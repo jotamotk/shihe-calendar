@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>时和</title>
+<!-- 字体:系统字体栈(零网络依赖，各机型一致) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D0B09">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="时和">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<style>
+  :root{
+    color-scheme:dark;
+    /* 与主界面统一:夜墨灰 · 香槟金 */
+    --bg:#0B0B0C;--bg-top:#141316;--card:#17161A;--card-2:#1F1E23;
+    --ink:#F1EDE6;--ink-2:#C2BDB3;--muted:#948F86;
+    --line:#262529;--line-2:#33323A;
+    --gold:#C8AC78;--gold-d:#E6CF9E;--gold-soft:#201C14;--gold-line:#4A4028;
+    --sage:var(--gold);--sage-d:var(--gold-d);--sage-soft:var(--gold-soft);--f3:#C0A86C;
+    --serif:'Songti SC','STSong','Source Han Serif SC','Noto Serif CJK SC',Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','HarmonyOS Sans SC','Source Han Sans SC','Noto Sans CJK SC','Microsoft YaHei',system-ui,sans-serif;
+    --shadow:0 34px 76px -42px rgba(0,0,0,.7);--shadow-sm:0 16px 40px -28px rgba(0,0,0,.6);
+    --lift:0 46px 84px -38px rgba(0,0,0,.78);--ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+  body{font-family:var(--sans);color:var(--ink);font-weight:400;letter-spacing:.2px;
+    background:radial-gradient(135% 95% at 50% -10%,#16151A 0%,#0D0C0F 50%,#070708 100%) fixed;min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:54px 24px 70px;position:relative;}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");}
+  .page-head,.frame-wrap{position:relative;z-index:1;}
+  .page-head{text-align:center;margin-bottom:34px;}
+  .brand-row{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:14px;}
+  .brand-seal{width:36px;height:36px;border-radius:11px;background:linear-gradient(150deg,#3A3221,#211B12);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:17px;font-family:var(--serif);box-shadow:0 10px 22px -12px rgba(58,42,14,.66),inset 0 0 0 1px rgba(200,172,120,.22);}
+  .brand-name{font-size:21px;font-weight:500;letter-spacing:6px;font-family:var(--serif);}
+  .page-head p{color:var(--ink-2);font-size:13px;font-weight:300;}
+  .page-head .tag{font-size:11.5px;color:var(--muted);margin-top:6px;font-weight:300;}
+  .back{display:inline-block;margin-top:12px;font-size:12px;color:var(--sage-d);text-decoration:none;border-bottom:1px solid var(--line-2);padding-bottom:2px;}
+
+  .frame-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;opacity:0;transform:translateY(14px);animation:rise .7s var(--ease) forwards;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+  .frame-label{font-size:12px;color:var(--ink-2);font-weight:400;}
+  .phone{width:312px;height:674px;background:linear-gradient(160deg,#2A2722,#141210);border-radius:46px;padding:10px;box-shadow:var(--shadow),inset 0 1px 1px rgba(255,255,255,.08),inset 0 -2px 6px rgba(0,0,0,.4);transition:transform .5s var(--ease),box-shadow .5s var(--ease);}
+  .phone:hover{transform:translateY(-6px);box-shadow:var(--lift);}
+  .screen{width:100%;height:100%;border-radius:36px;overflow:hidden;position:relative;background:radial-gradient(120% 70% at 50% -6%,var(--bg-top),var(--bg) 60%);display:flex;flex-direction:column;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:96px;height:20px;background:var(--bg-top);border-radius:0 0 14px 14px;z-index:6;}
+  .status{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 2px;font-size:11px;color:var(--ink-2);z-index:5;}
+  .scroll{flex:1;overflow-x:hidden;overflow-y:auto;padding:22px 22px 20px;display:flex;flex-direction:column;}
+
+  .ftitle{font-size:22px;font-weight:500;letter-spacing:2px;margin-bottom:6px;font-family:var(--serif);}
+  .fsub{font-size:11.5px;color:var(--muted);font-weight:300;margin-bottom:24px;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+  .field{margin-bottom:18px;}
+  .flabel{font-size:11px;color:var(--muted);font-weight:400;letter-spacing:1px;margin-bottom:8px;}
+  .seg{display:flex;background:var(--line);border-radius:12px;padding:4px;gap:4px;}
+  .seg button{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--ink-2);padding:9px 0;border-radius:9px;cursor:pointer;transition:all .3s var(--ease);font-weight:400;}
+  .seg button.on{background:var(--card-2);color:var(--gold-d);box-shadow:var(--shadow-sm),inset 0 0 0 1px rgba(205,168,98,.28);font-weight:500;}
+  .city-row{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;}
+  .pick{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line-2);border-radius:13px;padding:13px 15px;cursor:pointer;transition:border-color .25s,background .25s;}
+  .pick:hover{border-color:var(--sage);background:var(--sage-soft);}
+  .pick .pv{font-size:14px;font-weight:400;color:var(--ink);}
+  .pick .pv small{color:var(--muted);font-weight:300;font-size:12px;margin:0 1px;}
+  .pick .chev{margin-left:auto;color:var(--muted);font-size:13px;}
+  .pick input,.pick select{flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);font-weight:400;width:100%;cursor:pointer;}
+  .pick select{appearance:none;-webkit-appearance:none;}
+  .pick input::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.55;filter:invert(1);}
+  .seg.tmode{margin-bottom:9px;}
+  .time-unknown{font-size:11.5px;color:var(--sage-d);font-weight:300;line-height:1.65;background:var(--sage-soft);border-radius:13px;padding:12px 15px;}
+
+  /* —— 滚轮选择器:出生日期与时间(替代原 date/time 输入框)—— */
+  .wheels{display:flex;gap:6px;background:var(--card);border:1px solid var(--line-2);border-radius:14px;padding:6px 8px;}
+  .wheel-col{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;min-width:0;}
+  .wheel-cap{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:1px;margin-bottom:3px;}
+  .wheel{height:150px;width:100%;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;}
+  .wheel::-webkit-scrollbar{display:none;}
+  .wheel-list{padding:60px 0;}
+  .wheel-item{height:30px;line-height:30px;text-align:center;font-size:15px;color:var(--muted);font-weight:300;scroll-snap-align:center;cursor:pointer;font-variant-numeric:tabular-nums;transition:color .2s var(--ease),font-size .2s var(--ease),opacity .2s;opacity:.5;}
+  .wheel-item.on{color:var(--gold-d);font-weight:500;font-size:17px;opacity:1;}
+  /* 中央选择带:对齐 wheel 垂直中心(高 150px → 距底 60px 处的 30px 行) */
+  .wheel-col::after{content:'';position:absolute;left:-2px;right:-2px;bottom:60px;height:30px;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line);background:rgba(200,172,120,.05);pointer-events:none;}
+  .wheels.tunknown .wh-time{display:none;}
+
+  .truesun{display:flex;align-items:center;gap:9px;background:var(--sage-soft);border-radius:13px;padding:12px 15px;margin-top:4px;}
+  .truesun .ts-ico{width:7px;height:7px;border-radius:50%;background:var(--sage);flex:none;}
+  .truesun .ts-txt{font-size:11.5px;color:var(--sage-d);font-weight:300;line-height:1.5;}
+  .truesun .ts-txt b{font-weight:500;}
+
+  .btn{margin-top:auto;width:100%;background:linear-gradient(180deg,var(--gold-d),var(--gold));color:#231A0C;border:none;border-radius:16px;padding:15px;font-size:14px;font-weight:600;letter-spacing:3px;font-family:inherit;cursor:pointer;transition:transform .3s var(--ease),box-shadow .3s var(--ease);box-shadow:0 16px 34px -14px rgba(205,168,98,.5);}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 22px 40px -14px rgba(205,168,98,.7);}
+  .privacy{text-align:center;font-size:10.5px;color:var(--muted);font-weight:300;margin-top:12px;}
+  .privacy .pv-link{color:var(--gold-d);text-decoration:none;border-bottom:1px solid var(--gold-line);padding-bottom:1px;margin:0 5px;}
+  .privacy .pv-link:active{opacity:.6;}
+
+  /* —— 命盘核对面板 —— */
+  .cf-ov{position:absolute;inset:0;z-index:20;background:rgba(8,6,4,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:18px;}
+  .cf-ov.on{display:flex;}
+  .cf-card{width:100%;background:linear-gradient(170deg,var(--card-2),var(--card));border:1px solid var(--line-2);border-radius:22px;padding:20px 18px 16px;box-shadow:var(--shadow);max-height:100%;overflow-y:auto;}
+  .cf-h{font-size:18px;font-weight:500;letter-spacing:1px;font-family:var(--serif);color:var(--ink);}
+  .cf-sub{font-size:11px;color:var(--muted);font-weight:300;margin:5px 0 15px;line-height:1.5;}
+  .cf-info{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:11px 0;}
+  .cf-info b{color:var(--ink);font-weight:500;}
+  .cf-pwrap{margin:15px 0 4px;}
+  .cf-plabel{font-size:10px;color:var(--muted);letter-spacing:2px;font-weight:400;margin-bottom:9px;}
+  .cf-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .cf-col{background:var(--gold-soft);border:1px solid var(--line-2);border-radius:12px;padding:10px 0;text-align:center;}
+  .cf-col .pk{font-size:9.5px;color:var(--muted);font-weight:400;margin-bottom:6px;letter-spacing:1px;}
+  .cf-col .gz{font-size:19px;font-weight:500;color:var(--gold-d);font-family:var(--serif);letter-spacing:2px;line-height:1.1;}
+  .cf-col.day{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(205,168,98,.3);}
+  .cf-col.day .pk{color:var(--gold-d);}
+  .cf-meta{margin-top:13px;font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.8;}
+  .cf-meta b{color:var(--gold-d);font-weight:500;}
+  .cf-btns{display:grid;grid-template-columns:1fr 1.5fr;gap:10px;margin-top:18px;}
+  .cf-back{background:var(--line);color:var(--ink-2);border:none;border-radius:14px;padding:14px 0;font-size:13px;font-family:inherit;font-weight:400;cursor:pointer;transition:background .2s;}
+  .cf-back:hover{background:var(--line-2);}
+  .cf-ok{background:linear-gradient(180deg,var(--gold-d),var(--gold));color:#231A0C;border:none;border-radius:14px;padding:14px 0;font-size:13px;font-weight:600;letter-spacing:1px;font-family:inherit;cursor:pointer;transition:transform .25s var(--ease),box-shadow .25s;box-shadow:0 14px 30px -14px rgba(205,168,98,.5);}
+  .cf-ok:hover{transform:translateY(-2px);box-shadow:0 20px 36px -14px rgba(205,168,98,.7);}
+
+  /* 全屏手机版 / PWA:窄屏去掉手机外框，登入页铺满整屏 */
+  @media (max-width:600px){
+    body{padding:0;display:block;background:var(--bg);}
+    body::before{display:none;}
+    .page-head{display:none;}
+    .frame-wrap{gap:0;}
+    .frame-label{display:none;}
+    .phone{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none;background:none;}
+    .phone:hover{transform:none;box-shadow:none;}
+    .screen{border-radius:0;height:100dvh;background:radial-gradient(120% 60% at 50% -4%,var(--bg-top),var(--bg) 56%);}
+    .notch{display:none;}
+    .status{padding-top:max(12px,env(safe-area-inset-top));}
+    .scroll{padding:24px 22px max(22px,env(safe-area-inset-bottom));}
+  }
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <div class="brand-row"><div class="brand-seal">时</div><div class="brand-name">时 和</div></div>
+    <p>完善出生信息，生成你的专属节律</p>
+    <div class="tag">性别 / 历法 / 日期 / 时间 / 出生地 · 真太阳时自动校正</div>
+    <a class="back" href="index.html">← 返回首页</a>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="status"><span class="clock">9:41</span><span></span></div>
+      <div class="scroll">
+        <div class="ftitle">认识你的节律</div>
+        <div class="fsub">留下出生信息，为你推算每日能量与宜忌</div>
+
+        <div class="grid2">
+          <div>
+            <div class="flabel">性别</div>
+            <div class="seg" id="seg-sex"><button class="on" data-v="女">女</button><button data-v="男">男</button></div>
+          </div>
+          <div>
+            <div class="flabel">历法</div>
+            <div class="seg" id="seg-cal"><button class="on" data-v="公历">公历</button><button data-v="农历">农历</button></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="flabel">出生日期与时间 · 北京时间</div>
+          <div class="seg tmode" id="seg-tmode">
+            <button class="on" data-m="exact">准确时间</button>
+            <button data-m="unknown">时辰未知</button>
+          </div>
+          <div class="wheels" id="birth-wheels">
+            <div class="wheel-col" style="flex:1.3"><div class="wheel-cap">年</div><div class="wheel" id="wh-year"></div></div>
+            <div class="wheel-col"><div class="wheel-cap">月</div><div class="wheel" id="wh-mon"></div></div>
+            <div class="wheel-col"><div class="wheel-cap">日</div><div class="wheel" id="wh-day"></div></div>
+            <div class="wheel-col wh-time"><div class="wheel-cap">时</div><div class="wheel" id="wh-hour"></div></div>
+            <div class="wheel-col wh-time"><div class="wheel-cap">分</div><div class="wheel" id="wh-min"></div></div>
+          </div>
+          <div class="time-unknown" id="time-unknown" style="display:none">时辰未知 · 将按当日节律推算，不锚定具体时辰。</div>
+          <input type="hidden" id="in-date" value="1995-08-17">
+          <input type="hidden" id="in-time" value="14:30">
+        </div>
+
+        <div class="field" style="margin-bottom:14px;">
+          <div class="flabel">出生地 · 精确到市即可</div>
+          <div class="city-row">
+            <div class="pick"><select id="in-prov"></select><span class="chev">›</span></div>
+            <div class="pick"><select id="in-city"></select><span class="chev">›</span></div>
+          </div>
+          <div class="truesun">
+            <span class="ts-ico"></span>
+            <span class="ts-txt" id="ts-note">已按真太阳时校正</span>
+          </div>
+        </div>
+
+        <button class="btn" id="btn-go">生成我的节律 →</button>
+        <div class="privacy">仅用于本机计算，不上传、不外传<br><a class="pv-link" href="./privacy.html">隐私政策</a>·<a class="pv-link" href="./terms.html">用户协议</a></div>
+      </div>
+
+      <!-- 核对面板:生成后先看四柱命盘，确认排盘无误再保存进入 -->
+      <div class="cf-ov" id="confirm">
+        <div class="cf-card">
+          <div class="cf-h">核对你的命盘</div>
+          <div class="cf-sub">已按真太阳时校正、节气定月排盘 · 确认无误后保存</div>
+          <div class="cf-info" id="cf-info"></div>
+          <div class="cf-pwrap">
+            <div class="cf-plabel">四柱 · 干支</div>
+            <div class="cf-pillars" id="cf-pillars"></div>
+          </div>
+          <div class="cf-meta" id="cf-meta"></div>
+          <div class="cf-btns">
+            <button class="cf-back" id="cf-back">返回修改</button>
+            <button class="cf-ok" id="cf-ok">确认无误 · 保存并进入 →</button>
+          </div>
+          <div class="privacy">仅存于本机 · 不上传、不外传</div>
+        </div>
+      </div>
+    </div></div>
+    <div class="frame-label">出生信息</div>
+  </div>
+
+  <script src="engine_bundle.js"></script>
+
+  <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
+       不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
+  <script>
+    // window.SHIHE_ANALYTICS_URL = 'https://你的后端域名/api/collect'; // ← 部署后端后打开这一行即开启采集
+    window.SHIHE_APP_VERSION = '1.1.0';
+    // window.SHIHE_ANALYTICS_PROFILE = true; // 可选:额外上报「粗粒度性别 + 出生年份」(永不含月/日/时)
+  </script>
+  <script src="analytics.js"></script>
+
+  <!-- 首次启动·单独同意弹窗(隐私政策/用户协议 + 敏感个人信息本机处理同意) -->
+  <script src="consent.js"></script>
+
+  <script>
+    // —— 全国省·市经度表(出生地 → 真太阳时校正用；精确到地级市，经差仅影响秒级，无需更细)——
+    const PROV = [
+      ['北京',[['北京',116.41]]],
+      ['天津',[['天津',117.20]]],
+      ['上海',[['上海',121.47]]],
+      ['重庆',[['重庆',106.55]]],
+      ['河北',[['石家庄',114.51],['唐山',118.18],['秦皇岛',119.60],['邯郸',114.49],['邢台',114.50],['保定',115.46],['张家口',114.88],['承德',117.96],['沧州',116.84],['廊坊',116.70],['衡水',115.67]]],
+      ['山西',[['太原',112.55],['大同',113.30],['阳泉',113.58],['长治',113.12],['晋城',112.85],['朔州',112.43],['晋中',112.75],['运城',111.00],['忻州',112.73],['临汾',111.52],['吕梁',111.14]]],
+      ['内蒙古',[['呼和浩特',111.75],['包头',109.84],['乌海',106.79],['赤峰',118.92],['通辽',122.24],['鄂尔多斯',109.78],['呼伦贝尔',119.77],['巴彦淖尔',107.39],['乌兰察布',113.13],['兴安盟',122.07],['锡林郭勒',116.05],['阿拉善',105.73]]],
+      ['辽宁',[['沈阳',123.43],['大连',121.62],['鞍山',122.99],['抚顺',123.96],['本溪',123.77],['丹东',124.38],['锦州',121.13],['营口',122.24],['阜新',121.65],['辽阳',123.18],['盘锦',122.07],['铁岭',123.84],['朝阳',120.45],['葫芦岛',120.84]]],
+      ['吉林',[['长春',125.32],['吉林市',126.55],['四平',124.35],['辽源',125.14],['通化',125.94],['白山',126.42],['松原',124.82],['白城',122.84],['延边',129.51]]],
+      ['黑龙江',[['哈尔滨',126.53],['齐齐哈尔',123.92],['鸡西',130.97],['鹤岗',130.27],['双鸭山',131.16],['大庆',125.11],['伊春',128.84],['佳木斯',130.32],['七台河',131.00],['牡丹江',129.62],['黑河',127.50],['绥化',126.99],['大兴安岭',124.71]]],
+      ['江苏',[['南京',118.78],['无锡',120.30],['徐州',117.18],['常州',119.95],['苏州',120.62],['南通',120.86],['连云港',119.16],['淮安',119.02],['盐城',120.16],['扬州',119.41],['镇江',119.45],['泰州',119.92],['宿迁',118.30]]],
+      ['浙江',[['杭州',120.15],['宁波',121.55],['温州',120.70],['嘉兴',120.76],['湖州',120.09],['绍兴',120.58],['金华',119.65],['衢州',118.87],['舟山',122.21],['台州',121.43],['丽水',119.92]]],
+      ['安徽',[['合肥',117.28],['芜湖',118.38],['蚌埠',117.36],['淮南',117.00],['马鞍山',118.51],['淮北',116.80],['铜陵',117.82],['安庆',117.05],['黄山',118.34],['滁州',118.32],['阜阳',115.81],['宿州',116.98],['六安',116.52],['亳州',115.78],['池州',117.49],['宣城',118.76]]],
+      ['福建',[['福州',119.30],['厦门',118.10],['莆田',119.01],['三明',117.64],['泉州',118.59],['漳州',117.65],['南平',118.18],['龙岩',117.02],['宁德',119.55]]],
+      ['江西',[['南昌',115.86],['景德镇',117.18],['萍乡',113.85],['九江',116.00],['新余',114.92],['鹰潭',117.07],['赣州',114.94],['吉安',114.99],['宜春',114.39],['抚州',116.36],['上饶',117.97]]],
+      ['山东',[['济南',117.00],['青岛',120.38],['淄博',118.05],['枣庄',117.32],['东营',118.49],['烟台',121.39],['潍坊',119.16],['济宁',116.59],['泰安',117.09],['威海',122.12],['日照',119.53],['临沂',118.35],['德州',116.36],['聊城',115.98],['滨州',118.02],['菏泽',115.48]]],
+      ['河南',[['郑州',113.62],['开封',114.30],['洛阳',112.45],['平顶山',113.19],['安阳',114.39],['鹤壁',114.30],['新乡',113.93],['焦作',113.24],['濮阳',115.04],['许昌',113.85],['漯河',114.03],['三门峡',111.20],['南阳',112.53],['商丘',115.65],['信阳',114.09],['周口',114.70],['驻马店',114.02],['济源',112.59]]],
+      ['湖北',[['武汉',114.30],['黄石',115.05],['十堰',110.79],['宜昌',111.29],['襄阳',112.14],['鄂州',114.89],['荆门',112.20],['孝感',113.92],['荆州',112.24],['黄冈',114.87],['咸宁',114.32],['随州',113.37],['恩施',109.49]]],
+      ['湖南',[['长沙',112.94],['株洲',113.13],['湘潭',112.94],['衡阳',112.57],['邵阳',111.47],['岳阳',113.13],['常德',111.69],['张家界',110.48],['益阳',112.36],['郴州',113.02],['永州',111.61],['怀化',110.00],['娄底',112.00],['湘西',109.74]]],
+      ['广东',[['广州',113.26],['韶关',113.60],['深圳',114.06],['珠海',113.58],['汕头',116.68],['佛山',113.12],['江门',113.08],['湛江',110.36],['茂名',110.93],['肇庆',112.47],['惠州',114.42],['梅州',116.12],['汕尾',115.37],['河源',114.70],['阳江',111.98],['清远',113.05],['东莞',113.75],['中山',113.39],['潮州',116.62],['揭阳',116.37],['云浮',112.04]]],
+      ['广西',[['南宁',108.37],['柳州',109.42],['桂林',110.29],['梧州',111.30],['北海',109.12],['防城港',108.35],['钦州',108.65],['贵港',109.60],['玉林',110.18],['百色',106.62],['贺州',111.55],['河池',108.06],['来宾',109.23],['崇左',107.37]]],
+      ['海南',[['海口',110.35],['三亚',109.51],['儋州',109.58],['三沙',112.34]]],
+      ['四川',[['成都',104.07],['自贡',104.78],['攀枝花',101.72],['泸州',105.44],['德阳',104.40],['绵阳',104.68],['广元',105.84],['遂宁',105.57],['内江',105.07],['乐山',103.77],['南充',106.08],['眉山',103.85],['宜宾',104.62],['广安',106.63],['达州',107.50],['雅安',103.04],['巴中',106.75],['资阳',104.65],['阿坝',102.22],['甘孜',101.96],['凉山',102.27]]],
+      ['贵州',[['贵阳',106.71],['六盘水',104.83],['遵义',106.93],['安顺',105.93],['毕节',105.29],['铜仁',109.19],['黔西南',104.90],['黔东南',107.98],['黔南',107.52]]],
+      ['云南',[['昆明',102.83],['曲靖',103.80],['玉溪',102.55],['保山',99.17],['昭通',103.72],['丽江',100.23],['普洱',100.97],['临沧',100.09],['楚雄',101.55],['红河',103.40],['文山',104.24],['西双版纳',100.80],['大理',100.27],['德宏',98.59],['怒江',98.86],['迪庆',99.71]]],
+      ['西藏',[['拉萨',91.13],['日喀则',88.88],['昌都',97.17],['林芝',94.36],['山南',91.77],['那曲',92.06],['阿里',80.10]]],
+      ['陕西',[['西安',108.95],['铜川',108.95],['宝鸡',107.24],['咸阳',108.71],['渭南',109.50],['延安',109.49],['汉中',107.03],['榆林',109.74],['安康',109.03],['商洛',109.93]]],
+      ['甘肃',[['兰州',103.83],['嘉峪关',98.29],['金昌',102.19],['白银',104.14],['天水',105.72],['武威',102.64],['张掖',100.46],['平凉',106.68],['酒泉',98.51],['庆阳',107.64],['定西',104.63],['陇南',104.92],['临夏',103.21],['甘南',102.91]]],
+      ['青海',[['西宁',101.78],['海东',102.40],['海北',100.90],['黄南',102.02],['海南州',100.62],['果洛',100.24],['玉树',97.01],['海西',97.37]]],
+      ['宁夏',[['银川',106.23],['石嘴山',106.38],['吴忠',106.20],['固原',106.24],['中卫',105.19]]],
+      ['新疆',[['乌鲁木齐',87.62],['克拉玛依',84.87],['吐鲁番',89.18],['哈密',93.51],['昌吉',87.30],['博尔塔拉',82.07],['巴音郭楞',86.15],['阿克苏',80.26],['克孜勒苏',76.17],['喀什',75.99],['和田',79.92],['伊犁',81.32],['塔城',82.98],['阿勒泰',88.14],['石河子',86.03]]],
+      ['台湾',[['台北',121.56],['新北',121.46],['桃园',121.30],['台中',120.68],['台南',120.21],['高雄',120.31],['基隆',121.74],['新竹',120.97],['嘉义',120.45],['花莲',121.61],['台东',121.15]]],
+      ['香港',[['香港',114.17]]],
+      ['澳门',[['澳门',113.54]]],
+    ];
+    const ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+    const provSel = document.getElementById('in-prov');
+    const citySel = document.getElementById('in-city');
+    const DEF_PROV = '四川', DEF_CITY = '成都';
+    PROV.forEach(([p],i)=>{
+      const o=document.createElement('option');o.value=i;o.textContent=p;
+      if(p===DEF_PROV)o.selected=true;provSel.appendChild(o);
+    });
+    function fillCities(pi){
+      citySel.innerHTML='';
+      PROV[pi][1].forEach(([n,lon])=>{
+        const o=document.createElement('option');o.value=lon;o.textContent=n;
+        if(PROV[pi][0]===DEF_PROV && n===DEF_CITY)o.selected=true;citySel.appendChild(o);
+      });
+    }
+    fillCities(PROV.findIndex(([p])=>p===DEF_PROV));
+    provSel.addEventListener('change',()=>{ fillCities(+provSel.value); updateTrueSun(); });
+
+    // 段选器:点选即切 .on,值存 data-v
+    function segBind(id){
+      const segs=document.querySelectorAll('#'+id+' button');
+      segs.forEach(b=>b.addEventListener('click',()=>{segs.forEach(x=>x.classList.remove('on'));b.classList.add('on');}));
+    }
+    function segVal(id){return document.querySelector('#'+id+' button.on').dataset.v;}
+    segBind('seg-sex');segBind('seg-cal');
+
+    // —— 出生时间:准确时间 / 不确定(无时辰→三柱) 两种模式 ——
+    // 决策:时辰不确定不再让用户「猜大致时段」(会捏造时柱、污染结果),改为按三柱推算。
+    let timeMode = 'exact'; // 'exact' | 'unknown'
+    const tmodeBtns = document.querySelectorAll('#seg-tmode button');
+    tmodeBtns.forEach(b=>b.addEventListener('click',()=>{
+      tmodeBtns.forEach(x=>x.classList.remove('on')); b.classList.add('on');
+      timeMode = b.dataset.m;
+      const wl=document.getElementById('birth-wheels'); if(wl) wl.classList.toggle('tunknown', timeMode==='unknown');
+      document.getElementById('time-unknown').style.display = timeMode==='unknown' ? '' : 'none';
+      document.querySelector('.truesun').style.display      = timeMode==='unknown' ? 'none' : '';
+      updateTrueSun();
+    }));
+
+    // —— 滚轮日期时间选择器 —— (item 高 30px;scrollTop/30 即居中索引)
+    const W_ITEM_H = 30;
+    const whY=document.getElementById('wh-year'), whMo=document.getElementById('wh-mon'), whD=document.getElementById('wh-day'), whH=document.getElementById('wh-hour'), whMi=document.getElementById('wh-min');
+    const pad2=(n)=>String(n).padStart(2,'0');
+    function fillWheel(el,values,labelFn){ el._values=values; el.innerHTML='<div class="wheel-list">'+values.map(v=>'<div class="wheel-item">'+(labelFn?labelFn(v):v)+'</div>').join('')+'</div>'; }
+    function wIndex(el){ return Math.max(0,Math.min((el._values?el._values.length:1)-1, Math.round(el.scrollTop/W_ITEM_H))); }
+    function wValue(el){ return el._values[wIndex(el)]; }
+    function wMark(el){ const i=wIndex(el); const items=el.children[0]?el.children[0].children:[]; for(let k=0;k<items.length;k++) items[k].classList.toggle('on',k===i); }
+    function wSet(el,value){ let i=el._values.indexOf(value); if(i<0)i=0; el._idx=i; el.scrollTop=i*W_ITEM_H; wMark(el); }
+    function wBind(el,onChange){ let t; el.addEventListener('scroll',()=>{ wMark(el); clearTimeout(t); t=setTimeout(()=>{ el._idx=wIndex(el); if(onChange)onChange(); },130); },{passive:true}); el.addEventListener('click',(e)=>{ const it=e.target.closest('.wheel-item'); if(!it)return; const items=[].slice.call(el.children[0].children); const i=items.indexOf(it); if(i>=0) el.scrollTo({top:i*W_ITEM_H,behavior:'smooth'}); }); }
+    const THIS_YEAR=new Date().getFullYear();
+    const yearVals=[]; for(let y=1920;y<=THIS_YEAR;y++) yearVals.push(y);
+    fillWheel(whY,yearVals,(v)=>v);
+    fillWheel(whH,Array.from({length:24},(_,i)=>i),(v)=>pad2(v));
+    fillWheel(whMi,Array.from({length:60},(_,i)=>i),(v)=>pad2(v));
+    // 月轮:公历固定 1–12;农历按所选年份插入闰月(值用 m+0.5 编码,label 显示「闰X」)
+    function monLabel(v){ return Number.isInteger(v) ? v : '闰'+Math.floor(v); }
+    function rebuildMonth(){
+      const cal=segVal('seg-cal'), y=wValue(whY)||1995;
+      const prev=(whMo._values&&whMo._values.length)?wValue(whMo):1;
+      const vals=[];
+      if(cal==='农历'){ const leap=(RhythmEngine.lunarLeapMonth?RhythmEngine.lunarLeapMonth(y):0)||0;
+        for(let m=1;m<=12;m++){ vals.push(m); if(m===leap) vals.push(m+0.5); } }
+      else { for(let m=1;m<=12;m++) vals.push(m); }
+      fillWheel(whMo,vals,monLabel);
+      let t=prev; if(vals.indexOf(t)<0) t=Math.floor(prev)||1; if(vals.indexOf(t)<0) t=1;
+      wSet(whMo,t);
+    }
+    // 农历取真实天数(29/30,含闰月);公历用日历天数。修正「农历恒 30 天」导致的排盘错。
+    function daysInMonth(cal,y,m){
+      if(cal==='农历'){ const leap=!Number.isInteger(m), mm=Math.floor(m);
+        return (RhythmEngine.lunarMonthDays?RhythmEngine.lunarMonthDays(y,mm,leap):30)||30; }
+      return new Date(y,m,0).getDate();
+    }
+    function rebuildDay(){ const y=wValue(whY)||1995, m=wValue(whMo)||1; const cur=whD._values?wValue(whD):1; const max=daysInMonth(segVal('seg-cal'),y,m); const days=[]; for(let d=1;d<=max;d++) days.push(d); fillWheel(whD,days,(v)=>v); wSet(whD,Math.min(cur||1,max)); }
+    function syncHidden(){ document.getElementById('in-date').value=wValue(whY)+'-'+pad2(wValue(whMo))+'-'+pad2(wValue(whD)); document.getElementById('in-time').value=pad2(wValue(whH))+':'+pad2(wValue(whMi)); }
+    function onWheelChange(){ syncHidden(); updateTrueSun(); }
+    wBind(whY,()=>{ rebuildMonth(); rebuildDay(); onWheelChange(); }); wBind(whMo,()=>{ rebuildDay(); onWheelChange(); });
+    wBind(whD,onWheelChange); wBind(whH,onWheelChange); wBind(whMi,onWheelChange);
+    document.querySelectorAll('#seg-cal button').forEach(b=>b.addEventListener('click',()=>{ rebuildMonth(); rebuildDay(); onWheelChange(); }));
+    function setWheelsDateTime(y,m,d,hh,mi){ wSet(whY,y); rebuildMonth(); wSet(whMo,m); rebuildDay(); wSet(whD,d); wSet(whH,hh); wSet(whMi,mi); }
+    setWheelsDateTime(1995,8,17,14,30); syncHidden();
+
+    // —— 收集表单 → person ——
+    function readPerson(){
+      const cal = segVal('seg-cal');
+      const [y,m,d] = document.getElementById('in-date').value.split('-').map(Number);
+      let hh, mi;
+      if (timeMode==='unknown'){
+        hh = 0; mi = 0; // 占位，排盘走 hourUnknown(三柱),不用此值
+      } else {
+        const t = document.getElementById('in-time').value.split(':').map(Number);
+        hh = t[0]||0; mi = t[1]||0;
+      }
+      const lon = parseFloat(document.getElementById('in-city').value);
+      let sy=y, sm=m, sd=d;
+      if (cal === '农历'){ const leap=!Number.isInteger(m), mm=Math.floor(m); const s = RhythmEngine.lunarToSolar(y,mm,d,leap); sy=s.year; sm=s.month; sd=s.day; }
+      return { year:sy, month:sm, day:sd, hour:hh||0, minute:mi||0, longitude:lon, gender:segVal('seg-sex'), hourUnknown: timeMode==='unknown',
+        // 原始录入(供返回时按用户当初的口径回填，避免农历用户看到公历)
+        calInput: cal, inY: y, inM: m, inD: d };
+    }
+
+    // —— 真太阳时实时校正提示 ——
+    function updateTrueSun(){
+      if (timeMode==='unknown') return; // 无时辰:不显示真太阳时校正提示
+      try{
+        const p = readPerson();
+        const corr = RhythmEngine.trueSolarCorrection(p.year,p.month,p.day,p.longitude); // 分钟
+        const total = p.hour*60 + p.minute + Math.round(corr);
+        let mins = ((total%1440)+1440)%1440;
+        const ch = Math.floor(mins/60), cm = mins%60;
+        const pad = (n)=>String(n).padStart(2,'0');
+        const zhiIdx = Math.floor(((ch+1)%24)/2); // 23~1=子
+        const sign = corr>=0 ? '+' : '−';
+        document.getElementById('ts-note').innerHTML =
+          '已按真太阳时校正 → <b>'+pad(ch)+':'+pad(cm)+' · '+ZHI[zhiIdx]+'时</b>（约 '+sign+Math.abs(Math.round(corr))+' 分钟）';
+      }catch(e){ /* 输入未完整时忽略 */ }
+    }
+    ['in-date','in-time','in-city'].forEach(id=>document.getElementById(id).addEventListener('change',updateTrueSun));
+    document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',updateTrueSun));
+    updateTrueSun();
+
+    // —— 回填上次填过的信息:返回登入页时显示上次输入，而非默认占位 ——
+    // 注:shihe_person 存的是已换算后的公历日期(农历在 readPerson 已转公历),
+    //     故回填统一按公历显示；出生地按经度反查省市。
+    (function prefill(){
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem('shihe_person') || 'null'); } catch(_){}
+      if (!saved) return;
+      const pad = (n)=>String(n).padStart(2,'0');
+      // 历法:优先还原用户当初选的口径(老数据无 calInput 时按公历)
+      const calBack = saved.calInput === '农历' ? '农历' : '公历';
+      document.querySelectorAll('#seg-cal button').forEach(b=>b.classList.toggle('on', b.dataset.v===calBack));
+      // 性别
+      if (saved.gender) document.querySelectorAll('#seg-sex button').forEach(b=>b.classList.toggle('on', b.dataset.v===saved.gender));
+      // 出生日期:有原始录入用原始(农历填的就显示农历那串数字),否则回退到公历换算值
+      const dY = saved.inY || saved.year, dM = saved.inM || saved.month, dD = saved.inD || saved.day;
+      const sh = saved.hour||0, smi = saved.minute||0;
+      if (dY && dM && dD){ setWheelsDateTime(dY, dM, dD, sh, smi); syncHidden(); }
+      // 出生地:按经度反查省 / 市
+      if (typeof saved.longitude === 'number'){
+        let pi = -1;
+        for (let i=0;i<PROV.length;i++){
+          if (PROV[i][1].some(([n,lon])=>Math.abs(lon-saved.longitude)<0.005)){ pi=i; break; }
+        }
+        if (pi>=0){
+          provSel.value = pi; fillCities(pi);
+          Array.from(citySel.options).forEach(o=>{ o.selected = Math.abs(parseFloat(o.value)-saved.longitude)<0.005; });
+        }
+      }
+      // 出生时间模式:点对应模式按钮(触发显示切换),再回填具体值
+      // 兼容旧数据:历史「大致时段」(timeApprox)已废弃，统一归入「不确定→三柱」。
+      let mode = (saved.hourUnknown || saved.timeApprox) ? 'unknown' : 'exact';
+      const tBtn = document.querySelector('#seg-tmode button[data-m="'+mode+'"]');
+      if (tBtn) tBtn.click();
+      updateTrueSun();
+    })();
+
+    // 布局稳定后重置滚轮位置(inline 阶段 scrollTop 可能未生效)
+    requestAnimationFrame(()=>{ [whY,whMo,whD,whH,whMi].forEach(el=>{ if(el && el._idx!=null){ el.scrollTop=el._idx*W_ITEM_H; wMark(el); } }); });
+
+    // —— 生成节律:先核对信息 → 确认后存本机 → 跳主屏 ——
+    // 命盘核对模式:仅本人用(?verify=1 开启并记住;?verify=0 关闭)。
+    // 普通用户看不到四柱/日主等玄学原盘，只看出生信息确认 —— 守住「养生外壳」口径。
+    (function(){
+      const m = /[?&]verify=([01])/.exec(location.search);
+      if (m) localStorage.setItem('shihe_verify', m[1]);
+    })();
+    const VERIFY = localStorage.getItem('shihe_verify') === '1';
+
+    const cfOv = document.getElementById('confirm');
+    let PENDING = null; // { person, APP }
+
+    function buildCardHTML(chart, APP){
+      // 标题与命盘块:仅核对模式露出四柱原盘；普通用户只确认出生信息
+      document.querySelector('.cf-h').textContent   = VERIFY ? '核对你的命盘' : '核对出生信息';
+      document.querySelector('.cf-sub').textContent = VERIFY
+        ? '已按真太阳时校正、节气定月排盘 · 确认无误后保存'
+        : '已按真太阳时校正 · 确认无误后为你推算节律';
+      document.querySelector('.cf-pwrap').style.display = VERIFY ? '' : 'none';
+      document.getElementById('cf-meta').style.display  = VERIFY ? '' : 'none';
+
+      const PK = ['年柱','月柱','日柱','时柱'];
+      const pillars = [chart.pillars.year, chart.pillars.month, chart.pillars.day, chart.pillars.time];
+      document.getElementById('cf-pillars').innerHTML = pillars.map((gz,i)=>
+        '<div class="cf-col'+(i===2?' day':'')+(gz?'':' unknown')+'"><div class="pk">'+PK[i]+'</div><div class="gz">'+(gz||'未知')+'</div></div>'
+      ).join('');
+
+      const p = PENDING.person;
+      const calTxt = segVal('seg-cal');
+      const corr = Math.round(chart.correctionMin);
+      const sign = corr>=0?'+':'−';
+      document.getElementById('cf-info').innerHTML =
+        '公历 <b>'+p.year+'年'+p.month+'月'+p.day+'日</b> · '+p.gender+' · '+document.getElementById('in-city').selectedOptions[0].text+'<br>'+
+        '农历 <b>'+chart.lunarText+'</b><br>'+
+        (p.hourUnknown
+          ? '出生时辰 <b>未知</b> · 按当日节律推算'
+          : '真太阳时 <b>'+chart.trueSolarClock+'</b>（校正 '+sign+Math.abs(corr)+' 分）');
+
+      const u = APP.user||{};
+      const xi = (u.xiYong||[]).join('、');
+      document.getElementById('cf-meta').innerHTML =
+        '日主 <b>'+(u.dayMaster||'—')+'</b>'+(u.strength?' · '+u.strength:'')+
+        (xi?' · 喜用 <b>'+xi+'</b>':'')+
+        (u.xiColor&&u.xiColor.name?' · 喜色 <b>'+u.xiColor.name+'</b>':'');
+    }
+
+    document.getElementById('btn-go').addEventListener('click',()=>{
+      try{
+        const person = readPerson();
+        const now = new Date();
+        const today = { year:now.getFullYear(), month:now.getMonth()+1, day:now.getDate() };
+        const chart = RhythmEngine.paipan(person);
+        const APP = RhythmEngine.buildApp(person, today);
+        PENDING = { person, APP };
+        buildCardHTML(chart, APP);
+        cfOv.classList.add('on');
+      }catch(e){
+        alert('排盘失败，请检查出生信息是否完整。\n'+e.message);
+      }
+    });
+
+    document.getElementById('cf-back').addEventListener('click',()=>{ cfOv.classList.remove('on'); });
+    cfOv.addEventListener('click',(e)=>{ if(e.target===cfOv) cfOv.classList.remove('on'); });
+
+    document.getElementById('cf-ok').addEventListener('click',()=>{
+      if(!PENDING) return;
+      try{
+        localStorage.setItem('shihe_app', JSON.stringify(PENDING.APP));
+        localStorage.setItem('shihe_person', JSON.stringify(PENDING.person)); // 供日历挑年月时实时重算
+        // 运营埋点:完成建档(性别/出生年仅在 SHIHE_ANALYTICS_PROFILE 开启时上报，且永不含月/日/时)
+        window.shihe && window.shihe.track('onboard_complete', { gender: PENDING.person.gender, birthYear: PENDING.person.year });
+        location.href = 'index.html';
+      }catch(e){ alert('保存失败：'+e.message); }
+    });
+    // 状态栏时钟显示真实时间(与主 app 一致，替换写死的 9:41)
+    (function(){ var el=document.querySelector('.status .clock'); if(!el) return;
+      function tick(){ var d=new Date(), h=d.getHours(), m=d.getMinutes(); el.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m; }
+      tick(); setInterval(tick, 15000);
+    })();
+  </script>
+</body>
+</html>
