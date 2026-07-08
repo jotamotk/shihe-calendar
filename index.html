@@ -1192,7 +1192,7 @@
   .hl2-cmp{margin-top:13px;}
   .hl2-cmp-h{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;color:var(--gold-d);letter-spacing:1px;margin-bottom:10px;}
   .hl2-cmp-h::before{content:'';width:3px;height:12px;border-radius:2px;background:linear-gradient(180deg,var(--gold),var(--gold-d));}
-  .hl2-cmp-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+  .hl2-cmp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px;}
   .hl2-cmp-c{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0;}
   .hl2-cmp-c .cmp-nm{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:.3px;}
   .hl2-cmp-c .cmp-vd{font-size:12px;font-weight:600;letter-spacing:.5px;}
@@ -1671,11 +1671,11 @@
               </div>
               <!-- 更多细节(折叠)+ 四法参断 -->
               <div class="hl2-more collapsible collapsed" data-wid="hlmore">
-                <div class="hl2-more-h wdg-toggle">更多历法细节 · 四法参断<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+                <div class="hl2-more-h wdg-toggle">更多历法细节 · 判定依据<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
                 <div class="wdg-body"><div class="wdg-body-in">
                   <div class="hl2-grid" id="hl2-grid"></div>
                   <div class="hl2-cmp">
-                    <div class="hl2-cmp-h">四法参断</div>
+                    <div class="hl2-cmp-h">判定依据 · 诸神煞取象</div>
                     <div class="hl2-cmp-row" id="hl2-cmp-row"></div>
                     <div class="hl2-cmp-sum" id="hl2-cmp-sum"></div>
                   </div>
@@ -1909,7 +1909,7 @@
           </button>
           <button class="tb-feat" data-tool="fangwei" data-title="诸神方位">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fangwei"></use></svg>
-              <div><b>诸神方位 · 今日宜朝向</b><small id="tb-c-fw">喜神 · 财神 · 福神</small></div></div>
+              <div><b>诸神方位 · 今日宜朝向</b><small id="tb-c-fw">喜 · 财 · 福 · 阳贵 · 阴贵</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2410,9 +2410,9 @@
         '满':{t:'平',m:'圆满丰盈，盈则忌满'},
         '平':{t:'平',m:'平常公道，宜守常'},
         '定':{t:'吉',m:'安定不移、心志笃定'},
-        '执':{t:'平',m:'执持操守、固守成局'},
+        '执':{t:'吉',m:'执持操守、固守成局'},
         '破':{t:'凶',m:'冲破损耗，诸事不宜'},
-        '危':{t:'平',m:'危高戒慎、居安思危'},
+        '危':{t:'吉',m:'居高戒慎，玉堂黄道反主吉'},
         '成':{t:'吉',m:'成就万事、水到渠成'},
         '收':{t:'平',m:'收纳归藏、敛而后蓄'},
         '开':{t:'吉',m:'开通启新、生机初动'},
@@ -2446,7 +2446,9 @@
         // 岁次干支(卡头右上，黄历自含)
         set('hl2-gz', safe(()=>lun.getYearInGanZhi())+'年 '+safe(()=>lun.getMonthInGanZhi())+'月 '+safe(()=>lun.getDayInGanZhi())+'日');
         // 宜忌 hero
-        set('hl2-yi', join(arr(()=>lun.getDayYi()),10));
+        const _yiArr=arr(()=>lun.getDayYi());
+        // getDayYi 查表未命中会兜底成「诸事不宜」占位——「宜:诸事不宜」自相矛盾,降级为从简提示
+        set('hl2-yi', (_yiArr.length===1&&_yiArr[0]==='诸事不宜') ? '日值平平 · 历注从简' : join(_yiArr,10));
         set('hl2-ji', join(arr(()=>lun.getDayJi()),10));
 
         // —— 三要件:值神(黄黑道)· 建除十二神 · 二十八宿 ——
@@ -2469,6 +2471,7 @@
         arr(()=>lun.getTimes()).forEach((t)=>{
           const gz=safe(()=>t.getGanZhi()); const z=gz.charAt(1); if(!z||_hlTimes[z]) return;
           _hlTimes[z]={ gz:gz, luck:safe(()=>t.getTianShenLuck()), chong:safe(()=>t.getChongDesc()),
+            ts:safe(()=>t.getTianShen()), tst:safe(()=>t.getTianShenType()),
             yi:arr(()=>t.getYi()), ji:arr(()=>t.getJi()), range:ZRANGE[z]||'' };
         });
         let nowZ=''; (function(){
@@ -2485,7 +2488,8 @@
             +'<span class="hl2-shi-luck">'+(info.luck||'—')+'</span></div>';
         }).join(''));
         const shiNow=$('hl2-shi-now');
-        if(shiNow) shiNow.textContent = nowZ ? ('此刻 '+nowZ+'时 · '+((_hlTimes[nowZ]&&_hlTimes[nowZ].luck)||'—')) : '点选时辰查看宜忌';
+        const _jishi=ZORDER.filter((z)=>_hlTimes[z]&&_hlTimes[z].luck==='吉').map((z)=>z+'时').join('、');
+        if(shiNow) shiNow.textContent = (nowZ?('此刻'+nowZ+'时·'+((_hlTimes[nowZ]&&_hlTimes[nowZ].luck)||'—')+'　'):'') + (_jishi?('今日吉时 '+_jishi):'（今日无明显吉时）');
         (function(){
           const det=$('hl2-shi-detail'); if(!det) return;
           if(nowZ && _hlTimes[nowZ]){ det.classList.add('show'); det.innerHTML=shiDetailHTML(nowZ); }
@@ -2501,12 +2505,21 @@
           const desc=safe(()=>lun.getDayChongDesc()); const mm=desc.match(/\(([^)]+)\)/); const gz=mm?mm[1]:'';
           chongCell = sx ? ('冲'+sx+(gz?('（'+gz+'）'):'')+(sha?(' 煞'+sha):'')) : desc;
         })();
+        // 补齐标准黄历栏目(全部 lunar.js 实算,只报不断吉凶):今日五神方位 / 岁煞(日支三合局) / 九星紫白 / 月相
+        const _jf=['喜 '+safe(()=>lun.getDayPositionXiDesc()),'财 '+safe(()=>lun.getDayPositionCaiDesc()),'福 '+safe(()=>lun.getDayPositionFuDesc()),'阳贵 '+safe(()=>lun.getDayPositionYangGuiDesc()),'阴贵 '+safe(()=>lun.getDayPositionYinGuiDesc())].filter((x)=>x.length>2).join(' · ');
+        const _SS={申:'南',子:'南',辰:'南',寅:'北',午:'北',戌:'北',巳:'东',酉:'东',丑:'东',亥:'西',卯:'西',未:'西'};
+        const _suisha='煞'+(_SS[safe(()=>lun.getDayZhi())]||'—');
+        let _jiuxing=''; try{ const _ns=lun.getDayNineStar(); _jiuxing=_ns.getNumber()+_ns.getColor()+' · '+_ns.getNameInXuanKong()+'('+_ns.getWuXing()+')'; }catch(e){}
         html('hl2-grid',
-            cell('冲煞', chongCell)
+            cell('今日吉方', _jf, '喜财福贵神所在', true)
+          + cell('冲煞', chongCell, '与所列生肖同属者当日相冲')
+          + cell('岁煞', _suisha, '按日支三合局')
           + cell('六曜', ly+(lyi.t?('('+lyi.t+')'):''))
+          + cell('九星', _jiuxing)
+          + cell('月相', safe(()=>lun.getYueXiang()))
           + cell('纳音五行', safe(()=>lun.getDayNaYin()))
           + cell('值日星宿', xiuName+xiuZheng+xiuAnimal, xiuLuck)
-          + cell('胎神占方', safe(()=>lun.getDayPositionTai()), '', true)
+          + cell('胎神占方', safe(()=>lun.getDayPositionTai()), '旧俗孕家忌于此方动土移重物', true)
           + cell('彭祖百忌', (safe(()=>lun.getPengZuGan())+'　'+safe(()=>lun.getPengZuZhi())).trim(), '', true)
           + cell('吉神宜趋', join(arr(()=>lun.getDayJiShen())), '', true)
           + cell('凶神宜忌', join(arr(()=>lun.getDayXiongSha())), '', true)
@@ -2514,14 +2527,11 @@
 
         // —— 四法参断 ——
         const cmp=(nm,t)=> '<div class="hl2-cmp-c '+tag(t)+'"><span class="cmp-nm">'+nm+'</span><span class="cmp-vd">'+(t||'—')+'</span></div>';
-        html('hl2-cmp-row', cmp('黄黑道',tsLuck)+cmp('建除',zxi.t)+cmp('廿八宿',xiuLuck)+cmp('六曜',lyi.t));
-        const okN=[tsLuck,zxi.t,xiuLuck,lyi.t].filter((x)=>x==='吉').length;
-        const badN=[tsLuck,zxi.t,xiuLuck,lyi.t].filter((x)=>x==='凶').length;
+        html('hl2-cmp-row', cmp('值神(黄黑道)',tsLuck)+cmp('建除',zxi.t)+cmp('廿八宿',xiuLuck));
         html('hl2-cmp-sum',
-          '四法同出古代历注、取象各异，本就时有出入——今黄黑道、建除、廿八宿、六曜四法中，'
-          +okN+'法示吉、'+badN+'法示忌。断日不取一法独断，而观其向背：多吉宜进、多忌宜守、参半则平常心待之。');
+          '上方「宜／忌」，正是由建除、值神(黄黑道)、廿八宿等神煞按传统历注综合排定——它们是宜忌的来路，不各自独立另断一种吉凶。神煞的吉凶多随所办之事而异（破日凶却宜拆旧、危日吉却忌登高），故此处只陈取象、不逐法计票。');
         html('hl2-src',
-          '参《协纪辨方书》(清·官修择吉总集)、《玉匣记》(民间择日通书)、《彭祖百忌歌》及二十八宿值日；上列干支、宜忌、神煞均由历法库实算。诸法为古人经验归类，仅供参考——<b>请相信科学</b>。');
+          '宜忌取自历法库内置的通书宜忌表(依传统历注归类)；干支、建除、值神、廿八宿、冲煞等由历法实算。六曜(先胜/友引/佛灭等)源自小六壬、今通行版为日本历注，非中式择吉正统，仅列作参考。参《协纪辨方书》(清·官修择吉总集)、《玉匣记》(民间择吉杂占集)等——诸法为古人经验归类，仅供参考，<b>请相信科学</b>。');
 
         // —— 一次性绑定:十二时辰点选 ——
         if(!_hlBound){
@@ -2541,8 +2551,9 @@
       function shiDetailHTML(z){
         const info=_hlTimes&&_hlTimes[z]; if(!info) return '';
         const j=(a)=> (a&&a.length)? a.slice(0,6).join('、') : '—';
+        const shen=info.ts?('值神 '+esc(info.ts)+(info.tst?('('+esc(info.tst)+')'):'')):'';
         return '<b>'+z+'时 '+esc(info.range||'')+'点</b>　'+esc(info.gz||'')+(info.luck?(' · '+esc(info.luck)):'')
-          +'　'+esc(info.chong||'')
+          +(shen?('　'+shen):'')+'　'+esc(info.chong||'')
           +'<br>宜 '+esc(j(info.yi))+'　忌 '+esc(j(info.ji));
       }
 
@@ -4687,23 +4698,22 @@
       if(nowEl) nowEl.innerHTML='<div class="sc-now-t">'+st.t+(st.m?'<small>'+st.m+'</small>':'')+'</div><div class="sc-now-y" style="margin-top:6px">'+st.y+'</div>';
     })();
 
-    // ===== 工具箱 · 诸神方位(按所选日日干,依通书口诀推 喜神/财神/福神方位;已双源核验,只报方位不断吉凶,可 ‹ › 翻日)=====
+    // ===== 工具箱 · 诸神方位(按所选日日干,一律用 lunar.js 实算 喜/财/福/阳贵/阴贵 五方位(与老黄历卡同源),只报方位不断吉凶,可 ‹ › 翻日)=====
     (function renderFangwei(){
       var grid=document.getElementById('fw-grid'); if(!grid) return;
       var RE=window.RhythmEngine, S=RE&&RE.Solar; if(!S) return;
-      var XI={甲:'东北',己:'东北',乙:'西北',庚:'西北',丙:'西南',辛:'西南',丁:'正南',壬:'正南',戊:'东南',癸:'东南'};
-      var CAI={甲:'东北',乙:'西南',丙:'正西',丁:'正西',戊:'正北',己:'正北',庚:'正东',辛:'正东',壬:'正南',癸:'正南'};
-      var FU={甲:'正北',己:'正北',丙:'西北',辛:'西北',乙:'西南',庚:'西南',戊:'东北',癸:'东北',丁:'东南',壬:'东南'};
+      // 方位一律用 lunar.js 实算(与老黄历卡同源,避免手表口径不一);补阳贵/阴贵两神
       var offset=0, chip=document.getElementById('tb-c-fw');
       function draw(){
         var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+offset);
-        var gz=''; try{ gz=S.fromYmd(d.getFullYear(),d.getMonth()+1,d.getDate()).getLunar().getDayInGanZhi(); }catch(e){}
-        var gan=gz.charAt(0);
+        var lun=null, gz='', gan=''; try{ lun=S.fromYmd(d.getFullYear(),d.getMonth()+1,d.getDate()).getLunar(); gz=lun.getDayInGanZhi(); gan=gz.charAt(0); }catch(e){}
+        var P=function(f){ try{ var v=f(); return v==null?'—':String(v); }catch(e){ return '—'; } };
+        var xi=P(function(){return lun.getDayPositionXiDesc();}), cai=P(function(){return lun.getDayPositionCaiDesc();}), fu=P(function(){return lun.getDayPositionFuDesc();}), yg=P(function(){return lun.getDayPositionYangGuiDesc();}), yin=P(function(){return lun.getDayPositionYinGuiDesc();});
         var hero=document.getElementById('fw-hero'), dateEl=document.getElementById('fw-date');
         if(hero) hero.innerHTML='<div class="sc-now-t">'+(offset===0?'今日':'该日')+'宜朝向</div><div class="sc-now-m" style="margin:6px 0 0">依当日日干「'+gan+'」推算</div>';
         if(dateEl) dateEl.textContent=(offset===0?'今日 · ':'')+(d.getMonth()+1)+'月'+d.getDate()+'日 · '+gz+'日';
-        if(chip && offset===0 && XI[gan]) chip.textContent='喜'+XI[gan]+' · 财'+CAI[gan];
-        var items=[{n:'喜神',d:XI[gan]||'—',y:'会亲友、谈婚嫁、办喜事'},{n:'财神',d:CAI[gan]||'—',y:'开市、谈生意、求财'},{n:'福神',d:FU[gan]||'—',y:'祈福纳祥、静心'}];
+        if(chip && offset===0) chip.textContent='喜'+xi+' · 财'+cai;
+        var items=[{n:'喜神',d:xi,y:'会亲友、谈婚嫁、办喜事'},{n:'财神',d:cai,y:'开市、谈生意、求财'},{n:'福神',d:fu,y:'祈福纳祥、静心'},{n:'阳贵神',d:yg,y:'求贵人相助 · 日间'},{n:'阴贵神',d:yin,y:'求贵人相助 · 夜间'}];
         grid.innerHTML=items.map(function(x){ return '<div class="fw-card"><div class="fw-dir">'+x.d+'</div><div class="fw-god">'+x.n+'</div><div class="fw-y">'+x.y+'</div></div>'; }).join('');
       }
       var prev=document.getElementById('fw-prev'), next=document.getElementById('fw-next');
