@@ -11892,9 +11892,9 @@ var RhythmEngine = (() => {
         \u4E01: { \u5BC5: "\u7532", \u536F: "\u5E9A", \u8FB0: "\u7532", \u5DF3: "\u7532", \u5348: "\u58EC", \u672A: "\u7532", \u7533: "\u7532", \u9149: "\u7532", \u620C: "\u7532", \u4EA5: "\u7532", \u5B50: "\u7532", \u4E11: "\u7532" },
         \u620A: { \u5BC5: "\u4E19", \u536F: "\u4E19", \u8FB0: "\u7532", \u5DF3: "\u7532", \u5348: "\u58EC", \u672A: "\u7678", \u7533: "\u4E19", \u9149: "\u4E19", \u620C: "\u7532", \u4EA5: "\u7532", \u5B50: "\u4E19", \u4E11: "\u4E19" },
         \u5DF1: { \u5BC5: "\u4E19", \u536F: "\u7532", \u8FB0: "\u4E19", \u5DF3: "\u7678", \u5348: "\u7678", \u672A: "\u7678", \u7533: "\u4E19", \u9149: "\u4E19", \u620C: "\u7532", \u4EA5: "\u4E19", \u5B50: "\u4E19", \u4E11: "\u4E19" },
-        \u5E9A: { \u5BC5: "\u620A", \u536F: "\u4E01", \u8FB0: "\u7532", \u5DF3: "\u58EC", \u5348: "\u58EC", \u672A: "\u4E01", \u7533: "\u4E01", \u9149: "\u4E01", \u620C: "\u7532", \u4EA5: "\u4E01", \u5B50: "\u4E01", \u4E11: "\u4E19" },
+        \u5E9A: { \u5BC5: "\u4E19", \u536F: "\u4E01", \u8FB0: "\u7532", \u5DF3: "\u58EC", \u5348: "\u58EC", \u672A: "\u4E01", \u7533: "\u4E01", \u9149: "\u4E01", \u620C: "\u7532", \u4EA5: "\u4E01", \u5B50: "\u4E01", \u4E11: "\u4E19" },
         \u8F9B: { \u5BC5: "\u5DF1", \u536F: "\u58EC", \u8FB0: "\u58EC", \u5DF3: "\u58EC", \u5348: "\u58EC", \u672A: "\u58EC", \u7533: "\u58EC", \u9149: "\u58EC", \u620C: "\u58EC", \u4EA5: "\u58EC", \u5B50: "\u4E19", \u4E11: "\u4E19" },
-        \u58EC: { \u5BC5: "\u5E9A", \u536F: "\u620A", \u8FB0: "\u5E9A", \u5DF3: "\u58EC", \u5348: "\u7678", \u672A: "\u8F9B", \u7533: "\u620A", \u9149: "\u7532", \u620C: "\u7532", \u4EA5: "\u620A", \u5B50: "\u620A", \u4E11: "\u4E19" },
+        \u58EC: { \u5BC5: "\u5E9A", \u536F: "\u620A", \u8FB0: "\u7532", \u5DF3: "\u58EC", \u5348: "\u7678", \u672A: "\u8F9B", \u7533: "\u620A", \u9149: "\u7532", \u620C: "\u7532", \u4EA5: "\u620A", \u5B50: "\u620A", \u4E11: "\u4E19" },
         \u7678: { \u5BC5: "\u8F9B", \u536F: "\u5E9A", \u8FB0: "\u4E19", \u5DF3: "\u8F9B", \u5348: "\u5E9A", \u672A: "\u5E9A", \u7533: "\u4E01", \u9149: "\u8F9B", \u620C: "\u8F9B", \u4EA5: "\u5E9A", \u5B50: "\u4E19", \u4E11: "\u4E19" }
       };
       var WX_COLOR = {
@@ -11953,12 +11953,10 @@ var RhythmEngine = (() => {
         }
         if (isZhuanWang) {
           const yin = SHENG_ME[dayWx], shi = ME_SHENG[dayWx], cai = ME_KE[dayWx], guan = KE_ME[dayWx];
-          const earthSelf = dayWx === "\u571F";
-          const suppressHelp = isDry || earthSelf;
           WX_ALL.forEach((wx) => {
             if (wx === shi) fav[wx] = 1;
-            else if (wx === dayWx) fav[wx] = earthSelf ? -0.1 : isDry ? 0.2 : 0.85;
-            else if (wx === yin) fav[wx] = suppressHelp ? -0.35 : 0.75;
+            else if (wx === dayWx) fav[wx] = 0.7;
+            else if (wx === yin) fav[wx] = 0.6;
             else if (wx === cai) fav[wx] = -0.5;
             else if (wx === guan) fav[wx] = -1;
           });
@@ -12069,7 +12067,6 @@ var RhythmEngine = (() => {
         const hasWetEarth = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
         const isDry = !isCong && !hasWetEarth && (season === "\u590F" || weights["\u706B"] >= 2) && weights["\u6C34"] < 1.5;
         const totalPower = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
-        const shiPower = weights[ME_SHENG[dayWx]];
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
         const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weights[KE_ME[dayWx]] < 0.5 && weights[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
         let effScore = score;
