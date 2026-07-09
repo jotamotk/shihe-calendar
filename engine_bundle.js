@@ -11758,6 +11758,7 @@ var RhythmEngine = (() => {
         const solar = Solar.fromYmdHms(ty, tm, td, th, tmin, 0);
         const lunar = solar.getLunar();
         const ec = lunar.getEightChar();
+        ec.setSect(1);
         const yearGan = ec.getYearGan();
         const yangGan = ["\u7532", "\u4E19", "\u620A", "\u5E9A", "\u58EC"].includes(yearGan);
         const forward = yangGan && gender === "\u7537" || !yangGan && gender === "\u5973";
@@ -11936,7 +11937,7 @@ var RhythmEngine = (() => {
         return null;
       }
       function buildFavVec(opts) {
-        const { effScore, dayWx, dayGan, season, monthZhi, isCong, congWx, isYinHeavyWeak, isDry } = opts;
+        const { effScore, dayWx, dayGan, season, monthZhi, isCong, congWx, isYinHeavyWeak, isZhuanWang, isDry } = opts;
         const t = strengthToT(effScore);
         const fav = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
         if (isCong) {
@@ -11947,6 +11948,22 @@ var RhythmEngine = (() => {
             else if (wx === dayWx) fav[wx] = -1;
             else if (wx === SHENG_ME[dayWx]) fav[wx] = -0.7;
             else fav[wx] = -0.3;
+          });
+          return { t, fav, clim: { vec: fav, god: null, thWx: null, aligned: false, sev: 0 } };
+        }
+        if (isZhuanWang) {
+          const yin = SHENG_ME[dayWx], shi = ME_SHENG[dayWx], cai = ME_KE[dayWx], guan = KE_ME[dayWx];
+          const earthSelf = dayWx === "\u571F";
+          const suppressHelp = isDry || earthSelf;
+          WX_ALL.forEach((wx) => {
+            if (wx === shi) fav[wx] = 1;
+            else if (wx === dayWx) fav[wx] = earthSelf ? -0.1 : isDry ? 0.2 : 0.85;
+            else if (wx === yin) fav[wx] = suppressHelp ? -0.35 : 0.75;
+            else if (wx === cai) fav[wx] = -0.5;
+            else if (wx === guan) fav[wx] = -1;
+          });
+          WX_ALL.forEach((wx) => {
+            fav[wx] = Math.max(-1, Math.min(1, Math.round(fav[wx] * 100) / 100));
           });
           return { t, fav, clim: { vec: fav, god: null, thWx: null, aligned: false, sev: 0 } };
         }
@@ -12051,6 +12068,10 @@ var RhythmEngine = (() => {
         const season = seasonOf(monthZhi);
         const hasWetEarth = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
         const isDry = !isCong && !hasWetEarth && (season === "\u590F" || weights["\u706B"] >= 2) && weights["\u6C34"] < 1.5;
+        const totalPower = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
+        const shiPower = weights[ME_SHENG[dayWx]];
+        const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
+        const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weights[KE_ME[dayWx]] < 0.5 && weights[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
         let effScore = score;
         if (isGuanShaWeak && !isCong) effScore = Math.min(effScore, -1);
         if (isYinHeavyWeak && !isCong) effScore = Math.min(effScore, -3);
@@ -12063,6 +12084,7 @@ var RhythmEngine = (() => {
           isCong,
           congWx,
           isYinHeavyWeak,
+          isZhuanWang,
           isDry
         });
         const { xiYong, jiShen, xiYongWeight: xiWeight, primaryXi } = deriveFromFav(favVec);
@@ -12091,6 +12113,7 @@ var RhythmEngine = (() => {
           weights,
           isYinHeavyWeak,
           isGuanShaWeak,
+          isZhuanWang,
           yinBuryRatio: Math.round(yinBuryRatio * 100) / 100,
           dryNote,
           favVec,
@@ -12179,7 +12202,7 @@ var RhythmEngine = (() => {
           dynScore: mj.strengthScore,
           dy: null
         };
-        if (mj.isCong) return base;
+        if (mj.isCong || mj.isZhuanWang) return base;
         const { delta, dy } = daYunStrengthDelta(chart, year);
         base.dy = dy;
         if (!dy) return base;
@@ -12197,6 +12220,7 @@ var RhythmEngine = (() => {
           isCong: false,
           congWx: null,
           isYinHeavyWeak: mj.isYinHeavyWeak,
+          isZhuanWang: false,
           isDry: !!mj.dryNote
         });
         const { xiYong, jiShen, xiYongWeight, primaryXi } = deriveFromFav(fav);
