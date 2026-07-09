@@ -1187,6 +1187,7 @@
   .hl2-cell.full{grid-column:1 / -1;}
   .hl2-cell-k{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:.5px;}
   .hl2-cell-v{font-size:12px;color:var(--ink);font-weight:300;letter-spacing:.3px;line-height:1.55;}
+  .hl2-cell-v b{color:var(--gold-d);font-weight:500;letter-spacing:.5px;}
   .ss{display:inline-block;margin:1px 4px 1px 0;padding:0 4px;border-radius:5px;font-size:11.5px;line-height:1.85;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .ss:active{background:var(--gold-soft);}
   .ss-top{color:var(--gold-d);font-weight:600;background:var(--gold-soft);}
@@ -2520,12 +2521,12 @@
           chongCell = sx ? ('冲'+sx+(gz?('（'+gz+'）'):'')+(sha?(' 煞'+sha):'')) : desc;
         })();
         // 补齐标准黄历栏目(全部 lunar.js 实算,只报不断吉凶):今日五神方位 / 岁煞(日支三合局) / 九星紫白 / 月相
-        const _jf=['喜 '+safe(()=>lun.getDayPositionXiDesc()),'财 '+safe(()=>lun.getDayPositionCaiDesc()),'福 '+safe(()=>lun.getDayPositionFuDesc()),'阳贵 '+safe(()=>lun.getDayPositionYangGuiDesc()),'阴贵 '+safe(()=>lun.getDayPositionYinGuiDesc())].filter((x)=>x.length>2).join(' · ');
+        const _jf=['喜 <b>'+safe(()=>lun.getDayPositionXiDesc())+'</b>','财 <b>'+safe(()=>lun.getDayPositionCaiDesc())+'</b>','福 <b>'+safe(()=>lun.getDayPositionFuDesc())+'</b>','阳贵 <b>'+safe(()=>lun.getDayPositionYangGuiDesc())+'</b>','阴贵 <b>'+safe(()=>lun.getDayPositionYinGuiDesc())+'</b>'].join('　');
         const _SS={申:'南',子:'南',辰:'南',寅:'北',午:'北',戌:'北',巳:'东',酉:'东',丑:'东',亥:'西',卯:'西',未:'西'};
         const _suisha='煞'+(_SS[safe(()=>lun.getDayZhi())]||'—');
         let _jiuxing=''; try{ const _ns=lun.getDayNineStar(); _jiuxing=_ns.getNumber()+_ns.getColor()+' · '+_ns.getNameInXuanKong()+'('+_ns.getWuXing()+')'; }catch(e){}
         html('hl2-grid',
-            cell('今日吉方', _jf, '喜财福贵神所在', true)
+            cell('今日吉方', _jf, '', true, true)
           + cell('冲煞', chongCell, '与所列生肖同属者当日相冲')
           + cell('岁煞', _suisha, '按日支三合局')
           + cell('六曜', ly+(lyi.t?('('+lyi.t+')'):''))
@@ -2548,9 +2549,9 @@
           + cmp('建除·'+(zx||'—'), zxi.t, zxi.t, (zx||'')+'日　'+(zxi.m||''))
           + cmp('廿八宿·'+(xiuName||'—'), xiuLuck, xiuLuck, (xiuName||'')+'宿　'+safe(()=>lun.getXiuSong())));
         html('hl2-cmp-sum',
-          '上方「宜／忌」，正是由建除、值神(黄黑道)、廿八宿等神煞按传统历注综合排定——它们是宜忌的来路，不各自独立另断一种吉凶。神煞的吉凶多随所办之事而异（破日凶却宜拆旧、危日吉却忌登高），故此处只陈取象、不逐法计票。');
+          '上方「宜／忌」即这些神煞按传统历注综合排定的结论，非各自另断一路吉凶。神煞吉凶多随事而异（破日凶却宜拆旧），故只陈取象、不计票。');
         html('hl2-src',
-          '宜忌取自历法库内置的通书宜忌表(依传统历注归类)；干支、建除、值神、廿八宿、冲煞等由历法实算。六曜(先胜/友引/佛灭等)源自小六壬、今通行版为日本历注，非中式择吉正统，仅列作参考。参《协纪辨方书》(清·官修择吉总集)、《玉匣记》(民间择吉杂占集)等——诸法为古人经验归类，仅供参考，<b>请相信科学</b>。');
+          '宜忌取自历法库内置通书宜忌表；干支、建除、值神、廿八宿、冲煞由历法实算。六曜源自小六壬、今通行为日本历注，非中式正统，仅供参考。参《协纪辨方书》《玉匣记》等，古人经验归类——<b>请相信科学</b>。');
 
         // —— 一次性绑定:十二时辰点选 ——
         if(!_hlBound){
