@@ -12014,7 +12014,7 @@ var RhythmEngine = (() => {
         const yinShare = yinPower / Math.max(totalWeight, 0.01);
         const noPeerStem = !gans.some((g, i) => i !== 2 && GAN_WX[g] === dayWx);
         const hasStrongRoot = zhis.some((z) => ZHI_WX[z] === dayWx);
-        const isYinHeavyWeak = yinBuryRatio >= 3 && yinShare >= 0.55 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
+        const isYinHeavyWeak = yinBuryRatio >= 4.5 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
         const guanShaPower = weights[KE_ME[dayWx]];
         const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2;
@@ -12025,6 +12025,7 @@ var RhythmEngine = (() => {
         const lingMap = { \u6BD4: 3, \u5370: 2.5, \u98DF: -2, \u8D22: -1.5, \u5B98: -2.5 };
         detail.\u5F97\u4EE4 = lingMap[monthRel] ?? 0;
         score += detail.\u5F97\u4EE4;
+        let rootSupport = 0;
         zhis.forEach((zhi, idx) => {
           const hide = ZHI_HIDE[zhi];
           hide.forEach((g, hi) => {
@@ -12032,8 +12033,12 @@ var RhythmEngine = (() => {
             let v = 0;
             if (t === "\u6BD4") v = hi === 0 ? 2 : hi === 1 ? 1 : 0.5;
             else if (t === "\u5370") v = hi === 0 ? 1.2 : hi === 1 ? 0.6 : 0.3;
+            else if (t === "\u98DF") v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
+            else if (t === "\u8D22") v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
+            else if (t === "\u5B98") v = hi === 0 ? -0.8 : hi === 1 ? -0.4 : -0.2;
             if (idx === 1) v *= 1.3;
             detail.\u5F97\u5730 += v;
+            if (v > 0) rootSupport += v;
           });
         });
         score += detail.\u5F97\u5730;
@@ -12044,7 +12049,7 @@ var RhythmEngine = (() => {
           detail.\u5F97\u52BF += seMap[t] ?? 0;
         });
         score += detail.\u5F97\u52BF;
-        const rooted = detail.\u5F97\u5730;
+        const rooted = rootSupport;
         let strength, isCong = false, congWx = null;
         if (rooted < 0.6 && detail.\u5F97\u4EE4 < 0 && detail.\u5F97\u52BF <= 0) {
           strength = "\u4ECE\u5F31";
@@ -12067,7 +12072,7 @@ var RhythmEngine = (() => {
         const isWeak = strength === "\u8EAB\u5F31" || strength === "\u504F\u5F31";
         const season = seasonOf(monthZhi);
         const hasWetEarth = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
-        const isDry = !isCong && !hasWetEarth && (season === "\u590F" || weights["\u706B"] >= 2) && weights["\u6C34"] < 1.5;
+        const isDry = !isCong && !hasWetEarth && season === "\u590F" && weights["\u6C34"] < 1.5;
         const totalPower = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
         const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weights[KE_ME[dayWx]] < 0.5 && weights[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
