@@ -12010,9 +12010,11 @@ var RhythmEngine = (() => {
         const selfPower = weights[dayWx];
         const yinPower = weights[SHENG_ME[dayWx]];
         const yinBuryRatio = yinPower / Math.max(selfPower, 0.01);
+        const totalWeight = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
+        const yinShare = yinPower / Math.max(totalWeight, 0.01);
         const noPeerStem = !gans.some((g, i) => i !== 2 && GAN_WX[g] === dayWx);
         const hasStrongRoot = zhis.some((z) => ZHI_WX[z] === dayWx);
-        const isYinHeavyWeak = yinBuryRatio >= 3 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
+        const isYinHeavyWeak = yinBuryRatio >= 3 && yinShare >= 0.55 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
         const guanShaPower = weights[KE_ME[dayWx]];
         const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2;
