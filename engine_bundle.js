@@ -12494,7 +12494,7 @@ var RhythmEngine = (() => {
         }
         return d;
       }
-      function liuri(mingju, chart, { year, month, day }) {
+      function rawFor(mingju, chart, year, month, day) {
         const dayWx = GAN_WX[chart.dayGan];
         const { gan, zhi, mZhi, yGan, yZhi } = dayGanZhi(year, month, day);
         const dyn = dynFor(mingju, chart, year);
@@ -12538,7 +12538,32 @@ var RhythmEngine = (() => {
           raw += 0.3;
           he_ = true;
         }
-        let energy = 58 + raw * 5.5;
+        return { raw, pole, seenGods, volatile_, he_, note, gan, zhi, xiYong, jiShen, xiW };
+      }
+      var _blCache = /* @__PURE__ */ new WeakMap();
+      function yearBaseline(mingju, chart, year) {
+        let ym = _blCache.get(mingju);
+        if (!ym) {
+          ym = /* @__PURE__ */ new Map();
+          _blCache.set(mingju, ym);
+        }
+        let b = ym.get(year);
+        if (b === void 0) {
+          const xs = [];
+          for (let m = 1; m <= 12; m++) for (let d = 1; d <= 28; d += 3) {
+            xs.push(rawFor(mingju, chart, year, m, d).raw);
+          }
+          const mean = xs.reduce((a, x) => a + x, 0) / (xs.length || 1);
+          const sd = Math.sqrt(xs.reduce((a, x) => a + (x - mean) * (x - mean), 0) / (xs.length || 1)) || 1;
+          b = { mean, sd };
+          ym.set(year, b);
+        }
+        return b;
+      }
+      function liuri(mingju, chart, { year, month, day }) {
+        const { raw, pole, seenGods, volatile_, he_, note, gan, zhi, xiYong, jiShen, xiW } = rawFor(mingju, chart, year, month, day);
+        const bl = yearBaseline(mingju, chart, year);
+        let energy = 58 + (raw - bl.mean) / bl.sd * 10;
         if (volatile_) energy -= 5;
         energy = Math.max(32, Math.min(100, Math.round(energy)));
         const sum = pole.\u84C4 + pole.\u51B3;
@@ -14049,6 +14074,8 @@ var RhythmEngine = (() => {
           season: mj.season,
           strength: mj.strength,
           strengthScore: mj.strengthScore,
+          bodyT: mj.bodyT,
+          // 连续旺衰强度[-1,1](归一化;前端派生公式请用它,免疫score刻度变化)
           detail: mj.strengthDetail,
           // {得令，得地，得势} 供条形可视化
           strengthExplain,

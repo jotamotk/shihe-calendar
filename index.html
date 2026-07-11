@@ -3717,10 +3717,12 @@
         const as={}; (n.aspects||[]).forEach((a)=>{ as[a.key]=a.score; });
         const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,Math.round(v)));
         const st=typeof n.strengthScore==='number'?n.strengthScore:0;
+        // 精力用引擎归一化的连续旺衰强度 bodyT∈[-1,1](免疫打分刻度变化;旧数据无 bodyT 时由 score 换算兜底)
+        const bt=typeof n.bodyT==='number'?n.bodyT:Math.max(-1,Math.min(1,(st-0.8)/3.5));
         const seasonTempo={春:5,夏:7,秋:-3,冬:-6}[n.season]||0;
         const study=as.study??62, career=as.career??62, money=as.money??62, mood=as.mood??62, health=as.health??68;
         return [
-          {k:'精力', v:clamp(60+st*5.5+seasonTempo,42,92)},
+          {k:'精力', v:clamp(63+bt*16+seasonTempo,40,92)},
           {k:'专注', v:clamp(study*0.6+career*0.4,42,95)},
           {k:'情绪', v:clamp(mood*0.7+health*0.3,42,95)},
           {k:'人际', v:clamp(money*0.5+career*0.5,42,95)},
