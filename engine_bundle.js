@@ -11937,7 +11937,7 @@ var RhythmEngine = (() => {
         return null;
       }
       function buildFavVec(opts) {
-        const { effScore, dayWx, dayGan, season, monthZhi, isCong, congWx, isYinHeavyWeak, isZhuanWang, isDry } = opts;
+        const { effScore, dayWx, dayGan, season, monthZhi, isCong, congWx, isYinHeavyWeak, isZhuanWang, isDry, isVentDamp } = opts;
         const t = strengthToT(effScore);
         const fav = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
         if (isCong) {
@@ -11986,6 +11986,7 @@ var RhythmEngine = (() => {
         fav[ME_SHENG[dayWx]] += flow;
         fav[ME_KE[dayWx]] += flow * 0.6;
         if (isDry) fav["\u571F"] -= 0.3;
+        if (isVentDamp && t > 0 && fav["\u571F"] > 0) fav["\u571F"] *= 0.5;
         WX_ALL.forEach((wx) => {
           fav[wx] = Math.max(-1, Math.min(1, Math.round(fav[wx] * 100) / 100));
         });
@@ -12073,6 +12074,7 @@ var RhythmEngine = (() => {
         const season = seasonOf(monthZhi);
         const hasWetEarth = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
         const isDry = !isCong && !hasWetEarth && season === "\u590F" && weights["\u6C34"] < 1.5;
+        const isVentDamp = !isCong && dayWx === "\u706B" && !hasWetEarth;
         const totalPower = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
         const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weights[KE_ME[dayWx]] < 0.5 && weights[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
@@ -12089,7 +12091,8 @@ var RhythmEngine = (() => {
           congWx,
           isYinHeavyWeak,
           isZhuanWang,
-          isDry
+          isDry,
+          isVentDamp
         });
         const { xiYong, jiShen, xiYongWeight: xiWeight, primaryXi } = deriveFromFav(favVec);
         const tiaohouGod = clim.god;
@@ -12118,6 +12121,7 @@ var RhythmEngine = (() => {
           isYinHeavyWeak,
           isGuanShaWeak,
           isZhuanWang,
+          isVentDamp,
           yinBuryRatio: Math.round(yinBuryRatio * 100) / 100,
           dryNote,
           favVec,
@@ -12225,7 +12229,8 @@ var RhythmEngine = (() => {
           congWx: null,
           isYinHeavyWeak: mj.isYinHeavyWeak,
           isZhuanWang: false,
-          isDry: !!mj.dryNote
+          isDry: !!mj.dryNote,
+          isVentDamp: !!mj.isVentDamp
         });
         const { xiYong, jiShen, xiYongWeight, primaryXi } = deriveFromFav(fav);
         const dynStrength = bucketStrength(dynEff);
@@ -12383,7 +12388,7 @@ var RhythmEngine = (() => {
           fav: "\u773C\u8111\u6E05\u4EAE\uFF0C\u5B9C\u529E\u8981\u4E8B\uFF0C\u4E2D\u9014\u8D77\u8EAB\u8D70\u52A8\u3002"
         },
         \u706B: {
-          ji: "\u6613\u4E0A\u706B\u3001\u7761\u6D45\uFF0C\u665A\u996D\u6E05\u6DE1\u5FCC\u51B0\uFF0C\u65E9\u5367\u3002",
+          ji: "\u5FC3\u706B\u6613\u65FA\uFF0C\u665A\u95F4\u5B9C\u9759\u5C11\u5237\u5C4F\uFF0C\u665A\u996D\u6E05\u6DE1\u5FCC\u51B0\u3002",
           fav: "\u7CBE\u795E\u8DB3\uFF0C\u767D\u5929\u6652\u592A\u9633\u8D70\u52A8\uFF0C\u5FCC\u71AC\u591C\u3002"
         },
         \u571F: {
@@ -13910,15 +13915,22 @@ var RhythmEngine = (() => {
         const topGod = nonBi[0].k, secondGod = nonBi[1].k;
         const balanced = nonBi[0].v - nonBi[1].v < 7 && nonBi[0].v < 30;
         const dominant = balanced ? "\u5747\u8861" : topGod;
+        const riZhiGod = tenGodType(dayWx, ZHI_WX[chart.zhis[2]]);
+        const emoKey = riZhiGod === "\u5B98" || godPct.\u5B98 >= 24 ? "\u79CB" : godPct.\u98DF >= 24 ? "\u590F" : godPct.\u5370 >= 28 ? "\u51AC" : godPct.\u6BD4 >= 35 ? "\u6625" : season;
+        const EXPRESS_INNER = { \u4E01: "\u5FC3\u4E8B\u4E0D\u8F7B\u6613\u9732\uFF0C\u81EA\u5DF1\u5FC3\u91CC\u6709\u5206\u5BF8\uFF0C", \u5DF1: "\u8BDD\u4E0D\u591A\uFF0C\u65E5\u5B50\u8FC7\u5F97\u6709\u81EA\u5DF1\u7684\u7AE0\u6CD5\uFF0C" };
+        const shiTouGan = (chart.gans || []).some((g, i) => i !== 2 && tenGodType(dayWx, GAN_WX[g]) === "\u98DF");
+        const innerType = !!EXPRESS_INNER[dayGan] && !shiTouGan && godPct.\u5370 >= 20 && godPct.\u98DF < 20;
         const noun = balanced ? "\u591A\u9762\u624B" : GOD_NOUN[topGod] || "\u884C\u52A8\u6D3E";
-        const modifier = balanced ? `${POL_TITLE[pol]}\u3001${SEASON_TITLE[season] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : TONE_PREFIX[dayGan] || "";
+        const modifier = balanced ? `${POL_TITLE[pol]}\u3001${SEASON_TITLE[emoKey] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : TONE_PREFIX[dayGan] || "";
         const identity = (modifier ? modifier + "\u7684" : "") + noun;
         const essence = balanced ? "\uFF0C\u5404\u9762\u5747\u8861\u3001\u9002\u5E94\u529B\u5F3A" : GOD_ESSENCE[topGod] || "";
-        const tagline = imp.short + essence + "\u3002";
+        const tagline = (innerType ? "\u6E29\u548C\u3001\u6709\u5185\u79C0" : imp.short) + essence + "\u3002";
         const yinyang = YANG_GAN.has(dayGan) ? "\u9633" : "\u9634";
-        const p1 = `\u4F60${imp.surface}\u3002${EXPRESS[dayGan] || YINYANG_TURN[yinyang]}${POL_INNER[pol]}${balanced ? BAL_DRIVE_HINT : DRIVE_HINT[topGod] || ""}`;
+        const expressLine = innerType ? EXPRESS_INNER[dayGan] : EXPRESS[dayGan] || YINYANG_TURN[yinyang];
+        const surfaceLine = innerType && dayGan === "\u5DF1" ? "\u9762\u5584\u813E\u6C14\u597D\uFF0C\u5F85\u4EBA\u5B9E\u5728\u4E0D\u5F20\u626C" : imp.surface;
+        const p1 = `\u4F60${surfaceLine}\u3002${expressLine}${POL_INNER[pol]}${balanced ? BAL_DRIVE_HINT : DRIVE_HINT[topGod] || ""}`;
         const p2 = balanced ? balancedDrive(topGod, secondGod) : `${CORE_DRIVE[topGod] || ""}${TENSION[topGod] && TENSION[topGod][secondGod] || ""}`;
-        const p3 = `${SEASON_EMO[season] || ""}${balanced ? BAL_BLINDSPOT : BLINDSPOT_SOFT[topGod] || ""}`;
+        const p3 = `${SEASON_EMO[emoKey] || ""}${balanced ? BAL_BLINDSPOT : BLINDSPOT_SOFT[topGod] || ""}`;
         const love = balanced ? GOD_LOVE["\u5747\u8861"] : GOD_LOVE[topGod] || GOD_LOVE["\u5747\u8861"];
         const workBase = balanced ? GOD_WORK["\u5747\u8861"] : GOD_WORK[topGod] || GOD_WORK["\u5747\u8861"];
         const work = `${workBase}${POL_WORK[pol] || ""}`;
@@ -13928,8 +13940,8 @@ var RhythmEngine = (() => {
         } else {
           closing = GOD_CLOSING[topGod] || "\u8BA4\u51C6\u4F60\u6700\u60F3\u8981\u7684\uFF0C\u628A\u52B2\u7528\u5728\u90A3\u4E00\u5904\uFF0C\u65E5\u5B50\u4F1A\u8D8A\u8D70\u8D8A\u987A\u3002";
         }
-        const kwImp = (imp.short || "").split(/[、,，]/).map((s) => s.trim()).filter(Boolean).slice(0, 2);
-        let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_SEASON[season]]);
+        const kwImp = innerType ? ["\u6E29\u548C", "\u6709\u5185\u79C0"] : (imp.short || "").split(/[、,，]/).map((s) => s.trim()).filter(Boolean).slice(0, 2);
+        let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_SEASON[emoKey]]);
         keywords = keywords.filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
         return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, _dominant: dominant, _pol: pol };
       }
@@ -14178,13 +14190,17 @@ var RhythmEngine = (() => {
         };
         const HEALTH_ADVICE = "\u522B\u7B49\u8EAB\u4F53\u4EAE\u7EA2\u706F\u624D\u60F3\u8D77\u517B\u751F\u2014\u2014\u628A\u7761\u591F\u3001\u5403\u597D\u3001\u52A8\u4E00\u52A8\u8FD9\u4E09\u4EF6\u5C0F\u4E8B\u505A\u7A33\uFF0C\u80DC\u8FC7\u4EFB\u4F55\u540D\u8D35\u8865\u54C1\u3002";
         const list = [];
-        const tStudy = tone(yinWx);
+        const wSum = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"].reduce((s, x) => s + Math.max(0, (mj.weights || {})[x] || 0), 0) || 1;
+        const yinPct = Math.round(Math.max(0, (mj.weights || {})[yinWx] || 0) / wSum * 100);
+        const yinStrongJi = tone(yinWx) === "\u614E" && (yinPct >= 28 || tenGodType(dayWx, ZHI_WX[mj.monthZhi]) === "\u5370");
+        const tStudy = yinStrongJi ? "\u5E73" : tone(yinWx);
+        const studyText = yinStrongJi ? "\u4F60\u5B66\u5F97\u8FDB\u3001\u4E5F\u5750\u5F97\u4F4F\uFF0C\u5438\u6536\u548C\u94BB\u7814\u662F\u5B9E\u6253\u5B9E\u7684\u5F3A\u9879\u3002\u8981\u9632\u7684\u53EA\u6709\u300C\u51C6\u5907\u8FC7\u5EA6\u300D\u2014\u2014\u5B66\u5230\u4E03\u6210\u5C31\u5148\u7528\u8D77\u6765\uFF0C\u522B\u7B49\u5168\u61C2\u624D\u52A8\u624B\u3002" : CORE.study[tStudy];
         list.push({
           key: "study",
           title: "\u5B66\u4E60\u6210\u957F",
           tone: tStudy,
           ...act(yinWx, tStudy),
-          text: CORE.study[tStudy],
+          text: studyText,
           advice: ADVICE.study[sb].slice()
         });
         const tCareer = tone(guanWx);
@@ -14272,7 +14288,7 @@ var RhythmEngine = (() => {
         const fSd = Math.sqrt(frac.reduce((a, f) => a + (f - 0.2) * (f - 0.2), 0) / 5);
         const healthScore = Math.max(48, Math.min(90, Math.round(86 - fSd * 120)));
         const SCORE_BY_KEY = {
-          study: favScore(yinWx),
+          study: yinStrongJi ? 62 : favScore(yinWx),
           career: favScore(guanWx),
           money: favScore(caiWx),
           mood: favScore(shiWx),
