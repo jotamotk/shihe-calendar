@@ -11986,7 +11986,7 @@ var RhythmEngine = (() => {
         fav[ME_SHENG[dayWx]] += flow;
         fav[ME_KE[dayWx]] += flow * 0.6;
         if (isDry) fav["\u571F"] -= 0.3;
-        if (isVentDamp && t > 0 && fav["\u571F"] > 0) fav["\u571F"] *= 0.5;
+        if (isVentDamp && fav["\u571F"] > 0) fav["\u571F"] = Math.min(fav["\u571F"] * 0.5, 0.1);
         WX_ALL.forEach((wx) => {
           fav[wx] = Math.max(-1, Math.min(1, Math.round(fav[wx] * 100) / 100));
         });
@@ -12074,7 +12074,7 @@ var RhythmEngine = (() => {
         const season = seasonOf(monthZhi);
         const hasWetEarth = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
         const isDry = !isCong && !hasWetEarth && season === "\u590F" && weights["\u6C34"] < 1.5;
-        const isVentDamp = !isCong && dayWx === "\u706B" && !hasWetEarth;
+        const isVentDamp = !isCong && !hasWetEarth && (dayWx === "\u706B" || dayWx === "\u91D1" && (season === "\u590F" || weights["\u706B"] >= 2));
         const totalPower = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
         const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weights[KE_ME[dayWx]] < 0.5 && weights[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
