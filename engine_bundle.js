@@ -11864,21 +11864,107 @@ var RhythmEngine = (() => {
         \u4E03\u6740: "\u5B98",
         \u6B63\u5B98: "\u5B98"
       };
+      var SAN_HE_JU = [
+        { trio: ["\u7533", "\u5B50", "\u8FB0"], wx: "\u6C34", wang: "\u5B50" },
+        { trio: ["\u5BC5", "\u5348", "\u620C"], wx: "\u706B", wang: "\u5348" },
+        { trio: ["\u4EA5", "\u536F", "\u672A"], wx: "\u6728", wang: "\u536F" },
+        { trio: ["\u5DF3", "\u9149", "\u4E11"], wx: "\u91D1", wang: "\u9149" }
+      ];
+      var SAN_HUI_JU = [
+        { trio: ["\u5BC5", "\u536F", "\u8FB0"], wx: "\u6728" },
+        { trio: ["\u5DF3", "\u5348", "\u672A"], wx: "\u706B" },
+        { trio: ["\u7533", "\u9149", "\u620C"], wx: "\u91D1" },
+        { trio: ["\u4EA5", "\u5B50", "\u4E11"], wx: "\u6C34" }
+      ];
+      var ZHI_CHONG_MAP = { \u5B50: "\u5348", \u4E11: "\u672A", \u5BC5: "\u7533", \u536F: "\u9149", \u8FB0: "\u620C", \u5DF3: "\u4EA5", \u5348: "\u5B50", \u672A: "\u4E11", \u7533: "\u5BC5", \u9149: "\u536F", \u620C: "\u8FB0", \u4EA5: "\u5DF3" };
+      var GAN_HE_MAP = { \u7532: "\u5DF1", \u5DF1: "\u7532", \u4E59: "\u5E9A", \u5E9A: "\u4E59", \u4E19: "\u8F9B", \u8F9B: "\u4E19", \u4E01: "\u58EC", \u58EC: "\u4E01", \u620A: "\u7678", \u7678: "\u620A" };
+      function structuralAdjust(gans, zhis) {
+        const n = zhis.length;
+        const stemMul = gans.map(() => 1);
+        const branchMul = zhis.map(() => 1);
+        const juBonus = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
+        const chongIdx = /* @__PURE__ */ new Set();
+        if (process.env.NO_GANHE !== "1") {
+          for (let i = 0; i + 1 < gans.length; i++) {
+            if (GAN_HE_MAP[gans[i]] === gans[i + 1]) {
+              if (i !== 2) stemMul[i] *= 0.65;
+              if (i + 1 !== 2) stemMul[i + 1] *= 0.65;
+            }
+          }
+        }
+        if (process.env.NO_HEJU !== "1") {
+          const has = (z) => zhis.includes(z);
+          let fullHit = null;
+          for (const j of SAN_HUI_JU) if (j.trio.every(has)) {
+            fullHit = { ...j, kind: "\u4F1A" };
+            break;
+          }
+          if (!fullHit) {
+            for (const j of SAN_HE_JU) if (j.trio.every(has)) {
+              fullHit = { ...j, kind: "\u5408" };
+              break;
+            }
+          }
+          if (fullHit) {
+            const touGan = gans.some((g) => GAN_WX[g] === fullHit.wx);
+            const wangDangLing = fullHit.wang && zhis[1] === fullHit.wang;
+            const strong = fullHit.kind === "\u4F1A" || touGan || wangDangLing;
+            juBonus[fullHit.wx] += fullHit.kind === "\u4F1A" ? 1.6 : strong ? 1.2 : 0.4;
+            if (strong) zhis.forEach((z, i) => {
+              if (fullHit.trio.includes(z)) branchMul[i] *= 0.6;
+            });
+          } else {
+            for (const j of SAN_HE_JU) {
+              if (!has(j.wang)) continue;
+              const others = j.trio.filter((z) => z !== j.wang);
+              for (const o of others) {
+                if (has(o)) {
+                  juBonus[j.wx] += 0.5;
+                  zhis.forEach((z, i) => {
+                    if (z === j.wang || z === o) branchMul[i] *= 0.8;
+                  });
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (process.env.NO_CHONG !== "1") {
+          const KU = ["\u8FB0", "\u620C", "\u4E11", "\u672A"];
+          for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+            if (ZHI_CHONG_MAP[zhis[i]] === zhis[j]) {
+              const kuChong = KU.includes(zhis[i]) && KU.includes(zhis[j]);
+              const mul = kuChong ? 0.85 : j - i === 1 ? 0.5 : 0.7;
+              branchMul[i] *= mul;
+              branchMul[j] *= mul;
+              if (!kuChong) {
+                chongIdx.add(i);
+                chongIdx.add(j);
+              }
+            }
+          }
+        }
+        return { stemMul, branchMul, juBonus, chongIdx };
+      }
       var HIDE_WEIGHT = [1, 0.5, 0.3];
-      function elementWeights(gans, zhis) {
+      function elementWeights(gans, zhis, adj) {
         const w = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
         gans.forEach((g, i) => {
-          if (i !== 2) w[GAN_WX[g]] += 1;
+          if (i !== 2) w[GAN_WX[g]] += 1 * (adj ? adj.stemMul[i] : 1);
         });
         zhis.forEach((z, zi) => {
           ZHI_HIDE[z].forEach((g, hi) => {
             let v = HIDE_WEIGHT[hi] ?? 0.3;
             if (zi === 1) v *= 1.5;
-            w[GAN_WX[g]] += v;
+            w[GAN_WX[g]] += v * (adj ? adj.branchMul[zi] : 1);
           });
+        });
+        if (adj) WX_ALL_REF.forEach((wx) => {
+          w[wx] += adj.juBonus[wx] || 0;
         });
         return w;
       }
+      var WX_ALL_REF = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"];
       function seasonOf(monthZhi) {
         if (["\u5BC5", "\u536F", "\u8FB0"].includes(monthZhi)) return "\u6625";
         if (["\u5DF3", "\u5348", "\u672A"].includes(monthZhi)) return "\u590F";
@@ -12007,17 +12093,19 @@ var RhythmEngine = (() => {
       function analyze(chart) {
         const { gans, zhis, dayGan, monthZhi } = chart;
         const dayWx = GAN_WX[dayGan];
-        const weights = elementWeights(gans, zhis);
-        const selfPower = weights[dayWx];
-        const yinPower = weights[SHENG_ME[dayWx]];
+        const adj = structuralAdjust(gans, zhis);
+        const weights = elementWeights(gans, zhis, adj);
+        const weightsRaw = elementWeights(gans, zhis);
+        const selfPower = weightsRaw[dayWx];
+        const yinPower = weightsRaw[SHENG_ME[dayWx]];
         const yinBuryRatio = yinPower / Math.max(selfPower, 0.01);
-        const totalWeight = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
+        const totalWeight = WX_ALL.reduce((s, wx) => s + weightsRaw[wx], 0);
         const yinShare = yinPower / Math.max(totalWeight, 0.01);
         const noPeerStem = !gans.some((g, i) => i !== 2 && GAN_WX[g] === dayWx);
         const hasStrongRoot = zhis.some((z) => ZHI_WX[z] === dayWx);
         const isYinHeavyWeak = yinBuryRatio >= 4.5 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
-        const guanShaPower = weights[KE_ME[dayWx]];
+        const guanShaPower = weightsRaw[KE_ME[dayWx]];
         const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2;
         let score = 0;
         const detail = { \u5F97\u4EE4: 0, \u5F97\u5730: 0, \u5F97\u52BF: 0 };
@@ -12038,16 +12126,25 @@ var RhythmEngine = (() => {
             else if (t === "\u8D22") v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
             else if (t === "\u5B98") v = hi === 0 ? -0.8 : hi === 1 ? -0.4 : -0.2;
             if (idx === 1) v *= 1.3;
-            detail.\u5F97\u5730 += v;
             if (v > 0) rootSupport += v;
+            v *= adj.branchMul[idx];
+            detail.\u5F97\u5730 += v;
           });
+        });
+        WX_ALL.forEach((wx) => {
+          const b = adj.juBonus[wx];
+          if (!b) return;
+          const t = tenGodType(dayWx, wx);
+          const juMap = { \u6BD4: 1, \u5370: 0.7, \u98DF: -0.5, \u8D22: -0.5, \u5B98: -0.7 };
+          detail.\u5F97\u5730 += b * (juMap[t] ?? 0);
+          if ((juMap[t] ?? 0) > 0) rootSupport += b * juMap[t];
         });
         score += detail.\u5F97\u5730;
         gans.forEach((g, idx) => {
           if (idx === 2) return;
           const t = tenGodType(dayWx, GAN_WX[g]);
           const seMap = { \u6BD4: 1.5, \u5370: 1.5, \u98DF: -1, \u8D22: -1, \u5B98: -1.5 };
-          detail.\u5F97\u52BF += seMap[t] ?? 0;
+          detail.\u5F97\u52BF += (seMap[t] ?? 0) * adj.stemMul[idx];
         });
         score += detail.\u5F97\u52BF;
         const rooted = rootSupport;
@@ -12073,11 +12170,11 @@ var RhythmEngine = (() => {
         const isWeak = strength === "\u8EAB\u5F31" || strength === "\u504F\u5F31";
         const season = seasonOf(monthZhi);
         const hasWetEarth = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
-        const isDry = !isCong && !hasWetEarth && season === "\u590F" && weights["\u6C34"] < 1.5;
-        const isVentDamp = !isCong && !hasWetEarth && (dayWx === "\u706B" || dayWx === "\u91D1" && (season === "\u590F" || weights["\u706B"] >= 2));
-        const totalPower = WX_ALL.reduce((s, wx) => s + weights[wx], 0);
+        const isDry = !isCong && !hasWetEarth && season === "\u590F" && weightsRaw["\u6C34"] < 1.5;
+        const isVentDamp = !isCong && !hasWetEarth && (dayWx === "\u706B" || dayWx === "\u91D1" && (season === "\u590F" || weightsRaw["\u706B"] >= 2));
+        const totalPower = WX_ALL.reduce((s, wx) => s + weightsRaw[wx], 0);
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
-        const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weights[KE_ME[dayWx]] < 0.5 && weights[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
+        const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weightsRaw[KE_ME[dayWx]] < 0.5 && weightsRaw[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
         let effScore = score;
         if (isGuanShaWeak && !isCong) effScore = Math.min(effScore, -1);
         if (isYinHeavyWeak && !isCong) effScore = Math.min(effScore, -3);
