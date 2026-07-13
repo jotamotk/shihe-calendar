@@ -12055,16 +12055,15 @@ var RhythmEngine = (() => {
           fav[wx] += fuyiFav(tenGodType(dayWx, wx), t);
         });
         if (isYinHeavyWeak) {
-          const yin = SHENG_ME[dayWx], cai = ME_KE[dayWx];
+          const yin = SHENG_ME[dayWx];
           fav[yin] = Math.min(fav[yin], -0.6);
           fav[dayWx] = Math.max(fav[dayWx], 0.9);
-          fav[cai] = Math.max(fav[cai], 0.25);
         }
         const clim = climateVec(dayGan, monthZhi, season);
         WX_ALL.forEach((wx) => {
           fav[wx] += clim.vec[wx];
         });
-        if (clim.thWx && !(isYinHeavyWeak && clim.thWx === SHENG_ME[dayWx])) {
+        if (clim.thWx && !(isYinHeavyWeak && (clim.thWx === SHENG_ME[dayWx] || clim.thWx === ME_KE[dayWx]))) {
           const floor = clim.aligned && (season === "\u51AC" || season === "\u590F") ? 0.22 : 0.13;
           fav[clim.thWx] = Math.max(fav[clim.thWx], floor);
         }
