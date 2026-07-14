@@ -2180,8 +2180,9 @@
     // 轻提示:替代生硬的 alert,底部淡入淡出
     const toast = (()=>{ let el,timer; return (msg)=>{ if(!el){ el=document.createElement('div'); el.className='toast'; document.body.appendChild(el); } el.textContent=msg; requestAnimationFrame(()=>el.classList.add('on')); clearTimeout(timer); timer=setTimeout(()=>el.classList.remove('on'),2800); }; })();
     // 喜色:命主个人色，仅在「宜色推荐」处现身，不再泼洒全局
-    const XI = (APP.user && APP.user.xiColor && APP.user.xiColor.hex) || '#6E8F73';
-    const XINAME = (APP.user && APP.user.xiColor && APP.user.xiColor.name) || '绿色';
+    // 无 persona 退化态的兜底色:用中性素色，绝不硬编码某个五行色(旧值木绿#6E8F73 会误示喜木)
+    const XI = (APP.user && APP.user.xiColor && APP.user.xiColor.hex) || '#A9A296';
+    const XINAME = (APP.user && APP.user.xiColor && APP.user.xiColor.name) || '素色';
     document.documentElement.style.setProperty('--xi', XI);
     // 全局活跃态/图表统一走琥珀金(吉·暖·雅)
     const GOLD = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#BC9550';
@@ -3716,9 +3717,9 @@
       function rhythmDims(n){
         const as={}; (n.aspects||[]).forEach((a)=>{ as[a.key]=a.score; });
         const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,Math.round(v)));
-        const st=typeof n.strengthScore==='number'?n.strengthScore:0;
-        // 精力用引擎归一化的连续旺衰强度 bodyT∈[-1,1](免疫打分刻度变化;旧数据无 bodyT 时由 score 换算兜底)
-        const bt=typeof n.bodyT==='number'?n.bodyT:Math.max(-1,Math.min(1,(st-0.8)/3.5));
+        // 精力用引擎归一化的连续旺衰强度 bodyT∈[-1,1]。旧数据无 bodyT 时取中性 0——
+        // 不能用 strengthScore 反推(它绕过印重埋身/官杀克身的 override 压制,会把这类盘算成"干劲足",与真值反向)。
+        const bt=typeof n.bodyT==='number'?n.bodyT:0;
         const seasonTempo={春:5,夏:7,秋:-3,冬:-6}[n.season]||0;
         const study=as.study??62, career=as.career??62, money=as.money??62, mood=as.mood??62, health=as.health??68;
         return [

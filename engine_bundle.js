@@ -14979,8 +14979,10 @@ var RhythmEngine = (() => {
           hits = hits.sort((a, b) => b.energy - a.energy).slice(0, n).sort((a, b) => a.idx - b.idx);
           return hits.map((x) => fmt(x, reasonOf(x)));
         }
-        const categories = [
-          {
+        const everFav = (g) => scan.some((x) => x.favTypes.includes(g));
+        const progressive = [];
+        if (everFav("\u5370") || everFav("\u5B98")) {
+          progressive.push({
             key: "sign",
             icon: "\u2713",
             title: "\u7B7E\u7EA6 \xB7 \u6572\u5B9A\u5927\u4E8B",
@@ -14990,8 +14992,10 @@ var RhythmEngine = (() => {
               (x) => x.energy >= 66 && !x.volatile,
               (x) => `\u80FD\u91CF${x.energy} \xB7 \u5224\u65AD\u51C6\uFF0C\u5B9C\u62CD\u677F`
             )
-          },
-          {
+          });
+        }
+        if (everFav("\u98DF") || everFav("\u5B98")) {
+          progressive.push({
             key: "talk",
             icon: "\u2726",
             title: "\u8C08\u5224 \xB7 \u9762\u8BD5 \xB7 \u91CD\u8981\u6C9F\u901A",
@@ -15001,18 +15005,36 @@ var RhythmEngine = (() => {
               (x) => x.energy >= 64 && !x.volatile,
               (x) => `\u80FD\u91CF${x.energy} \xB7 \u8868\u8FBE\u987A\u7545\uFF0C\u6C89\u7A33\u5E94\u5BF9`
             )
-          },
-          {
+          });
+        }
+        if (everFav("\u8D22")) {
+          progressive.push({
             key: "push",
             icon: "\u2197",
             title: "\u62D3\u5C55 \xB7 \u5408\u4F5C \xB7 \u5546\u8C08",
             desc: "\u5B9C\u4E3B\u52A8\u51FA\u624B\u3001\u79EF\u6781\u63A8\u8FDB\u7684\u65E5\u5B50",
             days: pick(
-              (x) => x.energy >= 70 && x.favTypes.includes("\u8D22"),
-              (x) => x.energy >= 68 && x.axis >= 52,
+              (x) => x.energy >= 70 && !x.volatile && x.favTypes.includes("\u8D22"),
+              (x) => x.energy >= 68 && !x.volatile && x.axis >= 52,
               (x) => `\u80FD\u91CF${x.energy} \xB7 \u6C14\u573A\u8FDB\u53D6\uFF0C\u4E3B\u52A8\u6709\u56DE\u5E94`
             )
-          },
+          });
+        }
+        if (progressive.length === 0) {
+          progressive.push({
+            key: "act",
+            icon: "\u2197",
+            title: "\u5B9C\u8FDB\u53D6 \xB7 \u529E\u8981\u7D27\u4E8B",
+            desc: "\u4F60\u72B6\u6001\u6700\u597D\u3001\u6700\u62FF\u5F97\u7A33\u7684\u65E5\u5B50\u2014\u2014\u62CD\u677F\u3001\u63A8\u8FDB\u3001\u8C08\u6210\u90FD\u5B9C",
+            days: pick(
+              (x) => x.energy >= 68 && !x.volatile,
+              (x) => x.energy >= 60 && !x.volatile,
+              (x) => `\u80FD\u91CF${x.energy} \xB7 \u72B6\u6001\u5728\u7EBF\uFF0C\u5B9C\u62CD\u677F\u63A8\u8FDB`
+            )
+          });
+        }
+        const categories = [
+          ...progressive,
           {
             key: "rest",
             icon: "\u25CD",
