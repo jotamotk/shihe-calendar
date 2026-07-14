@@ -1028,6 +1028,8 @@
     font-family:var(--serif);font-size:22px;font-weight:600;color:var(--gold-d);
     background:var(--gold-soft);border:1px solid var(--line-2);padding-top:11px;letter-spacing:0;}
   .intro-n i{font-size:10px;font-style:normal;color:var(--muted);margin-left:1px;}
+  .intro-orb{flex:none;width:46px;height:46px;display:flex;align-items:center;justify-content:center;}
+  .intro-orb svg{overflow:visible;}
   .intro-ic{flex:none;width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;
     font-size:20px;color:var(--gold-d);background:var(--gold-soft);border:1px solid var(--line-2);}
   .intro-tx{flex:1;display:flex;flex-direction:column;gap:4px;padding-top:1px;}
@@ -1617,9 +1619,9 @@
             <div class="intro-h">读懂你的每一天</div>
             <div class="intro-sub">一分钟看懂怎么用</div>
             <div class="intro-rows">
-              <div class="intro-row"><span class="intro-n">84<i>分</i></span><div class="intro-tx"><b>分数越高 = 能量越高</b><span>分高，状态越舒展、越宜放手推进；分低，则宜收宜养、内守蓄力。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日能量</b><span>轻点日历上任意一天，下方卡片即显当日分数、基调与宜忌。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>挑高能量日做要紧事</b><span>日历上标金的是你的高能量日，宜把重要决定、要紧事排在这几天；每天的「宜 / 缓 / 宜色」照着做即可。</span></div></div>
+              <div class="intro-row"><span class="intro-orb" id="intro-orb"></span><div class="intro-tx"><b>光球越满 = 能量越足</b><span>球满，状态舒展、宜放手去做；球浅，则宜收宜养、内守蓄力。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日节律</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>挑高能量日做要紧事</b><span>日历上标金的是你的高能量日，重要决定、要紧事排在这几天；每天的「宜 / 缓 / 宜色」照着做就好。</span></div></div>
             </div>
             <button class="intro-go" id="intro-go">知道了</button>
             <div class="intro-fine">全部在本机计算 · 不上传、不外传</div>
@@ -2190,8 +2192,8 @@
     const GOLD = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#BC9550';
     // —— 能量光球:替代裸「N分」。一球金光,自下盛起、自内透光、缓缓呼吸;满=气足。空处透明随背景 ——
     let _orbN = 0;
-    function energyOrb(e){
-      _orbN++; const id='eo'+_orbN, S=100, cx=S/2, cy=S*0.46, r=S*0.38;
+    function energyOrb(e, sz){
+      _orbN++; const id='eo'+_orbN, S=sz||100, cx=S/2, cy=S*0.46, r=S*0.38;
       const f=Math.max(0.07,Math.min(1,(e-36)/48));
       const level=cy-r+(1-f)*2*r;
       const A=r*0.03, L=r*1.3; let dd='M '+(-S)+' 0';
@@ -2644,9 +2646,10 @@
         else { fest.style.display='none'; }
         // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)
         if($('w-orb')) $('w-orb').innerHTML = energyOrb(d.e);
-        // 关键词(神清气爽/气定神和/…)+ 折叠态右上角小分数「N分」
-        if($('w-scoreword')) $('w-scoreword').textContent = d.word || '';
-        if($('w-score-chip')) $('w-score-chip').textContent = (d.e!=null? d.e+'分' : '');
+        // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
+        if($('w-score-chip')) $('w-score-chip').textContent = d.word || '';
+        // 新手引导里的示意光球(满档,只填一次)
+        if($('intro-orb') && !$('intro-orb').firstChild) $('intro-orb').innerHTML = energyOrb(78, 44);
         // 态势条以中线为原点:游标落在当下点；中线向落点淡染体现偏幅(读「偏向」,不是「分数」)
         (function(ax){
           const fill=$('w-axisfill'), knob=$('w-axisknob');
@@ -2670,7 +2673,7 @@
           set(R, dev>0?dev:0);
         })(d.axis);
         // 心神基调(从命局+当日推得):今日卡的引导主句，只此一条，不再叠加套话
-        if($('w-tip')) $('w-tip').textContent = d.state || tipLine(d);
+        // (今日卡状态句 w-tip 已随光球改版移除)
         // 分享卡入口:按今日能量给一句更勾人的邀约，提升「做卡 → 分享」转化
         (function(){
           const b=$('t-share'); if(!b) return;
