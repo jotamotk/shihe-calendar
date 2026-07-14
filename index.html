@@ -1136,6 +1136,8 @@
   .th-num{font-family:var(--serif);font-size:50px;font-weight:500;color:var(--gold-d);line-height:1;letter-spacing:0;}
   .th-max{font-size:14px;color:var(--muted);font-weight:300;margin-left:2px;}
   .th-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;}
+  .today-say{font-family:var(--serif);font-size:16px;line-height:1.78;color:var(--ink);margin:16px 2px 2px;letter-spacing:.3px;text-wrap:pretty;}
+  .today-say:empty{display:none;}
   .th-word{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);letter-spacing:1.5px;}
   .th-state{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.62;letter-spacing:.2px;}
   /* 五维 fortune 面板 —— tab 版:一排域 tab(带 顺/平/慎 色点) + 下方只显选中项，省地方、可一眼看全貌 */
@@ -1739,6 +1741,8 @@
                     <div class="yi-row"><span class="yi-k huan">缓</span><span class="yi-v" id="w-huan">无须刻意避忌</span></div>
                   </div>
                 </div>
+                <!-- 今日一句:干货生成器(说中你+能照做),据你人格×当天信号生成 -->
+                <div class="today-say" id="w-hero"></div>
                 <!-- 今日各方面(tab 版:事业/财运/感情/机会/学习/健康,点 tab 看对应项;色点=顺/平/慎)-->
                 <div class="tf-wrap" id="w-fortune-wrap" style="display:none">
                   <div class="tf-h">今日各方面</div>
@@ -2671,6 +2675,8 @@
         else { fest.style.display='none'; }
         // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)
         if($('w-orb')) $('w-orb').innerHTML = energyOrb(d.e);
+        // 今日一句:干货生成器主句(说中你+能照做)
+        if($('w-hero')) $('w-hero').textContent = d.heroLine || '';
         // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
         if($('w-score-chip')) $('w-score-chip').textContent = d.word || '';
         // 新手引导里的示意光球(满档,只填一次)
@@ -3022,7 +3028,7 @@
         const xitems=XDOM.map(function(p){var f=(d.fortune&&d.fortune[p[0]])||{};return {lab:p[1],tone:f.tone||'',line:f.line||''};})
           .filter(function(x){return x.line;})
           .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
-        var xhero=(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'顺其自然，把要紧的一件做好。';
+        var xhero=d.heroLine||(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'顺其自然，把要紧的一件做好。';
         var xci=xhero.indexOf('，'); if(xci<2) xci=xhero.indexOf('、');
         var xheroHtml=(xci>1&&xci<xhero.length-2)?(esc(xhero.slice(0,xci+1))+'<br>'+esc(xhero.slice(xci+1))):esc(xhero);
         var xtips=xitems.filter(function(x){return x.line!==xhero;}).slice(0,3);
