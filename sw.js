@@ -1,6 +1,6 @@
 // 时和 · 离线缓存 Service Worker(纯静态,无追踪;失败不影响在线使用)
 // 策略:网络优先(始终拿最新),离线时回退缓存——避免更新后看到旧版本。
-const CACHE = 'shihe-v59';
+const CACHE = 'shihe-v60';
 const ASSETS = [
   './', './index.html', './onboarding.html', './privacy.html', './terms.html',
   './app_data.js', './engine_bundle.js', './analytics.js', './consent.js',

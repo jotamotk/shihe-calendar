@@ -281,6 +281,31 @@
   /* —— A · 留白一句 —— */
   /* —— A · 今日笺(内容丰富 · 黄历海报) —— */
   .share-card.sc-tA{background:radial-gradient(135% 80% at 50% -8%,#1c1a15 0%,#0b0a09 60%);border:1px solid var(--line);padding:22px 22px 20px;}
+  /* —— 宣纸留白 · 今日笺重做(接入霞鹜文楷,懒加载) —— */
+  @font-face{font-family:LXGW;font-weight:400;font-style:normal;font-display:swap;src:url("lxgw_common.woff2") format("woff2");}
+  .share-themes{display:none;}  /* 分享只做这一页 */
+  .share-card.sc-tA{background:radial-gradient(135% 100% at 28% 4%,#F8F2E4 0%,#EFE6CF 60%,#E5D9BD 100%);border:1px solid rgba(154,111,46,.16);color:#33291B;padding:0;font-family:LXGW,"Kaiti SC","STKaiti",serif;}
+  .xp{position:relative;padding:24px 24px 20px;}
+  .xp-wash{position:absolute;z-index:0;right:-40px;top:-34px;width:184px;height:184px;border-radius:50%;background:radial-gradient(circle,rgba(72,92,102,.14),transparent 70%);filter:blur(10px);}
+  .xp-wash2{position:absolute;z-index:0;left:-28px;bottom:-26px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(154,111,46,.08),transparent 66%);filter:blur(12px);}
+  .xp-grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .xp-in{position:relative;z-index:2;}
+  .xp-top{display:flex;justify-content:space-between;align-items:center;}
+  .xp-brand{font-size:15px;letter-spacing:5px;color:#33291B;display:flex;align-items:center;gap:8px;}
+  .xp-mk{display:inline-block;width:16px;height:1px;background:#9A6F2E;opacity:.7;}
+  .xp-date{font-size:12px;letter-spacing:2px;color:#7C6E52;}
+  .xp-hair{height:1px;background:rgba(154,111,46,.2);margin:14px 0 0;}
+  .xp-orb{display:flex;justify-content:center;margin:16px 0 16px;}
+  .xp-orb svg{overflow:visible;}
+  .xp-say{font-size:21px;line-height:1.72;letter-spacing:1px;color:#33291B;text-align:center;text-wrap:balance;}
+  .xp-tips{margin:18px auto 0;display:flex;flex-direction:column;gap:10px;align-items:flex-start;width:fit-content;max-width:100%;}
+  .xp-tip{display:flex;align-items:baseline;gap:11px;}
+  .xp-tip .xp-k{flex:none;font-size:12.5px;color:#9A6F2E;letter-spacing:3px;white-space:nowrap;}
+  .xp-tip .xp-v{font-size:14px;color:#7C6E52;line-height:1.5;}
+  .xp-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
+  .xp-xi{font-size:12px;color:#7C6E52;letter-spacing:1px;display:flex;align-items:center;gap:7px;}
+  .xp-dot{width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 1px rgba(154,111,46,.4);}
+  .xp-seal{width:28px;height:28px;border-radius:6px;border:1px solid #9A6F2E;color:#9A6F2E;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(154,111,46,.05);}
   .sc-tA .sc-hd{display:flex;align-items:center;justify-content:space-between;}
   .sc-tA .sc-bd{display:flex;align-items:center;gap:9px;}
   .sc-tA .sc-bdt b{display:block;font-size:13px;font-weight:500;letter-spacing:2px;color:var(--ink);line-height:1.2;}
@@ -2991,21 +3016,27 @@
             +'<div class="sc-wkline">最舒展是 <b>'+best.g+'日</b>（'+best.e+'分）。把要紧的事，放在你状态最好的那天。</div></div>'
             +'<div class="sc-foot">时和 · 把日子过成自己的节律</div>';
         }
-        // A · 今日笺(内容丰富 · 黄历海报)
-        return '<div class="sc-hd">'
-          +'<div class="sc-bd"><span class="sc-seal">时</span><div class="sc-bdt"><b>时和</b><span>顺时而行</span></div></div>'
-          +'<div class="sc-date"><b>'+d.g+'</b><div class="sc-dr"><span>'+M+'月·周'+wd+'</span><span>农历'+lunar+(gzShort?' · '+gzShort+sx:'')+'</span></div></div></div>'
-          +'<div class="sc-rule"><i></i><span>❖</span><i></i></div>'
-          +'<div class="sc-hero"><div class="sc-kwlab">今 日 一 字</div>'
-          +'<div class="sc-kwwrap"><div class="sc-kw" style="font-size:'+kwSize(kw,54)+'px">'+kw+'</div><span class="sc-kwseal">時</span></div>'
-          +'<div class="sc-line">'+line+'</div></div>'
-          +'<div class="sc-energy"><div class="sc-ring">'+ringSVG(d.e)+'<div class="sc-ri"><b>'+d.e+'</b><span>能量</span></div></div>'
-          +'<div class="sc-eri"><div class="sc-erword">'+(word||'平稳')+'<i>今日能量 '+(word||'平稳')+'</i></div>'
-          +'<div class="sc-axis"><span class="sc-axl">内收</span><span class="sc-axt"><i style="left:'+axis+'%"></i></span><span class="sc-axr">外放</span></div></div></div>'
-          +'<div class="sc-yh"><div class="sc-yhc"><span class="sc-yhk">宜</span><span class="sc-yhv">'+yi+'</span></div>'
-          +'<div class="sc-yhc"><span class="sc-yhk huan">缓</span><span class="sc-yhv">'+huan+'</span></div></div>'
-          +'<div class="sc-foot"><div class="sc-xi"><span class="sc-xidot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</div>'
-          +'<div class="sc-cta"><div class="sc-ctat"><b>时和 · 节律日历</b><span>顺时而养 · 过好每一天</span></div></div></div>';
+        // A · 今日笺 · 宣纸留白(真数据:光球 + 当天信号最强的域当主句、其余当提点 + 宜色)
+        const XDOM=[['career','事业'],['money','钱财'],['study','学习'],['love','感情'],['health','身体'],['chance','机会']];
+        const XRANK={顺:0,慎:1,养:1,平:2};
+        const xitems=XDOM.map(function(p){var f=(d.fortune&&d.fortune[p[0]])||{};return {lab:p[1],tone:f.tone||'',line:f.line||''};})
+          .filter(function(x){return x.line;})
+          .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
+        var xhero=(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'顺其自然，把要紧的一件做好。';
+        var xci=xhero.indexOf('，'); if(xci<2) xci=xhero.indexOf('、');
+        var xheroHtml=(xci>1&&xci<xhero.length-2)?(esc(xhero.slice(0,xci+1))+'<br>'+esc(xhero.slice(xci+1))):esc(xhero);
+        var xtips=xitems.filter(function(x){return x.line!==xhero;}).slice(0,3);
+        var xtipsHtml=xtips.map(function(t){return '<div class="xp-tip"><span class="xp-k">'+t.lab+'</span><span class="xp-v">'+esc(t.line)+'</span></div>';}).join('');
+        var xorb=(typeof energyOrb==='function')?energyOrb(d.e,84):ringSVG(d.e);
+        return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
+          +'<div class="xp-in">'
+          +'<div class="xp-top"><div class="xp-brand">时和<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
+          +'<div class="xp-hair"></div>'
+          +'<div class="xp-orb">'+xorb+'</div>'
+          +'<div class="xp-say">'+xheroHtml+'</div>'
+          +(xtipsHtml?'<div class="xp-tips">'+xtipsHtml+'</div>':'')
+          +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</span><span class="xp-seal">時</span></div>'
+          +'</div></div>';
       }
       function render(){
         card.className='share-card sc-t'+THEME;
@@ -3024,7 +3055,7 @@
         go.addEventListener('click', async ()=>{
           const d=SHARE_DAY; if(!d) return;
           const kw=(d.cueWord||d.cue||'顺其自然');
-          const txt='时和 · 我今天的能量 '+d.e+' 分，'+kw+'。把日子过成自己的节律。';
+          const txt='时和 · '+APP.month.month+'月'+d.g+'日 · 我今天的节律。顺时而养，过好每一天。';
           try{
             await navigator.share({ title:'时和', text:txt, url:location.origin+location.pathname });
             window.shihe&&window.shihe.track&&window.shihe.track('share_done',{ch:'system'});
