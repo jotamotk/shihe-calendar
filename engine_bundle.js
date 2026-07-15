@@ -11884,7 +11884,7 @@ var RhythmEngine = (() => {
         const branchMul = zhis.map(() => 1);
         const juBonus = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
         const chongIdx = /* @__PURE__ */ new Set();
-        if (process.env.NO_GANHE !== "1") {
+        if (typeof process === "undefined" || process.env.NO_GANHE !== "1") {
           for (let i = 0; i + 1 < gans.length; i++) {
             if (GAN_HE_MAP[gans[i]] === gans[i + 1]) {
               if (i !== 2) stemMul[i] *= 0.65;
@@ -11892,7 +11892,7 @@ var RhythmEngine = (() => {
             }
           }
         }
-        if (process.env.NO_HEJU !== "1") {
+        if (typeof process === "undefined" || process.env.NO_HEJU !== "1") {
           const has = (z) => zhis.includes(z);
           let fullHit = null;
           for (const j of SAN_HUI_JU) if (j.trio.every(has)) {
@@ -11929,7 +11929,7 @@ var RhythmEngine = (() => {
             }
           }
         }
-        if (process.env.NO_CHONG !== "1") {
+        if (typeof process === "undefined" || process.env.NO_CHONG !== "1") {
           const KU = ["\u8FB0", "\u620C", "\u4E11", "\u672A"];
           for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
             if (ZHI_CHONG_MAP[zhis[i]] === zhis[j]) {
