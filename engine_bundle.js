@@ -14039,7 +14039,8 @@ var RhythmEngine = (() => {
         const kwImp = innerType ? ["\u6E29\u548C", "\u6709\u5185\u79C0"] : (imp.short || "").split(/[、,，]/).map((s) => s.trim()).filter(Boolean).slice(0, 2);
         let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_SEASON[emoKey]]);
         keywords = keywords.filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
-        return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, _dominant: dominant, _pol: pol };
+        const _social = Math.max(0, Math.min(100, 50 + (godPct.\u98DF * 0.85 + godPct.\u6BD4 * 0.5 - godPct.\u5370 * 0.55 - godPct.\u5B98 * 0.25)));
+        return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, _dominant: dominant, _pol: pol, _social };
       }
       var POS_ORDER = { \u5E74: 0, \u6708: 1, \u65E5: 2, \u65F6: 3 };
       var pairKey = (a, b) => POS_ORDER[a] <= POS_ORDER[b] ? a + b : b + a;
@@ -14184,6 +14185,8 @@ var RhythmEngine = (() => {
           strengthScore: mj.strengthScore,
           bodyT: mj.bodyT,
           // 连续旺衰强度[-1,1](归一化;前端派生公式请用它,免疫score刻度变化)
+          socialTendency: persona._social,
+          // 结构性外向度[0-100](食伤+比劫-印-官);供「人际」维,独立于旺衰
           detail: mj.strengthDetail,
           // {得令，得地，得势} 供条形可视化
           strengthExplain,

@@ -3789,11 +3789,15 @@
         const bt=typeof n.bodyT==='number'?n.bodyT:0;
         const seasonTempo={春:5,夏:7,秋:-3,冬:-6}[n.season]||0;
         const study=as.study??62, career=as.career??62, money=as.money??62, mood=as.mood??62, health=as.health??68;
+        // 精力:bodyT 定方向(身弱/印重仍偏低,合"偏虚"体感)+ 四维均值解 ±1 饱和(喜忌口径连续) + 季节
+        const aspAvg=(study+career+money+mood+health)/5;
+        // 人际:改用结构性外向度 socialTendency(食伤+比劫-印-官),独立于旺衰,免身弱一律触底
+        const social=typeof n.socialTendency==='number'?n.socialTendency:50;
         return [
-          {k:'精力', v:clamp(63+bt*16+seasonTempo,40,92)},
+          {k:'精力', v:clamp(58+bt*12+(aspAvg-62)*0.5+seasonTempo*0.7,38,92)},
           {k:'专注', v:clamp(study*0.6+career*0.4,42,95)},
           {k:'情绪', v:clamp(mood*0.7+health*0.3,42,95)},
-          {k:'人际', v:clamp(money*0.5+career*0.5,42,95)},
+          {k:'人际', v:clamp(50+(social-50)*0.62,38,90)},
         ];
       }
       function rhythmCard(n){
