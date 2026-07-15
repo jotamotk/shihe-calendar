@@ -15181,6 +15181,71 @@ var RhythmEngine = (() => {
         }
         return null;
       }
+      function buildMonthObj(mj, chart, heroP, ym) {
+        const my = liuyue(mj, chart, { year: ym.year, month: ym.month });
+        const firstDow = new Date(ym.year, ym.month - 1, 1).getDay();
+        let band = null;
+        const days = my.list.map((d) => {
+          const g = +d.date.slice(8);
+          const folk = folkOf(ym.year, ym.month, g);
+          if (folk.band && !band) band = folk.band;
+          const tag = pickTag(folk);
+          const lun = Solar.fromYmd(ym.year, ym.month, g).getLunar();
+          const ganZhi = {
+            year: lun.getYearInGanZhi(),
+            month: lun.getMonthInGanZhi(),
+            day: lun.getDayInGanZhi(),
+            shengXiao: lun.getYearShengXiao()
+          };
+          const hasDot = folk.tags.some((t) => t.type === "\u8D66\u65E5" || t.type !== "\u5FCC" && t.level <= 2);
+          const isHigh = my.high.some((h) => h.date === d.date);
+          return {
+            g,
+            lunarDayCN: folk.lunarDayCN,
+            lunarLabel: folk.lunarLabel,
+            e: d.energy,
+            word: energyWord(d.energy),
+            fill: fill(d.energy),
+            axis: d.axis,
+            tone: d.tone,
+            toneShort: TONE_SHORT[d.tone] || "\u5E73\u7A33",
+            cue: d.cue,
+            cueWord: d.cueWord,
+            cueLine: d.cueLine,
+            state: d.state,
+            detail: d.detail,
+            fortune: d.fortune,
+            heroLine: heroLine(heroP, d.fortune, d.energy),
+            // 干货主句:说中你+能照做(月历日也带,供当日卡/分享卡)
+            yi: d.yi,
+            huan: d.huan,
+            fk: hasDot,
+            wu: folk.wuRi,
+            today: g === ym.day,
+            high: isHigh,
+            good: d.energy >= GOOD,
+            // 吉日(统一口径，与今日页金点同标准)
+            tagName: tag ? tag.name : "\u5E73\u65E5",
+            tagCls: tag ? tag.cls : "plain",
+            tagYi: tag ? tag.yi : d.yi.join(" \xB7 "),
+            tagDesc: tag ? tag.desc : "",
+            tagType: tag ? tag.type : "",
+            ganZhi
+          };
+        });
+        return {
+          year: ym.year,
+          month: ym.month,
+          monthLabel: `${ym.month}\u6708`,
+          ganZhiYear: Solar.fromYmd(ym.year, ym.month, 1).getLunar().getYearInGanZhi() + "\u5E74",
+          avg: my.avg,
+          firstDow,
+          band,
+          days,
+          highDays: days.filter((d) => d.good).map((d) => d.g)
+          // 吉日(统一口径)
+        };
+      }
       function buildApp(person, today) {
         const chart = paipan(person);
         const mj = analyze(chart);
@@ -15230,77 +15295,15 @@ var RhythmEngine = (() => {
           todayList.push(buildCard({ year: dt.getFullYear(), month: dt.getMonth() + 1, day: dt.getDate() }, i));
         }
         const todayCard = todayList[0];
-        const my = liuyue(mj, chart, { year: today.year, month: today.month });
-        const firstDow = new Date(today.year, today.month - 1, 1).getDay();
-        let band = null;
-        const days = my.list.map((d) => {
-          const g = +d.date.slice(8);
-          const folk = folkOf(today.year, today.month, g);
-          if (folk.band && !band) band = folk.band;
-          const tag = pickTag(folk);
-          const lun = Solar.fromYmd(today.year, today.month, g).getLunar();
-          const ganZhi = {
-            year: lun.getYearInGanZhi(),
-            month: lun.getMonthInGanZhi(),
-            day: lun.getDayInGanZhi(),
-            shengXiao: lun.getYearShengXiao()
-          };
-          const hasDot = folk.tags.some((t) => t.type === "\u8D66\u65E5" || t.type !== "\u5FCC" && t.level <= 2);
-          const isHigh = my.high.some((h) => h.date === d.date);
-          return {
-            g,
-            lunarDayCN: folk.lunarDayCN,
-            lunarLabel: folk.lunarLabel,
-            e: d.energy,
-            word: energyWord(d.energy),
-            fill: fill(d.energy),
-            axis: d.axis,
-            tone: d.tone,
-            toneShort: TONE_SHORT[d.tone] || "\u5E73\u7A33",
-            cue: d.cue,
-            cueWord: d.cueWord,
-            cueLine: d.cueLine,
-            state: d.state,
-            detail: d.detail,
-            fortune: d.fortune,
-            heroLine: heroLine(heroP, d.fortune, d.energy),
-            // 干货主句:说中你+能照做(月历日也带,供当日卡/分享卡)
-            yi: d.yi,
-            huan: d.huan,
-            fk: hasDot,
-            wu: folk.wuRi,
-            today: g === today.day,
-            high: isHigh,
-            good: d.energy >= GOOD,
-            // 吉日(统一口径，与今日页金点同标准)
-            tagName: tag ? tag.name : "\u5E73\u65E5",
-            tagCls: tag ? tag.cls : "plain",
-            tagYi: tag ? tag.yi : d.yi.join(" \xB7 "),
-            tagDesc: tag ? tag.desc : "",
-            tagType: tag ? tag.type : "",
-            ganZhi
-          };
-        });
-        const month = {
-          year: today.year,
-          month: today.month,
-          monthLabel: `${today.month}\u6708`,
-          ganZhiYear: Solar.fromYmd(today.year, today.month, 1).getLunar().getYearInGanZhi() + "\u5E74",
-          avg: my.avg,
-          firstDow,
-          band,
-          days,
-          highDays: days.filter((d) => d.good).map((d) => d.g)
-          // 吉日(统一口径)
-        };
+        const month = buildMonthObj(mj, chart, heroP, today);
         const yr = liunian(mj, chart, today.year);
-        const goodDays = days.filter((d) => d.good);
+        const goodDays = month.days.filter((d) => d.good);
         const highList = goodDays.slice().sort((a, b) => b.e - a.e).slice(0, 3).map((d) => {
           const dt = new Date(today.year, today.month - 1, d.g);
           return { d: d.g, e: d.e, weekday: "\u5468" + WEEK[dt.getDay()] };
         });
         const rhythm = {
-          monthAvg: my.avg,
+          monthAvg: month.avg,
           highCount: goodDays.length,
           todayEnergy: todayCard.energy,
           highDays: highList,
@@ -15392,14 +15395,26 @@ var RhythmEngine = (() => {
           })
         };
       }
-      module.exports = { buildApp };
+      function buildMonth(person, ym) {
+        const chart = paipan(person);
+        const mj = analyze(chart);
+        const heroP = heroPersonaOf(mj);
+        return buildMonthObj(mj, chart, heroP, ym);
+      }
+      function buildYear(person, Y) {
+        const chart = paipan(person);
+        const mj = analyze(chart);
+        const yr = liunian(mj, chart, Y);
+        return yr.months.map((m) => m.avg);
+      }
+      module.exports = { buildApp, buildMonth, buildYear };
     }
   });
 
   // engine/browser.js
   var require_browser = __commonJS({
     "engine/browser.js"(exports, module) {
-      var { buildApp } = require_buildApp();
+      var { buildApp, buildMonth, buildYear } = require_buildApp();
       var { paipan, trueSolarCorrection } = require_paipan();
       var { analyze } = require_analyze();
       var { liuri } = require_liuri();
@@ -15445,7 +15460,7 @@ var RhythmEngine = (() => {
           return 30;
         }
       }
-      module.exports = { buildApp, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
+      module.exports = { buildApp, buildMonth, buildYear, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
     }
   });
   return require_browser();

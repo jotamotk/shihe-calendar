@@ -445,11 +445,12 @@
 
     function buildCardHTML(chart, APP){
       // 标题与命盘块:仅核对模式露出四柱原盘；普通用户只确认出生信息
-      document.querySelector('.cf-h').textContent   = VERIFY ? '核对你的命盘' : '核对出生信息';
+      document.querySelector('.cf-h').textContent   = VERIFY ? '核对你的命盘' : '核对你的八字';
       document.querySelector('.cf-sub').textContent = VERIFY
         ? '已按真太阳时校正、节气定月排盘 · 确认无误后保存'
-        : '已按真太阳时校正 · 确认无误后为你推算节律';
-      document.querySelector('.cf-pwrap').style.display = VERIFY ? '' : 'none';
+        : '已按真太阳时校正、节气定月排盘 · 核对无误后保存';
+      // 四柱八字对所有人显示(很多人要看要核对);日主/喜用/喜色等更深解读仍仅核对模式露出,守住养生外壳口径
+      document.querySelector('.cf-pwrap').style.display = '';
       document.getElementById('cf-meta').style.display  = VERIFY ? '' : 'none';
 
       const PK = ['年柱','月柱','日柱','时柱'];

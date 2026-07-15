@@ -75,6 +75,8 @@
   .status .mine{display:inline-flex;align-items:center;gap:6px;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .status .mine-tx{font-size:11px;font-weight:400;color:var(--ink-2);letter-spacing:.3px;}
   .status .mine:hover .mine-tx{color:var(--gold-d);}
+  .status .clock{display:none;} /* 去掉伪状态栏时钟:真机顶部系统栏已有时间,重复且突兀 */
+  .tabbar a.tab{text-decoration:none;} /* 「我的」导航项是 <a>,去掉下划线 */
   .scroll{flex:1;overflow-y:auto;padding:14px 20px 18px;}
   .scroll::-webkit-scrollbar{display:none;}
 
@@ -1613,6 +1615,7 @@
 <symbol id="i-rhythm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1"/></symbol>
 <symbol id="i-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 4 13.6 10.4 12 12 10.4 10.4 12 4Z"/><circle cx="12" cy="12" r="1.1"/></symbol>
 <symbol id="i-read" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.4C10.4 5 7.9 4.5 4 4.8V18c3.9-.3 6.4.2 8 1.7 1.6-1.5 4.1-2 8-1.7V4.8c-3.9-.3-6.4.2-8 1.6Z"/><path d="M12 6.4v13.3"/></symbol>
+<symbol id="i-mine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.9 3.1-6.4 7-6.4s7 2.5 7 6.4"/></symbol>
 <symbol id="i-jieqi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/></symbol>
 <symbol id="i-folk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 7.4c1.2-1.2 0-2.5 0-3.6M14 7.4c1.2-1.2 0-2.5 0-3.6M4.5 11h15M6.2 11l.9 5.7a2.2 2.2 0 0 0 2.2 1.9h5.4a2.2 2.2 0 0 0 2.2-1.9l.9-5.7M9 19.4v1.4M15 19.4v1.4"/></symbol>
 <symbol id="i-holiday" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/><path d="m12 11.6 1 2 2.2.3-1.6 1.5.4 2.2-2-1.1-2 1.1.4-2.2-1.6-1.5 2.2-.3 1-2Z"/></symbol>
@@ -1638,7 +1641,7 @@
     <div class="frame-wrap">
       <div class="phone"><div class="screen">
         <div class="notch"></div>
-        <div class="status"><span class="clock">9:41</span><a class="mine" id="t-mine" href="onboarding.html"><span class="mine-tx">我的</span></a></div>
+        <div class="status"><span class="clock">9:41</span><span></span></div>
         <!-- 首次使用说明:一次性，直白讲清「分数高=能量高」 -->
         <div class="intro-ov" id="intro-ov">
           <div class="intro-card">
@@ -1697,6 +1700,33 @@
               <div class="we-mk" id="w-mk" style="display:none"></div>
             </div>
 
+            <!-- W-TODAY 今日 · 你的节律(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
+            <div class="wdg wdg-today collapsible" data-wid="today">
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的节律</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-body"><div class="wdg-body-in">
+                <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
+                <div class="today-hero">
+                  <div class="th-orb" id="w-orb"></div>
+                  <div class="th-side">
+                    <div class="yi-row"><span class="yi-k">宜</span><span class="yi-v" id="w-yi">静养蓄力 · 处理琐事</span></div>
+                    <div class="yi-row"><span class="yi-k huan">缓</span><span class="yi-v" id="w-huan">无须刻意避忌</span></div>
+                  </div>
+                </div>
+                <!-- 今日一句:干货生成器(说中你+能照做),据你人格×当天信号生成 -->
+                <div class="today-say" id="w-hero"></div>
+                <!-- 今日各方面(tab 版:事业/财运/感情/机会/学习/健康,点 tab 看对应项;色点=顺/平/慎)-->
+                <div class="tf-wrap" id="w-fortune-wrap" style="display:none">
+                  <div class="tf-h">今日各方面</div>
+                  <div class="tf-tabs" id="w-fortune-tabs"></div>
+                  <div class="tf-body" id="w-fortune-body"></div>
+                  <div class="wcare-note" id="w-fortune-note" style="display:none">「健康」为顺时调养参考，非医疗建议</div>
+                </div>
+                <div class="today-xi"><span class="cue-xilab">今日宜色</span><i class="cue-sw" id="w-xisw"></i><span class="today-xiname" id="w-xiname">松绿</span></div>
+                <!-- 导航衔接:通向「解读」完整命书 -->
+                <div class="today-more" data-goto="read"><span>查看完整命书解读<span class="tm-sub"> · 能量底色与今年走势</span></span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+              </div></div>
+            </div>
+
             <!-- W-HL 老黄历(选中日 · 权威版:宜忌 hero + 为什么推导 + 十二时辰 + 更多细节 + 四法参断)-->
             <div class="wdg wdg-hl2 collapsible" data-wid="huangli" id="w-huangli" style="display:none">
               <div class="wdg-h wdg-toggle hl2-toggle"><span class="wdg-htitle">老黄历</span><span class="hl2-sub" id="hl2-gz">—</span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
@@ -1729,33 +1759,6 @@
               </div></div>
             </div>
 
-            <!-- W-TODAY 今日 · 你的节律(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
-            <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的节律</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
-              <div class="wdg-body"><div class="wdg-body-in">
-                <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
-                <div class="today-hero">
-                  <div class="th-orb" id="w-orb"></div>
-                  <div class="th-side">
-                    <div class="yi-row"><span class="yi-k">宜</span><span class="yi-v" id="w-yi">静养蓄力 · 处理琐事</span></div>
-                    <div class="yi-row"><span class="yi-k huan">缓</span><span class="yi-v" id="w-huan">无须刻意避忌</span></div>
-                  </div>
-                </div>
-                <!-- 今日一句:干货生成器(说中你+能照做),据你人格×当天信号生成 -->
-                <div class="today-say" id="w-hero"></div>
-                <!-- 今日各方面(tab 版:事业/财运/感情/机会/学习/健康,点 tab 看对应项;色点=顺/平/慎)-->
-                <div class="tf-wrap" id="w-fortune-wrap" style="display:none">
-                  <div class="tf-h">今日各方面</div>
-                  <div class="tf-tabs" id="w-fortune-tabs"></div>
-                  <div class="tf-body" id="w-fortune-body"></div>
-                  <div class="wcare-note" id="w-fortune-note" style="display:none">「健康」为顺时调养参考，非医疗建议</div>
-                </div>
-                <div class="today-xi"><span class="cue-xilab">今日宜色</span><i class="cue-sw" id="w-xisw"></i><span class="today-xiname" id="w-xiname">松绿</span></div>
-                <!-- 导航衔接:通向「解读」完整命书 -->
-                <div class="today-more" data-goto="read"><span>查看完整命书解读<span class="tm-sub"> · 能量底色与今年走势</span></span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
-              </div></div>
-            </div>
-
             <!-- W2 未来一周能量(移至末尾，可折叠) -->
             <div class="wdg collapsible" data-wid="week">
               <div class="wdg-h wdg-toggle">未来一周 · 能量<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
@@ -1772,6 +1775,7 @@
           <div class="tab on"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
         </div>
         <!-- 分享卡 overlay(覆盖在手机内，可截图) -->
         <div class="share-ov" id="share-ov">
@@ -1872,6 +1876,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
         </div>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
       </div></div>
@@ -1884,15 +1889,13 @@
         <div class="notch"></div>
         <div class="status"><span class="clock">9:41</span><span></span></div>
         <div class="scroll">
-          <div class="life-top">
-            <div class="life-h"><b>我的解读</b><span>你的能量底色 · 为你逐项推算</span></div>
-          </div>
           <div id="jd-main"><!-- 由引擎在本机推算后填充:免费命书速览 + 深度报告入口 --></div>
         </div>
         <div class="tabbar">
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab on"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
         </div>
       </div></div>
       <div class="frame-label">解读 · 命书速览 → 深度报告(全部免费)</div>
@@ -2118,6 +2121,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
         </div>
       </div></div>
       <div class="frame-label">工具箱 · 目录 → 点进查看(吉日 / 养生 / 重点日 / 时令民俗)</div>
@@ -2207,6 +2211,14 @@
     })();
   </script>
   <script>
+    // 引导兜底:三条引擎路径 + app_data.js 末级兜底全部失败时 window.APP 会是 undefined。
+    // 裸取 APP.user(2217)会在本脚本块(2209–4820)顶部抛错 → 整页白屏且无任何提示。
+    // 这正是为「引擎在浏览器抛错」那类事故准备的安全网,自己却无护栏。改为:先画一个可恢复的
+    // 「请刷新」提示,再主动中止本块(此时本就无数据可渲染,中止即可,不再连累用户看到白屏)。
+    if(!window.APP){
+      document.body.innerHTML='<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2em;text-align:center;color:#A9A296;font-size:15px;line-height:1.9">内容加载失败<br>请检查网络后刷新页面</div>';
+      throw new Error('APP unavailable — showed recovery notice');
+    }
     const APP = window.APP;
     const $ = (id) => document.getElementById(id);
     const esc = (s)=> String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -2415,7 +2427,10 @@
         const isReal = (Y===REAL.year && M===REAL.month);
         // 非当前月没有「今天」:用 day:1 让引擎正常出盘(day:0 会让 Solar.fromYmd 报错),再清掉 today 标记
         try {
-          const mo = ENGINE.buildApp(PERSON, { year:Y, month:M, day: isReal?REAL.day:1 }).month;
+          const ym = { year:Y, month:M, day: isReal?REAL.day:1 };
+          // 轻量路径:只重算某月,避开整只 buildApp 的 100年循环+六份报告(约 830ms→数十ms)。
+          // 兜底 buildApp:防旧 bundle(SW 版本 skew)尚无 buildMonth 时仍可用。
+          const mo = ENGINE.buildMonth ? ENGINE.buildMonth(PERSON, ym) : ENGINE.buildApp(PERSON, ym).month;
           if (!isReal) mo.days.forEach((d)=>{ d.today = false; });
           return mo;
         } catch(e){ return null; }
@@ -3286,7 +3301,8 @@
       function yearData(Y){
         let a=null;
         if(Y===REAL.year) a=APP.rhythm.yearMonths;
-        else if(ENGINE){ try{ a=ENGINE.buildApp(PERSON,{year:Y,month:1,day:1}).rhythm.yearMonths; }catch(e){} }
+        // 轻量路径:只算某年 12 月均能量,避开整只 buildApp。兜底 buildApp 防旧 bundle 无 buildYear。
+        else if(ENGINE){ try{ a = ENGINE.buildYear ? ENGINE.buildYear(PERSON,Y) : ENGINE.buildApp(PERSON,{year:Y,month:1,day:1}).rhythm.yearMonths; }catch(e){} }
         return a? a.map((e,i)=>({ key:i+1, e })) : null;
       }
       // 某年「公历月 → 当月节气名[]」(用引擎暴露的 Solar 实算，懒缓存)
@@ -3772,8 +3788,8 @@
 
       // (全免费版本:原付费墙 cover / 解锁确认 sheet / doUnlock 已移除——打开报告即直达完整内容)
 
-      // —— 四维节律禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(旺衰分/季节/生活五项分),不改底层计算。
-      //   精力=旺衰强度+季节节奏 · 专注=学习(沉淀)×.6+事业(自律)×.4 · 情绪=情感(流动)×.7+健康(五行均衡)×.3 · 人际=钱财(经营)×.5+事业(协作)×.5
+      // —— 四维节律禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
+      //   精力=bodyT定方向+四维均值(喜忌口径)解饱和+季节 · 专注=学习×.6+事业×.4 · 情绪=情感×.7+健康×.3 · 人际=结构性外向度 socialTendency(食伤+比劫-印-官,独立于旺衰)
       const RH_DESC={
         精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度、别硬透支'],[0,'精力细水长流，顺势蓄力、少熬夜']],
         专注:[[72,'沉得下心、钻得进去，宜深耕一处'],[56,'专注够用，固定节奏最出活'],[0,'思路活跳、点子多，宜分段推进']],
@@ -3877,8 +3893,8 @@
           + '<div class="rp-color-tx"><b>'+esc(n.xiColor.name)+'</b><p>'+esc(n.colorAdvice)+'</p></div></div></div></div>';
         // 收束金句(温暖尾声)
         const closing=pe.closing?'<div class="rp-sec"><div class="rp-closing">'+esc(pe.closing)+'</div></div>':'';
-        // 纹理轮换:渐变英雄 → 无框金句 → 左线要点行 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
-        $('rp-p-natal').innerHTML = quote + rows + life + careWindow() + ji + color + closing + rpFlourish();
+        // 纹理轮换:渐变英雄 → 无框金句 → 左线要点行 → 四维节律禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
+        $('rp-p-natal').innerHTML = quote + rows + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
         // 生活方面分段 Tab:点选切换
         const wrap=$('rp-p-natal');
         wrap.querySelectorAll('.np-tab').forEach((t)=>{
@@ -4297,6 +4313,9 @@
       // —— 报告3:重要择日 ——
       function renderPicker(){
         const P=R.picker;
+        // 守卫:旧存档(report.picker 字段出现前的引擎版本写入)回落时 R.picker 可能缺失——
+        // 对齐 renderMonths/renderYears/renderAhead 的 if(!X)return,免裸取 P.from 抛错中断整个脚本块。
+        if(!P){ $('rp-p-picker').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">择日数据生成中…</div></div>'; return; }
         const day=(d)=>{
           const w=Math.max(8,Math.min(100,Math.round((d.energy-40)/0.6)));
           const reason=String(d.reason||'').replace(/^能量\s*\d+\s*·\s*/,'');
@@ -4323,7 +4342,11 @@
       function showBody(){
         cover.style.display='none'; body.style.display='block';
         $('rp-head-sub').textContent='为你而读';
-        renderNatal(); renderMonths(); renderYears(); renderCare(); renderPicker(); renderAhead();
+        // 纵深防御:逐段包 try/catch——showBody 在页面初始化的同一大脚本块(2209–4820)内同步执行,
+        // 任一段抛错都会中止整块(连带整个工具箱初始化都不再运行)。隔离后,单段坏了其余段与工具箱照常。
+        [renderNatal, renderMonths, renderYears, renderCare, renderPicker, renderAhead].forEach(function(fn){
+          try{ fn(); }catch(e){ /* 单段渲染失败:静默跳过,不连累其余 */ }
+        });
       }
       // tabs
       $('rp-tabs').addEventListener('click', (e)=>{
@@ -4375,9 +4398,7 @@
       try{ hasPerson = !!localStorage.getItem('shihe_person'); }catch(e){}
       const birthIc = '<span class="jd-birth-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.8 3.1-6.4 7-6.4s7 2.6 7 6.4"/></svg></span>';
       const birthEntry = hasPerson
-        ? '<a class="jd-birth" href="onboarding.html">'+birthIc
-            + '<span class="jd-birth-tx"><b>查看 / 修改生辰</b><span>当前命书按你录入的生辰推算</span></span>'
-            + '<span class="jd-birth-cta">修改 →</span></a>'
+        ? ''  // 已录入生辰:去掉这张卡(修改生辰改从底部导航「我的」进入,不再在解读页顶部占位)
         : '<a class="jd-birth is-demo" href="onboarding.html">'+birthIc
             + '<span class="jd-birth-tx"><b>录入你的生辰</b><span>当前为示例命书 · 录入后即看你自己的</span></span>'
             + '<span class="jd-birth-cta">立即录入 →</span></a>';
@@ -4856,7 +4877,7 @@
         bar.querySelectorAll('.tab').forEach(function(tab){
           var use = tab.querySelector('use');
           var href = use ? (use.getAttribute('href')||'').replace('#','') : '';
-          var i = SCREEN_BY_ICON[href]; if (i==null) i = 0;
+          var i = SCREEN_BY_ICON[href]; if (i==null) return; // 未知图标(如「我的」)不绑切屏,交给其 <a href> 自行跳转
           tab.addEventListener('click', function(){ setScreen(i); });
         });
       });
