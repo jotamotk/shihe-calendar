@@ -558,10 +558,10 @@
   .jd-gl-color .sw{width:20px;height:20px;border-radius:50%;border:1px solid var(--gold-line);box-shadow:inset 0 0 0 2px var(--bg-top);}
   .jd-gl-color span{font-size:11px;color:var(--muted);letter-spacing:1px;}
   /* 六章手风琴 */
-  .jd-acc{display:flex;flex-direction:column;padding:0 2px;}
+  .jd-acc{display:flex;flex-direction:column;padding:0;}
   .jd-ch{border-top:1px solid var(--line);}
   .jd-ch:last-child{border-bottom:1px solid var(--line);}
-  .jd-ch-head{width:100%;display:grid;grid-template-columns:34px 1fr 22px;align-items:center;gap:13px;
+  .jd-ch-head{width:100%;display:grid;grid-template-columns:34px 1fr 22px;align-items:center;gap:13px;scroll-margin-top:16px;
     padding:18px 2px 18px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;position:relative;-webkit-tap-highlight-color:transparent;}
   .jd-ch-head::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:0;border-radius:2px;
     background:linear-gradient(var(--gold-d),var(--gold));transition:height .3s var(--ease);}
@@ -577,19 +577,20 @@
   .jd-ch-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s var(--ease);}
   .jd-ch.open .jd-ch-panel{grid-template-rows:1fr;}
   .jd-ch-inner{overflow:hidden;min-height:0;}
-  .jd-ch-inner > .rp-page{padding:2px 0 24px;}
+  .jd-ch-inner > .rp-page{display:block;padding:2px 0 24px;}
   /* future-fade:只淡金色 accent,不淡正文,守 AA 可读 */
   .jd-future .jd-ch-num,.jd-future .jd-ch-eye{color:var(--muted);opacity:.62;}
   .jd-future .jd-ch-head::before{background:linear-gradient(var(--ink-2),transparent);opacity:.5;}
   .jd-future.open .jd-ch-chev{color:var(--ink-2);}
+  /* 越远越淡:第一档(伍)章名转次色、最远档(陆.jd-far)再淡一级——都守 AA(--ink-2/--muted 于深底大字远超标准) */
+  .jd-future .jd-ch-name{color:var(--ink-2);}
+  .jd-far .jd-ch-name{color:var(--muted);}
   /* 进场揭示(克制:只动 transform+opacity;尊重 reduced-motion) */
   @media (prefers-reduced-motion:no-preference){
     .jd-reveal{opacity:0;transform:translateY(10px);}
     .jd-reveal.in{opacity:1;transform:none;transition:opacity .5s var(--ease),transform .5s var(--ease);}
   }
-  .rp-tabs{position:sticky;top:0;z-index:2;display:flex;gap:6px;padding:12px 16px;background:linear-gradient(180deg,var(--bg) 70%,transparent);}
-  .rp-tab{flex:1;padding:9px 4px;text-align:center;font-size:11.5px;font-weight:400;letter-spacing:1px;color:var(--ink-2);border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;transition:all .2s;}
-  .rp-tab.on{color:#231A0C;font-weight:600;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;}
+  /* 六 Tab 已重构为手风琴,.rp-tabs/.rp-tab 死代码已删;.rp-page 显示规则保留(六章内容容器仍用) */
   .rp-page{display:none;padding:6px 18px 34px;}
   .rp-page.on{display:block;animation:rpfade .35s var(--ease);}
   @keyframes rpfade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
@@ -2217,7 +2218,7 @@
             <button class="jd-ch-head" type="button"></button>
             <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="years" id="rp-p-years"></div></div></div>
           </div>
-          <div class="jd-ch jd-future" data-p="ahead">
+          <div class="jd-ch jd-future jd-far" data-p="ahead">
             <button class="jd-ch-head" type="button"></button>
             <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="ahead" id="rp-p-ahead"></div></div></div>
           </div>
@@ -17958,10 +17959,7 @@ var RhythmEngine = (() => {
   }
 })();
 </script>
-<script>try{
-  if(!localStorage.getItem("shihe_person")){ localStorage.setItem("shihe_person", JSON.stringify({year:1994,month:5,day:4,hour:13,minute:30,longitude:102.4,gender:"女",trueSolar:true})); }
-  localStorage.setItem("shihe_consent","1"); localStorage.setItem("shihe_intro","1");
-}catch(e){}</script>
+<script>try{ if(!localStorage.getItem("shihe_person")){ localStorage.setItem("shihe_person", JSON.stringify({year:1994,month:5,day:4,hour:13,minute:30,longitude:102.4,gender:"女",trueSolar:true})); } localStorage.setItem("shihe_consent","1"); localStorage.setItem("shihe_intro","1"); }catch(e){}</script>
   <script>
     // 数据来源:① 有本机存档(onboarding 真实生日)→ 直接用;
     // ② 无存档 → 用演示命主 + 「真实今天」由本机引擎实时计算
@@ -19680,8 +19678,9 @@ var RhythmEngine = (() => {
           + '<div class="rp-color-tx"><b>'+esc(n.xiColor.name)+'</b><p>'+esc(n.colorAdvice)+'</p></div></div></div></div>';
         // 收束金句(温暖尾声)
         const closing=pe.closing?'<div class="rp-sec"><div class="rp-closing">'+esc(pe.closing)+'</div></div>':'';
-        // 纹理轮换:渐变英雄 → 无框金句 → 左线要点行 → 四维节律禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
-        $('rp-p-natal').innerHTML = quote + rows + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
+        // 纹理轮换:读懂你 → 四维节律禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
+        // (开篇 np-quote 已删:archetype.line 只在常驻顶卡出现一次,免同屏两句大号金色宋体金句重复、超金面积预算)
+        $('rp-p-natal').innerHTML = rows + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
         // 生活方面分段 Tab:点选切换
         const wrap=$('rp-p-natal');
         wrap.querySelectorAll('.np-tab').forEach((t)=>{
@@ -20134,7 +20133,7 @@ var RhythmEngine = (() => {
         {p:'months',num:'叁', eye:'今年节奏',   name:'高能量月'},
         {p:'picker',num:'肆', eye:'为要紧事',   name:'重要择日'},
         {p:'years', num:'伍', eye:'未来大势',   name:'高能量年'},
-        {p:'ahead', num:'陆', eye:'长 镜 头',   name:'三年逐月'},
+        {p:'ahead', num:'陆', eye:'长镜头',     name:'三年逐月'},
       ];
       function jdSignal(p){
         try{
@@ -20149,9 +20148,17 @@ var RhythmEngine = (() => {
         }catch(e){}
         return '';
       }
+      // 只滚「最近的 .scroll 滚动容器」,绝不动 window(桌面四机并排时 scrollIntoView 会滚整个文档)
+      function jdScrollTo(el){
+        if(!el) return;
+        var sc=el.closest('.scroll')||el.closest('.rp-scroll');
+        if(sc){ var top=sc.scrollTop + el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 12; sc.scrollTo({top:top,behavior:'smooth'}); }
+        else el.scrollIntoView({behavior:'smooth',block:'start'});
+      }
       function jdOpenOnly(target,scroll){
         document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.toggle('open', c===target); });
-        if(scroll && target){ const h=target.querySelector('.jd-ch-head'); setTimeout(function(){ (h||target).scrollIntoView({behavior:'smooth',block:'start'}); }, 90); }
+        // 滚动放到折叠动画(340ms)之后再算落点,否则上方章还在收起、锚点会错位
+        if(scroll && target){ const h=target.querySelector('.jd-ch-head'); setTimeout(function(){ jdScrollTo(h||target); }, 370); }
       }
       function jdToggle(p){
         const t=document.querySelector('#jd-acc .jd-ch[data-p="'+p+'"]'); if(!t) return;
@@ -20165,7 +20172,9 @@ var RhythmEngine = (() => {
         const line=(n.archetype&&n.archetype.line)?n.archetype.line:'';
         let dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
         const dimHtml=dims.map(function(d){ const lvl=d.v>=62?'hi':(d.v>=48?'mid':'lo'); return '<span class="jd-gl-dim" data-go="natal"><i class="mk '+lvl+'"></i><span>'+esc(d.k)+'</span></span>'; }).join('');
-        const axis=(R.yearMonths&&R.yearMonths.yearVerdict)?R.yearMonths.yearVerdict:'';
+        // 今年主轴:优先 yearVerdict;它约6成盘为空,缺则用已算的高能量月派生一句(纯描述数据,不写新文案),免顶卡留白
+        let axis=(R.yearMonths&&R.yearMonths.yearVerdict)?R.yearMonths.yearVerdict:'';
+        if(!axis){ const Ym=R.yearMonths; if(Ym&&Ym.highMonths&&Ym.highMonths.length) axis='气场高点在 '+Ym.highMonths.slice(0,3).join('、')+' 月'; }
         const xi=n.xiColor||{};
         el.innerHTML='<div class="jd-glance">'
           +'<div class="jd-gl-eye">你 的 能 量 底 色</div>'
@@ -20175,7 +20184,8 @@ var RhythmEngine = (() => {
           + (axis?'<div class="jd-gl-axis" data-go="months"><b>今年 ·</b> '+esc(axis)+'</div>':'<div class="jd-gl-axis"></div>')
           + (xi.hex?'<div class="jd-gl-color" data-go="natal"><span>宜 '+esc(xi.name||'')+'</span><i class="sw" style="background:'+xi.hex+'"></i></div>':'')
           +'</div></div>';
-        el.querySelectorAll('[data-go]').forEach(function(x){ x.addEventListener('click',function(){ jdToggle(x.dataset.go); }); });
+        // 顶卡元素是「直达章」不是「开关」:恒展开目标章+滚动(点默认已展开的壹章不该把它折叠)
+        el.querySelectorAll('[data-go]').forEach(function(x){ x.addEventListener('click',function(){ var t=document.querySelector('#jd-acc .jd-ch[data-p="'+x.dataset.go+'"]'); if(t) jdOpenOnly(t,true); }); });
       }
       function buildHeads(){
         JD_META.forEach(function(m){
@@ -20217,7 +20227,7 @@ var RhythmEngine = (() => {
       // 供工具箱「本命养生速查」跳转到完整报告指定 tab(全免费:打开即完整内容)
       // 内联化:报告主体常驻「解读」页；工具深链只切到解读页并定位子页(不再开 overlay)
       window.__rpInlineInto = function(host){ if(host && body && body.parentNode!==host) host.appendChild(body); showBody(); };
-      window.__rpGoTab = function(tab){ if(!tab) return; const t=document.querySelector('#jd-acc .jd-ch[data-p="'+tab+'"]'); if(!t) return; document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.toggle('open', c===t); }); const h=t.querySelector('.jd-ch-head'); setTimeout(function(){ (h||t).scrollIntoView({behavior:'smooth',block:'start'}); }, 100); };
+      window.__rpGoTab = function(tab){ if(!tab) return; const t=document.querySelector('#jd-acc .jd-ch[data-p="'+tab+'"]'); if(!t) return; document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.toggle('open', c===t); }); const h=t.querySelector('.jd-ch-head'); setTimeout(function(){ jdScrollTo(h||t); }, 370); };
       window.__openReport=(tab)=>{
         if(window.__setScreen) window.__setScreen(2);
         window.shihe && window.shihe.track('report_open', { source:'tool', tab: tab||'' });
@@ -20717,16 +20727,8 @@ var RhythmEngine = (() => {
       document.querySelectorAll('[data-goto]').forEach(function(el){
         el.addEventListener('click', function(){ var i=GOTO_SCREEN[el.dataset.goto]; if(i!=null) setScreen(i); });
       });
-      // 状态栏时钟:显示真实当前时间(替换写死的 9:41 演示时间),每分钟刷新
-      (function(){
-        var els = document.querySelectorAll('.status .clock'); if(!els.length) return;
-        function tick(){
-          var d = new Date(), h = d.getHours(), m = d.getMinutes();
-          var t = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m;
-          for (var i=0;i<els.length;i++) els[i].textContent = t;
-        }
-        tick(); setInterval(tick, 15000);
-      })();
+      // 伪状态栏时钟已由 CSS(.status .clock{display:none}) 隐藏(真机系统栏已有时间);
+      // 原每 15 秒刷新隐藏元素的定时器纯属浪费,已删。span 保留无害(被 CSS 隐藏)。
       // 按图标映射到屏幕索引，而非 DOM 顺序 —— 这样下线某个 tab 不会让其余错位
       var SCREEN_BY_ICON = { 'i-cal':0, 'i-rhythm':1, 'i-read':2, 'i-tools':3 };
       document.querySelectorAll('.tabbar').forEach(function(bar){
