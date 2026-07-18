@@ -1185,7 +1185,16 @@
   .wdg-help.hint{color:var(--gold-d);border-color:var(--gold-line);animation:helpPulse 2.4s ease-in-out infinite;}
   @keyframes helpPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,172,120,0);}50%{box-shadow:0 0 0 4px rgba(200,172,120,.13);}}
   .collapsed>.wdg-toggle .wdg-help{display:none;}
-  .today-hero{display:flex;align-items:center;gap:18px;margin:2px 0 18px;}
+  .today-hero{display:flex;align-items:center;gap:18px;margin:2px 0 18px;position:relative;}
+  /* 能量光球:按住浮出整体能量 0-100(平时藏,按住才露) */
+  #w-orb{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none;}
+  .orb-peek{position:absolute;left:50px;top:52px;transform:translate(-50%,-50%) scale(.94);
+    display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 14px;border-radius:14px;
+    background:rgba(11,11,12,.82);border:1px solid var(--gold-line);box-shadow:0 8px 24px -8px rgba(0,0,0,.7);
+    backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .16s var(--ease),transform .16s var(--ease);z-index:4;}
+  .orb-peek.on{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  .orb-peek b{font-family:var(--serif);font-size:30px;line-height:1;color:var(--gold-d);font-weight:500;letter-spacing:1px;}
+  .orb-peek s{font-size:9.5px;letter-spacing:2px;color:var(--muted);text-decoration:none;}
   .th-orb{flex:none;width:100px;height:106px;display:flex;align-items:center;justify-content:center;}
   .th-orb svg{display:block;overflow:visible;}
   .th-score{flex:none;display:flex;align-items:baseline;}
@@ -1218,6 +1227,9 @@
   .tf-body-tone.mid{color:var(--muted);background:var(--card);box-shadow:inset 0 0 0 1px var(--line);}
   .tf-body-tone.warn{color:var(--rest);background:color-mix(in srgb,var(--rest) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 30%,transparent);}
   .tf-body-line{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.78;letter-spacing:.2px;}
+  /* 机会并入事业:事业正文下的「机会」子行(虚线分隔+金色小标) */
+  .tf-body-sub{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.78;letter-spacing:.2px;}
+  .tf-body-sublab{display:inline-block;margin-right:7px;font-size:10.5px;font-weight:500;letter-spacing:1px;color:var(--gold-d);vertical-align:1px;}
   /* 未来一周能量:口径说明 */
   .wk7-note{margin-top:12px;font-size:11.5px;color:var(--muted);font-weight:300;line-height:1.7;letter-spacing:.2px;}
   .wk7-note b{color:var(--gold-d);font-weight:500;}
@@ -1701,7 +1713,6 @@
           <div class="intro-card">
             <div class="intro-seal">时</div>
             <div class="intro-h">读懂你的每一天</div>
-            <div class="intro-sub">一分钟看懂怎么用</div>
             <div class="intro-rows">
               <div class="intro-row"><span class="intro-orb" id="intro-orb"></span><div class="intro-tx"><b>光球越满 = 能量越足</b><span>球满，状态舒展、宜放手去做；球浅，则宜收宜养、内守蓄力。</span></div></div>
               <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日节律</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
@@ -1739,7 +1750,7 @@
           <!-- ====== 选中日 · 小部件流 ====== -->
           <div class="widgets" id="widgets">
             <div class="wdg-streak" id="wdg-streak" style="display:none"></div>
-            <div class="wdg-hint" id="wdg-hint">长按卡片可上下拖动 · 自由排序</div>
+            <div class="wdg-hint" id="wdg-hint">长按可拖动排序</div>
             <!-- W1 能量(显眼) -->
             <div class="wdg wdg-energy" data-wid="energy">
               <div class="wdg-daterow">
@@ -1777,7 +1788,7 @@
                 </div>
                 <div class="today-xi"><span class="cue-xilab">今日宜色</span><i class="cue-sw" id="w-xisw"></i><span class="today-xiname" id="w-xiname">松绿</span></div>
                 <!-- 导航衔接:通向「解读」完整命书 -->
-                <div class="today-more" data-goto="read"><span>查看完整命书解读<span class="tm-sub"> · 能量底色与今年走势</span></span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+                <div class="today-more" data-goto="read"><span>查看完整解读</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
               </div></div>
             </div>
 
@@ -1817,7 +1828,7 @@
             <div class="wdg collapsible" data-wid="week">
               <div class="wdg-h wdg-toggle">未来一周 · 能量<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in"><div class="wk7b" id="w-wk7"></div>
-                <div class="wk7-note">每根柱是当天的<b>整体能量(0–100)</b>：由你的生辰命局，结合当日干支与喜用推算——越高越顺、宜主动；越低宜内收蓄力。金柱为高能量日。</div>
+                <div class="wk7-note">柱越高越顺、宜主动；越低宜内收蓄力。金柱是高能量日。</div>
               </div></div>
             </div>
 
@@ -1842,7 +1853,7 @@
           <div class="share-card sc-tA" id="share-card"></div>
           <div class="share-acts">
             <button class="share-go" id="share-go">分享给朋友</button>
-            <span class="share-tip">或截图保存这张卡片，分享你的今天</span>
+            <span class="share-tip">或截图保存</span>
             <button class="share-close" id="share-close">关闭</button>
           </div>
         </div>
@@ -1878,19 +1889,20 @@
               <svg id="lf-wheel" viewBox="-170 -170 340 340"></svg>
               <div class="lf-guide" id="lf-guide">
                 <svg class="lf-guide-svg" viewBox="-170 -170 340 340" aria-hidden="true">
-                  <path id="lf-guide-arc" d="M-51.4,-61.3 A80,80 0 0 1 51.4,-61.3" fill="none"
-                        stroke="#201C14" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+                  <!-- 绕圈弧:沿外环转一圈(缺口留在顶部红针处),示意「捏红针沿外圈转」,不再是横扫误导成左右滑 -->
+                  <path id="lf-guide-arc" d="M30.6,-114 A118,118 0 1 1 -30.6,-114" fill="none"
+                        stroke="#201C14" stroke-width="11" stroke-linecap="round" opacity=".45"/>
                   <g class="lf-guide-hand">
                     <circle r="15" fill="#C8AC78" opacity=".2"/>
                     <circle r="8.5" fill="#E6CF9E"/>
                     <circle r="8.5" fill="none" stroke="#fff" stroke-width="1" opacity=".5"/>
-                    <animateMotion dur="2.8s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1"
-                                   calcMode="spline" keySplines="0.45 0 0.25 1;0.45 0 0.25 1" rotate="auto">
+                    <animateMotion dur="3.6s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1"
+                                   calcMode="linear" rotate="auto">
                       <mpath href="#lf-guide-arc"/>
                     </animateMotion>
                   </g>
                 </svg>
-                <div class="lf-guide-tip">拨动圆心外侧一圈来转 · 顶端即所选<br><small>点格子或圆心「进入」· 也可用下方「上一格/下一格」</small></div>
+                <div class="lf-guide-tip">捏住红针，沿外圈转到你要的岁数<br><small>中间大字即所选 · 点圆心「进入 / 返回」，也可用下方「‹ ›」逐格</small></div>
               </div>
               <!-- 快速跳转弹窗:输入年月，直达 -->
               <div class="lf-jump" id="lf-jump" hidden>
@@ -1909,16 +1921,16 @@
             </div>
             <div class="wheel-stepper">
               <button class="wstep wstep-ico" id="lf-prev" type="button" aria-label="上一格">‹</button>
-              <div class="wheel-read" id="lf-read">拖动指针选岁数、月份、日子，点圆心进入</div>
+              <div class="wheel-read" id="lf-read">转红针选岁数，中间即所选</div>
               <button class="wstep wstep-ico" id="lf-next" type="button" aria-label="下一格">›</button>
             </div>
-            <div class="wheel-hint" id="lf-hint">拖动指针选 · 点格子/圆心进入 · 「‹ 上一层」返回 · 一生 › 年 › 月 › 日</div>
+            <div class="wheel-hint" id="lf-hint">转红针选岁数 · 点圆心进入那一年</div>
           </div>
 
           <!-- 阶段均能量(随年轮联动) -->
           <div class="panel">
             <h3 id="lf-bars-h">十年一程 · 阶段均能量</h3>
-            <div class="ph" id="lf-bars-p">把一生分成十段，看哪一程气场更舒展</div>
+            <div class="ph" id="lf-bars-p">哪一程更舒展</div>
             <div class="decrow" id="lf-decs"></div>
           </div>
 
@@ -2056,7 +2068,7 @@
           <div class="tb-panel" data-panel="compass">
             <div class="cps-read">
               <div class="cps-deg" id="cps-deg">—</div>
-              <div class="cps-dir" id="cps-dir">点下方开启，读取朝向</div>
+              <div class="cps-dir" id="cps-dir">待开启 · 读取朝向</div>
             </div>
             <div class="cps-stage">
               <svg class="cps-dial" id="cps-dial" viewBox="-160 -160 320 320" aria-hidden="true"></svg>
@@ -2187,7 +2199,7 @@
   <div class="rp-ov" id="rp-ov">
     <div class="rp-head">
       <button class="rp-back" id="rp-close">×</button>
-      <span class="rp-head-t">深度报告<small id="rp-head-sub">为你而读</small></span>
+      <span class="rp-head-t">深度报告<small id="rp-head-sub"></small></span>
     </div>
     <div class="rp-scroll" id="rp-scroll">
       <!-- 付费墙 -->
@@ -18044,6 +18056,24 @@ var RhythmEngine = (() => {
         +'<path d="M '+(cx-r*0.64).toFixed(1)+' '+(cy-r*0.56).toFixed(1)+' A '+r+' '+r+' 0 0 1 '+(cx+r*0.36).toFixed(1)+' '+(cy-r*0.82).toFixed(1)+'" fill="none" stroke="#FFFDF2" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>'
         +'</svg>';
     }
+    // 能量光球:按住浮出整体能量 0-100(平时藏,与「不裸露分数」一致)。幂等:renderToday 每次调用,只首次真正绑定。
+    var _orbPeekBound=false;
+    function bindOrbPeek(){
+      if(_orbPeekBound) return;
+      var orb=$('w-orb'); if(!orb) return;
+      var hero=orb.closest('.today-hero'); if(!hero) return;
+      _orbPeekBound=true;
+      var tip=document.createElement('div'); tip.className='orb-peek'; hero.appendChild(tip);
+      var show=function(e){ var v=orb.dataset.e; if(v==null||v==='') return; tip.innerHTML='<b>'+v+'</b><s>越 高 越 好</s>'; tip.classList.add('on'); if(e&&e.cancelable) e.preventDefault(); };
+      var hide=function(){ tip.classList.remove('on'); };
+      orb.addEventListener('pointerdown', show);
+      orb.addEventListener('pointercancel', hide);
+      orb.addEventListener('pointerleave', hide);
+      window.addEventListener('pointerup', hide);
+      // 触屏兜底(个别老浏览器无 pointer 事件)
+      orb.addEventListener('touchstart', show, {passive:false});
+      window.addEventListener('touchend', hide);
+    }
     const WEEK = ['日','一','二','三','四','五','六'];
     const fillOf = (e)=> e<46?'f0':e<55?'f1':e<64?'f2':e<73?'f3':e<82?'f4':'f5';
 
@@ -18166,16 +18196,16 @@ var RhythmEngine = (() => {
 
     // 演示数据:首次进入且本机尚无重点日时，预置几个示例，让「重点日」在日历上立刻可见;
     //   用了独立标记位，用户清空后不会再被补回。全部仅存本机。
-    (function seedDemoMarks(){
+    // 重点日不再预置示例;并一次性清掉历史遗留的三条测试数据(妈妈生日/结婚纪念日/体检预约)——
+    // 按「名字+月日+分类」精确匹配,不误伤用户自建的同名项;用 shihe_demo_purged 旗标只跑一次。
+    (function purgeDemoMarks(){
       try{
-        if(localStorage.getItem('shihe_marks_seeded')) return;
-        if(MARKS.all().length===0){
-          const Y=new Date().getFullYear();
-          MARKS.add({name:'妈妈生日',  date:Y+'-06-18', repeat:true,  cat:'birthday'});
-          MARKS.add({name:'结婚纪念日', date:Y+'-06-09', repeat:true,  cat:'anniv'});
-          MARKS.add({name:'体检预约',  date:Y+'-06-25', repeat:false, cat:'remind'});
-        }
-        localStorage.setItem('shihe_marks_seeded','1');
+        if(localStorage.getItem('shihe_demo_purged')) return;
+        const SIG=[{name:'妈妈生日',md:'06-18',cat:'birthday'},{name:'结婚纪念日',md:'06-09',cat:'anniv'},{name:'体检预约',md:'06-25',cat:'remind'}];
+        MARKS.all().forEach(function(m){
+          if(SIG.some(function(s){ return m.name===s.name && String(m.date||'').slice(5)===s.md && m.cat===s.cat; })) MARKS.remove(m.id);
+        });
+        localStorage.setItem('shihe_demo_purged','1');
       }catch(_){}
     })();
 
@@ -18230,11 +18260,11 @@ var RhythmEngine = (() => {
       }
       // —— 今日详解:把引擎算出的 2~3 个维度(事业/钱财/人际/表达/学养/身体/出行…)铺成可展开列表 ——
       //   「心神」一条已上提到体感行；这里只列其余维度，无则隐藏整块。
-      // —— 今日各方面(tab 版:事业/财运/感情/机会/学习/健康)——
+      // —— 今日各方面(tab 版:事业/财运/感情/学习/健康;机会并入事业,免左右滑)——
       //   数据来自 liuri.js 的 d.fortune(引擎按当日十神喜忌 + 五行调养 + 能量实算，底层打分不变)。
       //   顺=当日助力、平=中性平顺、慎=宜留意收敛。一排 tab 各带色点(一眼看全貌),点谁看谁,省地方。
       var FT_LABEL = { career:'事业', love:'感情', money:'财运', study:'学习', health:'健康', chance:'机会' };
-      var FT_ORDER = ['career','money','love','chance','study','health'];  // 关切度 × 数据扎实度
+      var FT_ORDER = ['career','money','love','study','health'];  // 机会不再单列 tab,合并进事业面板;5个一行放下、免左右滑
       var FT_TONECLS = { '顺':'up', '平':'mid', '慎':'warn' };
       var _ftSel = null;   // 当前选中的方面(跨日粘滞:用户挑了就一直看那个)
       function renderFortune(d){
@@ -18265,9 +18295,15 @@ var RhythmEngine = (() => {
         }
         var it=f[_ftSel]||{tone:'平',line:''};
         var tc=FT_TONECLS[it.tone]||'mid';
+        // 机会并入事业:选中事业时,若机会有独立显象(非平档、且与事业文案不同),在下方追加一条带「机会」小标的子行
+        //   —— 机会源自 liuri 的 食/合/冲(与事业读的「官」不同源),故不丢内容;平档无独立显象、不追加(免同义堆叠)
+        var extra='';
+        if(_ftSel==='career' && f.chance && f.chance.tone!=='平' && f.chance.line && f.chance.line!==it.line){
+          extra='<div class="tf-body-sub"><span class="tf-body-sublab">机会</span>'+esc(f.chance.line)+'</div>';
+        }
         $('w-fortune-body').innerHTML=
           '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
-          +'<div class="tf-body-line">'+esc(it.line)+'</div>';
+          +'<div class="tf-body-line">'+esc(it.line)+'</div>'+extra;
         var note=$('w-fortune-note'); if(note) note.style.display=(_ftSel==='health')?'':'none';
       }
 
@@ -18473,8 +18509,8 @@ var RhythmEngine = (() => {
         else if (fstToday){ fest.textContent=fstToday; fest.style.display=''; fest.className='w-festival fest-folk'; }
         else if (hol && hol.type==='work'){ fest.textContent='调休上班'; fest.style.display=''; fest.className='w-festival fest-work'; }
         else { fest.style.display='none'; }
-        // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)
-        if($('w-orb')) $('w-orb').innerHTML = energyOrb(d.e);
+        // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)。整体能量值存 dataset,供「按住浮出 0-100」读取
+        if($('w-orb')){ $('w-orb').innerHTML = energyOrb(d.e); $('w-orb').dataset.e = d.e; bindOrbPeek(); }
         // 今日一句:干货生成器主句(说中你+能照做)
         if($('w-hero')) $('w-hero').textContent = d.heroLine || '';
         // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
@@ -18509,7 +18545,7 @@ var RhythmEngine = (() => {
         (function(){
           const b=$('t-share'); if(!b) return;
           b.textContent = d.e>=72 ? '今日状态正佳，做一张卡片分享 →'
-            : d.e<=54 ? '为今日留一张安静的卡片 →'
+            : d.e<=54 ? '给今天打张卡 →'
             : '为今日做一张卡片 →';
         })();
         $('w-yi').textContent = (d.yi && d.yi.length) ? d.yi.join(' · ') : '顺其自然';
@@ -19327,8 +19363,8 @@ var RhythmEngine = (() => {
             uu.setAttribute('x',((s.length*cenDigitW)/2+3).toFixed(1)); } })();
         // 轮盘交互改由 spin() 统一处理:转外圈选，点圆心进入(不再「点格即下钻」)
         renderCrumb(); readFor(f);
-        $('lf-hint').textContent = level==='life' ? '拖动指针选岁数 · 点圆心进入那一年'
-          : '拖动指针选月份 · 点圆心返回一生';
+        $('lf-hint').textContent = level==='life' ? '转红针选岁数 · 点圆心进入那一年'
+          : '转红针选月份 · 点圆心返回一生';
         renderBars(V);
       }
 
@@ -19963,7 +19999,7 @@ var RhythmEngine = (() => {
           rpBanner('sec-rhythm','高能量月','顺势而为 · 选对时机')
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b><span>12 个月</span></div>'
           + (Y.yearVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.yearVerdict)+'</div>':'')
-          + chartCard(cpts, Y.year+' 年逐月气场', '金点为你的相对高点 · 点圆点看详情')
+          + chartCard(cpts, Y.year+' 年逐月气场', '金点为相对高点')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeM+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余月份</span></div>'
           + Y.months.map(card).join('')
@@ -19999,7 +20035,7 @@ var RhythmEngine = (() => {
           const _av=months.map((m)=>m.avg), aLo=Math.min.apply(null,_av), aHi=Math.max.apply(null,_av);
           const cpts=months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:false, key:yObj.year+'-'+m.month}));
           html += '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+yObj.year+' 年</b><span>'+(hi.length?('相对高点 '+hi.join('、')+' 月'):'平稳为主')+'</span></div>'
-            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', '金点为你的相对高点 · 点圆点看详情'):'')
+            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', '金点为相对高点'):'')
             + months.map((m)=>monthCard(m,yObj.year,aLo,aHi)).join('')
             + '</div>';
         });
@@ -20036,7 +20072,7 @@ var RhythmEngine = (() => {
           rpBanner('sec-rhythm','高能量年','十年起伏 · 把握大势')
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b><span>10 年</span></div>'
           + (Y.decadeVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.decadeVerdict)+'</div>':'')
-          + chartCard(cpts, '未来十年气场走势', '金点为你的相对高点 · 点圆点看详情')
+          + chartCard(cpts, '未来十年气场走势', '金点为相对高点')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeY+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余年份</span></div>'
           + Y.years.map(card).join('')
@@ -20142,7 +20178,7 @@ var RhythmEngine = (() => {
           if(p==='natal') return '你的性子、内在驱动，与生活各面';
           if(p==='care')  return jq?('眼下「'+jq+'」· 顺时怎么养'):'顺时调养 · 眼下怎么养';
           if(p==='months'){ const hi=(Y&&Y.highMonths&&Y.highMonths.length)?Y.highMonths.slice(0,3).join('·'):''; return hi?('气场高点在 '+hi+' 月'):'今年这一年的节奏起伏'; }
-          if(p==='picker'){ let N=0; if(P&&P.categories) P.categories.forEach(function(c){ N+=(c.days&&c.days.length)?c.days.length:0; }); return N?('未来两月 · 替你挑出 '+N+' 个好日子'):'为要紧事挑个好日子'; }
+          if(p==='picker'){ let N=0; if(P&&P.categories) P.categories.forEach(function(c){ N+=(c.days&&c.days.length)?c.days.length:0; }); return N?('未来两月 · '+N+' 个好日子'):'为要紧事挑个好日子'; }
           if(p==='years'){ const hi=(YR&&YR.highYears&&YR.highYears.length)?YR.highYears.slice(0,3).join('·'):''; return hi?('能量高点年 '+hi):'未来十年的大势起伏'; }
           if(p==='ahead') return '三年逐月 · 一个长镜头看过去';
         }catch(e){}
@@ -20214,7 +20250,7 @@ var RhythmEngine = (() => {
 
       function showBody(){
         cover.style.display='none'; body.style.display='block';
-        $('rp-head-sub').textContent='为你而读';
+        if($('rp-head-sub')) $('rp-head-sub').textContent='';
         // 纵深防御:逐段包 try/catch(单段坏不连累其余与工具箱)
         [renderNatal, renderMonths, renderYears, renderCare, renderPicker, renderAhead].forEach(function(fn){
           try{ fn(); }catch(e){}
@@ -20354,8 +20390,8 @@ var RhythmEngine = (() => {
           if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 本季':'');
           if(chip && offset===0) chip.textContent= top.length? ('本季 '+top.length+' 个吉日') : '本季平稳';
           if($('luck-intro')) $('luck-intro').textContent= top.length
-            ? '按黄历神煞 × 你的能量，为这一季挑出的好日子，附「为什么吉」，把要紧事往这几天排。'
-            : '这一季暂无特别突出的吉日，按平日节奏稳步推进即可。';
+            ? '按黄历神煞 × 你的能量，挑出这一季的好日子，把要紧事往这几天排。'
+            : '这一季暂无特别突出的吉日，按平日节奏推进即可。';
           list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">这一季暂无特别突出的吉日</div>';
         }
         function rowHtml(x){
