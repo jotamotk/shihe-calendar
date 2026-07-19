@@ -1267,6 +1267,8 @@
   .hl2-yi .hl2-yj-k{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
   .hl2-ji .hl2-yj-k{color:var(--rest);background:color-mix(in srgb,var(--rest) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 30%,transparent);}
   .hl2-yj-v{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.7;letter-spacing:.3px;}
+  .hl2-verdict{font-size:13px;font-weight:600;color:var(--gold-d);letter-spacing:.3px;margin:0 0 10px;}
+  .hl2-verdict.a{font-weight:500;color:var(--muted);}
   /* 十二时辰吉凶 */
   .hl2-shi{margin-bottom:2px;}
   .hl2-shi-h{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:var(--gold-d);letter-spacing:1px;margin:4px 0 11px;}
@@ -1801,6 +1803,8 @@
             <div class="wdg wdg-hl2 collapsible" data-wid="huangli" id="w-huangli" style="display:none">
               <div class="wdg-h wdg-toggle hl2-toggle"><span class="wdg-htitle">老黄历</span><span class="hl2-sub" id="hl2-gz">—</span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
+              <!-- 公吉结论行(大吉当头:天赦/大节/黄道,读 gongJi;硬凶/平日静默) -->
+              <div class="hl2-verdict" id="hl2-verdict" style="display:none"></div>
               <!-- 宜忌 hero -->
               <div class="hl2-yj">
                 <div class="hl2-yj-col hl2-yi"><span class="hl2-yj-k">宜</span><div class="hl2-yj-v" id="hl2-yi"></div></div>
@@ -18358,12 +18362,7 @@ var RhythmEngine = (() => {
       }
 
       // —— 能量卡今日顺时一句:贴着分数+态势，给每天一个一眼可读的钩子(养生口吻，非医疗)——
-      function tipLine(d){
-        const e=d.e;
-        return e>=72 ? '今日宜乘势 · 要紧之事宜先行，动中养阳勿透支'
-          : e>=56 ? '今日宜如常 · 循自身节奏，规律作息最养身'
-          : '今日宜内收 · 早些休息、放缓节奏，为身体留出恢复的余地';
-      }
+      // (tipLine 死代码已删:今日主句走 heroLine + 大吉横幅,不再用纯能量的宜句,免与大吉当头打架)
       // —— 今日详解:把引擎算出的 2~3 个维度(事业/钱财/人际/表达/学养/身体/出行…)铺成可展开列表 ——
       //   「心神」一条已上提到体感行；这里只列其余维度，无则隐藏整块。
       // —— 今日各方面(tab 版:事业/财运/感情/学习/健康;机会并入事业,免左右滑)——
@@ -18447,8 +18446,18 @@ var RhythmEngine = (() => {
       var ZORDER=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
       var ZRANGE={子:'23–1',丑:'1–3',寅:'3–5',卯:'5–7',辰:'7–9',巳:'9–11',午:'11–13',未:'13–15',申:'15–17',酉:'17–19',戌:'19–21',亥:'21–23'};
 
-      function renderHuangli(Y,M,g){
+      function renderHuangli(Y,M,g,gj){
         const box=$('w-huangli'); if(!box) return;
+        // 公吉结论行:S级大吉当头置顶金句、A级黄道降调、硬凶/平日静默(负面继续留在下方折叠,不喊吉不吓人)
+        (function(){
+          const el=$('hl2-verdict'); if(!el) return;
+          if(gj && gj.grade==='S'){
+            const rs=(gj.names&&gj.names.length)?gj.names.slice(0,2).join(' · '):((gj.reasons&&gj.reasons.length)?gj.reasons.slice(0,2).join(' · '):'诸事可为');
+            el.textContent='黄历大吉 · '+rs; el.className='hl2-verdict'; el.style.display='';
+          } else if(gj && gj.grade==='A'){
+            el.textContent=(gj.reasons&&gj.reasons.length)?gj.reasons.slice(0,2).join(' · '):'黄道吉日'; el.className='hl2-verdict a'; el.style.display='';
+          } else { el.style.display='none'; }
+        })();
         const RE=window.RhythmEngine;
         let lun=null;
         try{ if(RE&&RE.Solar) lun=RE.Solar.fromYmd(Y,M,g).getLunar(); }catch(e){ lun=null; }
@@ -18659,7 +18668,7 @@ var RhythmEngine = (() => {
         $('w-xisw').style.background = XI;
         $('w-xiname').textContent = XINAME;
         renderFortune(d);                 // 今日各方面(五维:事业/感情/财运/学习↔健康/机会)
-        renderHuangli(curY, curM, d.g);   // 老黄历卡(选中日 · 传统历法速查)
+        renderHuangli(curY, curM, d.g, d.gongJi);   // 老黄历卡(选中日 · 传统历法速查;传 gongJi 显公吉结论行)
         // 民俗 / 神诞:并入能量卡第一栏(名称 + 释义，详情见工具箱「神诞民俗」)
         (function(){
           const box=$('w-folk'), nm=$('w-folk-n'), de=$('w-folk-d');
@@ -20227,8 +20236,7 @@ var RhythmEngine = (() => {
         html += sec('','身体 · 平时多养护','调养',
           '<div class="rp-card"><div class="rp-lede" style="margin-bottom:11px">这几处平日多养护最省力。</div>'
           + pills(organs)
-          + (js.length?'<div class="rp-cl-h" style="margin-top:14px">这些方向需要注意</div><div class="rp-ji">'+js.map((j)=>'<span class="rp-ji-it">'+esc(j.caution)+'</span>').join('')+'</div>':'')
-          + '</div>');
+          + '</div>');  // 忌神「需要注意」已在壹·能量底色章呈现,此处删去,避免两章重复
         // 7 顺时此刻
         if(H){
           html += sec('','顺时 · 此刻「'+esc(JQ.name)+'」','当季要点',
