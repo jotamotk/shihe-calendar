@@ -1716,12 +1716,12 @@
         <!-- 首次使用说明:一次性，直白讲清「分数高=能量高」 -->
         <div class="intro-ov" id="intro-ov">
           <div class="intro-card">
-            <div class="intro-seal">时</div>
+            <div class="intro-seal">顺</div>
             <div class="intro-h">读懂你的每一天</div>
             <div class="intro-rows">
               <div class="intro-row"><span class="intro-orb" id="intro-orb"></span><div class="intro-tx"><b>光球越满 = 能量越足</b><span>球满，状态舒展、宜放手去做；球浅，则宜收宜养、内守蓄力。</span></div></div>
               <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日状态</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>挑高能量日做要紧事</b><span>日历上标金的是你的高能量日，重要决定、要紧事排在这几天；每天的「宜 / 缓 / 宜色」照着做就好。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>要紧事，挑高能量日</b><span>长按某天，会浮出当日能量数，越高越顺——重要决定排到这几天。日历上标金的，是黄历大吉与民俗吉日，另作择日参考。</span></div></div>
             </div>
             <button class="intro-go" id="intro-go">知道了</button>
             <div class="intro-fine">全部在本机计算 · 不上传、不外传</div>
@@ -15346,10 +15346,10 @@ var RhythmEngine = (() => {
           const DE = ["\u5929\u5FB7", "\u6708\u5FB7", "\u5929\u5FB7\u5408", "\u6708\u5FB7\u5408", "\u5929\u613F", "\u6708\u6069", "\u4E09\u5408", "\u516D\u5408", "\u5929\u533B", "\u5929\u559C", "\u6BCD\u4ED3", "\u4E0D\u5C06", "\u9E23\u5420"];
           const hitJi = js.filter((g) => DE.some((d) => g.indexOf(d) >= 0));
           const hasSande = js.some((g) => /天德|月德/.test(g));
-          if (tsType === "\u9EC4\u9053") push("\u5409\u795E", "\u9EC4\u9053\u5409\u65E5 \xB7 " + ts, 2, "\u9EC4\u9053\u5F53\u503C \xB7 \u8BF8\u4E8B\u53EF\u4E3A");
-          if (hitJi.length) push("\u5409\u795E", hitJi.slice(0, 4).join(" \xB7 "), 2, "\u5409\u795E\u503C\u65E5 \xB7 \u5B9C\u7948\u798F\u529E\u6B63\u4E8B");
           const HARD = ["\u6708\u7834", "\u53D7\u6B7B", "\u56DB\u79BB", "\u56DB\u7EDD", "\u5C81\u7834"];
           const hardXiong = xs.some((g) => HARD.some((h) => g.indexOf(h) >= 0));
+          if (!hardXiong && tsType === "\u9EC4\u9053") push("\u5409\u795E", "\u9EC4\u9053\u5409\u65E5 \xB7 " + ts, 2, "\u9EC4\u9053\u5F53\u503C \xB7 \u8BF8\u4E8B\u53EF\u4E3A");
+          if (!hardXiong && hitJi.length) push("\u5409\u795E", hitJi.slice(0, 4).join(" \xB7 "), 2, "\u5409\u795E\u503C\u65E5 \xB7 \u5B9C\u7948\u798F\u529E\u6B63\u4E8B");
           const isBigFest = tags.some((t) => t.type === "\u8282\u65E5");
           const isLv1Shen = tags.some((t) => t.type === "\u795E\u8BDE" && t.level === 1);
           const isTianShe = TIANSHE[mZhi] === dGZ;
@@ -17756,7 +17756,15 @@ var RhythmEngine = (() => {
   var require_browser = __commonJS({
     "engine/browser.js"(exports, module) {
       var { buildApp, buildMonth, buildYear } = require_buildApp();
+      var { folkOf } = require_folk();
       var { paipan, trueSolarCorrection } = require_paipan();
+      function gongJiOf(y, m, d) {
+        try {
+          return folkOf(y, m, d).gongJi;
+        } catch (e) {
+          return null;
+        }
+      }
       var { analyze } = require_analyze();
       var { liuri } = require_liuri();
       var { Solar, Lunar, LunarYear, LunarMonth } = require_lunar();
@@ -17801,7 +17809,7 @@ var RhythmEngine = (() => {
           return 30;
         }
       }
-      module.exports = { buildApp, buildMonth, buildYear, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
+      module.exports = { buildApp, buildMonth, buildYear, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
     }
   });
   return require_browser();
@@ -18738,21 +18746,7 @@ var RhythmEngine = (() => {
         grid.addEventListener('mouseleave',()=>{ cur=null; const tip=grid.querySelector('.cal-tip'); if(tip) tip.classList.remove('on'); });
       }
 
-      // 天赦日:黄历里赦过宥罪的上吉之辰(春戊寅/夏甲午/秋戊申/冬甲子,一年仅约六日),由 lunar.js 吉神实算。
-      //   一个月算一次、缓存到 set —— 翻月不重算,不拖慢滚动。
-      const _tsheCache={};
-      function tsheDays(y, mo){
-        const k=y+'-'+mo; if(_tsheCache[k]) return _tsheCache[k];
-        const set=new Set(), RE=window.RhythmEngine;
-        if(RE&&RE.Solar){
-          const dim=new Date(y,mo,0).getDate();
-          for(let g=1;g<=dim;g++){
-            try{ if((RE.Solar.fromYmd(y,mo,g).getLunar().getDayJiShen()||[]).includes('天赦')) set.add(g); }catch(e){}
-          }
-        }
-        _tsheCache[k]=set; return set;
-      }
-
+      // (天赦日/大吉标记已改用 buildApp 挂好的 day.gongJi,不再单独重扫整月——见下方 renderMonth 的 d.gongJi)
       function renderMonth(m){
         $('c-title').innerHTML = m.year+'年'+m.month+'月<small id="c-sub">'+m.ganZhiYear+'</small><i class="mn-caret">▾</i>';
         if (m.band){ $('c-band').style.display='flex'; $('c-band-t').textContent = m.band; }
@@ -18760,7 +18754,6 @@ var RhythmEngine = (() => {
         const grid = $('pgrid');
         let html = '';
         const jqMap = jieqiDays(m.year, m.month);   // {日: 节气名}
-        const tshe = tsheDays(m.year, m.month);     // 本月天赦日的日号集合(极少,右上角描金 ✦)
         for (let i=0;i<m.firstDow;i++) html += '<div class="pad"></div>';
         m.days.forEach((d)=>{
           const hol = holiday(m.year, m.month, d.g);
@@ -18783,15 +18776,16 @@ var RhythmEngine = (() => {
           // 重点日:本机自定义(生日/纪念日/提醒)。标注统一改为「数字染色」:
           //   民俗→金、放假→暖红(h-off)、重点日→陶土，不再叠小圆点。
           const mks = MARKS.forDate(m.year, m.month, d.g);
-          if (d.fk) cls.push('d-fk');
+          // 金点(数字染金)+ ✦星标:只给 S级大吉 或 具名民俗(节日/天赦/神诞/五腊);泛化黄道约占半月、不占金标(点开当日卡仍可见)
+          const gj = d.gongJi;
+          const isDaji = !!(gj && gj.names && gj.names.length);   // 具名公吉:天赦/大节/一级圣诞等
+          const namedFolk = ['节日','赦日','神诞','五腊'].indexOf(d.tagType) >= 0;
+          if (isDaji || namedFolk) cls.push('d-fk');
           if (mks.length) cls.push('d-mk');
-          // 能量在「点开/悬停」时呈现:轻点看当日卡片(分数+基调),桌面端悬停看一行提示;
-          // 格子本身保持极简留白，不再用整格柔光泼满日历。
-          const isShe = tshe.has(d.g);
-          if (isShe) cls.push('d-she');
-          const sheMark = isShe ? '<span class="tsmark" aria-label="天赦日">✦</span>' : '';
-          const eTip = (isShe?'天赦日 · ':'')+'能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
-          html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+(mks.length?' has-mk':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
+          // 能量在「点开/悬停」时呈现,格子保持极简留白。
+          const sheMark = isDaji ? '<span class="tsmark" aria-label="'+esc(gj.names[0]||'黄历大吉')+'">✦</span>' : '';
+          const eTip = (isDaji?gj.names.slice(0,2).join(' · ')+' · 黄历大吉 · ':'')+'能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
+          html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
                   restBadge+sheMark+
                   '<b>'+d.g+'</b>'+
                   '<span class="'+subCls+'">'+sub+'</span></div>';
@@ -19827,7 +19821,10 @@ var RhythmEngine = (() => {
         const closing=pe.closing?'<div class="rp-sec"><div class="rp-closing">'+esc(pe.closing)+'</div></div>':'';
         // 纹理轮换:读懂你 → 四种状态禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
         // (开篇 np-quote 已删:archetype.line 只在常驻顶卡出现一次,免同屏两句大号金色宋体金句重复、超金面积预算)
-        $('rp-p-natal').innerHTML = rows + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
+        // 深层辩证(dialectics):最戳人的「说中你」内容(如「真到了关口，你比自己以为的扛得住」),接在读懂你之后——重构手风琴时曾漏渲染,现补回
+        const diaIt=(x)=>'<div class="rp-dia-it">'+(x.t?'<div class="rp-dia-t">'+esc(x.t)+'</div>':'')+'<div class="rp-dia-s">'+esc(x.s)+'</div></div>';
+        const dia=(n.dialectics&&n.dialectics.length)?'<div class="rp-sec"><div class="rp-dia">'+n.dialectics.map(diaIt).join('')+'</div></div>':'';
+        $('rp-p-natal').innerHTML = rows + dia + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
         // 生活方面分段 Tab:点选切换
         const wrap=$('rp-p-natal');
         wrap.querySelectorAll('.np-tab').forEach((t)=>{
@@ -20318,7 +20315,7 @@ var RhythmEngine = (() => {
         const n=R.natal; if(!n){ el.innerHTML=''; return; }
         const line=(n.archetype&&n.archetype.line)?n.archetype.line:'';
         let dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
-        const dimHtml=dims.map(function(d){ const lvl=d.v>=62?'hi':(d.v>=48?'mid':'lo'); return '<span class="jd-gl-dim" data-go="natal"><i class="mk '+lvl+'"></i><span>'+esc(d.k)+'</span></span>'; }).join('');
+        const dimHtml=dims.map(function(d){ const lvl=d.v>=72?'hi':(d.v>=56?'mid':'lo'); return '<span class="jd-gl-dim" data-go="natal"><i class="mk '+lvl+'"></i><span>'+esc(d.k)+'</span></span>'; }).join('');
         // 今年主轴:优先 yearVerdict;它约6成盘为空,缺则用已算的高能量月派生一句(纯描述数据,不写新文案),免顶卡留白
         let axis=(R.yearMonths&&R.yearMonths.yearVerdict)?R.yearMonths.yearVerdict:'';
         if(!axis){ const Ym=R.yearMonths; if(Ym&&Ym.highMonths&&Ym.highMonths.length) axis='气场高点在 '+Ym.highMonths.slice(0,3).join('、')+' 月'; }
@@ -20486,14 +20483,20 @@ var RhythmEngine = (() => {
           const eng=RE.energyRange(P, sy,sm,sd, WIN)||[];
           const cand=[];
           for(let i=0;i<eng.length;i++){
-            const d=eng[i]; let L; try{ L=S.fromYmdHms(d.year,d.month,d.day,12,0,0).getLunar(); }catch(e){ continue; }
-            let js=[],tt='',ts=''; try{ js=L.getDayJiShen()||[]; tt=L.getDayTianShenType(); ts=L.getDayTianShen(); }catch(e){}
-            const strong=js.filter((x)=> STRONG.indexOf(x)>=0);
-            if(!(strong.length && tt==='黄道')) continue;
-            let yi=[]; try{ yi=(L.getDayYi()||[]).filter((x)=> x!=='馀事勿取'); }catch(e){}
+            const d=eng[i];
+            // 同源:用引擎 gongJiOf(与今日卡/日历/老黄历同一份 gongJi),别再各自 re-derive
+            const gj = (typeof RE.gongJiOf==='function') ? RE.gongJiOf(d.year,d.month,d.day) : null;
+            if(!gj || gj.hardXiong) continue;   // 硬凶(月破/受死/四离四绝)一票否决,免把凶日当吉日推荐
+            // S级(天赦/大节/德神)无条件收(修:7/19天赦是黑道、旧版"须黄道"把它漏了);A级须黄道+吉神(精选,免纯黄道半月淹没名单)
+            const isPick = gj.grade==='S' || (gj.grade==='A' && gj.jiShen && gj.jiShen.length && gj.tianShenType==='黄道');
+            if(!isPick) continue;
+            let yi=[]; try{ yi=(S.fromYmdHms(d.year,d.month,d.day,12,0,0).getLunar().getDayYi()||[]).filter((x)=> x!=='馀事勿取'); }catch(e){}
             const dt=new Date(d.year,d.month-1,d.day);
-            cand.push({ m:d.month, day:d.day, e:d.energy, ts, strong, yi:yi.slice(0,4),
-              wk:'周'+WK[dt.getDay()], score: strong.length*2 + (d.energy>=72?2:0) + d.energy/30 });
+            const gods=gj.jiShen||[];
+            const head = gj.grade==='S' ? ((gj.names&&gj.names[0]) || (gj.reasons&&gj.reasons[0]) || '黄历大吉') : '';
+            const why = WHY[gods[0]] || (gj.grade==='S' ? '黄历上吉之辰，宜隆重办要紧事、祈福和解' : '黄道当值，诸事可为');
+            cand.push({ m:d.month, day:d.day, e:d.energy, ts:gj.tianShen||'', tt:gj.tianShenType||'', grade:gj.grade, head, gods:gods.slice(0,4), why, yi:yi.slice(0,4),
+              wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?100:0) + gods.length*2 + (d.energy>=72?2:0) + d.energy/30 });
           }
           cand.sort((a,b)=> b.score-a.score);
           const top=cand.slice(0,14).sort((a,b)=> (a.m-b.m)||(a.day-b.day));
@@ -20506,11 +20509,13 @@ var RhythmEngine = (() => {
           list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">这一季暂无特别突出的吉日</div>';
         }
         function rowHtml(x){
-          const tags=x.strong.map((s)=>'<span class="lk-god">'+esc(s)+'</span>').join('');
+          const badge = x.grade==='S' && x.head ? '<span class="lk-god" style="color:var(--gold-d);border-color:var(--gold-line)">'+esc(x.head)+'</span>' : '';
+          const gods = (x.gods||[]).map((s)=>'<span class="lk-god">'+esc(s)+'</span>').join('');
+          const hd = (x.ts && x.tt==='黄道') ? '<span class="lk-hd">'+esc(x.ts)+'黄道</span>' : '';
           const eCls=x.e>=72?'hi':(x.e>=56?'mid':'lo');
           return '<div class="lk-day"><div class="lk-dt"><b>'+x.m+'/'+x.day+'</b><span>'+esc(x.wk)+'</span></div>'
-            +'<div class="lk-main"><div class="lk-tags">'+tags+'<span class="lk-hd">'+esc(x.ts)+'黄道</span><span class="lk-e '+eCls+'">能量'+x.e+'</span></div>'
-            +'<div class="lk-why">'+esc(WHY[x.strong[0]]||'')+'</div>'
+            +'<div class="lk-main"><div class="lk-tags">'+badge+gods+hd+'<span class="lk-e '+eCls+'">能量'+x.e+'</span></div>'
+            +'<div class="lk-why">'+esc(x.why||'')+'</div>'
             +(x.yi.length?'<div class="lk-yi">宜 '+esc(x.yi.join(' · '))+'</div>':'')
             +'</div></div>';
         }
