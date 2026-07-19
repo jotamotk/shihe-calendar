@@ -19769,7 +19769,7 @@ var RhythmEngine = (() => {
         const Y=R.yearMonths; if(!Y||!Y.lowMonths||!Y.lowMonths.length) return '';
         const cur=Y.curMonth||1;
         let up=Y.lowMonths.filter((m)=>m>=cur);
-        if(!up.length) up=Y.lowMonths.slice();
+        if(!up.length) return '';   // 今年后续已无低月:不回退显示已过去的月(「近期调养窗口」只谈未来,免指向过去)
         const pick=up.slice(0,2);
         const mtxt=pick.map((m)=>'<em>'+m+'</em>月').join('、');
         return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>近期调养窗口</b><span>顺时蓄力</span></div>'
