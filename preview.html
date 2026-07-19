@@ -1080,6 +1080,11 @@
   .we-folk{margin:-4px 0 12px;padding:0 0 0 9px;border-left:2px solid #C8AC78;line-height:1.5;}
   .we-folk-n{font-family:var(--serif);font-size:12.5px;font-weight:500;color:#E0C88A;letter-spacing:.3px;}
   .we-folk-d{font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;margin-left:7px;}
+  /* 大吉当头:S级公吉横幅(天赦/大节/圣诞)——比普通民俗更显眼,金底左描边 */
+  .we-folk-daji{border-left-width:3px;border-radius:0 11px 11px 0;padding:9px 13px 9px 11px;margin:-2px 0 13px;
+    background:linear-gradient(90deg,color-mix(in srgb,var(--gold) 12%,transparent),transparent 82%);}
+  .we-folk-daji .we-folk-n{font-size:14px;color:var(--gold-d);letter-spacing:.6px;}
+  .we-folk-daji .we-folk-d{display:block;margin:3px 0 0;color:var(--ink-2);font-size:11.5px;}
   /* 能量卡 · 当日重点日 */
   .we-mk{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 13px;}
   .we-mk-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:400;
@@ -15254,6 +15259,40 @@ var RhythmEngine = (() => {
         if (t.type === "\u4E94\u814A") return "\u9053\u6559\u4E94\u814A\u65E5\u4E4B\u4E00\uFF0C\u796D\u7956\u8C22\u7F6A\u3001\u4FEE\u658B\u79EF\u798F\u7684\u65E5\u5B50\u3002";
         return CONCEPT_DESC[t.name] || "";
       }
+      var FESTIVAL = {
+        "1-1": "\u6625\u8282",
+        "1-5": "\u7834\u4E94",
+        "1-7": "\u4EBA\u65E5",
+        "1-15": "\u5143\u5BB5\u8282",
+        "1-25": "\u586B\u4ED3\u8282",
+        "2-1": "\u4E2D\u548C\u8282",
+        "2-2": "\u9F99\u62AC\u5934",
+        "3-3": "\u4E0A\u5DF3\u8282",
+        "5-5": "\u7AEF\u5348\u8282",
+        "6-6": "\u5929\u8D36\u8282",
+        "7-7": "\u4E03\u5915",
+        "7-15": "\u4E2D\u5143\u8282",
+        "8-15": "\u4E2D\u79CB\u8282",
+        "9-9": "\u91CD\u9633\u8282",
+        "10-1": "\u5BD2\u8863\u8282",
+        "10-15": "\u4E0B\u5143\u8282",
+        "12-8": "\u814A\u516B\u8282",
+        "12-23": "\u5C0F\u5E74"
+      };
+      var FEST_YI = {
+        "\u5929\u8D36\u8282": "\u6652\u8863\u66DD\u4E66 \xB7 \u7948\u798F \xB7 \u56DE\u5A18\u5BB6",
+        "\u6625\u8282": "\u796D\u7956 \xB7 \u56E2\u805A \xB7 \u8FCE\u65B0",
+        "\u5143\u5BB5\u8282": "\u8D4F\u706F \xB7 \u56E2\u5706",
+        "\u7AEF\u5348\u8282": "\u796D\u7940 \xB7 \u6302\u827E \xB7 \u5B89\u5EB7",
+        "\u4E03\u5915": "\u4E5E\u5DE7 \xB7 \u7948\u7F18",
+        "\u4E2D\u5143\u8282": "\u796D\u7956 \xB7 \u8FFD\u601D",
+        "\u4E2D\u79CB\u8282": "\u56E2\u5706 \xB7 \u8D4F\u6708",
+        "\u91CD\u9633\u8282": "\u767B\u9AD8 \xB7 \u656C\u8001",
+        "\u5BD2\u8863\u8282": "\u796D\u7956 \xB7 \u9001\u5BD2\u8863",
+        "\u9F99\u62AC\u5934": "\u7406\u53D1 \xB7 \u7948\u4E30",
+        "\u814A\u516B\u8282": "\u98DF\u814A\u516B\u7CA5 \xB7 \u5907\u5E74",
+        "\u5C0F\u5E74": "\u796D\u7076 \xB7 \u626B\u5C18"
+      };
       function folkOf(year, month, day) {
         const solar = Solar.fromYmdHms(year, month, day, 12, 0, 0);
         const lunar = solar.getLunar();
@@ -15272,6 +15311,21 @@ var RhythmEngine = (() => {
         if (ld === 15) push("\u658B\u6212", "\u671B\u65E5\u658B\u6212", 3, "\u4E0A\u9999 \xB7 \u5FF5\u7ECF \xB7 \u658B\u6212 \xB7 \u9759\u5FC3");
         const sd = SHENDAN_DAO[`${lm}-${ld}`];
         if (sd && !isLeap) sd.forEach((s) => push("\u795E\u8BDE", s.n, s.lv, "\u4E0A\u9999 \xB7 \u793C\u62DC \xB7 \u884C\u5584"));
+        const sf = SHENDAN_FO[`${lm}-${ld}`];
+        if (sf && !isLeap) sf.forEach((s) => {
+          const dup = tags.some((t) => t.name === s.n || /观音|慈航/.test(t.name) && /观音|慈航/.test(s.n));
+          if (!dup) push("\u795E\u8BDE", s.n, s.lv, "\u4E0A\u9999 \xB7 \u793C\u62DC \xB7 \u884C\u5584");
+        });
+        const fest = FESTIVAL[`${lm}-${ld}`];
+        if (fest && !isLeap) push("\u8282\u65E5", fest, 1, FEST_YI[fest] || "\u5E94\u8282 \xB7 \u987A\u65F6");
+        const jqName = lunar.getJieQi();
+        if (jqName === "\u6E05\u660E") push("\u8282\u65E5", "\u6E05\u660E", 1, "\u796D\u626B \xB7 \u8E0F\u9752");
+        else if (jqName === "\u51AC\u81F3") push("\u8282\u65E5", "\u51AC\u81F3", 1, "\u796D\u7956 \xB7 \u8FDB\u8865 \xB7 \u6570\u4E5D");
+        try {
+          const nl = Solar.fromYmdHms(year, month, day, 12, 0, 0).next(1).getLunar();
+          if (Math.abs(nl.getMonth()) === 1 && nl.getDay() === 1) push("\u8282\u65E5", "\u9664\u5915", 1, "\u5B88\u5C81 \xB7 \u56E2\u5706 \xB7 \u796D\u7956");
+        } catch (e) {
+        }
         if (WULA[`${lm}-${ld}`] && !isLeap) push("\u4E94\u814A", "\u4E94\u814A\xB7" + WULA[`${lm}-${ld}`], 2, "\u796D\u7956 \xB7 \u5FCF\u6094 \xB7 \u658B\u6212 \xB7 \u884C\u5584");
         if (dGZ === "\u5E9A\u7533") push("\u4FEE\u884C", "\u5E9A\u7533\u65E5", 2, "\u5B88\u5E9A\u7533 \xB7 \u9759\u5750 \xB7 \u5FCF\u6094 \xB7 \u5FF5\u7ECF \xB7 \u8282\u6B32");
         let wuRi = false;
@@ -15282,7 +15336,46 @@ var RhythmEngine = (() => {
         let band = null;
         if (lm === 6 && ld <= 24 && !isLeap) band = "\u96F7\u658B\u6708 \xB7 \u521D\u4E00\u2013\u5EFF\u56DB";
         else if (lm === 9 && ld <= 9 && !isLeap) band = "\u4E5D\u7687\u658B \xB7 \u521D\u4E00\u2013\u521D\u4E5D";
-        const order = { "\u8D66\u65E5": 0, "\u4E94\u814A": 2, "\u658B\u6212": 4, "\u4FEE\u884C": 5, "\u5409\u795E": 6 };
+        let gongJi = null;
+        try {
+          const tsType = lunar.getDayTianShenType();
+          const ts = lunar.getDayTianShen();
+          const zx = lunar.getZhiXing();
+          const js = lunar.getDayJiShen() || [];
+          const xs = lunar.getDayXiongSha() || [];
+          const DE = ["\u5929\u5FB7", "\u6708\u5FB7", "\u5929\u5FB7\u5408", "\u6708\u5FB7\u5408", "\u5929\u613F", "\u6708\u6069", "\u4E09\u5408", "\u516D\u5408", "\u5929\u533B", "\u5929\u559C", "\u6BCD\u4ED3", "\u4E0D\u5C06", "\u9E23\u5420"];
+          const hitJi = js.filter((g) => DE.some((d) => g.indexOf(d) >= 0));
+          const hasSande = js.some((g) => /天德|月德/.test(g));
+          if (tsType === "\u9EC4\u9053") push("\u5409\u795E", "\u9EC4\u9053\u5409\u65E5 \xB7 " + ts, 2, "\u9EC4\u9053\u5F53\u503C \xB7 \u8BF8\u4E8B\u53EF\u4E3A");
+          if (hitJi.length) push("\u5409\u795E", hitJi.slice(0, 4).join(" \xB7 "), 2, "\u5409\u795E\u503C\u65E5 \xB7 \u5B9C\u7948\u798F\u529E\u6B63\u4E8B");
+          const HARD = ["\u6708\u7834", "\u53D7\u6B7B", "\u56DB\u79BB", "\u56DB\u7EDD", "\u5C81\u7834"];
+          const hardXiong = xs.some((g) => HARD.some((h) => g.indexOf(h) >= 0));
+          const isBigFest = tags.some((t) => t.type === "\u8282\u65E5");
+          const isLv1Shen = tags.some((t) => t.type === "\u795E\u8BDE" && t.level === 1);
+          const isTianShe = TIANSHE[mZhi] === dGZ;
+          const reasons = [];
+          if (isTianShe) reasons.push("\u5929\u8D66\u5F53\u5934");
+          if (hasSande) reasons.push("\u5929\u5FB7\u6708\u5FB7\u4E34");
+          if (fest) reasons.push(fest);
+          else if (jqName === "\u6E05\u660E" || jqName === "\u51AC\u81F3") reasons.push(jqName);
+          if (isLv1Shen) {
+            const lv1 = tags.find((t) => t.type === "\u795E\u8BDE" && t.level === 1);
+            if (lv1) reasons.push(lv1.name);
+          }
+          let grade = null;
+          if (!hardXiong && (isTianShe || hasSande || isBigFest || isLv1Shen)) grade = "S";
+          else if (!hardXiong && (tsType === "\u9EC4\u9053" || hitJi.length)) {
+            grade = "A";
+            if (tsType === "\u9EC4\u9053") reasons.push("\u9EC4\u9053\u5409\u65E5");
+            else if (hitJi.length) reasons.push("\u5409\u795E\u503C\u65E5");
+          }
+          const gjNames = tags.filter((t) => t.type === "\u8282\u65E5" || t.type === "\u8D66\u65E5" || t.type === "\u795E\u8BDE" && t.level === 1).map((t) => t.name);
+          const headYi = (tags.find((t) => t.type === "\u8282\u65E5") || tags.find((t) => t.type === "\u8D66\u65E5") || {}).yi || "";
+          gongJi = { grade, reasons, names: gjNames, headYi, tianShen: ts, tianShenType: tsType, zhiXing: zx, jiShen: hitJi, xiongSha: xs, hardXiong };
+        } catch (e) {
+          gongJi = null;
+        }
+        const order = { "\u8282\u65E5": 0, "\u8D66\u65E5": 0, "\u4E94\u814A": 2, "\u658B\u6212": 4, "\u4FEE\u884C": 5, "\u5409\u795E": 6 };
         const rank = (t) => t.type === "\u795E\u8BDE" ? t.level === 1 ? 1 : t.level === 2 ? 3 : 7 : order[t.type] ?? 8;
         tags.sort((a, b) => rank(a) - rank(b));
         tags.forEach((t) => {
@@ -15297,7 +15390,8 @@ var RhythmEngine = (() => {
           ganZhi: dGZ,
           wuRi,
           band,
-          tags
+          tags,
+          gongJi
         };
       }
       function deityEntriesOf(lm, ld, isLeap) {
@@ -17473,7 +17567,9 @@ var RhythmEngine = (() => {
             tagYi: tag ? tag.yi : d.yi.join(" \xB7 "),
             tagDesc: tag ? tag.desc : "",
             tagType: tag ? tag.type : "",
-            ganZhi
+            ganZhi,
+            gongJi: folk.gongJi
+            // 通用黄历吉凶(黄道/天赦/大节→S/A级),供"大吉当头"呈现,与个人能量解耦
           };
         });
         return {
@@ -17528,6 +17624,8 @@ var RhythmEngine = (() => {
             wuNote: folk.wuRi ? "\u4ECA\u9022\u620A\u65E5 \xB7 \u5FCC\u711A\u9999\u671D\u771F" : "",
             good: LR.energy >= GOOD,
             // 高能量吉日，供选日标记(统一口径)
+            gongJi: folk.gongJi,
+            // 通用黄历吉凶(大吉当头,与个人能量解耦)
             heroLine: heroLine(heroP, LR.fortune, LR.energy)
             // 干货主句:说中你+能照做
           };
@@ -18558,14 +18656,27 @@ var RhythmEngine = (() => {
         (function(){
           const box=$('w-folk'), nm=$('w-folk-n'), de=$('w-folk-d');
           if(!box) return;
-          if (d.tagName && d.tagName!=='平日' && d.tagType!=='忌'){
+          const gj = d.gongJi;
+          if (gj && gj.grade==='S'){
+            // 大吉当头:通用黄历层置顶大吉,个人能量在下方「你的状态」卡另说,诚实分层、不打架
+            const names = (gj.names&&gj.names.length) ? gj.names.slice(0,2).join(' · ') : (d.tagName&&d.tagName!=='平日'?d.tagName:'黄历上吉');
+            nm.textContent = names + ' · 黄历大吉';
+            de.textContent = gj.headYi ? ('宜 '+gj.headYi) : '天地开恩、诸事可为';
+            box.className='we-folk we-folk-daji'; box.style.display='';
+          } else if (d.tagName && d.tagName!=='平日' && d.tagType!=='忌'){
+            // 具名民俗(神诞/观音诞/节日/五腊)优先于泛化黄道
             nm.textContent = d.tagName;
             de.textContent = d.tagDesc || (d.tagYi ? ('宜 '+d.tagYi) : '');
-            box.style.display='';
+            box.className='we-folk'; box.style.display='';
+          } else if (gj && gj.grade==='A'){
+            // 无具名民俗时才显泛化黄道吉日(约占半月,常态底色)
+            nm.textContent = '黄历吉日'+(gj.tianShen?(' · '+gj.tianShen):'');
+            de.textContent = (gj.jiShen&&gj.jiShen.length) ? gj.jiShen.slice(0,3).join(' · ') : '诸事可为';
+            box.className='we-folk'; box.style.display='';
           } else if (d.wu){
             nm.textContent = '戊日 · 静养';
             de.textContent = '道教「戊不朝真」之静日，逢戊日不焚香、不动土；宜静养、诵经、读书。';
-            box.style.display='';
+            box.className='we-folk'; box.style.display='';
           } else { box.style.display='none'; }
         })();
       }
