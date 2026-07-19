@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>时和</title>
+<title>顺时黄历</title>
 <!-- 字体:全部走系统字体栈(国内零网络依赖、各机型快速且一致；不再依赖被墙的 Google Fonts) -->
 <!-- PWA · 可「添加到主屏幕」全屏运行 -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="时和">
+<meta name="apple-mobile-web-app-title" content="顺时黄历">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <style>
@@ -634,7 +634,7 @@
   .rp-step-arw{flex:none;align-self:center;color:var(--line-2);font-size:12px;}
   /* natal · 分层小标(①②③) */
   .rp-ly{flex:none;width:19px;height:19px;border-radius:50%;background:var(--gold-soft);border:1px solid var(--gold-line);color:var(--gold-d);font-size:11px;font-weight:600;font-style:normal;font-family:var(--serif);display:inline-flex;align-items:center;justify-content:center;letter-spacing:0;}
-  /* natal · 四维节律禀赋条 */
+  /* natal · 四种状态禀赋条 */
   .rp-rhythm{display:flex;flex-direction:column;gap:14px;}
   .rp-rh-top{display:flex;align-items:center;gap:11px;}
   .rp-rh{display:flex;align-items:baseline;gap:12px;}
@@ -1696,8 +1696,8 @@
 <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.7 9.3 10.6 10.6 9.3 14.7 13.4 13.4 14.7 9.3Z"/><circle cx="12" cy="12" r="0.7" fill="currentColor" stroke="none"/></symbol>
 </defs></svg>
   <div class="page-head">
-    <div class="brand-row"><div class="brand-seal">时</div><div class="brand-name">时 和</div></div>
-    <p>每天一格，把日子过成自己的节律</p>
+    <div class="brand-row"><div class="brand-seal">顺</div><div class="brand-name">顺时黄历</div></div>
+    <p>顺天而养，应时而行</p>
     <div class="tag">真实引擎驱动 · 数据全本机计算</div>
   </div>
 
@@ -1715,7 +1715,7 @@
             <div class="intro-h">读懂你的每一天</div>
             <div class="intro-rows">
               <div class="intro-row"><span class="intro-orb" id="intro-orb"></span><div class="intro-tx"><b>光球越满 = 能量越足</b><span>球满，状态舒展、宜放手去做；球浅，则宜收宜养、内守蓄力。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日节律</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日状态</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
               <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>挑高能量日做要紧事</b><span>日历上标金的是你的高能量日，重要决定、要紧事排在这几天；每天的「宜 / 缓 / 宜色」照着做就好。</span></div></div>
             </div>
             <button class="intro-go" id="intro-go">知道了</button>
@@ -1765,9 +1765,9 @@
               <div class="we-mk" id="w-mk" style="display:none"></div>
             </div>
 
-            <!-- W-TODAY 今日 · 你的节律(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
+            <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的节律</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
@@ -1946,7 +1946,7 @@
         </div>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
       </div></div>
-      <div class="frame-label">节律 · 百年能量(生命之轮，可缩放)</div>
+      <div class="frame-label">一生能量 · 生命之轮(可缩放)</div>
     </div>
 
     <!-- ===== 3. 解读(命书速览 → 深度报告 · 全部免费) ===== -->
@@ -1993,7 +1993,7 @@
           </button>
           <button class="tb-feat" data-tool="fujiu" data-title="三伏三九">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fujiu"></use></svg>
-              <div><b>三伏三九 · 养生节律</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
+              <div><b>三伏三九 · 顺时养生</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -17906,7 +17906,7 @@ var RhythmEngine = (() => {
       '<div class="shc-seal">时</div>' +
       '<div class="shc-title">使用前必读</div>' +
       '<div class="shc-body">' +
-        '<p>欢迎使用「时和 · 节律日历」。开始前，请你阅读并同意我们的' +
+        '<p>欢迎使用「顺时黄历」。开始前，请你阅读并同意我们的' +
         '《隐私政策》与《用户协议》。</p>' +
         '<div class="shc-note-box">' +
           '<p style="margin:0 0 6px"><b>关于你的信息</b></p>' +
@@ -18186,7 +18186,7 @@ var RhythmEngine = (() => {
         const stamp=now.getUTCFullYear()+z(now.getUTCMonth()+1)+z(now.getUTCDate())+'T'+z(now.getUTCHours())+z(now.getUTCMinutes())+z(now.getUTCSeconds())+'Z';
         const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//shihe//rhythm-calendar//CN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
           'BEGIN:VEVENT','UID:'+m.id+'@shihe.app','DTSTAMP:'+stamp,'DTSTART;VALUE=DATE:'+dstart,
-          'SUMMARY:'+icsEsc(m.name),'DESCRIPTION:'+icsEsc(catNm+' · 由「时和·节律日历」加入'),'TRANSP:TRANSPARENT'];
+          'SUMMARY:'+icsEsc(m.name),'DESCRIPTION:'+icsEsc(catNm+' · 由「顺时黄历」加入'),'TRANSP:TRANSPARENT'];
         if(m.repeat) L.push('RRULE:FREQ=YEARLY');
         L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(m.name),'TRIGGER:PT9H','END:VALARM','END:VEVENT','END:VCALENDAR');
         return L.join('\r\n');
@@ -18834,13 +18834,13 @@ var RhythmEngine = (() => {
             +'<div class="sc-bmeta"><span class="sc-gz">农历'+lunar+(gz?' · '+gz:'')+'</span><span>能量 '+d.e+'</span></div></div>';
         }
         if(THEME==='C'){
-          return '<div class="sc-ctop"><div class="sc-cbrand"><span class="sc-cs">时</span>时和</div>'
+          return '<div class="sc-ctop"><div class="sc-cbrand"><span class="sc-cs">顺</span>顺时黄历</div>'
             +'<div class="sc-ce">能量 '+d.e+(word?' · '+word:'')+'</div></div>'
             +'<div class="sc-cmid"><div class="sc-kw" style="font-size:'+kwSize(kw,56)+'px">'+kw+'</div>'
             +'<div class="sc-line">'+line+'</div>'
             +'<div class="sc-cbar"><div class="sc-t"><b>今日宜 '+yi+'</b><span>'+esc(XINAME||'')+'</span></div>'
             +'<div class="sc-bar"><i style="width:'+e+'%"></i></div></div></div>'
-            +'<div class="sc-cfoot"><span>'+M+'月'+d.g+'日 · 农历'+lunar+'</span><span>把日子过成自己的节律</span></div>';
+            +'<div class="sc-cfoot"><span>'+M+'月'+d.g+'日 · 农历'+lunar+'</span><span>顺天而养，应时而行</span></div>';
         }
         if(THEME==='D'){
           const days=APP.month.days||[];
@@ -18856,7 +18856,7 @@ var RhythmEngine = (() => {
             +'<div class="sc-wkmid"><div class="sc-wkavg"><b>'+avg+'</b><i>周均能量</i></div>'
             +'<div class="sc-wkchart">'+bars+'</div>'
             +'<div class="sc-wkline">最舒展是 <b>'+best.g+'日</b>（'+best.e+'分）。把要紧的事，放在你状态最好的那天。</div></div>'
-            +'<div class="sc-foot">时和 · 把日子过成自己的节律</div>';
+            +'<div class="sc-foot">顺时黄历 · 顺天而养，应时而行</div>';
         }
         // A · 今日笺 · 宣纸留白(真数据:光球 + 当天信号最强的域当主句、其余当提点 + 宜色)
         const XDOM=[['career','事业'],['money','钱财'],['study','学习'],['love','感情'],['health','身体'],['chance','机会']];
@@ -18872,7 +18872,7 @@ var RhythmEngine = (() => {
         var xorb=(typeof energyOrb==='function')?energyOrb(d.e,84):ringSVG(d.e);
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
           +'<div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand">时和<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-orb">'+xorb+'</div>'
           +'<div class="xp-say">'+xheroHtml+'</div>'
@@ -18897,9 +18897,9 @@ var RhythmEngine = (() => {
         go.addEventListener('click', async ()=>{
           const d=SHARE_DAY; if(!d) return;
           const kw=(d.cueWord||d.cue||'顺其自然');
-          const txt='时和 · '+APP.month.month+'月'+d.g+'日 · 我今天的节律。顺时而养，过好每一天。';
+          const txt='顺时黄历 · '+APP.month.month+'月'+d.g+'日 · 我今天的状态。顺天而养，应时而行。';
           try{
-            await navigator.share({ title:'时和', text:txt, url:location.origin+location.pathname });
+            await navigator.share({ title:'顺时黄历', text:txt, url:location.origin+location.pathname });
             window.shihe&&window.shihe.track&&window.shihe.track('share_done',{ch:'system'});
           }catch(e){}
         });
@@ -19609,7 +19609,7 @@ var RhythmEngine = (() => {
 
       // (全免费版本:原付费墙 cover / 解锁确认 sheet / doUnlock 已移除——打开报告即直达完整内容)
 
-      // —— 四维节律禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
+      // —— 四种状态禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
       //   精力=bodyT定方向+四维均值(喜忌口径)解饱和+季节 · 专注=学习×.6+事业×.4 · 情绪=情感×.7+健康×.3 · 人际=结构性外向度 socialTendency(食伤+比劫-印-官,独立于旺衰)
       const RH_DESC={
         精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度、别硬透支'],[0,'精力细水长流，顺势蓄力、少熬夜']],
@@ -19645,9 +19645,9 @@ var RhythmEngine = (() => {
           + '<span class="rp-rh-lab">'+d.k+'</span>'
           + '<span class="rp-rh-line">'+esc(rhDesc(d.k,d.v))+'</span>'
           + '</div>';
-        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四维节律</b><span>你的能量禀赋</span></div>'
+        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四种状态</b><span>你的能量禀赋</span></div>'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
-          + '<div class="rp-rh-foot">这是你与生俱来的节律倾向，无关好坏——顺着它安排张弛，最省力。</div>'
+          + '<div class="rp-rh-foot">这是你天生的样子，无关好坏——顺着它安排张弛，最省力。</div>'
           + '</div></div>';
       }
       // 应期正向化:取现有流月低分月，改说成「调养窗口期」(蓄力，不是低谷)
@@ -19714,7 +19714,7 @@ var RhythmEngine = (() => {
           + '<div class="rp-color-tx"><b>'+esc(n.xiColor.name)+'</b><p>'+esc(n.colorAdvice)+'</p></div></div></div></div>';
         // 收束金句(温暖尾声)
         const closing=pe.closing?'<div class="rp-sec"><div class="rp-closing">'+esc(pe.closing)+'</div></div>':'';
-        // 纹理轮换:读懂你 → 四维节律禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
+        // 纹理轮换:读懂你 → 四种状态禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
         // (开篇 np-quote 已删:archetype.line 只在常驻顶卡出现一次,免同屏两句大号金色宋体金句重复、超金面积预算)
         $('rp-p-natal').innerHTML = rows + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
         // 生活方面分段 Tab:点选切换
