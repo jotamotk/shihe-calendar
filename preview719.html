@@ -18777,7 +18777,10 @@ var RhythmEngine = (() => {
           else if (hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
           // 日期下方文字优先级:节气 > 节假日名 > 民俗节日 > 农历(让重点信息突出，不显杂乱)
           let sub, subCls='ln';
-          const fst = festOf(m.year, m.month, d.g, d.lunarLabel);
+          // 民俗节日/大吉名:优先用引擎 folk 数据(d.tagName,与卡片同源、含天贶节/天赦日等),≤5字才显防溢出;
+          //   本地 festOf 半套表作兜底(它缺天贶节等,故退居其次)。这样 7/19 底下直接显「天赦日」而非「初六」。
+          const folkName = (['节日','赦日','神诞','五腊'].indexOf(d.tagType)>=0 && d.tagName && d.tagName.length<=5) ? d.tagName : '';
+          const fst = folkName || festOf(m.year, m.month, d.g, d.lunarLabel);
           if (jq){ sub=jq; subCls='ln jq'; }
           else if (hol && hol.name){ sub=hol.name; subCls='ln fest'; }
           else if (fst){ sub=fst; subCls='ln fest'; }
