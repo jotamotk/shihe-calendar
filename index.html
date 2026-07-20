@@ -2768,7 +2768,7 @@
         let _jiuxing=''; try{ const _ns=lun.getDayNineStar(); _jiuxing=_ns.getNumber()+_ns.getColor()+' · '+_ns.getNameInXuanKong()+'('+_ns.getWuXing()+')'; }catch(e){}
         const _hdEra=(function(){ try{ return (lun.getYear()+2697)+' 年'; }catch(e){ return ''; } })();
         html('hl2-grid',
-            cell('黄帝纪年', _hdEra?('<span class="yj-term" data-d="'+esc("黄帝纪年　以华夏人文初祖黄帝即位之年起算（公历年＋2697），属人文纪念、不涉吉凶占断。")+'">'+_hdEra+'</span>'):'', '', false, true)
+            cell('黄帝纪年', _hdEra?('<span class="yj-term" data-d="'+esc("黄帝纪年　以华夏人文初祖黄帝即位之年起算（公历年＋2697），属人文纪念、不涉吉凶占断。")+'">'+_hdEra+'</span>'):'', '', true, true)
           + cell('今日吉方', _jf, '', true, true)
           + cell('冲煞', chongCell, '与所列生肖同属者当日相冲')
           + cell('岁煞', _suisha, '按日支三合局')
