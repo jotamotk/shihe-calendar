@@ -560,6 +560,26 @@
     background:radial-gradient(72% 56% at 50% -4%,color-mix(in srgb,var(--gold) 15%,transparent),transparent 70%);opacity:.6;}
   .jd-gl-eye{position:relative;font-size:10px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;font-weight:500;opacity:.82;}
   .jd-gl-line{position:relative;font-family:var(--serif);font-size:20px;line-height:1.55;color:var(--gold-d);font-weight:400;margin:12px 0 2px;text-wrap:balance;letter-spacing:.5px;}
+  /* 开篇「当年运势」卡:今年要做/要注意 + 左右翻年 */
+  .jd-yr{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:16px;padding:15px 15px 14px;margin:0 0 16px;}
+  .jd-yr-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;}
+  .jd-yr-arw{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);background:var(--card);color:var(--gold-d);font-size:19px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:all .16s var(--ease);-webkit-tap-highlight-color:transparent;}
+  .jd-yr-arw:active{background:var(--gold-soft);transform:scale(.94);}
+  .jd-yr-ttl{text-align:center;flex:1;min-width:0;}
+  .jd-yr-ttl b{font-family:var(--serif);font-size:21px;font-weight:500;color:var(--gold-d);letter-spacing:1px;}
+  .jd-yr-ttl span{display:block;font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
+  .jd-yr-trait{font-size:14px;line-height:1.72;color:var(--ink);margin-bottom:13px;position:relative;padding-left:13px;}
+  .jd-yr-dot{position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;}
+  .jd-yr-dot.hi{background:var(--gold);box-shadow:0 0 6px -1px var(--gold);}
+  .jd-yr-dot.mid{background:var(--muted);}
+  .jd-yr-dot.lo{background:#6b7a86;}
+  .jd-yr-yj{display:flex;flex-direction:column;gap:11px;}
+  .jd-yr-k{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;padding:2px 9px;border-radius:7px;margin-bottom:7px;}
+  .jd-yr-k.do{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
+  .jd-yr-k.watch{color:var(--rest);background:color-mix(in srgb,var(--rest) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 28%,transparent);}
+  .jd-yr-col ul{list-style:none;margin:0;padding:0;}
+  .jd-yr-col li{font-size:13.5px;line-height:1.65;color:var(--ink-2);padding-left:14px;position:relative;}
+  .jd-yr-col li::before{content:"";position:absolute;left:4px;top:9px;width:4px;height:4px;border-radius:50%;background:var(--gold-d);opacity:.7;}
   .jd-gl-dims{position:relative;display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 2px;}
   .jd-gl-dim{display:flex;align-items:center;gap:7px;cursor:pointer;}
   .jd-gl-dim .mk{width:9px;height:9px;border-radius:50%;flex:none;}
@@ -1894,7 +1914,6 @@
         <div class="notch"></div>
         <div class="status"><span class="clock">9:41</span><span></span></div>
         <div class="scroll">
-          <div class="tb-detail-head"><button class="tb-back" data-goto="tools" type="button"><span>‹</span>工具箱</button></div>
           <div class="life-top">
             <div class="life-h"><b>一生能量</b><span>逐年逐月</span></div>
           </div>
@@ -1964,11 +1983,11 @@
           <!-- 深度报告入口已移除:统一走「解读」页入口，避免重复 -->
 
         </div>
-        <!-- 生命之轮为工具箱下的独立能量指南页:顶部「‹ 工具箱」返回 + 底部标准 3-tab 栏(工具箱高亮),与其它工具页一致 -->
+        <!-- 一生能量:从「我的」进入的整屏能量指南页;底部标准 tab 栏,不高亮任何项(它不归属某个底栏 tab) -->
         <div class="tabbar">
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-          <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+          <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
           <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
@@ -2032,11 +2051,6 @@
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
               <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
-            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
-          </button>
-          <button class="tb-feat" data-tool="rhythm" data-title="一生能量">
-            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-rhythm"></use></svg>
-              <div><b>一生能量</b><small>逐年逐月</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2232,6 +2246,8 @@
       <div class="rp-cover" id="rp-cover"></div>
       <!-- 已解锁内容 -->
       <div id="rp-body" style="display:none">
+        <!-- 开篇「当年运势」卡:讲今年要做什么/要注意(干货),可左右翻年看上一年/下一年 -->
+        <div id="jd-year"></div>
         <!-- 一目了然层:常驻不折叠的「能量底色卡」(JS 填充,全部引用现有已算字段,缺失走 if-guard) -->
         <div id="jd-glance"></div>
         <!-- 六章手风琴:章头由 JS 填(章序/眉标/章名/信号 chip);章内容=原 rp-page 原样搬入(内容一字不改) -->
@@ -4579,7 +4595,51 @@
         items.forEach(function(el){ io.observe(el); });
         setTimeout(function(){ items.forEach(show); },1500); // 安全兜底:防 display:none→block 时 IO 不触发致内容隐身
       }
-      function buildJiedu(){ try{ buildGlance(); buildHeads(); jdReveal(); }catch(e){} }
+      // —— 开篇「当年运势」卡:当年要做什么/要注意(干货),左右翻年(过去年按需实算)——
+      var _jdYearY=null, _jdYearCache={};
+      function jdYearData(Y){
+        if(_jdYearCache[Y]) return _jdYearCache[Y];
+        var hit=((R.years&&R.years.years)||[]).filter(function(y){return y.year===Y;})[0];
+        if(hit){ _jdYearCache[Y]=hit; return hit; }
+        try{ var c=window.RhythmEngine&&window.RhythmEngine.buildYearCardFor&&window.RhythmEngine.buildYearCardFor(window.APP_PERSON, Y); if(c){ _jdYearCache[Y]=c; return c; } }catch(e){}
+        return null;
+      }
+      function renderYearCard(){
+        var el=$('jd-year'); if(!el) return;
+        if(!R.years||!R.years.years||!R.years.years.length){ el.innerHTML=''; return; }
+        var curY=R.years.curYear||R.years.years[0].year;
+        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
+        if(_jdYearY==null) _jdYearY=curY;
+        _jdYearY=Math.max(birthY, Math.min(birthY+99, _jdYearY));
+        var y=jdYearData(_jdYearY); if(!y){ el.innerHTML=''; return; }
+        var lvl=y.level==='高'?'hi':(y.level==='低'?'lo':'mid');
+        var sub=[(y.age!=null?y.age+'岁':''), y.ganZhi, (_jdYearY===curY?'今年':'')].filter(Boolean).join(' · ');
+        var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
+        var doL=li(y.yi), watchL=li(y.ji);
+        el.innerHTML=
+          '<div class="jd-yr">'
+          +'<div class="jd-yr-nav">'
+          +'<button class="jd-yr-arw" id="jd-yr-prev" type="button" aria-label="上一年">‹</button>'
+          +'<div class="jd-yr-ttl"><b>'+_jdYearY+' 年</b>'+(sub?'<span>'+esc(sub)+'</span>':'')+'</div>'
+          +'<button class="jd-yr-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
+          +'</div>'
+          +(y.trait?'<div class="jd-yr-trait"><i class="jd-yr-dot '+lvl+'"></i>'+esc(y.trait)+'</div>':'')
+          +'<div class="jd-yr-yj">'
+          +(doL?'<div class="jd-yr-col"><span class="jd-yr-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
+          +(watchL?'<div class="jd-yr-col"><span class="jd-yr-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
+          +'</div>'
+          +'</div>';
+        var go=function(d){ _jdYearY+=d; renderYearCard(); };
+        var p=$('jd-yr-prev'), nx=$('jd-yr-next');
+        if(p) p.onclick=function(){ go(-1); };
+        if(nx) nx.onclick=function(){ go(1); };
+        var card=el.querySelector('.jd-yr'), x0=null;
+        if(card){
+          card.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
+          card.addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)<45)return; go(dx<0?1:-1); },{passive:true});
+        }
+      }
+      function buildJiedu(){ try{ renderYearCard(); buildGlance(); buildHeads(); jdReveal(); }catch(e){} }
 
       function showBody(){
         cover.style.display='none'; body.style.display='block';

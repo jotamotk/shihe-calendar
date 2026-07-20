@@ -13011,6 +13011,40 @@ var RhythmEngine = (() => {
         if (t.type === "\u4E94\u814A") return "\u9053\u6559\u4E94\u814A\u65E5\u4E4B\u4E00\uFF0C\u796D\u7956\u8C22\u7F6A\u3001\u4FEE\u658B\u79EF\u798F\u7684\u65E5\u5B50\u3002";
         return CONCEPT_DESC[t.name] || "";
       }
+      var FESTIVAL = {
+        "1-1": "\u6625\u8282",
+        "1-5": "\u7834\u4E94",
+        "1-7": "\u4EBA\u65E5",
+        "1-15": "\u5143\u5BB5\u8282",
+        "1-25": "\u586B\u4ED3\u8282",
+        "2-1": "\u4E2D\u548C\u8282",
+        "2-2": "\u9F99\u62AC\u5934",
+        "3-3": "\u4E0A\u5DF3\u8282",
+        "5-5": "\u7AEF\u5348\u8282",
+        "6-6": "\u5929\u8D36\u8282",
+        "7-7": "\u4E03\u5915",
+        "7-15": "\u4E2D\u5143\u8282",
+        "8-15": "\u4E2D\u79CB\u8282",
+        "9-9": "\u91CD\u9633\u8282",
+        "10-1": "\u5BD2\u8863\u8282",
+        "10-15": "\u4E0B\u5143\u8282",
+        "12-8": "\u814A\u516B\u8282",
+        "12-23": "\u5C0F\u5E74"
+      };
+      var FEST_YI = {
+        "\u5929\u8D36\u8282": "\u6652\u8863\u66DD\u4E66 \xB7 \u7948\u798F \xB7 \u56DE\u5A18\u5BB6",
+        "\u6625\u8282": "\u796D\u7956 \xB7 \u56E2\u805A \xB7 \u8FCE\u65B0",
+        "\u5143\u5BB5\u8282": "\u8D4F\u706F \xB7 \u56E2\u5706",
+        "\u7AEF\u5348\u8282": "\u796D\u7940 \xB7 \u6302\u827E \xB7 \u5B89\u5EB7",
+        "\u4E03\u5915": "\u4E5E\u5DE7 \xB7 \u7948\u7F18",
+        "\u4E2D\u5143\u8282": "\u796D\u7956 \xB7 \u8FFD\u601D",
+        "\u4E2D\u79CB\u8282": "\u56E2\u5706 \xB7 \u8D4F\u6708",
+        "\u91CD\u9633\u8282": "\u767B\u9AD8 \xB7 \u656C\u8001",
+        "\u5BD2\u8863\u8282": "\u796D\u7956 \xB7 \u9001\u5BD2\u8863",
+        "\u9F99\u62AC\u5934": "\u7406\u53D1 \xB7 \u7948\u4E30",
+        "\u814A\u516B\u8282": "\u98DF\u814A\u516B\u7CA5 \xB7 \u5907\u5E74",
+        "\u5C0F\u5E74": "\u796D\u7076 \xB7 \u626B\u5C18"
+      };
       function folkOf(year, month, day) {
         const solar = Solar.fromYmdHms(year, month, day, 12, 0, 0);
         const lunar = solar.getLunar();
@@ -13029,6 +13063,21 @@ var RhythmEngine = (() => {
         if (ld === 15) push("\u658B\u6212", "\u671B\u65E5\u658B\u6212", 3, "\u4E0A\u9999 \xB7 \u5FF5\u7ECF \xB7 \u658B\u6212 \xB7 \u9759\u5FC3");
         const sd = SHENDAN_DAO[`${lm}-${ld}`];
         if (sd && !isLeap) sd.forEach((s) => push("\u795E\u8BDE", s.n, s.lv, "\u4E0A\u9999 \xB7 \u793C\u62DC \xB7 \u884C\u5584"));
+        const sf = SHENDAN_FO[`${lm}-${ld}`];
+        if (sf && !isLeap) sf.forEach((s) => {
+          const dup = tags.some((t) => t.name === s.n || /观音|慈航/.test(t.name) && /观音|慈航/.test(s.n));
+          if (!dup) push("\u795E\u8BDE", s.n, s.lv, "\u4E0A\u9999 \xB7 \u793C\u62DC \xB7 \u884C\u5584");
+        });
+        const fest = FESTIVAL[`${lm}-${ld}`];
+        if (fest && !isLeap) push("\u8282\u65E5", fest, 1, FEST_YI[fest] || "\u5E94\u8282 \xB7 \u987A\u65F6");
+        const jqName = lunar.getJieQi();
+        if (jqName === "\u6E05\u660E") push("\u8282\u65E5", "\u6E05\u660E", 1, "\u796D\u626B \xB7 \u8E0F\u9752");
+        else if (jqName === "\u51AC\u81F3") push("\u8282\u65E5", "\u51AC\u81F3", 1, "\u796D\u7956 \xB7 \u8FDB\u8865 \xB7 \u6570\u4E5D");
+        try {
+          const nl = Solar.fromYmdHms(year, month, day, 12, 0, 0).next(1).getLunar();
+          if (Math.abs(nl.getMonth()) === 1 && nl.getDay() === 1) push("\u8282\u65E5", "\u9664\u5915", 1, "\u5B88\u5C81 \xB7 \u56E2\u5706 \xB7 \u796D\u7956");
+        } catch (e) {
+        }
         if (WULA[`${lm}-${ld}`] && !isLeap) push("\u4E94\u814A", "\u4E94\u814A\xB7" + WULA[`${lm}-${ld}`], 2, "\u796D\u7956 \xB7 \u5FCF\u6094 \xB7 \u658B\u6212 \xB7 \u884C\u5584");
         if (dGZ === "\u5E9A\u7533") push("\u4FEE\u884C", "\u5E9A\u7533\u65E5", 2, "\u5B88\u5E9A\u7533 \xB7 \u9759\u5750 \xB7 \u5FCF\u6094 \xB7 \u5FF5\u7ECF \xB7 \u8282\u6B32");
         let wuRi = false;
@@ -13039,7 +13088,46 @@ var RhythmEngine = (() => {
         let band = null;
         if (lm === 6 && ld <= 24 && !isLeap) band = "\u96F7\u658B\u6708 \xB7 \u521D\u4E00\u2013\u5EFF\u56DB";
         else if (lm === 9 && ld <= 9 && !isLeap) band = "\u4E5D\u7687\u658B \xB7 \u521D\u4E00\u2013\u521D\u4E5D";
-        const order = { "\u8D66\u65E5": 0, "\u4E94\u814A": 2, "\u658B\u6212": 4, "\u4FEE\u884C": 5, "\u5409\u795E": 6 };
+        let gongJi = null;
+        try {
+          const tsType = lunar.getDayTianShenType();
+          const ts = lunar.getDayTianShen();
+          const zx = lunar.getZhiXing();
+          const js = lunar.getDayJiShen() || [];
+          const xs = lunar.getDayXiongSha() || [];
+          const DE = ["\u5929\u5FB7", "\u6708\u5FB7", "\u5929\u5FB7\u5408", "\u6708\u5FB7\u5408", "\u5929\u613F", "\u6708\u6069", "\u4E09\u5408", "\u516D\u5408", "\u5929\u533B", "\u5929\u559C", "\u6BCD\u4ED3", "\u4E0D\u5C06", "\u9E23\u5420"];
+          const hitJi = js.filter((g) => DE.some((d) => g.indexOf(d) >= 0));
+          const hasSande = js.some((g) => /天德|月德/.test(g));
+          const HARD = ["\u6708\u7834", "\u53D7\u6B7B", "\u56DB\u79BB", "\u56DB\u7EDD", "\u5C81\u7834"];
+          const hardXiong = xs.some((g) => HARD.some((h) => g.indexOf(h) >= 0));
+          if (!hardXiong && tsType === "\u9EC4\u9053") push("\u5409\u795E", "\u9EC4\u9053\u5409\u65E5 \xB7 " + ts, 2, "\u9EC4\u9053\u5F53\u503C \xB7 \u8BF8\u4E8B\u53EF\u4E3A");
+          if (!hardXiong && hitJi.length) push("\u5409\u795E", hitJi.slice(0, 4).join(" \xB7 "), 2, "\u5409\u795E\u503C\u65E5 \xB7 \u5B9C\u7948\u798F\u529E\u6B63\u4E8B");
+          const isBigFest = tags.some((t) => t.type === "\u8282\u65E5");
+          const isLv1Shen = tags.some((t) => t.type === "\u795E\u8BDE" && t.level === 1);
+          const isTianShe = TIANSHE[mZhi] === dGZ;
+          const reasons = [];
+          if (isTianShe) reasons.push("\u5929\u8D66\u5F53\u5934");
+          if (hasSande) reasons.push("\u5929\u5FB7\u6708\u5FB7\u4E34");
+          if (fest) reasons.push(fest);
+          else if (jqName === "\u6E05\u660E" || jqName === "\u51AC\u81F3") reasons.push(jqName);
+          if (isLv1Shen) {
+            const lv1 = tags.find((t) => t.type === "\u795E\u8BDE" && t.level === 1);
+            if (lv1) reasons.push(lv1.name);
+          }
+          let grade = null;
+          if (!hardXiong && (isTianShe || hasSande || isBigFest || isLv1Shen)) grade = "S";
+          else if (!hardXiong && (tsType === "\u9EC4\u9053" || hitJi.length)) {
+            grade = "A";
+            if (tsType === "\u9EC4\u9053") reasons.push("\u9EC4\u9053\u5409\u65E5");
+            else if (hitJi.length) reasons.push("\u5409\u795E\u503C\u65E5");
+          }
+          const gjNames = tags.filter((t) => t.type === "\u8282\u65E5" || t.type === "\u8D66\u65E5" || t.type === "\u795E\u8BDE" && t.level === 1).map((t) => t.name);
+          const headYi = (tags.find((t) => t.type === "\u8282\u65E5") || tags.find((t) => t.type === "\u8D66\u65E5") || {}).yi || "";
+          gongJi = { grade, reasons, names: gjNames, headYi, tianShen: ts, tianShenType: tsType, zhiXing: zx, jiShen: hitJi, xiongSha: xs, hardXiong };
+        } catch (e) {
+          gongJi = null;
+        }
+        const order = { "\u8282\u65E5": 0, "\u8D66\u65E5": 0, "\u4E94\u814A": 2, "\u658B\u6212": 4, "\u4FEE\u884C": 5, "\u5409\u795E": 6 };
         const rank = (t) => t.type === "\u795E\u8BDE" ? t.level === 1 ? 1 : t.level === 2 ? 3 : 7 : order[t.type] ?? 8;
         tags.sort((a, b) => rank(a) - rank(b));
         tags.forEach((t) => {
@@ -13054,7 +13142,8 @@ var RhythmEngine = (() => {
           ganZhi: dGZ,
           wuRi,
           band,
-          tags
+          tags,
+          gongJi
         };
       }
       function deityEntriesOf(lm, ld, isLeap) {
@@ -14935,6 +15024,44 @@ var RhythmEngine = (() => {
           lowYears
         };
       }
+      function buildYearCard(mj, chart, year) {
+        const natal = natalPillars(chart);
+        const dayWx = GAN_WX[chart.dayGan];
+        const win = [];
+        for (let y = year - 2; y <= year + 2; y++) {
+          const s = scoreYear(mj, chart, natal, y);
+          const god = GOD_LIFE[s.godType] || { name: "", good: "", caution: "" };
+          win.push({
+            year: y,
+            age: chart.birthYear ? y - chart.birthYear : null,
+            ganZhi: s.yGan + s.yZhi,
+            energy: s.energy,
+            relation: s.relation,
+            godType: s.godType,
+            godName: god.name,
+            godGood: god.good,
+            godCaution: god.caution,
+            domains: deriveDomains(dayWx, s.godType, s.yGanWx, s.tags, s.dyn, s.energy),
+            _tags: s.tags,
+            _severe: s.severe,
+            _dyn: s.dyn
+          });
+        }
+        gradeLevels(win, "energy");
+        const yr = win.find((x) => x.year === year) || win[2];
+        yr._dyn._relation = yr.relation;
+        const dom = dominantTag(yr._tags);
+        const g = deriveDialectic(dom, yr._dyn, yr, yr.level, "\u8FD9\u4E00\u5E74", yr.year);
+        yr.headline = g.headline;
+        yr.trait = g.trait;
+        yr.yi = g.yi;
+        yr.ji = g.ji;
+        yr.shifted = !!yr._dyn.shifted;
+        delete yr._tags;
+        delete yr._severe;
+        delete yr._dyn;
+        return yr;
+      }
       function decadeVerdict(avgs) {
         if (!avgs || avgs.length < 10) return "";
         const h1 = avgs.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
@@ -15062,7 +15189,6 @@ var RhythmEngine = (() => {
         const series = scan.map((x) => ({ md: x.md, e: x.energy, i: x.idx, v: x.volatile ? 1 : 0 }));
         return { span: PICK_SPAN, from: today, categories, series };
       }
-      var HERO_LIB = { "\u5370\u91CD": { "aff": ["study", "career", "chance", "health"], "by": { "study\u614E": "\u8D44\u6599\u591F\u591A\u4E86,\u7F3A\u7684\u662F\u5F00\u59CB\u3002\u4ECA\u5929,\u5148\u505A\u6700\u5C0F\u7684\u4E00\u4EF6\u3002", "study\u987A": "\u4ECA\u5929\u5FC3\u662F\u5B9A\u7684,\u601D\u8DEF\u4E5F\u6E05\u3002\u90A3\u672C\u8BFB\u4E86\u4E00\u534A\u7684,\u8BFB\u5B8C\u3002", "career\u987A": "\u60F3\u6E05\u695A\u7684\u4E8B,\u4E0D\u5FC5\u518D\u53CD\u590D\u6382\u91CF\u3002\u4ECA\u5929,\u5B9A\u4E0B\u6765\u3002", "career\u614E": "\u4E0D\u5FC5\u63A8\u5012\u91CD\u6765\u3002\u4ECA\u5929,\u628A\u624B\u8FB9\u7684\u5C0F\u4E8B,\u4E00\u4EF6\u4EF6\u6536\u597D\u3002", "chance\u987A": "\u673A\u4F1A\u6765\u4E86,\u4F60\u603B\u8981\u591A\u60F3\u51E0\u8F6E\u3002\u4ECA\u5929,\u5148\u5E94\u4E0B\u6765\u3002", "health\u614E": "\u60F3\u5F97\u592A\u591A,\u4EBA\u4E5F\u4F1A\u7D2F\u3002\u4ECA\u5929,\u6401\u4E0B\u6CA1\u5934\u7EEA\u7684,\u65E9\u4E9B\u7761\u3002" }, "low": "\u8F6C\u4E0D\u52A8\u7684\u65F6\u5019,\u4E0D\u5FC5\u786C\u6491\u3002\u4ECA\u5929,\u8BA9\u81EA\u5DF1\u6162\u4E0B\u6765\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u62D6\u5F97\u6700\u4E45\u7684\u90A3\u4EF6,\u5F80\u524D\u63A8\u4E00\u6B65\u3002" }, "\u5370": { "aff": ["love", "social", "study", "health"], "by": { "love\u987A": "\u60F3\u8D77\u8C01,\u4E0D\u5FC5\u7B49\u4E00\u4E2A\u66F4\u597D\u7684\u65F6\u673A\u3002\u4ECA\u5929,\u5C31\u8054\u7CFB\u3002", "love\u614E": "\u4F60\u603B\u66FF\u522B\u4EBA\u628A\u62C5\u5B50\u5168\u63A5\u8FC7\u6765\u3002\u4ECA\u5929,\u5148\u987E\u597D\u81EA\u5DF1\u3002", "social\u987A": "\u6709\u4EBA\u9012\u6765\u5584\u610F,\u4F60\u4E60\u60EF\u5148\u63A8\u8F9E\u3002\u4ECA\u5929,\u5766\u7136\u63A5\u4F4F\u3002", "social\u614E": "\u522B\u4EBA\u7684\u96BE\u5904,\u4F60\u603B\u4E00\u4E2A\u4EBA\u62C5\u7740\u3002\u4ECA\u5929,\u6E29\u548C\u5730\u8BF4\u4E00\u6B21\u4E0D\u3002", "study\u987A": "\u4ECA\u5929\u5FC3\u9759,\u5438\u6536\u5F97\u5FEB\u3002\u60F3\u5B66\u7684\u90A3\u95E8,\u518D\u5F80\u6DF1\u5904\u8D70\u4E00\u5C42\u3002", "health\u614E": "\u5FC3\u91CC\u53D1\u6C89\u65F6,\u4E0D\u5FC5\u88AB\u4EBA\u50AC\u7740\u8D70\u3002\u4ECA\u5929,\u6162\u4E9B\u6765,\u65E9\u4E9B\u6B47\u3002" }, "low": "\u4F60\u6162,\u662F\u56E0\u4E3A\u4F60\u5728\u610F\u3002\u4ECA\u5929,\u628A\u4E00\u4EF6\u4E8B,\u8E0F\u5B9E\u505A\u5B8C\u3002", "high": "\u4ECA\u5929\u5FC3\u91CC\u6709\u52B2\u3002\u5C31\u5148\u4E3A\u81EA\u5DF1,\u505A\u4E00\u4EF6\u4E00\u76F4\u60F3\u505A\u7684\u4E8B\u3002" }, "\u98DF": { "aff": ["chance", "career", "study", "social"], "by": { "chance\u987A": "\u4ECA\u5929\u601D\u8DEF\u987A,\u8BDD\u4E5F\u5728\u70B9\u4E0A\u3002\u628A\u6700\u597D\u7684\u60F3\u6CD5,\u5F53\u9762\u8BF4\u7ED9\u62CD\u677F\u4EBA\u3002", "career\u987A": "\u4ECA\u5929,\u9002\u5408\u505A\u9700\u8981\u51FA\u4E3B\u610F\u7684\u4E8B\u3002\u5148\u505A\u51FA\u4E00\u4E2A\u96CF\u5F62\u3002", "career\u614E": "\u65B0\u70B9\u5B50\u5148\u653E\u4E00\u653E\u3002\u628A\u6CA1\u6536\u5C3E\u7684\u90A3\u4EF6,\u505A\u5230\u80FD\u4EA4\u51FA\u53BB\u3002", "study\u987A": "\u4ECA\u5929\u5B66\u5F97\u8FDB\u53BB\u3002\u628A\u6700\u96BE\u7684\u4E00\u5757,\u8D81\u73B0\u5728\u5F04\u61C2\u3002", "study\u614E": "\u5750\u4E0D\u4F4F\u7684\u65F6\u5019,\u4E0D\u7528\u52C9\u5F3A\u3002\u53EA\u5F04\u61C2\u4E00\u4E2A\u70B9,\u518D\u8D77\u8EAB\u3002", "social\u614E": "\u8BDD\u5230\u5634\u8FB9,\u5148\u5728\u5FC3\u91CC\u8FC7\u4E00\u904D\u3002\u4ECA\u5929,\u8BA9\u4EBA\u5148\u8BF4\u3002" }, "low": "\u8111\u5B50\u7A7A\u7684\u65F6\u5019,\u4E0D\u5FC5\u786C\u6491\u7740\u51FA\u5F69\u3002\u4ECA\u5929,\u8BA9\u81EA\u5DF1\u7F13\u4E00\u7F13\u3002", "high": "\u4ECA\u5929\u601D\u8DEF\u548C\u52B2\u5934\u90FD\u5728\u3002\u628A\u6700\u60F3\u8BA9\u4EBA\u770B\u89C1\u7684\u90A3\u4EF6,\u505A\u51FA\u6765\u3002" }, "\u8D22": { "aff": ["money", "career", "health", "chance"], "by": { "money\u987A": "\u4ECA\u5929\u7B97\u5F97\u6E05\u3001\u770B\u5F97\u51C6\u3002\u76D8\u7B97\u597D\u7684\u90A3\u7B14,\u4ECA\u5929\u843D\u5B9A\u3002", "money\u614E": "\u8D8A\u662F\u6025\u7740\u843D\u888B,\u8D8A\u8981\u5148\u505C\u4E00\u505C\u3002\u628A\u8D26\u770B\u6E05\u4E86\u518D\u52A8\u3002", "career\u987A": "\u4ECA\u5929\u9002\u5408\u4E13\u6CE8\u4E00\u4EF6\u4E8B\u3002\u76EF\u4F4F\u5B83,\u4E00\u9F13\u4F5C\u6C14\u505A\u5230\u5E95\u3002", "chance\u987A": "\u4ECA\u5929\u773C\u5149\u51C6\u3002\u9047\u5230\u9760\u8C31\u7684\u673A\u4F1A,\u5F53\u573A\u5B9A\u4E0B\u6765\u3002", "chance\u614E": "\u6765\u94B1\u7684\u8DEF\u5B50,\u4E0D\u5FC5\u90FD\u63A5\u3002\u53EA\u7559\u6700\u7A33\u7684\u90A3\u4E00\u4E2A\u3002", "health\u614E": "\u7ED9\u81EA\u5DF1\u5B9A\u4E00\u4E2A\u6536\u5DE5\u7684\u70B9\u3002\u5230\u70B9,\u5C31\u505C\u4E0B\u6765\u4F11\u606F\u3002" }, "low": "\u52B2\u5934\u4E0B\u53BB\u65F6,\u4E0D\u5FC5\u62FF\u6210\u679C\u8861\u91CF\u81EA\u5DF1\u3002\u4ECA\u5929,\u5148\u7F13\u4E00\u5929\u3002", "high": "\u4ECA\u5929\u6709\u52B2\u3001\u4E5F\u6E05\u9192\u3002\u628A\u62D6\u4E86\u5F88\u4E45\u7684\u90A3\u4EF6\u6B63\u4E8B,\u4E00\u9F13\u4F5C\u6C14\u529E\u5B8C\u3002" }, "\u5B98": { "aff": ["career", "social", "health", "love", "chance"], "by": { "career\u987A": "\u4F60\u4E60\u60EF\u628A\u51B3\u5B9A\u5F80\u540E\u62D6\u3002\u4ECA\u5929,\u8BE5\u5B9A\u7684\u4E8B,\u5F53\u573A\u5B9A\u4E0B\u6765\u3002", "career\u614E": "\u4E0D\u662F\u4F60\u7684\u4E8B,\u4F60\u4E5F\u4E60\u60EF\u63A5\u4E0B\u6765\u3002\u4ECA\u5929,\u628A\u4E00\u4EF6\u8FD8\u56DE\u53BB\u3002", "health\u614E": "\u4F60\u628A\u81EA\u5DF1\u903C\u5F97\u592A\u7D27\u3002\u4ECA\u5929,\u5B9A\u4E2A\u70B9,\u5C31\u8BA9\u81EA\u5DF1\u505C\u4E0B\u6765\u3002", "social\u987A": "\u4F60\u603B\u60F3\u628A\u4E8B\u505A\u5230\u4F4D,\u597D\u6362\u6765\u8BA4\u53EF\u3002\u4ECA\u5929,\u5355\u7EAF\u627E\u4EBA\u8BF4\u8BF4\u8BDD\u3002", "love\u614E": "\u5728\u4E4E\u7684\u4EBA\u9762\u524D,\u4F60\u4E5F\u7AEF\u7740'\u5E94\u8BE5'\u3002\u4ECA\u5929,\u628A\u5728\u610F\u7684\u8BDD\u8BF4\u51FA\u6765\u3002", "chance\u987A": "\u597D\u5904\u6765\u4E86,\u4F60\u603B\u662F\u5148\u8BA9\u7ED9\u522B\u4EBA\u3002\u4ECA\u5929,\u5148\u4E3A\u81EA\u5DF1\u63A5\u4F4F\u4E00\u6B21\u3002" }, "low": "\u4F60\u603B\u60F3\u9762\u9762\u4FF1\u5230\u3002\u4ECA\u5929,\u5141\u8BB8\u4E00\u5904\u7559\u767D,\u8BA9\u81EA\u5DF1\u7F13\u4E00\u7F13\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u90A3\u4EF6\u53EA\u6709\u4F60\u80FD\u625B\u7684\u786C\u4E8B,\u4E00\u53E3\u6C14\u505A\u4E0B\u6765\u3002" }, "\u6BD4": { "aff": ["social", "career", "money", "love", "chance"], "by": { "social\u987A": "\u8BB2\u4E49\u6C14,\u662F\u4F60\u96BE\u5F97\u7684\u957F\u5904\u3002\u4ECA\u5929\u6709\u4EBA\u9700\u8981,\u4F60\u4FBF\u642D\u628A\u624B\u3002", "social\u614E": "\u8BDD\u4E0D\u6295\u673A,\u4F60\u5BB9\u6613\u7ACB\u523B\u53CD\u9A73\u3002\u4ECA\u5929,\u5148\u505C\u4E09\u79D2,\u518D\u5F00\u53E3\u3002", "career\u987A": "\u4F60\u4E00\u5411\u4FE1\u81EA\u5DF1\u7684\u5224\u65AD\u3002\u4ECA\u5929\u8BE5\u5B9A\u7684\u4E8B,\u4E0D\u5FC5\u7406\u4F1A\u6742\u97F3,\u5B9A\u4E0B\u6765\u3002", "money\u614E": "\u4E3A\u670B\u53CB,\u4F60\u5411\u6765\u4E0D\u542B\u7CCA\u3002\u4F46\u4ECA\u5929\u9047\u4E0A\u501F\u94B1\u3001\u62C5\u4FDD,\u5148\u653E\u4E00\u5929\u518D\u5B9A\u3002", "love\u614E": "\u4EB2\u8FD1\u7684\u4EBA\u9762\u524D,\u4F60\u4E5F\u60F3\u4E89\u4E2A\u5BF9\u9519\u3002\u4ECA\u5929,\u653E\u4E0B\u8F93\u8D62,\u628A\u8BDD\u542C\u5B8C\u3002", "chance\u987A": "\u8BA4\u51C6\u4E86,\u4F60\u5C31\u6562\u5F80\u524D\u3002\u4ECA\u5929\u8FD9\u4EF6\u4E8B,\u4E0D\u5FC5\u95EE\u65C1\u4EBA,\u81EA\u5DF1\u5B9A\u3002" }, "low": "\u8F6C\u4E0D\u52A8\u65F6,\u4E0D\u5FC5\u786C\u6491\u3002\u4ECA\u5929\u5148\u7F13\u4E00\u7F13,\u90A3\u80A1\u52B2\u7559\u5230\u771F\u8981\u7D27\u65F6\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u8BA4\u51C6\u4E86\u5F88\u4E45\u7684\u90A3\u4EF6\u4E8B,\u4E0D\u5FC5\u7B49\u4EBA\u70B9\u5934,\u81EA\u5DF1\u5F80\u524D\u3002" }, "\u5747\u8861": { "aff": ["career", "study", "chance", "social", "love"], "by": { "career\u987A": "\u4F60\u60F3\u628A\u6BCF\u6761\u8DEF\u90FD\u63E1\u5728\u624B\u91CC\u3002\u4ECA\u5929,\u53EA\u6311\u6700\u60F3\u6210\u7684\u4E00\u4EF6,\u5F80\u524D\u63A8\u8FDB\u3002", "career\u614E": "\u4E8B\u60C5\u8FD8\u6CA1\u4E86\u7ED3,\u4F60\u53C8\u6DFB\u4E86\u65B0\u7684\u3002\u4ECA\u5929,\u4E0D\u52A0\u65B0\u4E8B,\u5148\u4E86\u7ED3\u4E00\u4EF6\u3002", "study\u987A": "\u4F60\u624B\u91CC,\u603B\u6709\u51E0\u6837\u5B66\u5230\u4E00\u534A\u3002\u4ECA\u5929,\u4E0D\u5F00\u65B0\u7684,\u628A\u5B83\u518D\u6DF1\u4E00\u5C42\u3002", "chance\u614E": "\u673A\u4F1A\u4E00\u591A,\u4F60\u5C31\u6837\u6837\u820D\u4E0D\u5F97\u3002\u4ECA\u5929,\u53EA\u7559\u6700\u60F3\u8981\u7684,\u5176\u4F59\u653E\u4E0B\u3002", "social\u614E": "\u4F60\u4EC0\u4E48\u90FD\u60F3\u81EA\u5DF1\u625B\u4E0B\u6765\u3002\u4ECA\u5929,\u6311\u4E00\u4EF6,\u5F00\u53E3\u8BF7\u4EBA\u642D\u628A\u624B\u3002", "love\u614E": "\u5FC3\u4E8B,\u4F60\u603B\u662F\u81EA\u5DF1\u4E00\u4E2A\u4EBA\u6D88\u5316\u3002\u4ECA\u5929,\u6311\u4E00\u4EF6,\u8BF4\u7ED9ta\u542C\u3002" }, "low": "\u4F60\u603B\u60F3\u6837\u6837\u90FD\u987E\u5230\u3002\u4ECA\u5929,\u53EA\u7559\u6700\u8981\u7D27\u7684\u4E00\u4EF6,\u5176\u4F59\u5148\u653E\u4E0B\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u4E0E\u5176\u5206\u6563,\u4E0D\u5982\u53EA\u8BA4\u4E00\u6761\u4E3B\u7EBF,\u5F80\u524D\u8FC8\u4E00\u5927\u6B65\u3002" } };
       function heroPersonaOf(mj) {
         if (!mj) return "\u5747\u8861";
         if (mj.isYinHeavyWeak) return "\u5370\u91CD";
@@ -15083,27 +15209,26 @@ var RhythmEngine = (() => {
         return nonBi[0].k;
       }
       function heroLine(personaKey, fortune, energy) {
-        const P = HERO_LIB[personaKey] || HERO_LIB["\u5747\u8861"];
-        if (!P) return "";
         fortune = fortune || {};
-        const DOMS = ["career", "money", "study", "love", "health", "chance"];
-        const norm = (t) => t === "\u987A" ? "\u987A" : t === "\u614E" || t === "\u517B" ? "\u614E" : "";
-        const cand = [];
-        DOMS.forEach((dom) => {
+        const LABEL = { career: "\u4E8B\u4E1A", chance: "\u673A\u4F1A", health: "\u5065\u5EB7", love: "\u611F\u60C5", money: "\u8D22\u8FD0", study: "\u5B66\u4E60" };
+        const ORDER = ["chance", "love", "health", "career", "money", "study"];
+        const ups = [], warns = [];
+        ORDER.forEach((dom) => {
           const f = fortune[dom];
-          if (!f) return;
-          const nt = norm(f.tone);
-          if (!nt) return;
-          const aff = P.aff.indexOf(dom);
-          cand.push({ sig: dom + nt, aff: aff < 0 ? 99 : aff });
+          if (!f || !f.line) return;
+          if (f.tone === "\u987A") ups.push({ dom, up: true, line: f.line });
+          else if (f.tone === "\u614E" || f.tone === "\u517B") warns.push({ dom, up: false, line: f.line });
         });
-        cand.sort((a, b) => a.aff - b.aff);
-        for (let i = 0; i < cand.length; i++) {
-          if (P.by[cand[i].sig]) return P.by[cand[i].sig];
-        }
-        if (energy != null && energy <= 50) return P.low;
-        if (energy != null && energy >= 64) return P.high;
-        return P.low;
+        const seg = (o, lead) => {
+          const pre = lead ? "\u4ECA\u5929" : "";
+          if (o.dom === "health") return pre + (o.up ? "\u4F53\u611F\u4F73\u2014\u2014" : "\u5B9C\u517B\u2014\u2014") + o.line;
+          return pre + LABEL[o.dom] + (o.up ? "\u987A\u624B\u2014\u2014" : "\u8981\u5F53\u5FC3\u2014\u2014") + o.line;
+        };
+        if (ups.length && warns.length) return seg(ups[0], true) + "\u3000" + seg(warns[0], false);
+        if (ups.length) return seg(ups[0], true);
+        if (warns.length) return seg(warns[0], true);
+        if (energy != null && energy < 48) return "\u4ECA\u5929\u7CBE\u529B\u504F\u4F4E\u2014\u2014\u628A\u6700\u8981\u7D27\u7684\u4E00\u4EF6\u505A\u5B8C\uFF0C\u522B\u786C\u8D76\uFF0C\u65E9\u70B9\u6B47\u3002";
+        return "\u4ECA\u5929\u5404\u65B9\u9762\u90FD\u5E73\u7A33\u2014\u2014\u6311\u6700\u8981\u7D27\u7684\u4E00\u4EF6\uFF0C\u7A33\u7A33\u505A\u5B8C\u5C31\u597D\u3002";
       }
       function buildReport(mj, chart, today, ctx) {
         const monthAvgs = ctx && ctx.monthAvgs || null;
@@ -15125,6 +15250,7 @@ var RhythmEngine = (() => {
         GOD_LIFE,
         ARCHETYPE,
         buildYears,
+        buildYearCard,
         buildYearMonths,
         scoreYear,
         natalPillars,
@@ -15145,7 +15271,7 @@ var RhythmEngine = (() => {
       var { liuri, liuyue, liunian, activeDaYun } = require_liuri();
       var { folkOf, upcomingDeities } = require_folk();
       var { seasonView } = require_content();
-      var { buildReport, heroPersonaOf, heroLine } = require_report();
+      var { buildReport, heroPersonaOf, heroLine, buildYearCard } = require_report();
       var { Solar } = require_lunar();
       var WEEK = ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"];
       function fill(e) {
@@ -15230,7 +15356,9 @@ var RhythmEngine = (() => {
             tagYi: tag ? tag.yi : d.yi.join(" \xB7 "),
             tagDesc: tag ? tag.desc : "",
             tagType: tag ? tag.type : "",
-            ganZhi
+            ganZhi,
+            gongJi: folk.gongJi
+            // 通用黄历吉凶(黄道/天赦/大节→S/A级),供"大吉当头"呈现,与个人能量解耦
           };
         });
         return {
@@ -15285,6 +15413,8 @@ var RhythmEngine = (() => {
             wuNote: folk.wuRi ? "\u4ECA\u9022\u620A\u65E5 \xB7 \u5FCC\u711A\u9999\u671D\u771F" : "",
             good: LR.energy >= GOOD,
             // 高能量吉日，供选日标记(统一口径)
+            gongJi: folk.gongJi,
+            // 通用黄历吉凶(大吉当头,与个人能量解耦)
             heroLine: heroLine(heroP, LR.fortune, LR.energy)
             // 干货主句:说中你+能照做
           };
@@ -15407,15 +15537,28 @@ var RhythmEngine = (() => {
         const yr = liunian(mj, chart, Y);
         return yr.months.map((m) => m.avg);
       }
-      module.exports = { buildApp, buildMonth, buildYear };
+      function buildYearCardFor(person, Y) {
+        const chart = paipan(person);
+        const mj = analyze(chart);
+        return buildYearCard(mj, chart, Y);
+      }
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor };
     }
   });
 
   // engine/browser.js
   var require_browser = __commonJS({
     "engine/browser.js"(exports, module) {
-      var { buildApp, buildMonth, buildYear } = require_buildApp();
+      var { buildApp, buildMonth, buildYear, buildYearCardFor } = require_buildApp();
+      var { folkOf } = require_folk();
       var { paipan, trueSolarCorrection } = require_paipan();
+      function gongJiOf(y, m, d) {
+        try {
+          return folkOf(y, m, d).gongJi;
+        } catch (e) {
+          return null;
+        }
+      }
       var { analyze } = require_analyze();
       var { liuri } = require_liuri();
       var { Solar, Lunar, LunarYear, LunarMonth } = require_lunar();
@@ -15460,7 +15603,7 @@ var RhythmEngine = (() => {
           return 30;
         }
       }
-      module.exports = { buildApp, buildMonth, buildYear, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
     }
   });
   return require_browser();

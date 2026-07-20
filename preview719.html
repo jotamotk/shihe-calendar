@@ -560,6 +560,26 @@
     background:radial-gradient(72% 56% at 50% -4%,color-mix(in srgb,var(--gold) 15%,transparent),transparent 70%);opacity:.6;}
   .jd-gl-eye{position:relative;font-size:10px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;font-weight:500;opacity:.82;}
   .jd-gl-line{position:relative;font-family:var(--serif);font-size:20px;line-height:1.55;color:var(--gold-d);font-weight:400;margin:12px 0 2px;text-wrap:balance;letter-spacing:.5px;}
+  /* 开篇「当年运势」卡:今年要做/要注意 + 左右翻年 */
+  .jd-yr{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:16px;padding:15px 15px 14px;margin:0 0 16px;}
+  .jd-yr-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;}
+  .jd-yr-arw{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);background:var(--card);color:var(--gold-d);font-size:19px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:all .16s var(--ease);-webkit-tap-highlight-color:transparent;}
+  .jd-yr-arw:active{background:var(--gold-soft);transform:scale(.94);}
+  .jd-yr-ttl{text-align:center;flex:1;min-width:0;}
+  .jd-yr-ttl b{font-family:var(--serif);font-size:21px;font-weight:500;color:var(--gold-d);letter-spacing:1px;}
+  .jd-yr-ttl span{display:block;font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
+  .jd-yr-trait{font-size:14px;line-height:1.72;color:var(--ink);margin-bottom:13px;position:relative;padding-left:13px;}
+  .jd-yr-dot{position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;}
+  .jd-yr-dot.hi{background:var(--gold);box-shadow:0 0 6px -1px var(--gold);}
+  .jd-yr-dot.mid{background:var(--muted);}
+  .jd-yr-dot.lo{background:#6b7a86;}
+  .jd-yr-yj{display:flex;flex-direction:column;gap:11px;}
+  .jd-yr-k{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;padding:2px 9px;border-radius:7px;margin-bottom:7px;}
+  .jd-yr-k.do{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
+  .jd-yr-k.watch{color:var(--rest);background:color-mix(in srgb,var(--rest) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 28%,transparent);}
+  .jd-yr-col ul{list-style:none;margin:0;padding:0;}
+  .jd-yr-col li{font-size:13.5px;line-height:1.65;color:var(--ink-2);padding-left:14px;position:relative;}
+  .jd-yr-col li::before{content:"";position:absolute;left:4px;top:9px;width:4px;height:4px;border-radius:50%;background:var(--gold-d);opacity:.7;}
   .jd-gl-dims{position:relative;display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 2px;}
   .jd-gl-dim{display:flex;align-items:center;gap:7px;cursor:pointer;}
   .jd-gl-dim .mk{width:9px;height:9px;border-radius:50%;flex:none;}
@@ -1894,7 +1914,6 @@
         <div class="notch"></div>
         <div class="status"><span class="clock">9:41</span><span></span></div>
         <div class="scroll">
-          <div class="tb-detail-head"><button class="tb-back" data-goto="tools" type="button"><span>‹</span>工具箱</button></div>
           <div class="life-top">
             <div class="life-h"><b>一生能量</b><span>逐年逐月</span></div>
           </div>
@@ -1964,11 +1983,11 @@
           <!-- 深度报告入口已移除:统一走「解读」页入口，避免重复 -->
 
         </div>
-        <!-- 生命之轮为工具箱下的独立能量指南页:顶部「‹ 工具箱」返回 + 底部标准 3-tab 栏(工具箱高亮),与其它工具页一致 -->
+        <!-- 一生能量:从「我的」进入的整屏能量指南页;底部标准 tab 栏,不高亮任何项(它不归属某个底栏 tab) -->
         <div class="tabbar">
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-          <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+          <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
           <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
@@ -2032,11 +2051,6 @@
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
               <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
-            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
-          </button>
-          <button class="tb-feat" data-tool="rhythm" data-title="一生能量">
-            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-rhythm"></use></svg>
-              <div><b>一生能量</b><small>逐年逐月</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2232,6 +2246,8 @@
       <div class="rp-cover" id="rp-cover"></div>
       <!-- 已解锁内容 -->
       <div id="rp-body" style="display:none">
+        <!-- 开篇「当年运势」卡:讲今年要做什么/要注意(干货),可左右翻年看上一年/下一年 -->
+        <div id="jd-year"></div>
         <!-- 一目了然层:常驻不折叠的「能量底色卡」(JS 填充,全部引用现有已算字段,缺失走 if-guard) -->
         <div id="jd-glance"></div>
         <!-- 六章手风琴:章头由 JS 填(章序/眉标/章名/信号 chip);章内容=原 rp-page 原样搬入(内容一字不改) -->
@@ -17317,6 +17333,44 @@ var RhythmEngine = (() => {
           lowYears
         };
       }
+      function buildYearCard(mj, chart, year) {
+        const natal = natalPillars(chart);
+        const dayWx = GAN_WX[chart.dayGan];
+        const win = [];
+        for (let y = year - 2; y <= year + 2; y++) {
+          const s = scoreYear(mj, chart, natal, y);
+          const god = GOD_LIFE[s.godType] || { name: "", good: "", caution: "" };
+          win.push({
+            year: y,
+            age: chart.birthYear ? y - chart.birthYear : null,
+            ganZhi: s.yGan + s.yZhi,
+            energy: s.energy,
+            relation: s.relation,
+            godType: s.godType,
+            godName: god.name,
+            godGood: god.good,
+            godCaution: god.caution,
+            domains: deriveDomains(dayWx, s.godType, s.yGanWx, s.tags, s.dyn, s.energy),
+            _tags: s.tags,
+            _severe: s.severe,
+            _dyn: s.dyn
+          });
+        }
+        gradeLevels(win, "energy");
+        const yr = win.find((x) => x.year === year) || win[2];
+        yr._dyn._relation = yr.relation;
+        const dom = dominantTag(yr._tags);
+        const g = deriveDialectic(dom, yr._dyn, yr, yr.level, "\u8FD9\u4E00\u5E74", yr.year);
+        yr.headline = g.headline;
+        yr.trait = g.trait;
+        yr.yi = g.yi;
+        yr.ji = g.ji;
+        yr.shifted = !!yr._dyn.shifted;
+        delete yr._tags;
+        delete yr._severe;
+        delete yr._dyn;
+        return yr;
+      }
       function decadeVerdict(avgs) {
         if (!avgs || avgs.length < 10) return "";
         const h1 = avgs.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
@@ -17444,7 +17498,6 @@ var RhythmEngine = (() => {
         const series = scan.map((x) => ({ md: x.md, e: x.energy, i: x.idx, v: x.volatile ? 1 : 0 }));
         return { span: PICK_SPAN, from: today, categories, series };
       }
-      var HERO_LIB = { "\u5370\u91CD": { "aff": ["study", "career", "chance", "health"], "by": { "study\u614E": "\u8D44\u6599\u591F\u591A\u4E86,\u7F3A\u7684\u662F\u5F00\u59CB\u3002\u4ECA\u5929,\u5148\u505A\u6700\u5C0F\u7684\u4E00\u4EF6\u3002", "study\u987A": "\u4ECA\u5929\u5FC3\u662F\u5B9A\u7684,\u601D\u8DEF\u4E5F\u6E05\u3002\u90A3\u672C\u8BFB\u4E86\u4E00\u534A\u7684,\u8BFB\u5B8C\u3002", "career\u987A": "\u60F3\u6E05\u695A\u7684\u4E8B,\u4E0D\u5FC5\u518D\u53CD\u590D\u6382\u91CF\u3002\u4ECA\u5929,\u5B9A\u4E0B\u6765\u3002", "career\u614E": "\u4E0D\u5FC5\u63A8\u5012\u91CD\u6765\u3002\u4ECA\u5929,\u628A\u624B\u8FB9\u7684\u5C0F\u4E8B,\u4E00\u4EF6\u4EF6\u6536\u597D\u3002", "chance\u987A": "\u673A\u4F1A\u6765\u4E86,\u4F60\u603B\u8981\u591A\u60F3\u51E0\u8F6E\u3002\u4ECA\u5929,\u5148\u5E94\u4E0B\u6765\u3002", "health\u614E": "\u60F3\u5F97\u592A\u591A,\u4EBA\u4E5F\u4F1A\u7D2F\u3002\u4ECA\u5929,\u6401\u4E0B\u6CA1\u5934\u7EEA\u7684,\u65E9\u4E9B\u7761\u3002" }, "low": "\u8F6C\u4E0D\u52A8\u7684\u65F6\u5019,\u4E0D\u5FC5\u786C\u6491\u3002\u4ECA\u5929,\u8BA9\u81EA\u5DF1\u6162\u4E0B\u6765\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u62D6\u5F97\u6700\u4E45\u7684\u90A3\u4EF6,\u5F80\u524D\u63A8\u4E00\u6B65\u3002" }, "\u5370": { "aff": ["love", "social", "study", "health"], "by": { "love\u987A": "\u60F3\u8D77\u8C01,\u4E0D\u5FC5\u7B49\u4E00\u4E2A\u66F4\u597D\u7684\u65F6\u673A\u3002\u4ECA\u5929,\u5C31\u8054\u7CFB\u3002", "love\u614E": "\u4F60\u603B\u66FF\u522B\u4EBA\u628A\u62C5\u5B50\u5168\u63A5\u8FC7\u6765\u3002\u4ECA\u5929,\u5148\u987E\u597D\u81EA\u5DF1\u3002", "social\u987A": "\u6709\u4EBA\u9012\u6765\u5584\u610F,\u4F60\u4E60\u60EF\u5148\u63A8\u8F9E\u3002\u4ECA\u5929,\u5766\u7136\u63A5\u4F4F\u3002", "social\u614E": "\u522B\u4EBA\u7684\u96BE\u5904,\u4F60\u603B\u4E00\u4E2A\u4EBA\u62C5\u7740\u3002\u4ECA\u5929,\u6E29\u548C\u5730\u8BF4\u4E00\u6B21\u4E0D\u3002", "study\u987A": "\u4ECA\u5929\u5FC3\u9759,\u5438\u6536\u5F97\u5FEB\u3002\u60F3\u5B66\u7684\u90A3\u95E8,\u518D\u5F80\u6DF1\u5904\u8D70\u4E00\u5C42\u3002", "health\u614E": "\u5FC3\u91CC\u53D1\u6C89\u65F6,\u4E0D\u5FC5\u88AB\u4EBA\u50AC\u7740\u8D70\u3002\u4ECA\u5929,\u6162\u4E9B\u6765,\u65E9\u4E9B\u6B47\u3002" }, "low": "\u4F60\u6162,\u662F\u56E0\u4E3A\u4F60\u5728\u610F\u3002\u4ECA\u5929,\u628A\u4E00\u4EF6\u4E8B,\u8E0F\u5B9E\u505A\u5B8C\u3002", "high": "\u4ECA\u5929\u5FC3\u91CC\u6709\u52B2\u3002\u5C31\u5148\u4E3A\u81EA\u5DF1,\u505A\u4E00\u4EF6\u4E00\u76F4\u60F3\u505A\u7684\u4E8B\u3002" }, "\u98DF": { "aff": ["chance", "career", "study", "social"], "by": { "chance\u987A": "\u4ECA\u5929\u601D\u8DEF\u987A,\u8BDD\u4E5F\u5728\u70B9\u4E0A\u3002\u628A\u6700\u597D\u7684\u60F3\u6CD5,\u5F53\u9762\u8BF4\u7ED9\u62CD\u677F\u4EBA\u3002", "career\u987A": "\u4ECA\u5929,\u9002\u5408\u505A\u9700\u8981\u51FA\u4E3B\u610F\u7684\u4E8B\u3002\u5148\u505A\u51FA\u4E00\u4E2A\u96CF\u5F62\u3002", "career\u614E": "\u65B0\u70B9\u5B50\u5148\u653E\u4E00\u653E\u3002\u628A\u6CA1\u6536\u5C3E\u7684\u90A3\u4EF6,\u505A\u5230\u80FD\u4EA4\u51FA\u53BB\u3002", "study\u987A": "\u4ECA\u5929\u5B66\u5F97\u8FDB\u53BB\u3002\u628A\u6700\u96BE\u7684\u4E00\u5757,\u8D81\u73B0\u5728\u5F04\u61C2\u3002", "study\u614E": "\u5750\u4E0D\u4F4F\u7684\u65F6\u5019,\u4E0D\u7528\u52C9\u5F3A\u3002\u53EA\u5F04\u61C2\u4E00\u4E2A\u70B9,\u518D\u8D77\u8EAB\u3002", "social\u614E": "\u8BDD\u5230\u5634\u8FB9,\u5148\u5728\u5FC3\u91CC\u8FC7\u4E00\u904D\u3002\u4ECA\u5929,\u8BA9\u4EBA\u5148\u8BF4\u3002" }, "low": "\u8111\u5B50\u7A7A\u7684\u65F6\u5019,\u4E0D\u5FC5\u786C\u6491\u7740\u51FA\u5F69\u3002\u4ECA\u5929,\u8BA9\u81EA\u5DF1\u7F13\u4E00\u7F13\u3002", "high": "\u4ECA\u5929\u601D\u8DEF\u548C\u52B2\u5934\u90FD\u5728\u3002\u628A\u6700\u60F3\u8BA9\u4EBA\u770B\u89C1\u7684\u90A3\u4EF6,\u505A\u51FA\u6765\u3002" }, "\u8D22": { "aff": ["money", "career", "health", "chance"], "by": { "money\u987A": "\u4ECA\u5929\u7B97\u5F97\u6E05\u3001\u770B\u5F97\u51C6\u3002\u76D8\u7B97\u597D\u7684\u90A3\u7B14,\u4ECA\u5929\u843D\u5B9A\u3002", "money\u614E": "\u8D8A\u662F\u6025\u7740\u843D\u888B,\u8D8A\u8981\u5148\u505C\u4E00\u505C\u3002\u628A\u8D26\u770B\u6E05\u4E86\u518D\u52A8\u3002", "career\u987A": "\u4ECA\u5929\u9002\u5408\u4E13\u6CE8\u4E00\u4EF6\u4E8B\u3002\u76EF\u4F4F\u5B83,\u4E00\u9F13\u4F5C\u6C14\u505A\u5230\u5E95\u3002", "chance\u987A": "\u4ECA\u5929\u773C\u5149\u51C6\u3002\u9047\u5230\u9760\u8C31\u7684\u673A\u4F1A,\u5F53\u573A\u5B9A\u4E0B\u6765\u3002", "chance\u614E": "\u6765\u94B1\u7684\u8DEF\u5B50,\u4E0D\u5FC5\u90FD\u63A5\u3002\u53EA\u7559\u6700\u7A33\u7684\u90A3\u4E00\u4E2A\u3002", "health\u614E": "\u7ED9\u81EA\u5DF1\u5B9A\u4E00\u4E2A\u6536\u5DE5\u7684\u70B9\u3002\u5230\u70B9,\u5C31\u505C\u4E0B\u6765\u4F11\u606F\u3002" }, "low": "\u52B2\u5934\u4E0B\u53BB\u65F6,\u4E0D\u5FC5\u62FF\u6210\u679C\u8861\u91CF\u81EA\u5DF1\u3002\u4ECA\u5929,\u5148\u7F13\u4E00\u5929\u3002", "high": "\u4ECA\u5929\u6709\u52B2\u3001\u4E5F\u6E05\u9192\u3002\u628A\u62D6\u4E86\u5F88\u4E45\u7684\u90A3\u4EF6\u6B63\u4E8B,\u4E00\u9F13\u4F5C\u6C14\u529E\u5B8C\u3002" }, "\u5B98": { "aff": ["career", "social", "health", "love", "chance"], "by": { "career\u987A": "\u4F60\u4E60\u60EF\u628A\u51B3\u5B9A\u5F80\u540E\u62D6\u3002\u4ECA\u5929,\u8BE5\u5B9A\u7684\u4E8B,\u5F53\u573A\u5B9A\u4E0B\u6765\u3002", "career\u614E": "\u4E0D\u662F\u4F60\u7684\u4E8B,\u4F60\u4E5F\u4E60\u60EF\u63A5\u4E0B\u6765\u3002\u4ECA\u5929,\u628A\u4E00\u4EF6\u8FD8\u56DE\u53BB\u3002", "health\u614E": "\u4F60\u628A\u81EA\u5DF1\u903C\u5F97\u592A\u7D27\u3002\u4ECA\u5929,\u5B9A\u4E2A\u70B9,\u5C31\u8BA9\u81EA\u5DF1\u505C\u4E0B\u6765\u3002", "social\u987A": "\u4F60\u603B\u60F3\u628A\u4E8B\u505A\u5230\u4F4D,\u597D\u6362\u6765\u8BA4\u53EF\u3002\u4ECA\u5929,\u5355\u7EAF\u627E\u4EBA\u8BF4\u8BF4\u8BDD\u3002", "love\u614E": "\u5728\u4E4E\u7684\u4EBA\u9762\u524D,\u4F60\u4E5F\u7AEF\u7740'\u5E94\u8BE5'\u3002\u4ECA\u5929,\u628A\u5728\u610F\u7684\u8BDD\u8BF4\u51FA\u6765\u3002", "chance\u987A": "\u597D\u5904\u6765\u4E86,\u4F60\u603B\u662F\u5148\u8BA9\u7ED9\u522B\u4EBA\u3002\u4ECA\u5929,\u5148\u4E3A\u81EA\u5DF1\u63A5\u4F4F\u4E00\u6B21\u3002" }, "low": "\u4F60\u603B\u60F3\u9762\u9762\u4FF1\u5230\u3002\u4ECA\u5929,\u5141\u8BB8\u4E00\u5904\u7559\u767D,\u8BA9\u81EA\u5DF1\u7F13\u4E00\u7F13\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u90A3\u4EF6\u53EA\u6709\u4F60\u80FD\u625B\u7684\u786C\u4E8B,\u4E00\u53E3\u6C14\u505A\u4E0B\u6765\u3002" }, "\u6BD4": { "aff": ["social", "career", "money", "love", "chance"], "by": { "social\u987A": "\u8BB2\u4E49\u6C14,\u662F\u4F60\u96BE\u5F97\u7684\u957F\u5904\u3002\u4ECA\u5929\u6709\u4EBA\u9700\u8981,\u4F60\u4FBF\u642D\u628A\u624B\u3002", "social\u614E": "\u8BDD\u4E0D\u6295\u673A,\u4F60\u5BB9\u6613\u7ACB\u523B\u53CD\u9A73\u3002\u4ECA\u5929,\u5148\u505C\u4E09\u79D2,\u518D\u5F00\u53E3\u3002", "career\u987A": "\u4F60\u4E00\u5411\u4FE1\u81EA\u5DF1\u7684\u5224\u65AD\u3002\u4ECA\u5929\u8BE5\u5B9A\u7684\u4E8B,\u4E0D\u5FC5\u7406\u4F1A\u6742\u97F3,\u5B9A\u4E0B\u6765\u3002", "money\u614E": "\u4E3A\u670B\u53CB,\u4F60\u5411\u6765\u4E0D\u542B\u7CCA\u3002\u4F46\u4ECA\u5929\u9047\u4E0A\u501F\u94B1\u3001\u62C5\u4FDD,\u5148\u653E\u4E00\u5929\u518D\u5B9A\u3002", "love\u614E": "\u4EB2\u8FD1\u7684\u4EBA\u9762\u524D,\u4F60\u4E5F\u60F3\u4E89\u4E2A\u5BF9\u9519\u3002\u4ECA\u5929,\u653E\u4E0B\u8F93\u8D62,\u628A\u8BDD\u542C\u5B8C\u3002", "chance\u987A": "\u8BA4\u51C6\u4E86,\u4F60\u5C31\u6562\u5F80\u524D\u3002\u4ECA\u5929\u8FD9\u4EF6\u4E8B,\u4E0D\u5FC5\u95EE\u65C1\u4EBA,\u81EA\u5DF1\u5B9A\u3002" }, "low": "\u8F6C\u4E0D\u52A8\u65F6,\u4E0D\u5FC5\u786C\u6491\u3002\u4ECA\u5929\u5148\u7F13\u4E00\u7F13,\u90A3\u80A1\u52B2\u7559\u5230\u771F\u8981\u7D27\u65F6\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u8BA4\u51C6\u4E86\u5F88\u4E45\u7684\u90A3\u4EF6\u4E8B,\u4E0D\u5FC5\u7B49\u4EBA\u70B9\u5934,\u81EA\u5DF1\u5F80\u524D\u3002" }, "\u5747\u8861": { "aff": ["career", "study", "chance", "social", "love"], "by": { "career\u987A": "\u4F60\u60F3\u628A\u6BCF\u6761\u8DEF\u90FD\u63E1\u5728\u624B\u91CC\u3002\u4ECA\u5929,\u53EA\u6311\u6700\u60F3\u6210\u7684\u4E00\u4EF6,\u5F80\u524D\u63A8\u8FDB\u3002", "career\u614E": "\u4E8B\u60C5\u8FD8\u6CA1\u4E86\u7ED3,\u4F60\u53C8\u6DFB\u4E86\u65B0\u7684\u3002\u4ECA\u5929,\u4E0D\u52A0\u65B0\u4E8B,\u5148\u4E86\u7ED3\u4E00\u4EF6\u3002", "study\u987A": "\u4F60\u624B\u91CC,\u603B\u6709\u51E0\u6837\u5B66\u5230\u4E00\u534A\u3002\u4ECA\u5929,\u4E0D\u5F00\u65B0\u7684,\u628A\u5B83\u518D\u6DF1\u4E00\u5C42\u3002", "chance\u614E": "\u673A\u4F1A\u4E00\u591A,\u4F60\u5C31\u6837\u6837\u820D\u4E0D\u5F97\u3002\u4ECA\u5929,\u53EA\u7559\u6700\u60F3\u8981\u7684,\u5176\u4F59\u653E\u4E0B\u3002", "social\u614E": "\u4F60\u4EC0\u4E48\u90FD\u60F3\u81EA\u5DF1\u625B\u4E0B\u6765\u3002\u4ECA\u5929,\u6311\u4E00\u4EF6,\u5F00\u53E3\u8BF7\u4EBA\u642D\u628A\u624B\u3002", "love\u614E": "\u5FC3\u4E8B,\u4F60\u603B\u662F\u81EA\u5DF1\u4E00\u4E2A\u4EBA\u6D88\u5316\u3002\u4ECA\u5929,\u6311\u4E00\u4EF6,\u8BF4\u7ED9ta\u542C\u3002" }, "low": "\u4F60\u603B\u60F3\u6837\u6837\u90FD\u987E\u5230\u3002\u4ECA\u5929,\u53EA\u7559\u6700\u8981\u7D27\u7684\u4E00\u4EF6,\u5176\u4F59\u5148\u653E\u4E0B\u3002", "high": "\u4ECA\u5929\u96BE\u5F97\u6709\u52B2\u3002\u4E0E\u5176\u5206\u6563,\u4E0D\u5982\u53EA\u8BA4\u4E00\u6761\u4E3B\u7EBF,\u5F80\u524D\u8FC8\u4E00\u5927\u6B65\u3002" } };
       function heroPersonaOf(mj) {
         if (!mj) return "\u5747\u8861";
         if (mj.isYinHeavyWeak) return "\u5370\u91CD";
@@ -17465,27 +17518,26 @@ var RhythmEngine = (() => {
         return nonBi[0].k;
       }
       function heroLine(personaKey, fortune, energy) {
-        const P = HERO_LIB[personaKey] || HERO_LIB["\u5747\u8861"];
-        if (!P) return "";
         fortune = fortune || {};
-        const DOMS = ["career", "money", "study", "love", "health", "chance"];
-        const norm = (t) => t === "\u987A" ? "\u987A" : t === "\u614E" || t === "\u517B" ? "\u614E" : "";
-        const cand = [];
-        DOMS.forEach((dom) => {
+        const LABEL = { career: "\u4E8B\u4E1A", chance: "\u673A\u4F1A", health: "\u5065\u5EB7", love: "\u611F\u60C5", money: "\u8D22\u8FD0", study: "\u5B66\u4E60" };
+        const ORDER = ["chance", "love", "health", "career", "money", "study"];
+        const ups = [], warns = [];
+        ORDER.forEach((dom) => {
           const f = fortune[dom];
-          if (!f) return;
-          const nt = norm(f.tone);
-          if (!nt) return;
-          const aff = P.aff.indexOf(dom);
-          cand.push({ sig: dom + nt, aff: aff < 0 ? 99 : aff });
+          if (!f || !f.line) return;
+          if (f.tone === "\u987A") ups.push({ dom, up: true, line: f.line });
+          else if (f.tone === "\u614E" || f.tone === "\u517B") warns.push({ dom, up: false, line: f.line });
         });
-        cand.sort((a, b) => a.aff - b.aff);
-        for (let i = 0; i < cand.length; i++) {
-          if (P.by[cand[i].sig]) return P.by[cand[i].sig];
-        }
-        if (energy != null && energy <= 50) return P.low;
-        if (energy != null && energy >= 64) return P.high;
-        return P.low;
+        const seg = (o, lead) => {
+          const pre = lead ? "\u4ECA\u5929" : "";
+          if (o.dom === "health") return pre + (o.up ? "\u4F53\u611F\u4F73\u2014\u2014" : "\u5B9C\u517B\u2014\u2014") + o.line;
+          return pre + LABEL[o.dom] + (o.up ? "\u987A\u624B\u2014\u2014" : "\u8981\u5F53\u5FC3\u2014\u2014") + o.line;
+        };
+        if (ups.length && warns.length) return seg(ups[0], true) + "\u3000" + seg(warns[0], false);
+        if (ups.length) return seg(ups[0], true);
+        if (warns.length) return seg(warns[0], true);
+        if (energy != null && energy < 48) return "\u4ECA\u5929\u7CBE\u529B\u504F\u4F4E\u2014\u2014\u628A\u6700\u8981\u7D27\u7684\u4E00\u4EF6\u505A\u5B8C\uFF0C\u522B\u786C\u8D76\uFF0C\u65E9\u70B9\u6B47\u3002";
+        return "\u4ECA\u5929\u5404\u65B9\u9762\u90FD\u5E73\u7A33\u2014\u2014\u6311\u6700\u8981\u7D27\u7684\u4E00\u4EF6\uFF0C\u7A33\u7A33\u505A\u5B8C\u5C31\u597D\u3002";
       }
       function buildReport(mj, chart, today, ctx) {
         const monthAvgs = ctx && ctx.monthAvgs || null;
@@ -17507,6 +17559,7 @@ var RhythmEngine = (() => {
         GOD_LIFE,
         ARCHETYPE,
         buildYears,
+        buildYearCard,
         buildYearMonths,
         scoreYear,
         natalPillars,
@@ -17527,7 +17580,7 @@ var RhythmEngine = (() => {
       var { liuri, liuyue, liunian, activeDaYun } = require_liuri();
       var { folkOf, upcomingDeities } = require_folk();
       var { seasonView } = require_content();
-      var { buildReport, heroPersonaOf, heroLine } = require_report();
+      var { buildReport, heroPersonaOf, heroLine, buildYearCard } = require_report();
       var { Solar } = require_lunar();
       var WEEK = ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"];
       function fill(e) {
@@ -17793,14 +17846,19 @@ var RhythmEngine = (() => {
         const yr = liunian(mj, chart, Y);
         return yr.months.map((m) => m.avg);
       }
-      module.exports = { buildApp, buildMonth, buildYear };
+      function buildYearCardFor(person, Y) {
+        const chart = paipan(person);
+        const mj = analyze(chart);
+        return buildYearCard(mj, chart, Y);
+      }
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor };
     }
   });
 
   // engine/browser.js
   var require_browser = __commonJS({
     "engine/browser.js"(exports, module) {
-      var { buildApp, buildMonth, buildYear } = require_buildApp();
+      var { buildApp, buildMonth, buildYear, buildYearCardFor } = require_buildApp();
       var { folkOf } = require_folk();
       var { paipan, trueSolarCorrection } = require_paipan();
       function gongJiOf(y, m, d) {
@@ -17854,7 +17912,7 @@ var RhythmEngine = (() => {
           return 30;
         }
       }
-      module.exports = { buildApp, buildMonth, buildYear, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
     }
   });
   return require_browser();
@@ -20396,7 +20454,51 @@ var RhythmEngine = (() => {
         items.forEach(function(el){ io.observe(el); });
         setTimeout(function(){ items.forEach(show); },1500); // 安全兜底:防 display:none→block 时 IO 不触发致内容隐身
       }
-      function buildJiedu(){ try{ buildGlance(); buildHeads(); jdReveal(); }catch(e){} }
+      // —— 开篇「当年运势」卡:当年要做什么/要注意(干货),左右翻年(过去年按需实算)——
+      var _jdYearY=null, _jdYearCache={};
+      function jdYearData(Y){
+        if(_jdYearCache[Y]) return _jdYearCache[Y];
+        var hit=((R.years&&R.years.years)||[]).filter(function(y){return y.year===Y;})[0];
+        if(hit){ _jdYearCache[Y]=hit; return hit; }
+        try{ var c=window.RhythmEngine&&window.RhythmEngine.buildYearCardFor&&window.RhythmEngine.buildYearCardFor(window.APP_PERSON, Y); if(c){ _jdYearCache[Y]=c; return c; } }catch(e){}
+        return null;
+      }
+      function renderYearCard(){
+        var el=$('jd-year'); if(!el) return;
+        if(!R.years||!R.years.years||!R.years.years.length){ el.innerHTML=''; return; }
+        var curY=R.years.curYear||R.years.years[0].year;
+        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
+        if(_jdYearY==null) _jdYearY=curY;
+        _jdYearY=Math.max(birthY, Math.min(birthY+99, _jdYearY));
+        var y=jdYearData(_jdYearY); if(!y){ el.innerHTML=''; return; }
+        var lvl=y.level==='高'?'hi':(y.level==='低'?'lo':'mid');
+        var sub=[(y.age!=null?y.age+'岁':''), y.ganZhi, (_jdYearY===curY?'今年':'')].filter(Boolean).join(' · ');
+        var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
+        var doL=li(y.yi), watchL=li(y.ji);
+        el.innerHTML=
+          '<div class="jd-yr">'
+          +'<div class="jd-yr-nav">'
+          +'<button class="jd-yr-arw" id="jd-yr-prev" type="button" aria-label="上一年">‹</button>'
+          +'<div class="jd-yr-ttl"><b>'+_jdYearY+' 年</b>'+(sub?'<span>'+esc(sub)+'</span>':'')+'</div>'
+          +'<button class="jd-yr-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
+          +'</div>'
+          +(y.trait?'<div class="jd-yr-trait"><i class="jd-yr-dot '+lvl+'"></i>'+esc(y.trait)+'</div>':'')
+          +'<div class="jd-yr-yj">'
+          +(doL?'<div class="jd-yr-col"><span class="jd-yr-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
+          +(watchL?'<div class="jd-yr-col"><span class="jd-yr-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
+          +'</div>'
+          +'</div>';
+        var go=function(d){ _jdYearY+=d; renderYearCard(); };
+        var p=$('jd-yr-prev'), nx=$('jd-yr-next');
+        if(p) p.onclick=function(){ go(-1); };
+        if(nx) nx.onclick=function(){ go(1); };
+        var card=el.querySelector('.jd-yr'), x0=null;
+        if(card){
+          card.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
+          card.addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)<45)return; go(dx<0?1:-1); },{passive:true});
+        }
+      }
+      function buildJiedu(){ try{ renderYearCard(); buildGlance(); buildHeads(); jdReveal(); }catch(e){} }
 
       function showBody(){
         cover.style.display='none'; body.style.display='block';
