@@ -2909,7 +2909,7 @@
             : d.e<=54 ? '给今天打张卡 →'
             : '为今日做一张卡片 →';
         })();
-        $('w-yi').textContent = (d.yi && d.yi.length) ? d.yi.join(' · ') : '顺其自然';
+        $('w-yi').textContent = (d.yi && d.yi.length) ? d.yi.join(' · ') : '挑手头最要紧的一件，先做完';
         $('w-huan').textContent = (d.huan.join('')==='—') ? '无须刻意避忌' : d.huan.join(' · ');
         $('w-xisw').style.background = XI;
         $('w-xiname').textContent = XINAME;
@@ -3168,9 +3168,9 @@
       function build(d){
         if (!d) return '';
         const M=APP.month.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
-        const kw=esc(d.cueWord||d.cue||'顺其自然'), line=poeticBreak(d.cueLine||('今日基调偏「'+(d.toneShort||'平')+'」，顺势而为即可。'));
+        const kw=esc(d.cueWord||d.cue||'顺其自然'), line=poeticBreak(d.cueLine||('今天平平，挑一件要紧事稳稳做完就好。'));
         const e=Math.min(100,d.e), word=esc(d.word||''), xi=XI||GOLD;
-        const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'顺其自然');
+        const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'挑最要紧的一件做完');
         const huan=esc((d.huan&&d.huan.length&&d.huan.join('')!=='—')?d.huan.slice(0,2).join(' · '):'无须刻意避忌');
         const axis=Math.max(4,Math.min(96,(typeof d.axis==='number'?d.axis:50)));
         const sx=(d.ganZhi&&d.ganZhi.shengXiao)?d.ganZhi.shengXiao:'';
@@ -3217,7 +3217,7 @@
         const xitems=XDOM.map(function(p){var f=(d.fortune&&d.fortune[p[0]])||{};return {lab:p[1],tone:f.tone||'',line:f.line||''};})
           .filter(function(x){return x.line;})
           .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
-        var xhero=d.heroLine||(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'顺其自然，把要紧的一件做好。';
+        var xhero=d.heroLine||(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'挑要紧的一件，先做完。';
         var xci=xhero.indexOf('，'); if(xci<2) xci=xhero.indexOf('、');
         var xheroHtml=(xci>1&&xci<xhero.length-2)?(esc(xhero.slice(0,xci+1))+'<br>'+esc(xhero.slice(xci+1))):esc(xhero);
         var xtips=xitems.filter(function(x){return x.line!==xhero;}).slice(0,3);
@@ -3963,7 +3963,7 @@
       const RH_DESC={
         精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度、别硬透支'],[0,'精力细水长流，顺势蓄力、少熬夜']],
         专注:[[72,'沉得下心、钻得进去，宜深耕一处'],[56,'专注够用，固定节奏最出活'],[0,'思路活跳、点子多，宜分段推进']],
-        情绪:[[72,'情绪流动顺畅、少积压，通透'],[56,'情绪大体平稳，偶有波动也能自解'],[0,'情绪细腻敏感，多向外疏解、勤走动']],
+        情绪:[[72,'情绪来去顺、不太憋得住事，想得开'],[56,'情绪大体平稳，偶有波动也能自解'],[0,'情绪细腻敏感，多向外疏解、勤走动']],
         人际:[[72,'善张罗、合得来，人脉能帮衬'],[56,'社交有度，亲疏拿捏得当'],[0,'慢热、重深交，小圈子里更自在']],
       };
       function rhDesc(k,v){ const b=RH_DESC[k]||[]; for(let i=0;i<b.length;i++){ if(v>=b[i][0]) return b[i][1]; } return ''; }
@@ -4345,7 +4345,7 @@
           ? ((hi?'今年 <b>'+hi+' 月</b>你的气场最足，最适合放大事、做重要决定；':'')
              + (lo?'<b>'+lo+' 月</b>更适合沉淀蓄力、打好基础，稳一稳再发力；':'')
              + '其余月份按自己的节奏稳步推进即可。')
-          : '今年各月气场起伏不大，整体平稳，按自己的节奏稳步推进即可。';
+          : '今年各月起伏不大，按平时节奏安排就好。';
         const cpts=Y.months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:m.month===Y.curMonth, key:'m'+m.month}));
         $('rp-p-months').innerHTML =
           rpBanner('sec-rhythm','高能量月','')
