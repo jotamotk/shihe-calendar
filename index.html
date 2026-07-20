@@ -195,8 +195,7 @@
   .px{aspect-ratio:1/1.24;border-radius:13px;background:transparent;position:relative;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding-bottom:5px;transition:background .18s var(--ease),box-shadow .18s var(--ease);}
   .px b{font-size:16px;font-weight:300;color:var(--ink);line-height:1;letter-spacing:.5px;position:relative;z-index:1;}
   .px .ln{font-size:8px;font-weight:300;color:var(--muted);opacity:.72;line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px;position:relative;z-index:1;}
-  /* 民俗/节庆=金数字、放假=暖红数字(通用日历惯例);重点日(自定义)= 顶部一颗统一金色小圆点，不染数字、不按分类分色。 */
-  .px.d-fk b{color:var(--gold);font-weight:500;}
+  /* 数字统一色:不再按民俗/节庆染金(用户反馈"有的金有的白看不懂");节庆仍在数字下方显示节日名。放假=暖红数字(红色假期通用惯例)、重点日=顶部金点。 */
   .px.h-off b{color:var(--rest);font-weight:500;}
   .px.h-off .ln.fest{color:var(--rest);}
   .px.d-mk::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold-d);box-shadow:0 0 6px -1px var(--gold-d);z-index:1;}
@@ -1200,7 +1199,8 @@
   /* —— 今日·你的节律:卡头标题 + 折叠态小分数 + 综合分 hero + 五维 fortune 面板 —— */
   .wdg-htitle{margin-right:auto;font-weight:500;color:var(--ink);letter-spacing:.5px;}
   .today-score-chip{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.5px;color:var(--gold-d);transition:max-width .32s var(--ease),opacity .26s var(--ease);}
-  .collapsed>.wdg-toggle .today-score-chip{max-width:70px;opacity:1;}
+  .collapsed>.wdg-toggle .today-score-chip{max-width:32px;opacity:1;margin-left:auto;}
+  .today-score-chip svg{display:block;width:26px;height:auto;}
   /* 常驻「怎么用?」入口:随时唤出首用讲解;首用轻高亮提示;折叠态隐藏保持简洁 */
   .wdg-help{flex:none;font-size:11px;font-weight:400;letter-spacing:.3px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin-right:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s var(--ease),border-color .2s var(--ease);}
   .wdg-help:active{color:var(--gold-d);border-color:var(--gold-line);}
@@ -2851,7 +2851,7 @@
         // 今日一句:干货生成器主句(说中你+能照做)
         if($('w-hero')) $('w-hero').textContent = d.heroLine || '';
         // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
-        if($('w-score-chip')) $('w-score-chip').textContent = d.word || '';
+        if($('w-score-chip')) $('w-score-chip').innerHTML = energyOrb(d.e, 26);   // 收起态显示小能量球(替代原状态标语)
         // 新手引导里的示意光球(满档,只填一次)
         if($('intro-orb') && !$('intro-orb').firstChild) $('intro-orb').innerHTML = energyOrb(78, 44);
         // 态势条以中线为原点:游标落在当下点；中线向落点淡染体现偏幅(读「偏向」,不是「分数」)
@@ -3404,11 +3404,7 @@
       }
       try{ localStorage.setItem(KEY, JSON.stringify({last:todayStr, count})); }catch(e){}
       // 连续打开天数:轻量露出(≥2 天才显示，把拖动提示换成一句温和的陪伴),不做打卡/红点等游戏化
-      if(count>=2){
-        const st=document.getElementById('wdg-streak');
-        if(st){ st.textContent='连续第 '+count+' 天 · 顺时而行'; st.style.display=''; }
-        const hint=document.getElementById('wdg-hint'); if(hint) hint.classList.add('gone');
-      }
+      // 连续打开天数仍在后台计数(localStorage),但不再显示"连续第N天·顺时而行"(用户要删,不做打卡/陪伴语)。
     })();
 
     // ===== 屏2 · 节律(百年能量 · 生命之轮)=====
@@ -4339,7 +4335,7 @@
           + rpFlourish();
         // 展开/收起 + 默认展开本月
         $('rp-p-months').querySelectorAll('.rp-mo').forEach((el)=>{
-          if(+el.dataset.mo===Y.curMonth) el.classList.add('open');
+          el.classList.add('open');   // 全部月份默认展开(用户要求,不只当前月)
           el.querySelector('.rp-mo-top').addEventListener('click', ()=> el.classList.toggle('open'));
         });
         bindChartJump($('rp-p-months'), (k)=> $('rp-p-months').querySelector('.rp-mo[data-mo="'+k.slice(1)+'"]'));
@@ -4411,7 +4407,7 @@
           + '</div>'
           + rpFlourish();
         $('rp-p-years').querySelectorAll('.rp-mo').forEach((el)=>{
-          if(+el.dataset.yr===Y.curYear) el.classList.add('open');
+          el.classList.add('open');   // 全部年份默认展开(用户要求,不只当前年)
           el.querySelector('.rp-mo-top').addEventListener('click', ()=> el.classList.toggle('open'));
         });
         bindChartJump($('rp-p-years'), (k)=> $('rp-p-years').querySelector('.rp-mo[data-yr="'+k.slice(1)+'"]'));
@@ -4544,7 +4540,6 @@
         if(!axis){ const Ym=R.yearMonths; if(Ym&&Ym.highMonths&&Ym.highMonths.length) axis='气场高点在 '+Ym.highMonths.slice(0,3).join('、')+' 月'; }
         const xi=n.xiColor||{};
         el.innerHTML='<div class="jd-glance">'
-          +(line?'<div class="jd-gl-line">'+esc(line)+'</div>':'')
           +(dimHtml?'<div class="jd-gl-dims">'+dimHtml+'</div>':'')
           +'<div class="jd-gl-foot">'
           + (axis?'<div class="jd-gl-axis" data-go="months"><b>今年 ·</b> '+esc(axis)+'</div>':'<div class="jd-gl-axis"></div>')
