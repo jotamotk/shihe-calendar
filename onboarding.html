@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>时和</title>
+<title>顺时黄历</title>
 <!-- 字体:系统字体栈(零网络依赖，各机型一致) -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D0B09">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="时和">
+<meta name="apple-mobile-web-app-title" content="顺时黄历">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <style>
@@ -138,9 +138,8 @@
 </head>
 <body>
   <div class="page-head">
-    <div class="brand-row"><div class="brand-seal">时</div><div class="brand-name">时 和</div></div>
-    <p>完善出生信息，生成你的专属节律</p>
-    <div class="tag">性别 / 历法 / 日期 / 时间 / 出生地 · 真太阳时自动校正</div>
+    <div class="brand-row"><div class="brand-seal">顺</div><div class="brand-name">顺时黄历</div></div>
+    <p>完善出生信息</p>
     <a class="back" href="index.html">← 返回首页</a>
   </div>
 
@@ -149,8 +148,7 @@
       <div class="notch"></div>
       <div class="status"><span class="clock">9:41</span><span></span></div>
       <div class="scroll">
-        <div class="ftitle">认识你的节律</div>
-        <div class="fsub">留下出生信息，为你推算每日能量与宜忌</div>
+        <div class="ftitle">认识你自己</div>
 
         <div class="grid2">
           <div>
@@ -176,7 +174,7 @@
             <div class="wheel-col wh-time"><div class="wheel-cap">时</div><div class="wheel" id="wh-hour"></div></div>
             <div class="wheel-col wh-time"><div class="wheel-cap">分</div><div class="wheel" id="wh-min"></div></div>
           </div>
-          <div class="time-unknown" id="time-unknown" style="display:none">时辰未知 · 将按当日节律推算，不锚定具体时辰。</div>
+          <div class="time-unknown" id="time-unknown" style="display:none">时辰未知 · 按当日推算</div>
           <input type="hidden" id="in-date" value="1995-08-17">
           <input type="hidden" id="in-time" value="14:30">
         </div>
@@ -193,7 +191,7 @@
           </div>
         </div>
 
-        <button class="btn" id="btn-go">生成我的节律 →</button>
+        <button class="btn" id="btn-go">生成我的黄历 →</button>
         <div class="privacy">仅用于本机计算，不上传、不外传<br><a class="pv-link" href="./privacy.html">隐私政策</a>·<a class="pv-link" href="./terms.html">用户协议</a></div>
       </div>
 
@@ -201,7 +199,7 @@
       <div class="cf-ov" id="confirm">
         <div class="cf-card">
           <div class="cf-h">核对你的命盘</div>
-          <div class="cf-sub">已按真太阳时校正、节气定月排盘 · 确认无误后保存</div>
+          <div class="cf-sub">已按真太阳时校正、节气定月排盘</div>
           <div class="cf-info" id="cf-info"></div>
           <div class="cf-pwrap">
             <div class="cf-plabel">四柱 · 干支</div>
@@ -447,7 +445,7 @@
       // 标题与命盘块:仅核对模式露出四柱原盘；普通用户只确认出生信息
       document.querySelector('.cf-h').textContent   = VERIFY ? '核对你的命盘' : '核对你的八字';
       document.querySelector('.cf-sub').textContent = VERIFY
-        ? '已按真太阳时校正、节气定月排盘 · 确认无误后保存'
+        ? '已按真太阳时校正、节气定月排盘'
         : '已按真太阳时校正、节气定月排盘 · 核对无误后保存';
       // 四柱八字对所有人显示(很多人要看要核对);日主/喜用/喜色等更深解读仍仅核对模式露出,守住养生外壳口径
       document.querySelector('.cf-pwrap').style.display = '';
@@ -467,7 +465,7 @@
         '公历 <b>'+p.year+'年'+p.month+'月'+p.day+'日</b> · '+p.gender+' · '+document.getElementById('in-city').selectedOptions[0].text+'<br>'+
         '农历 <b>'+chart.lunarText+'</b><br>'+
         (p.hourUnknown
-          ? '出生时辰 <b>未知</b> · 按当日节律推算'
+          ? '出生时辰 <b>未知</b> · 按当日推算'
           : '真太阳时 <b>'+chart.trueSolarClock+'</b>（校正 '+sign+Math.abs(corr)+' 分）');
 
       const u = APP.user||{};

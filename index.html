@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>时和</title>
+<title>顺时黄历</title>
 <!-- 字体:全部走系统字体栈(国内零网络依赖、各机型快速且一致；不再依赖被墙的 Google Fonts) -->
 <!-- PWA · 可「添加到主屏幕」全屏运行 -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="时和">
+<meta name="apple-mobile-web-app-title" content="顺时黄历">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <style>
@@ -429,6 +429,23 @@
   .rp-ov{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;opacity:0;transition:opacity .3s var(--ease);}
   @media(min-width:561px){ .rp-ov{max-width:430px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);} }
   .rp-ov.on{display:flex;opacity:1;}
+  /* 「我的」overlay:复用 rp-head/rp-back,菜单式列表 */
+  .mine-ov{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;opacity:0;transition:opacity .3s var(--ease);}
+  @media(min-width:561px){ .mine-ov{max-width:430px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);} }
+  .mine-ov.on{display:flex;opacity:1;}
+  .mine-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 16px 40px;}
+  .mine-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:18px;}
+  .mine-hero-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.04em;}
+  .mine-hero-sub{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:300;}
+  .mine-list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+  .mine-it{display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;background:none;border:none;border-bottom:1px solid var(--line);color:var(--ink);font-size:15px;text-align:left;text-decoration:none;cursor:pointer;transition:background .15s;}
+  .mine-it:last-child{border-bottom:none;}
+  .mine-it:active{background:var(--bg-top);}
+  .mine-ic{width:19px;height:19px;flex:none;color:var(--gold-d);opacity:.9;}
+  .mine-it-t{flex:1;}
+  .mine-go{color:var(--muted);font-size:18px;line-height:1;}
+  .mine-foot{text-align:center;font-size:10.5px;color:var(--muted);font-weight:300;line-height:1.9;padding:14px 20px 0;}
+  .mine-foot b{color:var(--ink-2);font-weight:400;}
   /* ===== 解读页 · 免费命书速览(复用 .rp-* 卡片样式，只补少量专属类)===== */
   .jd-free-tag{display:inline-block;font-size:10px;letter-spacing:3px;color:var(--gold-d);font-weight:500;border:1px solid var(--line-2);border-radius:20px;padding:4px 12px;margin:0 auto 4px;}
   .jd-yr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px;}
@@ -534,9 +551,63 @@
   .rp-up-btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:2px;color:#231A0C;background:linear-gradient(135deg,var(--gold-d),var(--gold));box-shadow:0 14px 30px -12px rgba(205,168,98,.5);}
 
   /* —— 已解锁 · tabs —— */
-  .rp-tabs{position:sticky;top:0;z-index:2;display:flex;gap:6px;padding:12px 16px;background:linear-gradient(180deg,var(--bg) 70%,transparent);}
-  .rp-tab{flex:1;padding:9px 4px;text-align:center;font-size:11.5px;font-weight:400;letter-spacing:1px;color:var(--ink-2);border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;transition:all .2s;}
-  .rp-tab.on{color:#231A0C;font-weight:600;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;}
+  /* ============ 解读页 · 渐进披露重构(2026-07 大改:一目了然卡 + 六章手风琴) ============ */
+  /* 一目了然层:常驻「能量底色卡」——全页唯一实渐变,金面积预算的锚点 */
+  #jd-glance{margin:4px 0 20px;}
+  .jd-glance{position:relative;overflow:hidden;border-radius:20px;padding:26px 22px 20px;
+    background:radial-gradient(125% 92% at 50% -12%,color-mix(in srgb,var(--gold) 13%,var(--bg-top)),var(--bg-top) 60%);
+    border:1px solid var(--gold-line);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(230,207,158,.09);}
+  .jd-glance::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(72% 56% at 50% -4%,color-mix(in srgb,var(--gold) 15%,transparent),transparent 70%);opacity:.6;}
+  .jd-gl-eye{position:relative;font-size:10px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;font-weight:500;opacity:.82;}
+  .jd-gl-line{position:relative;font-family:var(--serif);font-size:20px;line-height:1.55;color:var(--gold-d);font-weight:400;margin:12px 0 2px;text-wrap:balance;letter-spacing:.5px;}
+  .jd-gl-dims{position:relative;display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 2px;}
+  .jd-gl-dim{display:flex;align-items:center;gap:7px;cursor:pointer;}
+  .jd-gl-dim .mk{width:9px;height:9px;border-radius:50%;flex:none;}
+  .jd-gl-dim .mk.hi{background:radial-gradient(circle at 34% 30%,var(--gold-d),var(--gold));box-shadow:0 0 8px -1px color-mix(in srgb,var(--gold) 68%,transparent);}
+  .jd-gl-dim .mk.mid{background:var(--gold);opacity:.52;}
+  .jd-gl-dim .mk.lo{background:var(--ink-2);opacity:.38;}
+  .jd-gl-dim span{font-size:12.5px;color:var(--ink-2);letter-spacing:1px;}
+  .jd-gl-foot{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:17px;padding-top:15px;border-top:1px solid var(--line);}
+  .jd-gl-axis{font-size:12.5px;color:var(--muted);line-height:1.5;cursor:pointer;flex:1 1 auto;min-width:0;}
+  .jd-gl-axis b{color:var(--ink-2);font-weight:500;}
+  .jd-gl-color{display:flex;align-items:center;gap:8px;flex:none;cursor:pointer;}
+  .jd-gl-color .sw{width:20px;height:20px;border-radius:50%;border:1px solid var(--gold-line);box-shadow:inset 0 0 0 2px var(--bg-top);}
+  .jd-gl-color span{font-size:11px;color:var(--muted);letter-spacing:1px;}
+  /* 六章手风琴 */
+  .jd-acc{display:flex;flex-direction:column;padding:0;}
+  .jd-ch{border-top:1px solid var(--line);}
+  .jd-ch:last-child{border-bottom:1px solid var(--line);}
+  .jd-ch-head{width:100%;display:grid;grid-template-columns:34px 1fr 22px;align-items:center;gap:13px;scroll-margin-top:16px;
+    padding:18px 2px 18px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;position:relative;-webkit-tap-highlight-color:transparent;}
+  .jd-ch-head::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:0;border-radius:2px;
+    background:linear-gradient(var(--gold-d),var(--gold));transition:height .3s var(--ease);}
+  .jd-ch.open .jd-ch-head::before{height:46px;}
+  .jd-ch-num{font-family:var(--serif);font-size:21px;color:var(--gold-d);text-align:center;font-weight:400;opacity:.92;line-height:1;padding-left:6px;}
+  .jd-ch-tx{min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .jd-ch-eye{font-size:9.5px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;font-weight:500;opacity:.72;}
+  .jd-ch-name{font-family:var(--serif);font-size:18px;color:var(--ink);font-weight:500;letter-spacing:1.5px;}
+  .jd-ch-sig{font-size:12px;color:var(--muted);font-weight:300;letter-spacing:.3px;line-height:1.45;}
+  .jd-ch-chev{width:22px;height:22px;color:var(--muted);transition:transform .24s var(--ease),color .24s var(--ease);display:flex;align-items:center;justify-content:center;}
+  .jd-ch-chev svg{width:14px;height:14px;}
+  .jd-ch.open .jd-ch-chev{transform:rotate(180deg);color:var(--gold-d);}
+  .jd-ch-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s var(--ease);}
+  .jd-ch.open .jd-ch-panel{grid-template-rows:1fr;}
+  .jd-ch-inner{overflow:hidden;min-height:0;}
+  .jd-ch-inner > .rp-page{display:block;padding:2px 0 24px;}
+  /* future-fade:只淡金色 accent,不淡正文,守 AA 可读 */
+  .jd-future .jd-ch-num,.jd-future .jd-ch-eye{color:var(--muted);opacity:.62;}
+  .jd-future .jd-ch-head::before{background:linear-gradient(var(--ink-2),transparent);opacity:.5;}
+  .jd-future.open .jd-ch-chev{color:var(--ink-2);}
+  /* 越远越淡:第一档(伍)章名转次色、最远档(陆.jd-far)再淡一级——都守 AA(--ink-2/--muted 于深底大字远超标准) */
+  .jd-future .jd-ch-name{color:var(--ink-2);}
+  .jd-far .jd-ch-name{color:var(--muted);}
+  /* 进场揭示(克制:只动 transform+opacity;尊重 reduced-motion) */
+  @media (prefers-reduced-motion:no-preference){
+    .jd-reveal{opacity:0;transform:translateY(10px);}
+    .jd-reveal.in{opacity:1;transform:none;transition:opacity .5s var(--ease),transform .5s var(--ease);}
+  }
+  /* 六 Tab 已重构为手风琴,.rp-tabs/.rp-tab 死代码已删;.rp-page 显示规则保留(六章内容容器仍用) */
   .rp-page{display:none;padding:6px 18px 34px;}
   .rp-page.on{display:block;animation:rpfade .35s var(--ease);}
   @keyframes rpfade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
@@ -580,7 +651,7 @@
   .rp-step-arw{flex:none;align-self:center;color:var(--line-2);font-size:12px;}
   /* natal · 分层小标(①②③) */
   .rp-ly{flex:none;width:19px;height:19px;border-radius:50%;background:var(--gold-soft);border:1px solid var(--gold-line);color:var(--gold-d);font-size:11px;font-weight:600;font-style:normal;font-family:var(--serif);display:inline-flex;align-items:center;justify-content:center;letter-spacing:0;}
-  /* natal · 四维节律禀赋条 */
+  /* natal · 四种状态禀赋条 */
   .rp-rhythm{display:flex;flex-direction:column;gap:14px;}
   .rp-rh-top{display:flex;align-items:center;gap:11px;}
   .rp-rh{display:flex;align-items:baseline;gap:12px;}
@@ -1026,6 +1097,11 @@
   .we-folk{margin:-4px 0 12px;padding:0 0 0 9px;border-left:2px solid #C8AC78;line-height:1.5;}
   .we-folk-n{font-family:var(--serif);font-size:12.5px;font-weight:500;color:#E0C88A;letter-spacing:.3px;}
   .we-folk-d{font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;margin-left:7px;}
+  /* 大吉当头:S级公吉横幅(天赦/大节/圣诞)——比普通民俗更显眼,金底左描边 */
+  .we-folk-daji{border-left-width:3px;border-radius:0 11px 11px 0;padding:9px 13px 9px 11px;margin:-2px 0 13px;
+    background:linear-gradient(90deg,color-mix(in srgb,var(--gold) 12%,transparent),transparent 82%);}
+  .we-folk-daji .we-folk-n{font-size:14px;color:var(--gold-d);letter-spacing:.6px;}
+  .we-folk-daji .we-folk-d{display:block;margin:3px 0 0;color:var(--ink-2);font-size:11.5px;}
   /* 能量卡 · 当日重点日 */
   .we-mk{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 13px;}
   .we-mk-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:400;
@@ -1131,7 +1207,16 @@
   .wdg-help.hint{color:var(--gold-d);border-color:var(--gold-line);animation:helpPulse 2.4s ease-in-out infinite;}
   @keyframes helpPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,172,120,0);}50%{box-shadow:0 0 0 4px rgba(200,172,120,.13);}}
   .collapsed>.wdg-toggle .wdg-help{display:none;}
-  .today-hero{display:flex;align-items:center;gap:18px;margin:2px 0 18px;}
+  .today-hero{display:flex;align-items:center;gap:18px;margin:2px 0 18px;position:relative;}
+  /* 能量光球:按住浮出整体能量 0-100(平时藏,按住才露) */
+  #w-orb{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none;}
+  .orb-peek{position:absolute;left:50px;top:52px;transform:translate(-50%,-50%) scale(.94);
+    display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 14px;border-radius:14px;
+    background:rgba(11,11,12,.82);border:1px solid var(--gold-line);box-shadow:0 8px 24px -8px rgba(0,0,0,.7);
+    backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .16s var(--ease),transform .16s var(--ease);z-index:4;}
+  .orb-peek.on{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  .orb-peek b{font-family:var(--serif);font-size:30px;line-height:1;color:var(--gold-d);font-weight:500;letter-spacing:1px;}
+  .orb-peek s{font-size:9.5px;letter-spacing:2px;color:var(--muted);text-decoration:none;}
   .th-orb{flex:none;width:100px;height:106px;display:flex;align-items:center;justify-content:center;}
   .th-orb svg{display:block;overflow:visible;}
   .th-score{flex:none;display:flex;align-items:baseline;}
@@ -1164,6 +1249,9 @@
   .tf-body-tone.mid{color:var(--muted);background:var(--card);box-shadow:inset 0 0 0 1px var(--line);}
   .tf-body-tone.warn{color:var(--rest);background:color-mix(in srgb,var(--rest) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 30%,transparent);}
   .tf-body-line{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.78;letter-spacing:.2px;}
+  /* 机会并入事业:事业正文下的「机会」子行(虚线分隔+金色小标) */
+  .tf-body-sub{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.78;letter-spacing:.2px;}
+  .tf-body-sublab{display:inline-block;margin-right:7px;font-size:10.5px;font-weight:500;letter-spacing:1px;color:var(--gold-d);vertical-align:1px;}
   /* 未来一周能量:口径说明 */
   .wk7-note{margin-top:12px;font-size:11.5px;color:var(--muted);font-weight:300;line-height:1.7;letter-spacing:.2px;}
   .wk7-note b{color:var(--gold-d);font-weight:500;}
@@ -1196,6 +1284,8 @@
   .hl2-yi .hl2-yj-k{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
   .hl2-ji .hl2-yj-k{color:var(--rest);background:color-mix(in srgb,var(--rest) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 30%,transparent);}
   .hl2-yj-v{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.7;letter-spacing:.3px;}
+  .hl2-verdict{font-size:13px;font-weight:600;color:var(--gold-d);letter-spacing:.3px;margin:0 0 10px;}
+  .hl2-verdict.a{font-weight:500;color:var(--muted);}
   /* 十二时辰吉凶 */
   .hl2-shi{margin-bottom:2px;}
   .hl2-shi-h{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:var(--gold-d);letter-spacing:1px;margin:4px 0 11px;}
@@ -1630,8 +1720,8 @@
 <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.7 9.3 10.6 10.6 9.3 14.7 13.4 13.4 14.7 9.3Z"/><circle cx="12" cy="12" r="0.7" fill="currentColor" stroke="none"/></symbol>
 </defs></svg>
   <div class="page-head">
-    <div class="brand-row"><div class="brand-seal">时</div><div class="brand-name">时 和</div></div>
-    <p>每天一格，把日子过成自己的节律</p>
+    <div class="brand-row"><div class="brand-seal">顺</div><div class="brand-name">顺时黄历</div></div>
+    <p>顺天而养，应时而行</p>
     <div class="tag">真实引擎驱动 · 数据全本机计算</div>
   </div>
 
@@ -1645,13 +1735,12 @@
         <!-- 首次使用说明:一次性，直白讲清「分数高=能量高」 -->
         <div class="intro-ov" id="intro-ov">
           <div class="intro-card">
-            <div class="intro-seal">时</div>
+            <div class="intro-seal">顺</div>
             <div class="intro-h">读懂你的每一天</div>
-            <div class="intro-sub">一分钟看懂怎么用</div>
             <div class="intro-rows">
               <div class="intro-row"><span class="intro-orb" id="intro-orb"></span><div class="intro-tx"><b>光球越满 = 能量越足</b><span>球满，状态舒展、宜放手去做；球浅，则宜收宜养、内守蓄力。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日节律</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>挑高能量日做要紧事</b><span>日历上标金的是你的高能量日，重要决定、要紧事排在这几天；每天的「宜 / 缓 / 宜色」照着做就好。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日状态</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>要紧事，挑高能量日</b><span>长按某天，会浮出当日能量数，越高越顺——重要决定排到这几天。日历上标金的，是黄历大吉与民俗吉日，另作择日参考。</span></div></div>
             </div>
             <button class="intro-go" id="intro-go">知道了</button>
             <div class="intro-fine">全部在本机计算 · 不上传、不外传</div>
@@ -1685,7 +1774,7 @@
           <!-- ====== 选中日 · 小部件流 ====== -->
           <div class="widgets" id="widgets">
             <div class="wdg-streak" id="wdg-streak" style="display:none"></div>
-            <div class="wdg-hint" id="wdg-hint">长按卡片可上下拖动 · 自由排序</div>
+            <div class="wdg-hint" id="wdg-hint"></div>
             <!-- W1 能量(显眼) -->
             <div class="wdg wdg-energy" data-wid="energy">
               <div class="wdg-daterow">
@@ -1700,9 +1789,9 @@
               <div class="we-mk" id="w-mk" style="display:none"></div>
             </div>
 
-            <!-- W-TODAY 今日 · 你的节律(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
+            <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的节律</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
@@ -1723,7 +1812,7 @@
                 </div>
                 <div class="today-xi"><span class="cue-xilab">今日宜色</span><i class="cue-sw" id="w-xisw"></i><span class="today-xiname" id="w-xiname">松绿</span></div>
                 <!-- 导航衔接:通向「解读」完整命书 -->
-                <div class="today-more" data-goto="read"><span>查看完整命书解读<span class="tm-sub"> · 能量底色与今年走势</span></span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+                <div class="today-more" data-goto="read"><span>查看完整解读</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
               </div></div>
             </div>
 
@@ -1731,6 +1820,8 @@
             <div class="wdg wdg-hl2 collapsible" data-wid="huangli" id="w-huangli" style="display:none">
               <div class="wdg-h wdg-toggle hl2-toggle"><span class="wdg-htitle">老黄历</span><span class="hl2-sub" id="hl2-gz">—</span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
+              <!-- 公吉结论行(大吉当头:天赦/大节/黄道,读 gongJi;硬凶/平日静默) -->
+              <div class="hl2-verdict" id="hl2-verdict" style="display:none"></div>
               <!-- 宜忌 hero -->
               <div class="hl2-yj">
                 <div class="hl2-yj-col hl2-yi"><span class="hl2-yj-k">宜</span><div class="hl2-yj-v" id="hl2-yi"></div></div>
@@ -1744,7 +1835,7 @@
               </div>
               <!-- 更多细节(折叠)+ 四法参断 -->
               <div class="hl2-more collapsible collapsed" data-wid="hlmore">
-                <div class="hl2-more-h wdg-toggle">更多历法细节 · 判定依据<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+                <div class="hl2-more-h wdg-toggle">更多历法细节<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
                 <div class="wdg-body"><div class="wdg-body-in">
                   <div class="hl2-grid" id="hl2-grid"></div>
                   <div class="hl2-ss-detail" id="hl2-ss-detail"></div>
@@ -1763,7 +1854,7 @@
             <div class="wdg collapsible" data-wid="week">
               <div class="wdg-h wdg-toggle">未来一周 · 能量<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in"><div class="wk7b" id="w-wk7"></div>
-                <div class="wk7-note">每根柱是当天的<b>整体能量(0–100)</b>：由你的生辰命局，结合当日干支与喜用推算——越高越顺、宜主动；越低宜内收蓄力。金柱为高能量日。</div>
+                <div class="wk7-note">柱越高越顺、宜主动；越低宜内收蓄力。金柱是高能量日。</div>
               </div></div>
             </div>
 
@@ -1775,7 +1866,7 @@
           <div class="tab on"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
         <!-- 分享卡 overlay(覆盖在手机内，可截图) -->
         <div class="share-ov" id="share-ov">
@@ -1788,7 +1879,6 @@
           <div class="share-card sc-tA" id="share-card"></div>
           <div class="share-acts">
             <button class="share-go" id="share-go">分享给朋友</button>
-            <span class="share-tip">或截图保存这张卡片，分享你的今天</span>
             <button class="share-close" id="share-close">关闭</button>
           </div>
         </div>
@@ -1804,7 +1894,7 @@
         <div class="scroll">
           <div class="tb-detail-head"><button class="tb-back" data-goto="tools" type="button"><span>‹</span>工具箱</button></div>
           <div class="life-top">
-            <div class="life-h"><b>一生能量</b><span>逐年逐月 · 顺时而行</span></div>
+            <div class="life-h"><b>一生能量</b><span>逐年逐月</span></div>
           </div>
 
           <div class="life-head">
@@ -1824,19 +1914,20 @@
               <svg id="lf-wheel" viewBox="-170 -170 340 340"></svg>
               <div class="lf-guide" id="lf-guide">
                 <svg class="lf-guide-svg" viewBox="-170 -170 340 340" aria-hidden="true">
-                  <path id="lf-guide-arc" d="M-51.4,-61.3 A80,80 0 0 1 51.4,-61.3" fill="none"
-                        stroke="#201C14" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+                  <!-- 绕圈弧:沿外环转一圈(缺口留在顶部红针处),示意「捏红针沿外圈转」,不再是横扫误导成左右滑 -->
+                  <path id="lf-guide-arc" d="M30.6,-114 A118,118 0 1 1 -30.6,-114" fill="none"
+                        stroke="#201C14" stroke-width="11" stroke-linecap="round" opacity=".45"/>
                   <g class="lf-guide-hand">
                     <circle r="15" fill="#C8AC78" opacity=".2"/>
                     <circle r="8.5" fill="#E6CF9E"/>
                     <circle r="8.5" fill="none" stroke="#fff" stroke-width="1" opacity=".5"/>
-                    <animateMotion dur="2.8s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1"
-                                   calcMode="spline" keySplines="0.45 0 0.25 1;0.45 0 0.25 1" rotate="auto">
+                    <animateMotion dur="3.6s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1"
+                                   calcMode="linear" rotate="auto">
                       <mpath href="#lf-guide-arc"/>
                     </animateMotion>
                   </g>
                 </svg>
-                <div class="lf-guide-tip">拨动圆心外侧一圈来转 · 顶端即所选<br><small>点格子或圆心「进入」· 也可用下方「上一格/下一格」</small></div>
+                <div class="lf-guide-tip">捏住红针，沿外圈转到你要的岁数<br><small>点圆心进入 / 返回</small></div>
               </div>
               <!-- 快速跳转弹窗:输入年月，直达 -->
               <div class="lf-jump" id="lf-jump" hidden>
@@ -1855,16 +1946,16 @@
             </div>
             <div class="wheel-stepper">
               <button class="wstep wstep-ico" id="lf-prev" type="button" aria-label="上一格">‹</button>
-              <div class="wheel-read" id="lf-read">拖动指针选岁数、月份、日子，点圆心进入</div>
+              <div class="wheel-read" id="lf-read">转红针选岁数，中间即所选</div>
               <button class="wstep wstep-ico" id="lf-next" type="button" aria-label="下一格">›</button>
             </div>
-            <div class="wheel-hint" id="lf-hint">拖动指针选 · 点格子/圆心进入 · 「‹ 上一层」返回 · 一生 › 年 › 月 › 日</div>
+            <div class="wheel-hint" id="lf-hint">转红针选岁数 · 点圆心进入那一年</div>
           </div>
 
           <!-- 阶段均能量(随年轮联动) -->
           <div class="panel">
             <h3 id="lf-bars-h">十年一程 · 阶段均能量</h3>
-            <div class="ph" id="lf-bars-p">把一生分成十段，看哪一程气场更舒展</div>
+            <div class="ph" id="lf-bars-p"></div>
             <div class="decrow" id="lf-decs"></div>
           </div>
 
@@ -1876,11 +1967,11 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
       </div></div>
-      <div class="frame-label">节律 · 百年能量(生命之轮，可缩放)</div>
+      <div class="frame-label">一生能量 · 生命之轮(可缩放)</div>
     </div>
 
     <!-- ===== 3. 解读(命书速览 → 深度报告 · 全部免费) ===== -->
@@ -1895,7 +1986,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab on"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
       </div></div>
       <div class="frame-label">解读 · 命书速览 → 深度报告(全部免费)</div>
@@ -1911,10 +2002,9 @@
          <div class="tb-catalog" id="tb-catalog">
           <div class="tb-top">
             <h2>工具箱</h2>
-            <div class="tb-sub">把日子里的讲究，收在一处</div>
           </div>
 
-          <div class="tb-group-h">时令<span>顺时而养</span></div>
+          <div class="tb-group-h">时令</div>
           <button class="tb-feat" data-tool="jieqi" data-title="二十四节气">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-jieqi"></use></svg>
               <div><b>二十四节气 · 时令</b><small id="tb-c-jieqi">此刻</small></div></div>
@@ -1927,11 +2017,11 @@
           </button>
           <button class="tb-feat" data-tool="fujiu" data-title="三伏三九">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fujiu"></use></svg>
-              <div><b>三伏三九 · 养生节律</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
+              <div><b>三伏三九 · 顺时养生</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">本命<span>你的能量底色</span></div>
+          <div class="tb-group-h">本命</div>
           <button class="tb-feat" data-tool="benming" data-title="本命养生">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-benming"></use></svg>
               <div><b>本命养生 · 速查</b><small id="tb-c-bm">顺你的气调养</small></div></div>
@@ -1944,11 +2034,11 @@
           </button>
           <button class="tb-feat" data-tool="rhythm" data-title="一生能量">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-rhythm"></use></svg>
-              <div><b>一生能量</b><small>逐年逐月 · 看你的能量起伏</small></div></div>
+              <div><b>一生能量</b><small>逐年逐月</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">民俗<span>历法与仪礼</span></div>
+          <div class="tb-group-h">民俗</div>
           <button class="tb-feat" data-tool="folk" data-title="神诞民俗">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-folk"></use></svg>
               <div><b>神诞民俗 · 道佛要日</b><small id="tb-c-folk">本月</small></div></div>
@@ -1960,7 +2050,7 @@
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">我的<span>记在本机</span></div>
+          <div class="tb-group-h">我的</div>
           <button class="tb-feat" data-tool="mark" data-title="重点日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-mark"></use></svg>
               <div><b>重点日 · 记一笔</b><small id="tb-c-mark">生日 · 纪念日 · 倒数日，记在本机</small></div></div>
@@ -2002,7 +2092,7 @@
           <div class="tb-panel" data-panel="compass">
             <div class="cps-read">
               <div class="cps-deg" id="cps-deg">—</div>
-              <div class="cps-dir" id="cps-dir">点下方开启，读取朝向</div>
+              <div class="cps-dir" id="cps-dir">待开启 · 读取朝向</div>
             </div>
             <div class="cps-stage">
               <svg class="cps-dial" id="cps-dial" viewBox="-160 -160 320 320" aria-hidden="true"></svg>
@@ -2062,7 +2152,7 @@
               <div class="hl-note">传统养生参考，非医疗建议</div>
             </div>
             <div class="sea-wis" id="sea-wis">
-              <div class="sw-lab">今日一则 · 传统智慧</div>
+              <div class="sw-lab">今日一则</div>
               <div class="sw-text" id="sw-text">心安即是归处。</div>
             </div>
           </div>
@@ -2121,7 +2211,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
       </div></div>
       <div class="frame-label">工具箱 · 目录 → 点进查看(吉日 / 养生 / 重点日 / 时令民俗)</div>
@@ -2133,29 +2223,68 @@
   <div class="rp-ov" id="rp-ov">
     <div class="rp-head">
       <button class="rp-back" id="rp-close">×</button>
-      <span class="rp-head-t">深度报告<small id="rp-head-sub">为你而读</small></span>
+      <span class="rp-head-t">深度报告<small id="rp-head-sub"></small></span>
     </div>
     <div class="rp-scroll" id="rp-scroll">
       <!-- 付费墙 -->
       <div class="rp-cover" id="rp-cover"></div>
       <!-- 已解锁内容 -->
       <div id="rp-body" style="display:none">
-        <div class="rp-tabs" id="rp-tabs">
-          <div class="rp-tab on" data-p="natal">能量底色</div>
-          <div class="rp-tab" data-p="months">高能量月</div>
-          <div class="rp-tab" data-p="years">高能量年</div>
-          <div class="rp-tab" data-p="care">顺时养生</div>
-          <div class="rp-tab" data-p="picker">重要择日</div>
-          <div class="rp-tab" data-p="ahead">三年逐月</div>
+        <!-- 一目了然层:常驻不折叠的「能量底色卡」(JS 填充,全部引用现有已算字段,缺失走 if-guard) -->
+        <div id="jd-glance"></div>
+        <!-- 六章手风琴:章头由 JS 填(章序/眉标/章名/信号 chip);章内容=原 rp-page 原样搬入(内容一字不改) -->
+        <div class="jd-acc" id="jd-acc">
+          <div class="jd-ch open" data-p="natal">
+            <button class="jd-ch-head" type="button"></button>
+            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="natal" id="rp-p-natal"></div></div></div>
+          </div>
+          <div class="jd-ch" data-p="care">
+            <button class="jd-ch-head" type="button"></button>
+            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="care" id="rp-p-care"></div></div></div>
+          </div>
+          <div class="jd-ch" data-p="months">
+            <button class="jd-ch-head" type="button"></button>
+            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="months" id="rp-p-months"></div></div></div>
+          </div>
+          <div class="jd-ch" data-p="picker">
+            <button class="jd-ch-head" type="button"></button>
+            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="picker" id="rp-p-picker"></div></div></div>
+          </div>
+          <div class="jd-ch jd-future" data-p="years">
+            <button class="jd-ch-head" type="button"></button>
+            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="years" id="rp-p-years"></div></div></div>
+          </div>
+          <div class="jd-ch jd-future jd-far" data-p="ahead">
+            <button class="jd-ch-head" type="button"></button>
+            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="ahead" id="rp-p-ahead"></div></div></div>
+          </div>
         </div>
-        <div class="rp-page on" data-p="natal" id="rp-p-natal"></div>
-        <div class="rp-page" data-p="months" id="rp-p-months"></div>
-        <div class="rp-page" data-p="years" id="rp-p-years"></div>
-        <div class="rp-page" data-p="care" id="rp-p-care"></div>
-        <div class="rp-page" data-p="picker" id="rp-p-picker"></div>
-        <div class="rp-page" data-p="ahead" id="rp-p-ahead"></div>
         <div class="rp-foot"><b class="rp-foot-em">内容仅供参考，请相信科学。</b>本报告依据你的出生信息逐项推算 · 全部在本机计算，不上传、不外传<br>内容用于自我调养与生活节奏参考，不构成医疗 / 投资 / 法律等专业建议</div>
       </div>
+    </div>
+  </div>
+
+  <!-- 「我的」overlay:body 级全屏,任意页面均可打开。生辰作为一项(不再整页),含一生能量/分享/协议 -->
+  <div class="mine-ov" id="mine-ov">
+    <div class="rp-head">
+      <button class="rp-back" id="mine-close">×</button>
+      <span class="rp-head-t">我的</span>
+    </div>
+    <div class="mine-scroll">
+      <div class="mine-card" id="mine-hero">
+        <div class="mine-hero-name" id="mine-name">—</div>
+        <div class="mine-hero-sub" id="mine-birth">—</div>
+      </div>
+      <div class="mine-list">
+        <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-go">›</span></a>
+        <button class="mine-it" type="button" id="mine-life"><svg class="mine-ic"><use href="#i-rhythm"></use></svg><span class="mine-it-t">一生能量</span><span class="mine-go">›</span></button>
+        <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日分享</span><span class="mine-go">›</span></button>
+      </div>
+      <div class="mine-list">
+        <a class="mine-it" href="terms.html"><span class="mine-it-t">用户协议</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="privacy.html"><span class="mine-it-t">隐私政策</span><span class="mine-go">›</span></a>
+      </div>
+      <div class="mine-foot"><b>内容仅供参考，请相信科学。</b>全部在本机计算，不上传、不外传</div>
     </div>
   </div>
 
@@ -2258,6 +2387,24 @@
         +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(214,165,60,.55)" stroke-width="1.1"/>'
         +'<path d="M '+(cx-r*0.64).toFixed(1)+' '+(cy-r*0.56).toFixed(1)+' A '+r+' '+r+' 0 0 1 '+(cx+r*0.36).toFixed(1)+' '+(cy-r*0.82).toFixed(1)+'" fill="none" stroke="#FFFDF2" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>'
         +'</svg>';
+    }
+    // 能量光球:按住浮出整体能量 0-100(平时藏,与「不裸露分数」一致)。幂等:renderToday 每次调用,只首次真正绑定。
+    var _orbPeekBound=false;
+    function bindOrbPeek(){
+      if(_orbPeekBound) return;
+      var orb=$('w-orb'); if(!orb) return;
+      var hero=orb.closest('.today-hero'); if(!hero) return;
+      _orbPeekBound=true;
+      var tip=document.createElement('div'); tip.className='orb-peek'; hero.appendChild(tip);
+      var show=function(e){ var v=orb.dataset.e; if(v==null||v==='') return; tip.innerHTML='<b>'+v+'</b><s>越 高 越 好</s>'; tip.classList.add('on'); if(e&&e.cancelable) e.preventDefault(); };
+      var hide=function(){ tip.classList.remove('on'); };
+      orb.addEventListener('pointerdown', show);
+      orb.addEventListener('pointercancel', hide);
+      orb.addEventListener('pointerleave', hide);
+      window.addEventListener('pointerup', hide);
+      // 触屏兜底(个别老浏览器无 pointer 事件)
+      orb.addEventListener('touchstart', show, {passive:false});
+      window.addEventListener('touchend', hide);
     }
     const WEEK = ['日','一','二','三','四','五','六'];
     const fillOf = (e)=> e<46?'f0':e<55?'f1':e<64?'f2':e<73?'f3':e<82?'f4':'f5';
@@ -2371,7 +2518,7 @@
         const stamp=now.getUTCFullYear()+z(now.getUTCMonth()+1)+z(now.getUTCDate())+'T'+z(now.getUTCHours())+z(now.getUTCMinutes())+z(now.getUTCSeconds())+'Z';
         const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//shihe//rhythm-calendar//CN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
           'BEGIN:VEVENT','UID:'+m.id+'@shihe.app','DTSTAMP:'+stamp,'DTSTART;VALUE=DATE:'+dstart,
-          'SUMMARY:'+icsEsc(m.name),'DESCRIPTION:'+icsEsc(catNm+' · 由「时和·节律日历」加入'),'TRANSP:TRANSPARENT'];
+          'SUMMARY:'+icsEsc(m.name),'DESCRIPTION:'+icsEsc(catNm+' · 由「顺时黄历」加入'),'TRANSP:TRANSPARENT'];
         if(m.repeat) L.push('RRULE:FREQ=YEARLY');
         L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(m.name),'TRIGGER:PT9H','END:VALARM','END:VEVENT','END:VCALENDAR');
         return L.join('\r\n');
@@ -2381,16 +2528,16 @@
 
     // 演示数据:首次进入且本机尚无重点日时，预置几个示例，让「重点日」在日历上立刻可见;
     //   用了独立标记位，用户清空后不会再被补回。全部仅存本机。
-    (function seedDemoMarks(){
+    // 重点日不再预置示例;并一次性清掉历史遗留的三条测试数据(妈妈生日/结婚纪念日/体检预约)——
+    // 按「名字+月日+分类」精确匹配,不误伤用户自建的同名项;用 shihe_demo_purged 旗标只跑一次。
+    (function purgeDemoMarks(){
       try{
-        if(localStorage.getItem('shihe_marks_seeded')) return;
-        if(MARKS.all().length===0){
-          const Y=new Date().getFullYear();
-          MARKS.add({name:'妈妈生日',  date:Y+'-06-18', repeat:true,  cat:'birthday'});
-          MARKS.add({name:'结婚纪念日', date:Y+'-06-09', repeat:true,  cat:'anniv'});
-          MARKS.add({name:'体检预约',  date:Y+'-06-25', repeat:false, cat:'remind'});
-        }
-        localStorage.setItem('shihe_marks_seeded','1');
+        if(localStorage.getItem('shihe_demo_purged')) return;
+        const SIG=[{name:'妈妈生日',md:'06-18',cat:'birthday'},{name:'结婚纪念日',md:'06-09',cat:'anniv'},{name:'体检预约',md:'06-25',cat:'remind'}];
+        MARKS.all().forEach(function(m){
+          if(SIG.some(function(s){ return m.name===s.name && String(m.date||'').slice(5)===s.md && m.cat===s.cat; })) MARKS.remove(m.id);
+        });
+        localStorage.setItem('shihe_demo_purged','1');
       }catch(_){}
     })();
 
@@ -2437,19 +2584,14 @@
       }
 
       // —— 能量卡今日顺时一句:贴着分数+态势，给每天一个一眼可读的钩子(养生口吻，非医疗)——
-      function tipLine(d){
-        const e=d.e;
-        return e>=72 ? '今日宜乘势 · 要紧之事宜先行，动中养阳勿透支'
-          : e>=56 ? '今日宜如常 · 循自身节奏，规律作息最养身'
-          : '今日宜内收 · 早些休息、放缓节奏，为身体留出恢复的余地';
-      }
+      // (tipLine 死代码已删:今日主句走 heroLine + 大吉横幅,不再用纯能量的宜句,免与大吉当头打架)
       // —— 今日详解:把引擎算出的 2~3 个维度(事业/钱财/人际/表达/学养/身体/出行…)铺成可展开列表 ——
       //   「心神」一条已上提到体感行；这里只列其余维度，无则隐藏整块。
-      // —— 今日各方面(tab 版:事业/财运/感情/机会/学习/健康)——
+      // —— 今日各方面(tab 版:事业/财运/感情/学习/健康;机会并入事业,免左右滑)——
       //   数据来自 liuri.js 的 d.fortune(引擎按当日十神喜忌 + 五行调养 + 能量实算，底层打分不变)。
       //   顺=当日助力、平=中性平顺、慎=宜留意收敛。一排 tab 各带色点(一眼看全貌),点谁看谁,省地方。
       var FT_LABEL = { career:'事业', love:'感情', money:'财运', study:'学习', health:'健康', chance:'机会' };
-      var FT_ORDER = ['career','money','love','chance','study','health'];  // 关切度 × 数据扎实度
+      var FT_ORDER = ['career','money','love','study','health'];  // 机会不再单列 tab,合并进事业面板;5个一行放下、免左右滑
       var FT_TONECLS = { '顺':'up', '平':'mid', '慎':'warn' };
       var _ftSel = null;   // 当前选中的方面(跨日粘滞:用户挑了就一直看那个)
       function renderFortune(d){
@@ -2480,9 +2622,15 @@
         }
         var it=f[_ftSel]||{tone:'平',line:''};
         var tc=FT_TONECLS[it.tone]||'mid';
+        // 机会并入事业:选中事业时,若机会有独立显象(非平档、且与事业文案不同),在下方追加一条带「机会」小标的子行
+        //   —— 机会源自 liuri 的 食/合/冲(与事业读的「官」不同源),故不丢内容;平档无独立显象、不追加(免同义堆叠)
+        var extra='';
+        if(_ftSel==='career' && f.chance && f.chance.tone!=='平' && f.chance.line && f.chance.line!==it.line){
+          extra='<div class="tf-body-sub"><span class="tf-body-sublab">机会</span>'+esc(f.chance.line)+'</div>';
+        }
         $('w-fortune-body').innerHTML=
           '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
-          +'<div class="tf-body-line">'+esc(it.line)+'</div>';
+          +'<div class="tf-body-line">'+esc(it.line)+'</div>'+extra;
         var note=$('w-fortune-note'); if(note) note.style.display=(_ftSel==='health')?'':'none';
       }
 
@@ -2520,8 +2668,18 @@
       var ZORDER=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
       var ZRANGE={子:'23–1',丑:'1–3',寅:'3–5',卯:'5–7',辰:'7–9',巳:'9–11',午:'11–13',未:'13–15',申:'15–17',酉:'17–19',戌:'19–21',亥:'21–23'};
 
-      function renderHuangli(Y,M,g){
+      function renderHuangli(Y,M,g,gj){
         const box=$('w-huangli'); if(!box) return;
+        // 公吉结论行:S级大吉当头置顶金句、A级黄道降调、硬凶/平日静默(负面继续留在下方折叠,不喊吉不吓人)
+        (function(){
+          const el=$('hl2-verdict'); if(!el) return;
+          if(gj && gj.grade==='S'){
+            const rs=(gj.names&&gj.names.length)?gj.names.slice(0,2).join(' · '):((gj.reasons&&gj.reasons.length)?gj.reasons.slice(0,2).join(' · '):'诸事可为');
+            el.textContent='黄历大吉 · '+rs; el.className='hl2-verdict'; el.style.display='';
+          } else if(gj && gj.grade==='A'){
+            el.textContent=(gj.reasons&&gj.reasons.length)?gj.reasons.slice(0,2).join(' · '):'黄道吉日'; el.className='hl2-verdict a'; el.style.display='';
+          } else { el.style.display='none'; }
+        })();
         const RE=window.RhythmEngine;
         let lun=null;
         try{ if(RE&&RE.Solar) lun=RE.Solar.fromYmd(Y,M,g).getLunar(); }catch(e){ lun=null; }
@@ -2688,8 +2846,8 @@
         else if (fstToday){ fest.textContent=fstToday; fest.style.display=''; fest.className='w-festival fest-folk'; }
         else if (hol && hol.type==='work'){ fest.textContent='调休上班'; fest.style.display=''; fest.className='w-festival fest-work'; }
         else { fest.style.display='none'; }
-        // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)
-        if($('w-orb')) $('w-orb').innerHTML = energyOrb(d.e);
+        // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)。整体能量值存 dataset,供「按住浮出 0-100」读取
+        if($('w-orb')){ $('w-orb').innerHTML = energyOrb(d.e); $('w-orb').dataset.e = d.e; bindOrbPeek(); }
         // 今日一句:干货生成器主句(说中你+能照做)
         if($('w-hero')) $('w-hero').textContent = d.heroLine || '';
         // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
@@ -2724,7 +2882,7 @@
         (function(){
           const b=$('t-share'); if(!b) return;
           b.textContent = d.e>=72 ? '今日状态正佳，做一张卡片分享 →'
-            : d.e<=54 ? '为今日留一张安静的卡片 →'
+            : d.e<=54 ? '给今天打张卡 →'
             : '为今日做一张卡片 →';
         })();
         $('w-yi').textContent = (d.yi && d.yi.length) ? d.yi.join(' · ') : '顺其自然';
@@ -2732,19 +2890,32 @@
         $('w-xisw').style.background = XI;
         $('w-xiname').textContent = XINAME;
         renderFortune(d);                 // 今日各方面(五维:事业/感情/财运/学习↔健康/机会)
-        renderHuangli(curY, curM, d.g);   // 老黄历卡(选中日 · 传统历法速查)
+        renderHuangli(curY, curM, d.g, d.gongJi);   // 老黄历卡(选中日 · 传统历法速查;传 gongJi 显公吉结论行)
         // 民俗 / 神诞:并入能量卡第一栏(名称 + 释义，详情见工具箱「神诞民俗」)
         (function(){
           const box=$('w-folk'), nm=$('w-folk-n'), de=$('w-folk-d');
           if(!box) return;
-          if (d.tagName && d.tagName!=='平日' && d.tagType!=='忌'){
+          const gj = d.gongJi;
+          if (gj && gj.grade==='S'){
+            // 大吉当头:通用黄历层置顶大吉,个人能量在下方「你的状态」卡另说,诚实分层、不打架
+            const names = (gj.names&&gj.names.length) ? gj.names.slice(0,2).join(' · ') : (d.tagName&&d.tagName!=='平日'?d.tagName:'黄历上吉');
+            nm.textContent = names + ' · 黄历大吉';
+            de.textContent = gj.headYi ? ('宜 '+gj.headYi) : '天地开恩、诸事可为';
+            box.className='we-folk we-folk-daji'; box.style.display='';
+          } else if (d.tagName && d.tagName!=='平日' && d.tagType!=='忌'){
+            // 具名民俗(神诞/观音诞/节日/五腊)优先于泛化黄道
             nm.textContent = d.tagName;
             de.textContent = d.tagDesc || (d.tagYi ? ('宜 '+d.tagYi) : '');
-            box.style.display='';
+            box.className='we-folk'; box.style.display='';
+          } else if (gj && gj.grade==='A'){
+            // 无具名民俗时才显泛化黄道吉日(约占半月,常态底色)
+            nm.textContent = '黄历吉日'+(gj.tianShen?(' · '+gj.tianShen):'');
+            de.textContent = (gj.jiShen&&gj.jiShen.length) ? gj.jiShen.slice(0,3).join(' · ') : '诸事可为';
+            box.className='we-folk'; box.style.display='';
           } else if (d.wu){
             nm.textContent = '戊日 · 静养';
             de.textContent = '道教「戊不朝真」之静日，逢戊日不焚香、不动土；宜静养、诵经、读书。';
-            box.style.display='';
+            box.className='we-folk'; box.style.display='';
           } else { box.style.display='none'; }
         })();
       }
@@ -2806,21 +2977,7 @@
         grid.addEventListener('mouseleave',()=>{ cur=null; const tip=grid.querySelector('.cal-tip'); if(tip) tip.classList.remove('on'); });
       }
 
-      // 天赦日:黄历里赦过宥罪的上吉之辰(春戊寅/夏甲午/秋戊申/冬甲子,一年仅约六日),由 lunar.js 吉神实算。
-      //   一个月算一次、缓存到 set —— 翻月不重算,不拖慢滚动。
-      const _tsheCache={};
-      function tsheDays(y, mo){
-        const k=y+'-'+mo; if(_tsheCache[k]) return _tsheCache[k];
-        const set=new Set(), RE=window.RhythmEngine;
-        if(RE&&RE.Solar){
-          const dim=new Date(y,mo,0).getDate();
-          for(let g=1;g<=dim;g++){
-            try{ if((RE.Solar.fromYmd(y,mo,g).getLunar().getDayJiShen()||[]).includes('天赦')) set.add(g); }catch(e){}
-          }
-        }
-        _tsheCache[k]=set; return set;
-      }
-
+      // (天赦日/大吉标记已改用 buildApp 挂好的 day.gongJi,不再单独重扫整月——见下方 renderMonth 的 d.gongJi)
       function renderMonth(m){
         $('c-title').innerHTML = m.year+'年'+m.month+'月<small id="c-sub">'+m.ganZhiYear+'</small><i class="mn-caret">▾</i>';
         if (m.band){ $('c-band').style.display='flex'; $('c-band-t').textContent = m.band; }
@@ -2828,7 +2985,6 @@
         const grid = $('pgrid');
         let html = '';
         const jqMap = jieqiDays(m.year, m.month);   // {日: 节气名}
-        const tshe = tsheDays(m.year, m.month);     // 本月天赦日的日号集合(极少,右上角描金 ✦)
         for (let i=0;i<m.firstDow;i++) html += '<div class="pad"></div>';
         m.days.forEach((d)=>{
           const hol = holiday(m.year, m.month, d.g);
@@ -2843,24 +2999,18 @@
           else if (hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
           // 日期下方文字优先级:节气 > 节假日名 > 民俗节日 > 农历(让重点信息突出，不显杂乱)
           let sub, subCls='ln';
+          // 日期下方文字:节气 > 节假日 > 传统节日(festOf) > 农历。不在月历上把吉日/神诞挑出来标注(那属"择日",归点开的今日卡/老黄历/近期吉日,别泼满日历)。
           const fst = festOf(m.year, m.month, d.g, d.lunarLabel);
           if (jq){ sub=jq; subCls='ln jq'; }
           else if (hol && hol.name){ sub=hol.name; subCls='ln fest'; }
           else if (fst){ sub=fst; subCls='ln fest'; }
           else sub=d.lunarDayCN;
-          // 重点日:本机自定义(生日/纪念日/提醒)。标注统一改为「数字染色」:
-          //   民俗→金、放假→暖红(h-off)、重点日→陶土，不再叠小圆点。
           const mks = MARKS.forDate(m.year, m.month, d.g);
-          if (d.fk) cls.push('d-fk');
+          if (d.fk) cls.push('d-fk');   // 民俗日金点(原有,克制),不再叠 ✦ 大吉星标
           if (mks.length) cls.push('d-mk');
-          // 能量在「点开/悬停」时呈现:轻点看当日卡片(分数+基调),桌面端悬停看一行提示;
-          // 格子本身保持极简留白，不再用整格柔光泼满日历。
-          const isShe = tshe.has(d.g);
-          if (isShe) cls.push('d-she');
-          const sheMark = isShe ? '<span class="tsmark" aria-label="天赦日">✦</span>' : '';
-          const eTip = (isShe?'天赦日 · ':'')+'能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
-          html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+(mks.length?' has-mk':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
-                  restBadge+sheMark+
+          const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
+          html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
+                  restBadge+
                   '<b>'+d.g+'</b>'+
                   '<span class="'+subCls+'">'+sub+'</span></div>';
         });
@@ -3013,13 +3163,13 @@
             +'<div class="sc-bmeta"><span class="sc-gz">农历'+lunar+(gz?' · '+gz:'')+'</span><span>能量 '+d.e+'</span></div></div>';
         }
         if(THEME==='C'){
-          return '<div class="sc-ctop"><div class="sc-cbrand"><span class="sc-cs">时</span>时和</div>'
+          return '<div class="sc-ctop"><div class="sc-cbrand"><span class="sc-cs">顺</span>顺时黄历</div>'
             +'<div class="sc-ce">能量 '+d.e+(word?' · '+word:'')+'</div></div>'
             +'<div class="sc-cmid"><div class="sc-kw" style="font-size:'+kwSize(kw,56)+'px">'+kw+'</div>'
             +'<div class="sc-line">'+line+'</div>'
             +'<div class="sc-cbar"><div class="sc-t"><b>今日宜 '+yi+'</b><span>'+esc(XINAME||'')+'</span></div>'
             +'<div class="sc-bar"><i style="width:'+e+'%"></i></div></div></div>'
-            +'<div class="sc-cfoot"><span>'+M+'月'+d.g+'日 · 农历'+lunar+'</span><span>把日子过成自己的节律</span></div>';
+            +'<div class="sc-cfoot"><span>'+M+'月'+d.g+'日 · 农历'+lunar+'</span><span>顺天而养，应时而行</span></div>';
         }
         if(THEME==='D'){
           const days=APP.month.days||[];
@@ -3035,7 +3185,7 @@
             +'<div class="sc-wkmid"><div class="sc-wkavg"><b>'+avg+'</b><i>周均能量</i></div>'
             +'<div class="sc-wkchart">'+bars+'</div>'
             +'<div class="sc-wkline">最舒展是 <b>'+best.g+'日</b>（'+best.e+'分）。把要紧的事，放在你状态最好的那天。</div></div>'
-            +'<div class="sc-foot">时和 · 把日子过成自己的节律</div>';
+            +'<div class="sc-foot">顺时黄历 · 顺天而养，应时而行</div>';
         }
         // A · 今日笺 · 宣纸留白(真数据:光球 + 当天信号最强的域当主句、其余当提点 + 宜色)
         const XDOM=[['career','事业'],['money','钱财'],['study','学习'],['love','感情'],['health','身体'],['chance','机会']];
@@ -3051,7 +3201,7 @@
         var xorb=(typeof energyOrb==='function')?energyOrb(d.e,84):ringSVG(d.e);
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
           +'<div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand">时和<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-orb">'+xorb+'</div>'
           +'<div class="xp-say">'+xheroHtml+'</div>'
@@ -3076,9 +3226,9 @@
         go.addEventListener('click', async ()=>{
           const d=SHARE_DAY; if(!d) return;
           const kw=(d.cueWord||d.cue||'顺其自然');
-          const txt='时和 · '+APP.month.month+'月'+d.g+'日 · 我今天的节律。顺时而养，过好每一天。';
+          const txt='顺时黄历 · '+APP.month.month+'月'+d.g+'日 · 我今天的状态。顺天而养，应时而行。';
           try{
-            await navigator.share({ title:'时和', text:txt, url:location.origin+location.pathname });
+            await navigator.share({ title:'顺时黄历', text:txt, url:location.origin+location.pathname });
             window.shihe&&window.shihe.track&&window.shihe.track('share_done',{ch:'system'});
           }catch(e){}
         });
@@ -3542,8 +3692,8 @@
             uu.setAttribute('x',((s.length*cenDigitW)/2+3).toFixed(1)); } })();
         // 轮盘交互改由 spin() 统一处理:转外圈选，点圆心进入(不再「点格即下钻」)
         renderCrumb(); readFor(f);
-        $('lf-hint').textContent = level==='life' ? '拖动指针选岁数 · 点圆心进入那一年'
-          : '拖动指针选月份 · 点圆心返回一生';
+        $('lf-hint').textContent = level==='life' ? '转红针选岁数 · 点圆心进入那一年'
+          : '转红针选月份 · 点圆心返回一生';
         renderBars(V);
       }
 
@@ -3555,16 +3705,16 @@
         let bars=[], title='', ph='';
         if(level==='life'){
           const decs=L.decades||[];
-          title='人生阶段 · 每程均能量'; ph='按你的人生阶段分程，看哪一程更舒展';
+          title='人生阶段 · 每程均能量'; ph='';
           bars=decs.map((d)=>({ v:d.avg, lab:d.from+'+', full:d.from+'–'+d.to+'岁', on:(selAge>=d.from&&selAge<=d.to),
             sel:false, jump:{lv:'life',k:d.from} }));
         } else {
           const yd=V.arr||[];
-          title=selY+' 年 · 各月均能量'; ph='看这一年里哪个月气场更顺';
+          title=selY+' 年 · 各月均能量'; ph='';
           bars=yd.map((m)=>({ v:m.e, lab:m.key+'月', on:(m.key===V.cur), sel:(m.key===selM),
             jump:{lv:'year',k:m.key} }));
         }
-        H.textContent=title; P.textContent=ph;
+        H.textContent=title; P.textContent=ph; P.style.display=ph?'':'none';
         const lo=Math.min(...bars.map((b)=>b.v)), hi=Math.max(...bars.map((b)=>b.v)), sp=Math.max(1,hi-lo);
         // 柱图仅作展示——选择某年/某月请用上方轮盘，返回上层用面包屑「‹ 上一层」或圆心。
         const barHTML=(b)=>{
@@ -3788,7 +3938,7 @@
 
       // (全免费版本:原付费墙 cover / 解锁确认 sheet / doUnlock 已移除——打开报告即直达完整内容)
 
-      // —— 四维节律禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
+      // —— 四种状态禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
       //   精力=bodyT定方向+四维均值(喜忌口径)解饱和+季节 · 专注=学习×.6+事业×.4 · 情绪=情感×.7+健康×.3 · 人际=结构性外向度 socialTendency(食伤+比劫-印-官,独立于旺衰)
       const RH_DESC={
         精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度、别硬透支'],[0,'精力细水长流，顺势蓄力、少熬夜']],
@@ -3824,9 +3974,9 @@
           + '<span class="rp-rh-lab">'+d.k+'</span>'
           + '<span class="rp-rh-line">'+esc(rhDesc(d.k,d.v))+'</span>'
           + '</div>';
-        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四维节律</b><span>你的能量禀赋</span></div>'
+        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四种状态</b></div>'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
-          + '<div class="rp-rh-foot">这是你与生俱来的节律倾向，无关好坏——顺着它安排张弛，最省力。</div>'
+          + '<div class="rp-rh-foot">这是你天生的样子，无关好坏——顺着它安排张弛，最省力。</div>'
           + '</div></div>';
       }
       // 应期正向化:取现有流月低分月，改说成「调养窗口期」(蓄力，不是低谷)
@@ -3834,7 +3984,7 @@
         const Y=R.yearMonths; if(!Y||!Y.lowMonths||!Y.lowMonths.length) return '';
         const cur=Y.curMonth||1;
         let up=Y.lowMonths.filter((m)=>m>=cur);
-        if(!up.length) up=Y.lowMonths.slice();
+        if(!up.length) return '';   // 今年后续已无低月:不回退显示已过去的月(「近期调养窗口」只谈未来,免指向过去)
         const pick=up.slice(0,2);
         const mtxt=pick.map((m)=>'<em>'+m+'</em>月').join('、');
         return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>近期调养窗口</b><span>顺时蓄力</span></div>'
@@ -3842,7 +3992,7 @@
           + '<div class="rp-win-ic"><span style="color:#BCD6EC;font-size:17px">☾</span></div>'
           + '<div class="rp-win-tx"><b>'+mtxt+'气场偏收，宜蓄力调养</b>'
           + '<p>这几个月你的能量自然回落——不是低谷，而是身体让你慢下来的信号。适合沉淀、打基础、把作息养回来，不必强求突破；养足了，下一程才走得远。</p>'
-          + '<div class="rp-win-more">想看每月起伏与宜忌，点上方 <b>高能量月</b> 分页 →</div>'
+          + '<div class="rp-win-more">想看每月起伏与宜忌，往下展开 <b>高能量月</b> 一章 ↓</div>'
           + '</div></div></div></div>';
       }
 
@@ -3865,7 +4015,7 @@
         // 读懂你:三段 coreText → 左线要点行(固定标签，一眼可扫，不再堆散文卡)
         const core=(pe.coreText||[]).filter(Boolean);
         const rows=core.length
-          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>读懂你</b><span>一眼识人</span></div>'
+          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>读懂你</b></div>'
             + '<div class="np-rows">'+core.slice(0,3).map((p,i)=>'<div class="np-row"><div class="np-row-lab">'+esc(NP_ROW_LAB[i]||'')+'</div><div class="np-row-tx">'+esc(p)+'</div></div>').join('')+'</div></div>' : '';
         // 生活方面:5 项收进分段 Tab —— 点选逐面看，替代 5 张同款卡堆叠
         const aspAct=(lab,arr,cls)=>(arr&&arr.length)?'<div class="rp-asp-act '+cls+'"><em>'+lab+'</em><span>'+arr.map(esc).join(' · ')+'</span></div>':'';
@@ -3880,7 +4030,7 @@
           + (a.note?'<div class="np-panel-note">'+esc(a.note)+'</div>':'')
           + '</div>').join('');
         const life=asps.length
-          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>生活方面</b><span>逐面点看</span></div>'
+          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>生活方面</b></div>'
             + '<div class="np-tabs">'+tabsNav+'</div>'+panels+'</div>' : '';
         // 需要注意
         const jiCard=(j)=>'<div class="rp-ji-it"><i class="rp-ji-dot"></i><span>'+esc(j.caution)+'</span></div>';
@@ -3893,8 +4043,12 @@
           + '<div class="rp-color-tx"><b>'+esc(n.xiColor.name)+'</b><p>'+esc(n.colorAdvice)+'</p></div></div></div></div>';
         // 收束金句(温暖尾声)
         const closing=pe.closing?'<div class="rp-sec"><div class="rp-closing">'+esc(pe.closing)+'</div></div>':'';
-        // 纹理轮换:渐变英雄 → 无框金句 → 左线要点行 → 四维节律禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
-        $('rp-p-natal').innerHTML = quote + rows + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
+        // 纹理轮换:读懂你 → 四种状态禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
+        // (开篇 np-quote 已删:archetype.line 只在常驻顶卡出现一次,免同屏两句大号金色宋体金句重复、超金面积预算)
+        // 深层辩证(dialectics):最戳人的「说中你」内容(如「真到了关口，你比自己以为的扛得住」),接在读懂你之后——重构手风琴时曾漏渲染,现补回
+        const diaIt=(x)=>'<div class="rp-dia-it">'+(x.t?'<div class="rp-dia-t">'+esc(x.t)+'</div>':'')+'<div class="rp-dia-s">'+esc(x.s)+'</div></div>';
+        const dia=(n.dialectics&&n.dialectics.length)?'<div class="rp-sec"><div class="rp-dia">'+n.dialectics.map(diaIt).join('')+'</div></div>':'';
+        $('rp-p-natal').innerHTML = rows + dia + rhythmCard(n) + life + careWindow() + ji + color + closing + rpFlourish();
         // 生活方面分段 Tab:点选切换
         const wrap=$('rp-p-natal');
         wrap.querySelectorAll('.np-tab').forEach((t)=>{
@@ -3964,7 +4118,7 @@
       // 把曲线包进卡片(标题 + 提示),并绑定点击跳转
       function chartCard(pts, title, hint, onJump){
         const html='<div class="rp-chart-wrap">'+energyChart(pts)
-          + '<div class="rp-chart-cap"><b>'+esc(title)+'</b><span>'+esc(hint||'点圆点跳到对应月份')+'</span></div></div>';
+          + '<div class="rp-chart-cap"><b>'+esc(title)+'</b>'+(hint?'<span>'+esc(hint)+'</span>':'')+'</div></div>';
         return html;
       }
       function bindChartJump(scope, resolve){
@@ -4170,14 +4324,14 @@
         const ledeM = (hi||lo)
           ? ((hi?'今年 <b>'+hi+' 月</b>你的气场最足，最适合放大事、做重要决定；':'')
              + (lo?'<b>'+lo+' 月</b>更适合沉淀蓄力、打好基础，稳一稳再发力；':'')
-             + '其余月份按自己的节奏稳步推进即可。点开看每月详情。')
-          : '今年各月气场起伏不大，整体平稳，按自己的节奏稳步推进即可。点开看每月详情。';
+             + '其余月份按自己的节奏稳步推进即可。')
+          : '今年各月气场起伏不大，整体平稳，按自己的节奏稳步推进即可。';
         const cpts=Y.months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:m.month===Y.curMonth, key:'m'+m.month}));
         $('rp-p-months').innerHTML =
-          rpBanner('sec-rhythm','高能量月','顺势而为 · 选对时机')
-          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b><span>12 个月</span></div>'
+          rpBanner('sec-rhythm','高能量月','')
+          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b></div>'
           + (Y.yearVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.yearVerdict)+'</div>':'')
-          + chartCard(cpts, Y.year+' 年逐月气场', '金点为你的相对高点 · 点圆点看详情')
+          + chartCard(cpts, Y.year+' 年逐月气场', '')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeM+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余月份</span></div>'
           + Y.months.map(card).join('')
@@ -4205,7 +4359,7 @@
           +   (m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
           +   yijiHtml(m.yi,m.ji)
           + '</div></div>';
-        let html='<div class="rp-lede" style="margin:2px 2px 16px">未来三年逐月排开。圆点越靠右、数字越高，气场越足；金点是你这几年里相对最足的月份。点开看每月详情。</div>';
+        let html='<div class="rp-lede" style="margin:2px 2px 16px">未来三年逐月，金点是相对最足的月份。</div>';
         A.forEach((yObj)=>{
           const months = yObj.curMonth>0 ? yObj.months.filter((m)=>m.month>=yObj.curMonth) : yObj.months;
           if(!months.length) return;
@@ -4213,7 +4367,7 @@
           const _av=months.map((m)=>m.avg), aLo=Math.min.apply(null,_av), aHi=Math.max.apply(null,_av);
           const cpts=months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:false, key:yObj.year+'-'+m.month}));
           html += '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+yObj.year+' 年</b><span>'+(hi.length?('相对高点 '+hi.join('、')+' 月'):'平稳为主')+'</span></div>'
-            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', '金点为你的相对高点 · 点圆点看详情'):'')
+            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', ''):'')
             + months.map((m)=>monthCard(m,yObj.year,aLo,aHi)).join('')
             + '</div>';
         });
@@ -4243,14 +4397,14 @@
         const ledeY = (hi||lo)
           ? ((hi?'未来十年里，<b>'+hi+' 年</b>你的气场最足，大事、重要布局往这几年放；':'')
              + (lo?'<b>'+lo+' 年</b>宜深耕守成、稳住根基，积蓄之后再起势；':'')
-             + '其余年份按自己的节奏稳步推进即可。点开看每年详情。')
-          : '未来十年气场大体平稳，起伏不大，按自己的节奏稳步推进即可。点开看每年详情。';
+             + '其余年份按自己的节奏稳步推进即可。')
+          : '未来十年气场大体平稳，起伏不大，按自己的节奏稳步推进即可。';
         const cpts=Y.years.map((y)=>({label:String(y.year).slice(2), value:y.energy, level:y.level, cur:y.year===Y.curYear, key:'y'+y.year}));
         $('rp-p-years').innerHTML =
-          rpBanner('sec-rhythm','高能量年','十年起伏 · 把握大势')
-          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b><span>10 年</span></div>'
+          rpBanner('sec-rhythm','高能量年','')
+          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b></div>'
           + (Y.decadeVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.decadeVerdict)+'</div>':'')
-          + chartCard(cpts, '未来十年气场走势', '金点为你的相对高点 · 点圆点看详情')
+          + chartCard(cpts, '未来十年气场走势', '')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeY+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余年份</span></div>'
           + Y.years.map(card).join('')
@@ -4268,40 +4422,39 @@
         const n=R.natal; const xs=n.xiYong||[]; const js=n.jiShen||[];
         const S=(window.APP&&APP.season)||null;
         const H=S&&S.health, JQ=S&&S.jieqi;
-        const sec=(ic,t,sub,inner)=>'<div class="rp-sec"><div class="rp-sec-h">'+(ic||'<i class="rp-bar"></i>')+'<b>'+t+'</b><span>'+sub+'</span></div>'+inner+'</div>';
+        const sec=(ic,t,sub,inner)=>'<div class="rp-sec"><div class="rp-sec-h">'+(ic||'<i class="rp-bar"></i>')+'<b>'+t+'</b>'+(sub?'<span>'+sub+'</span>':'')+'</div>'+inner+'</div>';
         const chips=(arr)=> '<div class="rp-cl">'+arr.map((a)=>'<span class="rp-cl-it"><i>'+esc(a.k)+'</i>'+esc(a.v)+'</span>').join('')+'</div>';
         const pills=(arr)=> '<div class="rp-pills">'+arr.map((v)=>'<span class="rp-pill">'+esc(v)+'</span>').join('')+'</div>';
         const splitItems=(s)=> String(s||'').split(/[、,，;；]/).map((x)=>x.trim()).filter(Boolean);
         // 顺时养生:删掉空泛的「养生总纲 / 高能时段」两框(说了等于没说),开门见山直接给「吃 / 动 / 心 / 身」四类可执行建议
-        let html = rpBanner('sec-wellness','顺时养生','顺时调养 · 非医疗建议');
+        let html = rpBanner('sec-wellness','顺时养生','非医疗建议');
         // 食养(把各路宜补的食物合并去重，直接列清单)
         const foods=[...new Set(xs.flatMap((x)=>splitItems(x.food)))];
-        html += sec('','食养 · 平时多吃这些','顺气养身',
+        html += sec('','食养 · 平时多吃这些','',
           '<div class="rp-card"><div class="rp-cl-h">日常宜补</div>'+pills(foods)
           + (H?'<div class="rp-cl-h" style="margin-top:14px">眼下时令（'+esc(JQ.name)+'）</div><div class="rp-wx-care">'+esc(H.eat)+(H.food?'　·　推荐 '+esc(H.food):'')+'</div>':'')
           + '</div>');
         // 4 动养
         const acts=[...new Set(xs.flatMap((x)=>splitItems(x.activity)))];
-        html += sec('','动养 · 适合你的活动','顺气而动',
+        html += sec('','动养 · 适合你的活动','',
           '<div class="rp-card"><div class="rp-cl-h">平时多做</div>'+pills(acts)
           + (H?'<div class="rp-cl-h" style="margin-top:14px">眼下时令</div><div class="rp-wx-care">'+esc(H.move)+'</div>':'')
           + '</div>');
         // 5 情志(直接给安顿心情的话，不挂抽象标签)
-        html += sec('','情志 · 心怎么安顿','调心',
+        html += sec('','情志 · 心怎么安顿','',
           '<div class="rp-card"><div class="rp-lede" style="margin-bottom:11px">情绪上来时，下面几句话送给你。</div>'
           + xs.map((x)=>'<div class="rp-wx-care">'+esc(x.care)+'</div>').join('')
           + (H?'<div class="rp-wx-care" style="border-color:var(--gold-soft)"><b>眼下「'+esc(JQ.name)+'」·</b>'+esc(H.mood)+'</div>':'')
           + '</div>');
         // 6 身体关照
         const organs=[...new Set(xs.map((x)=>x.organ))];
-        html += sec('','身体 · 平时多养护','调养',
+        html += sec('','身体 · 平时多养护','',
           '<div class="rp-card"><div class="rp-lede" style="margin-bottom:11px">这几处平日多养护最省力。</div>'
           + pills(organs)
-          + (js.length?'<div class="rp-cl-h" style="margin-top:14px">这些方向需要注意</div><div class="rp-ji">'+js.map((j)=>'<span class="rp-ji-it">'+esc(j.caution)+'</span>').join('')+'</div>':'')
-          + '</div>');
+          + '</div>');  // 忌神「需要注意」已在壹·能量底色章呈现,此处删去,避免两章重复
         // 7 顺时此刻
         if(H){
-          html += sec('','顺时 · 此刻「'+esc(JQ.name)+'」','当季要点',
+          html += sec('','顺时 · 此刻「'+esc(JQ.name)+'」','',
             '<div class="rp-card"><div class="rp-cl-h">起居</div><div class="rp-wx-care">'+esc(H.from)+'</div>'
             + '<div class="rp-cl-h" style="margin-top:10px">养生要点</div><div class="rp-wx-care" style="border-color:var(--gold-soft)">'+esc(H.care)+'</div>'
             + (H.say?'<div class="rp-say">「'+esc(H.say)+'」</div>':'')
@@ -4330,7 +4483,7 @@
           + '</div>';
         const from=P.from;
         $('rp-p-picker').innerHTML =
-          rpBanner('sec-timing','重要择日','为要紧事挑好日子')
+          rpBanner('sec-timing','重要择日','')
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>替你挑好的日子</b><span>未来 '+P.span+' 天</span></div>'
           + '<div class="rp-pk-intro">从 '+from.month+'月'+from.day+'日 起两个月内，按事情性质挑出你状态最配的日子。</div>'
           + pickerBand(P.series)
@@ -4339,29 +4492,108 @@
           + rpFlourish();
       }
 
-      function showBody(){
-        cover.style.display='none'; body.style.display='block';
-        $('rp-head-sub').textContent='为你而读';
-        // 纵深防御:逐段包 try/catch——showBody 在页面初始化的同一大脚本块(2209–4820)内同步执行,
-        // 任一段抛错都会中止整块(连带整个工具箱初始化都不再运行)。隔离后,单段坏了其余段与工具箱照常。
-        [renderNatal, renderMonths, renderYears, renderCare, renderPicker, renderAhead].forEach(function(fn){
-          try{ fn(); }catch(e){ /* 单段渲染失败:静默跳过,不连累其余 */ }
+      // ===== 解读页 · 渐进披露手风琴外壳(2026-07 大改) =====
+      // 只搬 DOM / 换导航 / 加折叠;命理·养生文案与引擎一字不改,顶卡与信号 chip 全部引用现有已算字段+if-guard 兜底。
+      const JD_META=[
+        {p:'natal', num:'壹', eye:'',   name:'能量底色'},
+        {p:'care',  num:'贰', eye:'',   name:'顺时养生'},
+        {p:'months',num:'叁', eye:'',   name:'高能量月'},
+        {p:'picker',num:'肆', eye:'',   name:'重要择日'},
+        {p:'years', num:'伍', eye:'',   name:'高能量年'},
+        {p:'ahead', num:'陆', eye:'',     name:'三年逐月'},
+      ];
+      function jdSignal(p){
+        try{
+          const n=R.natal, Y=R.yearMonths, YR=R.years, P=R.picker;
+          const jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
+          if(p==='natal') return '你的性子、内在驱动，与生活各面';
+          if(p==='care')  return jq?('眼下「'+jq+'」· 顺时怎么养'):'顺时调养 · 眼下怎么养';
+          if(p==='months'){ const hi=(Y&&Y.highMonths&&Y.highMonths.length)?Y.highMonths.slice(0,3).join('·'):''; return hi?('气场高点在 '+hi+' 月'):'今年这一年的节奏起伏'; }
+          if(p==='picker'){ let N=0; if(P&&P.categories) P.categories.forEach(function(c){ N+=(c.days&&c.days.length)?c.days.length:0; }); return N?('未来两月 · '+N+' 个好日子'):'为要紧事挑个好日子'; }
+          if(p==='years'){ const hi=(YR&&YR.highYears&&YR.highYears.length)?YR.highYears.slice(0,3).join('·'):''; return hi?('能量高点年 '+hi):'未来十年的大势起伏'; }
+          if(p==='ahead') return '三年逐月';
+        }catch(e){}
+        return '';
+      }
+      // 只滚「最近的 .scroll 滚动容器」,绝不动 window(桌面四机并排时 scrollIntoView 会滚整个文档)
+      function jdScrollTo(el){
+        if(!el) return;
+        var sc=el.closest('.scroll')||el.closest('.rp-scroll');
+        if(sc){ var top=sc.scrollTop + el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 12; sc.scrollTo({top:top,behavior:'smooth'}); }
+        else el.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+      function jdOpenOnly(target,scroll){
+        document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.toggle('open', c===target); });
+        // 滚动放到折叠动画(340ms)之后再算落点,否则上方章还在收起、锚点会错位
+        if(scroll && target){ const h=target.querySelector('.jd-ch-head'); setTimeout(function(){ jdScrollTo(h||target); }, 370); }
+      }
+      function jdToggle(p){
+        const t=document.querySelector('#jd-acc .jd-ch[data-p="'+p+'"]'); if(!t) return;
+        const willOpen=!t.classList.contains('open');
+        document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.remove('open'); });
+        if(willOpen) jdOpenOnly(t,true);
+      }
+      function buildGlance(){
+        const el=$('jd-glance'); if(!el) return;
+        const n=R.natal; if(!n){ el.innerHTML=''; return; }
+        const line=(n.archetype&&n.archetype.line)?n.archetype.line:'';
+        let dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
+        const dimHtml=dims.map(function(d){ const lvl=d.v>=72?'hi':(d.v>=56?'mid':'lo'); return '<span class="jd-gl-dim" data-go="natal"><i class="mk '+lvl+'"></i><span>'+esc(d.k)+'</span></span>'; }).join('');
+        // 今年主轴:优先 yearVerdict;它约6成盘为空,缺则用已算的高能量月派生一句(纯描述数据,不写新文案),免顶卡留白
+        let axis=(R.yearMonths&&R.yearMonths.yearVerdict)?R.yearMonths.yearVerdict:'';
+        if(!axis){ const Ym=R.yearMonths; if(Ym&&Ym.highMonths&&Ym.highMonths.length) axis='气场高点在 '+Ym.highMonths.slice(0,3).join('、')+' 月'; }
+        const xi=n.xiColor||{};
+        el.innerHTML='<div class="jd-glance">'
+          +(line?'<div class="jd-gl-line">'+esc(line)+'</div>':'')
+          +(dimHtml?'<div class="jd-gl-dims">'+dimHtml+'</div>':'')
+          +'<div class="jd-gl-foot">'
+          + (axis?'<div class="jd-gl-axis" data-go="months"><b>今年 ·</b> '+esc(axis)+'</div>':'<div class="jd-gl-axis"></div>')
+          + (xi.hex?'<div class="jd-gl-color" data-go="natal"><span>宜 '+esc(xi.name||'')+'</span><i class="sw" style="background:'+xi.hex+'"></i></div>':'')
+          +'</div></div>';
+        // 顶卡元素是「直达章」不是「开关」:恒展开目标章+滚动(点默认已展开的壹章不该把它折叠)
+        el.querySelectorAll('[data-go]').forEach(function(x){ x.addEventListener('click',function(){ var t=document.querySelector('#jd-acc .jd-ch[data-p="'+x.dataset.go+'"]'); if(t) jdOpenOnly(t,true); }); });
+      }
+      function buildHeads(){
+        JD_META.forEach(function(m){
+          const ch=document.querySelector('#jd-acc .jd-ch[data-p="'+m.p+'"]'); if(!ch) return;
+          const head=ch.querySelector('.jd-ch-head'); if(!head||head.dataset.built) return;
+          head.dataset.built='1';
+          head.innerHTML='<span class="jd-ch-num">'+m.num+'</span>'
+            +'<span class="jd-ch-tx">'+(m.eye?'<span class="jd-ch-eye">'+esc(m.eye)+'</span>':'')
+            +'<span class="jd-ch-name">'+esc(m.name)+'</span>'
+            +'<span class="jd-ch-sig">'+esc(jdSignal(m.p))+'</span></span>'
+            +'<span class="jd-ch-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+          head.addEventListener('click',function(){ jdToggle(m.p); });
         });
       }
-      // tabs
-      $('rp-tabs').addEventListener('click', (e)=>{
-        const t=e.target.closest('.rp-tab'); if(!t) return;
-        const p=t.dataset.p;
-        document.querySelectorAll('#rp-body .rp-tab').forEach((x)=> x.classList.toggle('on', x===t));
-        document.querySelectorAll('#rp-body .rp-page').forEach((x)=> x.classList.toggle('on', x.dataset.p===p));
-        $('rp-scroll').scrollTop=0;
-      });
+      function jdReveal(){
+        const items=[].slice.call(document.querySelectorAll('#jd-acc .jd-ch'));
+        if(!items.length) return;
+        if(!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches)) return;
+        items.forEach(function(el,i){ el.classList.add('jd-reveal'); el.style.transitionDelay=(i*50)+'ms'; });
+        const show=function(el){ el.classList.add('in'); };
+        const io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ show(e.target); io.unobserve(e.target); } }); },{threshold:.1});
+        items.forEach(function(el){ io.observe(el); });
+        setTimeout(function(){ items.forEach(show); },1500); // 安全兜底:防 display:none→block 时 IO 不触发致内容隐身
+      }
+      function buildJiedu(){ try{ buildGlance(); buildHeads(); jdReveal(); }catch(e){} }
+
+      function showBody(){
+        cover.style.display='none'; body.style.display='block';
+        if($('rp-head-sub')) $('rp-head-sub').textContent='';
+        // 纵深防御:逐段包 try/catch(单段坏不连累其余与工具箱)
+        [renderNatal, renderMonths, renderYears, renderCare, renderPicker, renderAhead].forEach(function(fn){
+          try{ fn(); }catch(e){}
+        });
+        buildJiedu();
+      }
+      // 章头点击在 buildHeads() 内逐章绑定单开手风琴(取代原六 Tab 横切)
       // open/close(节律页入口已移除，报告统一由「解读」页 #jd-report 打开)
       $('rp-close').addEventListener('click', ()=> ov.classList.remove('on'));
       // 供工具箱「本命养生速查」跳转到完整报告指定 tab(全免费:打开即完整内容)
       // 内联化:报告主体常驻「解读」页；工具深链只切到解读页并定位子页(不再开 overlay)
       window.__rpInlineInto = function(host){ if(host && body && body.parentNode!==host) host.appendChild(body); showBody(); };
-      window.__rpGoTab = function(tab){ if(!tab) return; const tabs=[...document.querySelectorAll('#rp-body .rp-tab')], pages=[...document.querySelectorAll('#rp-body .rp-page')]; const t=tabs.find((x)=>x.dataset.p===tab); if(t){ tabs.forEach((x)=>x.classList.toggle('on',x===t)); pages.forEach((x)=>x.classList.toggle('on',x.dataset.p===tab)); } };
+      window.__rpGoTab = function(tab){ if(!tab) return; const t=document.querySelector('#jd-acc .jd-ch[data-p="'+tab+'"]'); if(!t) return; document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.toggle('open', c===t); }); const h=t.querySelector('.jd-ch-head'); setTimeout(function(){ jdScrollTo(h||t); }, 370); };
       window.__openReport=(tab)=>{
         if(window.__setScreen) window.__setScreen(2);
         window.shihe && window.shihe.track('report_open', { source:'tool', tab: tab||'' });
@@ -4473,14 +4705,20 @@
           const eng=RE.energyRange(P, sy,sm,sd, WIN)||[];
           const cand=[];
           for(let i=0;i<eng.length;i++){
-            const d=eng[i]; let L; try{ L=S.fromYmdHms(d.year,d.month,d.day,12,0,0).getLunar(); }catch(e){ continue; }
-            let js=[],tt='',ts=''; try{ js=L.getDayJiShen()||[]; tt=L.getDayTianShenType(); ts=L.getDayTianShen(); }catch(e){}
-            const strong=js.filter((x)=> STRONG.indexOf(x)>=0);
-            if(!(strong.length && tt==='黄道')) continue;
-            let yi=[]; try{ yi=(L.getDayYi()||[]).filter((x)=> x!=='馀事勿取'); }catch(e){}
+            const d=eng[i];
+            // 同源:用引擎 gongJiOf(与今日卡/日历/老黄历同一份 gongJi),别再各自 re-derive
+            const gj = (typeof RE.gongJiOf==='function') ? RE.gongJiOf(d.year,d.month,d.day) : null;
+            if(!gj || gj.hardXiong) continue;   // 硬凶(月破/受死/四离四绝)一票否决,免把凶日当吉日推荐
+            // S级(天赦/大节/德神)无条件收(修:7/19天赦是黑道、旧版"须黄道"把它漏了);A级须黄道+吉神(精选,免纯黄道半月淹没名单)
+            const isPick = gj.grade==='S' || (gj.grade==='A' && gj.jiShen && gj.jiShen.length && gj.tianShenType==='黄道');
+            if(!isPick) continue;
+            let yi=[]; try{ yi=(S.fromYmdHms(d.year,d.month,d.day,12,0,0).getLunar().getDayYi()||[]).filter((x)=> x!=='馀事勿取'); }catch(e){}
             const dt=new Date(d.year,d.month-1,d.day);
-            cand.push({ m:d.month, day:d.day, e:d.energy, ts, strong, yi:yi.slice(0,4),
-              wk:'周'+WK[dt.getDay()], score: strong.length*2 + (d.energy>=72?2:0) + d.energy/30 });
+            const gods=gj.jiShen||[];
+            const head = gj.grade==='S' ? ((gj.names&&gj.names[0]) || (gj.reasons&&gj.reasons[0]) || '黄历大吉') : '';
+            const why = WHY[gods[0]] || (gj.grade==='S' ? '黄历上吉之辰，宜隆重办要紧事、祈福和解' : '黄道当值，诸事可为');
+            cand.push({ m:d.month, day:d.day, e:d.energy, ts:gj.tianShen||'', tt:gj.tianShenType||'', grade:gj.grade, head, gods:gods.slice(0,4), why, yi:yi.slice(0,4),
+              wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?100:0) + gods.length*2 + (d.energy>=72?2:0) + d.energy/30 });
           }
           cand.sort((a,b)=> b.score-a.score);
           const top=cand.slice(0,14).sort((a,b)=> (a.m-b.m)||(a.day-b.day));
@@ -4488,16 +4726,18 @@
           if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 本季':'');
           if(chip && offset===0) chip.textContent= top.length? ('本季 '+top.length+' 个吉日') : '本季平稳';
           if($('luck-intro')) $('luck-intro').textContent= top.length
-            ? '按黄历神煞 × 你的能量，为这一季挑出的好日子，附「为什么吉」，把要紧事往这几天排。'
-            : '这一季暂无特别突出的吉日，按平日节奏稳步推进即可。';
+            ? '按黄历神煞 × 你的能量，挑出这一季的好日子，把要紧事往这几天排。'
+            : '这一季暂无特别突出的吉日，按平日节奏推进即可。';
           list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">这一季暂无特别突出的吉日</div>';
         }
         function rowHtml(x){
-          const tags=x.strong.map((s)=>'<span class="lk-god">'+esc(s)+'</span>').join('');
+          const badge = x.grade==='S' && x.head ? '<span class="lk-god" style="color:var(--gold-d);border-color:var(--gold-line)">'+esc(x.head)+'</span>' : '';
+          const gods = (x.gods||[]).map((s)=>'<span class="lk-god">'+esc(s)+'</span>').join('');
+          const hd = (x.ts && x.tt==='黄道') ? '<span class="lk-hd">'+esc(x.ts)+'黄道</span>' : '';
           const eCls=x.e>=72?'hi':(x.e>=56?'mid':'lo');
           return '<div class="lk-day"><div class="lk-dt"><b>'+x.m+'/'+x.day+'</b><span>'+esc(x.wk)+'</span></div>'
-            +'<div class="lk-main"><div class="lk-tags">'+tags+'<span class="lk-hd">'+esc(x.ts)+'黄道</span><span class="lk-e '+eCls+'">能量'+x.e+'</span></div>'
-            +'<div class="lk-why">'+esc(WHY[x.strong[0]]||'')+'</div>'
+            +'<div class="lk-main"><div class="lk-tags">'+badge+gods+hd+'<span class="lk-e '+eCls+'">能量'+x.e+'</span></div>'
+            +'<div class="lk-why">'+esc(x.why||'')+'</div>'
             +(x.yi.length?'<div class="lk-yi">宜 '+esc(x.yi.join(' · '))+'</div>':'')
             +'</div></div>';
         }
@@ -4861,16 +5101,8 @@
       document.querySelectorAll('[data-goto]').forEach(function(el){
         el.addEventListener('click', function(){ var i=GOTO_SCREEN[el.dataset.goto]; if(i!=null) setScreen(i); });
       });
-      // 状态栏时钟:显示真实当前时间(替换写死的 9:41 演示时间),每分钟刷新
-      (function(){
-        var els = document.querySelectorAll('.status .clock'); if(!els.length) return;
-        function tick(){
-          var d = new Date(), h = d.getHours(), m = d.getMinutes();
-          var t = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m;
-          for (var i=0;i<els.length;i++) els[i].textContent = t;
-        }
-        tick(); setInterval(tick, 15000);
-      })();
+      // 伪状态栏时钟已由 CSS(.status .clock{display:none}) 隐藏(真机系统栏已有时间);
+      // 原每 15 秒刷新隐藏元素的定时器纯属浪费,已删。span 保留无害(被 CSS 隐藏)。
       // 按图标映射到屏幕索引，而非 DOM 顺序 —— 这样下线某个 tab 不会让其余错位
       var SCREEN_BY_ICON = { 'i-cal':0, 'i-rhythm':1, 'i-read':2, 'i-tools':3 };
       document.querySelectorAll('.tabbar').forEach(function(bar){
@@ -4881,6 +5113,35 @@
           tab.addEventListener('click', function(){ setScreen(i); });
         });
       });
+      // 「我的」hub:生辰作为一项(不再整页),含一生能量/分享/协议。tab-mine 图标不在切屏映射,单独开 overlay
+      (function(){
+        var mov = document.getElementById('mine-ov');
+        if(!mov) return;
+        function openMine(){
+          var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
+          if(!p) p=window.APP_PERSON||null;
+          var nm=document.getElementById('mine-name'), bs=document.getElementById('mine-birth');
+          if(p&&p.year){
+            var mn=(p.minute!=null?p.minute:0); mn=(mn<10?'0':'')+mn;
+            var hr=(p.hour!=null?p.hour:0);
+            if(nm) nm.textContent=p.year+'年'+p.month+'月'+p.day+'日';
+            if(bs) bs.textContent=hr+':'+mn+(p.gender?' · '+p.gender:'');
+          } else {
+            if(nm) nm.textContent='未设置生辰';
+            if(bs) bs.textContent='填写后即可查看';
+          }
+          mov.classList.add('on');
+          window.shihe&&window.shihe.track&&window.shihe.track('mine_open',{});
+        }
+        function closeMine(){ mov.classList.remove('on'); }
+        document.querySelectorAll('.tab-mine').forEach(function(t){ t.addEventListener('click', openMine); });
+        var mc=document.getElementById('mine-close'); if(mc) mc.addEventListener('click', closeMine);
+        var ml=document.getElementById('mine-life'); if(ml) ml.addEventListener('click', function(){ closeMine(); setScreen(1); });
+        var ms=document.getElementById('mine-share'); if(ms) ms.addEventListener('click', function(){
+          closeMine(); setScreen(0);
+          var ts=document.getElementById('t-share'); if(ts) setTimeout(function(){ ts.click(); }, 80);
+        });
+      })();
       if (!document.body.hasAttribute('data-screen')) document.body.dataset.screen = '0';
     })();
     // PWA:注册离线缓存(失败不影响使用)

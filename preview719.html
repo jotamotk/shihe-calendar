@@ -1774,7 +1774,7 @@
           <!-- ====== 选中日 · 小部件流 ====== -->
           <div class="widgets" id="widgets">
             <div class="wdg-streak" id="wdg-streak" style="display:none"></div>
-            <div class="wdg-hint" id="wdg-hint">长按可拖动排序</div>
+            <div class="wdg-hint" id="wdg-hint"></div>
             <!-- W1 能量(显眼) -->
             <div class="wdg wdg-energy" data-wid="energy">
               <div class="wdg-daterow">
@@ -1835,7 +1835,7 @@
               </div>
               <!-- 更多细节(折叠)+ 四法参断 -->
               <div class="hl2-more collapsible collapsed" data-wid="hlmore">
-                <div class="hl2-more-h wdg-toggle">更多历法细节 · 判定依据<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+                <div class="hl2-more-h wdg-toggle">更多历法细节<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
                 <div class="wdg-body"><div class="wdg-body-in">
                   <div class="hl2-grid" id="hl2-grid"></div>
                   <div class="hl2-ss-detail" id="hl2-ss-detail"></div>
@@ -1879,7 +1879,6 @@
           <div class="share-card sc-tA" id="share-card"></div>
           <div class="share-acts">
             <button class="share-go" id="share-go">分享给朋友</button>
-            <span class="share-tip">或截图保存</span>
             <button class="share-close" id="share-close">关闭</button>
           </div>
         </div>
@@ -1895,7 +1894,7 @@
         <div class="scroll">
           <div class="tb-detail-head"><button class="tb-back" data-goto="tools" type="button"><span>‹</span>工具箱</button></div>
           <div class="life-top">
-            <div class="life-h"><b>一生能量</b><span>逐年逐月 · 顺时而行</span></div>
+            <div class="life-h"><b>一生能量</b><span>逐年逐月</span></div>
           </div>
 
           <div class="life-head">
@@ -1928,7 +1927,7 @@
                     </animateMotion>
                   </g>
                 </svg>
-                <div class="lf-guide-tip">捏住红针，沿外圈转到你要的岁数<br><small>中间大字即所选 · 点圆心「进入 / 返回」，也可用下方「‹ ›」逐格</small></div>
+                <div class="lf-guide-tip">捏住红针，沿外圈转到你要的岁数<br><small>点圆心进入 / 返回</small></div>
               </div>
               <!-- 快速跳转弹窗:输入年月，直达 -->
               <div class="lf-jump" id="lf-jump" hidden>
@@ -1956,7 +1955,7 @@
           <!-- 阶段均能量(随年轮联动) -->
           <div class="panel">
             <h3 id="lf-bars-h">十年一程 · 阶段均能量</h3>
-            <div class="ph" id="lf-bars-p">哪一程更舒展</div>
+            <div class="ph" id="lf-bars-p"></div>
             <div class="decrow" id="lf-decs"></div>
           </div>
 
@@ -2003,10 +2002,9 @@
          <div class="tb-catalog" id="tb-catalog">
           <div class="tb-top">
             <h2>工具箱</h2>
-            <div class="tb-sub">把日子里的讲究，收在一处</div>
           </div>
 
-          <div class="tb-group-h">时令<span>顺时而养</span></div>
+          <div class="tb-group-h">时令</div>
           <button class="tb-feat" data-tool="jieqi" data-title="二十四节气">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-jieqi"></use></svg>
               <div><b>二十四节气 · 时令</b><small id="tb-c-jieqi">此刻</small></div></div>
@@ -2023,7 +2021,7 @@
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">本命<span>你的能量底色</span></div>
+          <div class="tb-group-h">本命</div>
           <button class="tb-feat" data-tool="benming" data-title="本命养生">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-benming"></use></svg>
               <div><b>本命养生 · 速查</b><small id="tb-c-bm">顺你的气调养</small></div></div>
@@ -2036,11 +2034,11 @@
           </button>
           <button class="tb-feat" data-tool="rhythm" data-title="一生能量">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-rhythm"></use></svg>
-              <div><b>一生能量</b><small>逐年逐月 · 看你的能量起伏</small></div></div>
+              <div><b>一生能量</b><small>逐年逐月</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">民俗<span>历法与仪礼</span></div>
+          <div class="tb-group-h">民俗</div>
           <button class="tb-feat" data-tool="folk" data-title="神诞民俗">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-folk"></use></svg>
               <div><b>神诞民俗 · 道佛要日</b><small id="tb-c-folk">本月</small></div></div>
@@ -2052,7 +2050,7 @@
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">我的<span>记在本机</span></div>
+          <div class="tb-group-h">我的</div>
           <button class="tb-feat" data-tool="mark" data-title="重点日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-mark"></use></svg>
               <div><b>重点日 · 记一笔</b><small id="tb-c-mark">生日 · 纪念日 · 倒数日，记在本机</small></div></div>
@@ -2154,7 +2152,7 @@
               <div class="hl-note">传统养生参考，非医疗建议</div>
             </div>
             <div class="sea-wis" id="sea-wis">
-              <div class="sw-lab">今日一则 · 传统智慧</div>
+              <div class="sw-lab">今日一则</div>
               <div class="sw-text" id="sw-text">心安即是归处。</div>
             </div>
           </div>
@@ -19524,16 +19522,16 @@ var RhythmEngine = (() => {
         let bars=[], title='', ph='';
         if(level==='life'){
           const decs=L.decades||[];
-          title='人生阶段 · 每程均能量'; ph='按你的人生阶段分程，看哪一程更舒展';
+          title='人生阶段 · 每程均能量'; ph='';
           bars=decs.map((d)=>({ v:d.avg, lab:d.from+'+', full:d.from+'–'+d.to+'岁', on:(selAge>=d.from&&selAge<=d.to),
             sel:false, jump:{lv:'life',k:d.from} }));
         } else {
           const yd=V.arr||[];
-          title=selY+' 年 · 各月均能量'; ph='看这一年里哪个月气场更顺';
+          title=selY+' 年 · 各月均能量'; ph='';
           bars=yd.map((m)=>({ v:m.e, lab:m.key+'月', on:(m.key===V.cur), sel:(m.key===selM),
             jump:{lv:'year',k:m.key} }));
         }
-        H.textContent=title; P.textContent=ph;
+        H.textContent=title; P.textContent=ph; P.style.display=ph?'':'none';
         const lo=Math.min(...bars.map((b)=>b.v)), hi=Math.max(...bars.map((b)=>b.v)), sp=Math.max(1,hi-lo);
         // 柱图仅作展示——选择某年/某月请用上方轮盘，返回上层用面包屑「‹ 上一层」或圆心。
         const barHTML=(b)=>{
@@ -19793,7 +19791,7 @@ var RhythmEngine = (() => {
           + '<span class="rp-rh-lab">'+d.k+'</span>'
           + '<span class="rp-rh-line">'+esc(rhDesc(d.k,d.v))+'</span>'
           + '</div>';
-        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四种状态</b><span>你的能量禀赋</span></div>'
+        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四种状态</b></div>'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
           + '<div class="rp-rh-foot">这是你天生的样子，无关好坏——顺着它安排张弛，最省力。</div>'
           + '</div></div>';
@@ -19834,7 +19832,7 @@ var RhythmEngine = (() => {
         // 读懂你:三段 coreText → 左线要点行(固定标签，一眼可扫，不再堆散文卡)
         const core=(pe.coreText||[]).filter(Boolean);
         const rows=core.length
-          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>读懂你</b><span>一眼识人</span></div>'
+          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>读懂你</b></div>'
             + '<div class="np-rows">'+core.slice(0,3).map((p,i)=>'<div class="np-row"><div class="np-row-lab">'+esc(NP_ROW_LAB[i]||'')+'</div><div class="np-row-tx">'+esc(p)+'</div></div>').join('')+'</div></div>' : '';
         // 生活方面:5 项收进分段 Tab —— 点选逐面看，替代 5 张同款卡堆叠
         const aspAct=(lab,arr,cls)=>(arr&&arr.length)?'<div class="rp-asp-act '+cls+'"><em>'+lab+'</em><span>'+arr.map(esc).join(' · ')+'</span></div>':'';
@@ -19849,7 +19847,7 @@ var RhythmEngine = (() => {
           + (a.note?'<div class="np-panel-note">'+esc(a.note)+'</div>':'')
           + '</div>').join('');
         const life=asps.length
-          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>生活方面</b><span>逐面点看</span></div>'
+          ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>生活方面</b></div>'
             + '<div class="np-tabs">'+tabsNav+'</div>'+panels+'</div>' : '';
         // 需要注意
         const jiCard=(j)=>'<div class="rp-ji-it"><i class="rp-ji-dot"></i><span>'+esc(j.caution)+'</span></div>';
@@ -19937,7 +19935,7 @@ var RhythmEngine = (() => {
       // 把曲线包进卡片(标题 + 提示),并绑定点击跳转
       function chartCard(pts, title, hint, onJump){
         const html='<div class="rp-chart-wrap">'+energyChart(pts)
-          + '<div class="rp-chart-cap"><b>'+esc(title)+'</b><span>'+esc(hint||'点圆点跳到对应月份')+'</span></div></div>';
+          + '<div class="rp-chart-cap"><b>'+esc(title)+'</b>'+(hint?'<span>'+esc(hint)+'</span>':'')+'</div></div>';
         return html;
       }
       function bindChartJump(scope, resolve){
@@ -20143,14 +20141,14 @@ var RhythmEngine = (() => {
         const ledeM = (hi||lo)
           ? ((hi?'今年 <b>'+hi+' 月</b>你的气场最足，最适合放大事、做重要决定；':'')
              + (lo?'<b>'+lo+' 月</b>更适合沉淀蓄力、打好基础，稳一稳再发力；':'')
-             + '其余月份按自己的节奏稳步推进即可。点开看每月详情。')
-          : '今年各月气场起伏不大，整体平稳，按自己的节奏稳步推进即可。点开看每月详情。';
+             + '其余月份按自己的节奏稳步推进即可。')
+          : '今年各月气场起伏不大，整体平稳，按自己的节奏稳步推进即可。';
         const cpts=Y.months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:m.month===Y.curMonth, key:'m'+m.month}));
         $('rp-p-months').innerHTML =
-          rpBanner('sec-rhythm','高能量月','顺势而为 · 选对时机')
-          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b><span>12 个月</span></div>'
+          rpBanner('sec-rhythm','高能量月','')
+          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b></div>'
           + (Y.yearVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.yearVerdict)+'</div>':'')
-          + chartCard(cpts, Y.year+' 年逐月气场', '金点为相对高点')
+          + chartCard(cpts, Y.year+' 年逐月气场', '')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeM+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余月份</span></div>'
           + Y.months.map(card).join('')
@@ -20178,7 +20176,7 @@ var RhythmEngine = (() => {
           +   (m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
           +   yijiHtml(m.yi,m.ji)
           + '</div></div>';
-        let html='<div class="rp-lede" style="margin:2px 2px 16px">未来三年逐月排开。圆点越靠右、数字越高，气场越足；金点是你这几年里相对最足的月份。点开看每月详情。</div>';
+        let html='<div class="rp-lede" style="margin:2px 2px 16px">未来三年逐月，金点是相对最足的月份。</div>';
         A.forEach((yObj)=>{
           const months = yObj.curMonth>0 ? yObj.months.filter((m)=>m.month>=yObj.curMonth) : yObj.months;
           if(!months.length) return;
@@ -20186,7 +20184,7 @@ var RhythmEngine = (() => {
           const _av=months.map((m)=>m.avg), aLo=Math.min.apply(null,_av), aHi=Math.max.apply(null,_av);
           const cpts=months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:false, key:yObj.year+'-'+m.month}));
           html += '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+yObj.year+' 年</b><span>'+(hi.length?('相对高点 '+hi.join('、')+' 月'):'平稳为主')+'</span></div>'
-            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', '金点为相对高点'):'')
+            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', ''):'')
             + months.map((m)=>monthCard(m,yObj.year,aLo,aHi)).join('')
             + '</div>';
         });
@@ -20216,14 +20214,14 @@ var RhythmEngine = (() => {
         const ledeY = (hi||lo)
           ? ((hi?'未来十年里，<b>'+hi+' 年</b>你的气场最足，大事、重要布局往这几年放；':'')
              + (lo?'<b>'+lo+' 年</b>宜深耕守成、稳住根基，积蓄之后再起势；':'')
-             + '其余年份按自己的节奏稳步推进即可。点开看每年详情。')
-          : '未来十年气场大体平稳，起伏不大，按自己的节奏稳步推进即可。点开看每年详情。';
+             + '其余年份按自己的节奏稳步推进即可。')
+          : '未来十年气场大体平稳，起伏不大，按自己的节奏稳步推进即可。';
         const cpts=Y.years.map((y)=>({label:String(y.year).slice(2), value:y.energy, level:y.level, cur:y.year===Y.curYear, key:'y'+y.year}));
         $('rp-p-years').innerHTML =
-          rpBanner('sec-rhythm','高能量年','十年起伏 · 把握大势')
-          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b><span>10 年</span></div>'
+          rpBanner('sec-rhythm','高能量年','')
+          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b></div>'
           + (Y.decadeVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.decadeVerdict)+'</div>':'')
-          + chartCard(cpts, '未来十年气场走势', '金点为相对高点')
+          + chartCard(cpts, '未来十年气场走势', '')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeY+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余年份</span></div>'
           + Y.years.map(card).join('')
@@ -20241,39 +20239,39 @@ var RhythmEngine = (() => {
         const n=R.natal; const xs=n.xiYong||[]; const js=n.jiShen||[];
         const S=(window.APP&&APP.season)||null;
         const H=S&&S.health, JQ=S&&S.jieqi;
-        const sec=(ic,t,sub,inner)=>'<div class="rp-sec"><div class="rp-sec-h">'+(ic||'<i class="rp-bar"></i>')+'<b>'+t+'</b><span>'+sub+'</span></div>'+inner+'</div>';
+        const sec=(ic,t,sub,inner)=>'<div class="rp-sec"><div class="rp-sec-h">'+(ic||'<i class="rp-bar"></i>')+'<b>'+t+'</b>'+(sub?'<span>'+sub+'</span>':'')+'</div>'+inner+'</div>';
         const chips=(arr)=> '<div class="rp-cl">'+arr.map((a)=>'<span class="rp-cl-it"><i>'+esc(a.k)+'</i>'+esc(a.v)+'</span>').join('')+'</div>';
         const pills=(arr)=> '<div class="rp-pills">'+arr.map((v)=>'<span class="rp-pill">'+esc(v)+'</span>').join('')+'</div>';
         const splitItems=(s)=> String(s||'').split(/[、,，;；]/).map((x)=>x.trim()).filter(Boolean);
         // 顺时养生:删掉空泛的「养生总纲 / 高能时段」两框(说了等于没说),开门见山直接给「吃 / 动 / 心 / 身」四类可执行建议
-        let html = rpBanner('sec-wellness','顺时养生','顺时调养 · 非医疗建议');
+        let html = rpBanner('sec-wellness','顺时养生','非医疗建议');
         // 食养(把各路宜补的食物合并去重，直接列清单)
         const foods=[...new Set(xs.flatMap((x)=>splitItems(x.food)))];
-        html += sec('','食养 · 平时多吃这些','顺气养身',
+        html += sec('','食养 · 平时多吃这些','',
           '<div class="rp-card"><div class="rp-cl-h">日常宜补</div>'+pills(foods)
           + (H?'<div class="rp-cl-h" style="margin-top:14px">眼下时令（'+esc(JQ.name)+'）</div><div class="rp-wx-care">'+esc(H.eat)+(H.food?'　·　推荐 '+esc(H.food):'')+'</div>':'')
           + '</div>');
         // 4 动养
         const acts=[...new Set(xs.flatMap((x)=>splitItems(x.activity)))];
-        html += sec('','动养 · 适合你的活动','顺气而动',
+        html += sec('','动养 · 适合你的活动','',
           '<div class="rp-card"><div class="rp-cl-h">平时多做</div>'+pills(acts)
           + (H?'<div class="rp-cl-h" style="margin-top:14px">眼下时令</div><div class="rp-wx-care">'+esc(H.move)+'</div>':'')
           + '</div>');
         // 5 情志(直接给安顿心情的话，不挂抽象标签)
-        html += sec('','情志 · 心怎么安顿','调心',
+        html += sec('','情志 · 心怎么安顿','',
           '<div class="rp-card"><div class="rp-lede" style="margin-bottom:11px">情绪上来时，下面几句话送给你。</div>'
           + xs.map((x)=>'<div class="rp-wx-care">'+esc(x.care)+'</div>').join('')
           + (H?'<div class="rp-wx-care" style="border-color:var(--gold-soft)"><b>眼下「'+esc(JQ.name)+'」·</b>'+esc(H.mood)+'</div>':'')
           + '</div>');
         // 6 身体关照
         const organs=[...new Set(xs.map((x)=>x.organ))];
-        html += sec('','身体 · 平时多养护','调养',
+        html += sec('','身体 · 平时多养护','',
           '<div class="rp-card"><div class="rp-lede" style="margin-bottom:11px">这几处平日多养护最省力。</div>'
           + pills(organs)
           + '</div>');  // 忌神「需要注意」已在壹·能量底色章呈现,此处删去,避免两章重复
         // 7 顺时此刻
         if(H){
-          html += sec('','顺时 · 此刻「'+esc(JQ.name)+'」','当季要点',
+          html += sec('','顺时 · 此刻「'+esc(JQ.name)+'」','',
             '<div class="rp-card"><div class="rp-cl-h">起居</div><div class="rp-wx-care">'+esc(H.from)+'</div>'
             + '<div class="rp-cl-h" style="margin-top:10px">养生要点</div><div class="rp-wx-care" style="border-color:var(--gold-soft)">'+esc(H.care)+'</div>'
             + (H.say?'<div class="rp-say">「'+esc(H.say)+'」</div>':'')
@@ -20302,7 +20300,7 @@ var RhythmEngine = (() => {
           + '</div>';
         const from=P.from;
         $('rp-p-picker').innerHTML =
-          rpBanner('sec-timing','重要择日','为要紧事挑好日子')
+          rpBanner('sec-timing','重要择日','')
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>替你挑好的日子</b><span>未来 '+P.span+' 天</span></div>'
           + '<div class="rp-pk-intro">从 '+from.month+'月'+from.day+'日 起两个月内，按事情性质挑出你状态最配的日子。</div>'
           + pickerBand(P.series)
@@ -20314,12 +20312,12 @@ var RhythmEngine = (() => {
       // ===== 解读页 · 渐进披露手风琴外壳(2026-07 大改) =====
       // 只搬 DOM / 换导航 / 加折叠;命理·养生文案与引擎一字不改,顶卡与信号 chip 全部引用现有已算字段+if-guard 兜底。
       const JD_META=[
-        {p:'natal', num:'壹', eye:'本命底色',   name:'能量底色'},
-        {p:'care',  num:'贰', eye:'顺时调养',   name:'顺时养生'},
-        {p:'months',num:'叁', eye:'今年节奏',   name:'高能量月'},
-        {p:'picker',num:'肆', eye:'为要紧事',   name:'重要择日'},
-        {p:'years', num:'伍', eye:'未来大势',   name:'高能量年'},
-        {p:'ahead', num:'陆', eye:'长镜头',     name:'三年逐月'},
+        {p:'natal', num:'壹', eye:'',   name:'能量底色'},
+        {p:'care',  num:'贰', eye:'',   name:'顺时养生'},
+        {p:'months',num:'叁', eye:'',   name:'高能量月'},
+        {p:'picker',num:'肆', eye:'',   name:'重要择日'},
+        {p:'years', num:'伍', eye:'',   name:'高能量年'},
+        {p:'ahead', num:'陆', eye:'',     name:'三年逐月'},
       ];
       function jdSignal(p){
         try{
@@ -20330,7 +20328,7 @@ var RhythmEngine = (() => {
           if(p==='months'){ const hi=(Y&&Y.highMonths&&Y.highMonths.length)?Y.highMonths.slice(0,3).join('·'):''; return hi?('气场高点在 '+hi+' 月'):'今年这一年的节奏起伏'; }
           if(p==='picker'){ let N=0; if(P&&P.categories) P.categories.forEach(function(c){ N+=(c.days&&c.days.length)?c.days.length:0; }); return N?('未来两月 · '+N+' 个好日子'):'为要紧事挑个好日子'; }
           if(p==='years'){ const hi=(YR&&YR.highYears&&YR.highYears.length)?YR.highYears.slice(0,3).join('·'):''; return hi?('能量高点年 '+hi):'未来十年的大势起伏'; }
-          if(p==='ahead') return '三年逐月 · 一个长镜头看过去';
+          if(p==='ahead') return '三年逐月';
         }catch(e){}
         return '';
       }
@@ -20363,7 +20361,6 @@ var RhythmEngine = (() => {
         if(!axis){ const Ym=R.yearMonths; if(Ym&&Ym.highMonths&&Ym.highMonths.length) axis='气场高点在 '+Ym.highMonths.slice(0,3).join('、')+' 月'; }
         const xi=n.xiColor||{};
         el.innerHTML='<div class="jd-glance">'
-          +'<div class="jd-gl-eye">你 的 能 量 底 色</div>'
           +(line?'<div class="jd-gl-line">'+esc(line)+'</div>':'')
           +(dimHtml?'<div class="jd-gl-dims">'+dimHtml+'</div>':'')
           +'<div class="jd-gl-foot">'
@@ -20379,7 +20376,7 @@ var RhythmEngine = (() => {
           const head=ch.querySelector('.jd-ch-head'); if(!head||head.dataset.built) return;
           head.dataset.built='1';
           head.innerHTML='<span class="jd-ch-num">'+m.num+'</span>'
-            +'<span class="jd-ch-tx"><span class="jd-ch-eye">'+esc(m.eye)+'</span>'
+            +'<span class="jd-ch-tx">'+(m.eye?'<span class="jd-ch-eye">'+esc(m.eye)+'</span>':'')
             +'<span class="jd-ch-name">'+esc(m.name)+'</span>'
             +'<span class="jd-ch-sig">'+esc(jdSignal(m.p))+'</span></span>'
             +'<span class="jd-ch-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
