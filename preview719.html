@@ -429,6 +429,23 @@
   .rp-ov{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;opacity:0;transition:opacity .3s var(--ease);}
   @media(min-width:561px){ .rp-ov{max-width:430px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);} }
   .rp-ov.on{display:flex;opacity:1;}
+  /* 「我的」overlay:复用 rp-head/rp-back,菜单式列表 */
+  .mine-ov{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;opacity:0;transition:opacity .3s var(--ease);}
+  @media(min-width:561px){ .mine-ov{max-width:430px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);} }
+  .mine-ov.on{display:flex;opacity:1;}
+  .mine-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 16px 40px;}
+  .mine-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:18px;}
+  .mine-hero-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.04em;}
+  .mine-hero-sub{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:300;}
+  .mine-list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+  .mine-it{display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;background:none;border:none;border-bottom:1px solid var(--line);color:var(--ink);font-size:15px;text-align:left;text-decoration:none;cursor:pointer;transition:background .15s;}
+  .mine-it:last-child{border-bottom:none;}
+  .mine-it:active{background:var(--bg-top);}
+  .mine-ic{width:19px;height:19px;flex:none;color:var(--gold-d);opacity:.9;}
+  .mine-it-t{flex:1;}
+  .mine-go{color:var(--muted);font-size:18px;line-height:1;}
+  .mine-foot{text-align:center;font-size:10.5px;color:var(--muted);font-weight:300;line-height:1.9;padding:14px 20px 0;}
+  .mine-foot b{color:var(--ink-2);font-weight:400;}
   /* ===== 解读页 · 免费命书速览(复用 .rp-* 卡片样式，只补少量专属类)===== */
   .jd-free-tag{display:inline-block;font-size:10px;letter-spacing:3px;color:var(--gold-d);font-weight:500;border:1px solid var(--line-2);border-radius:20px;padding:4px 12px;margin:0 auto 4px;}
   .jd-yr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px;}
@@ -1849,7 +1866,7 @@
           <div class="tab on"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
         <!-- 分享卡 overlay(覆盖在手机内，可截图) -->
         <div class="share-ov" id="share-ov">
@@ -1951,7 +1968,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
       </div></div>
@@ -1970,7 +1987,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab on"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
       </div></div>
       <div class="frame-label">解读 · 命书速览 → 深度报告(全部免费)</div>
@@ -2196,7 +2213,7 @@
           <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
           <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
           <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <a class="tab" href="onboarding.html"><svg class="ti"><use href="#i-mine"></use></svg>我的</a>
+          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
         </div>
       </div></div>
       <div class="frame-label">工具箱 · 目录 → 点进查看(吉日 / 养生 / 重点日 / 时令民俗)</div>
@@ -2246,6 +2263,30 @@
         </div>
         <div class="rp-foot"><b class="rp-foot-em">内容仅供参考，请相信科学。</b>本报告依据你的出生信息逐项推算 · 全部在本机计算，不上传、不外传<br>内容用于自我调养与生活节奏参考，不构成医疗 / 投资 / 法律等专业建议</div>
       </div>
+    </div>
+  </div>
+
+  <!-- 「我的」overlay:body 级全屏,任意页面均可打开。生辰作为一项(不再整页),含一生能量/分享/协议 -->
+  <div class="mine-ov" id="mine-ov">
+    <div class="rp-head">
+      <button class="rp-back" id="mine-close">×</button>
+      <span class="rp-head-t">我的</span>
+    </div>
+    <div class="mine-scroll">
+      <div class="mine-card" id="mine-hero">
+        <div class="mine-hero-name" id="mine-name">—</div>
+        <div class="mine-hero-sub" id="mine-birth">—</div>
+      </div>
+      <div class="mine-list">
+        <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-go">›</span></a>
+        <button class="mine-it" type="button" id="mine-life"><svg class="mine-ic"><use href="#i-rhythm"></use></svg><span class="mine-it-t">一生能量</span><span class="mine-go">›</span></button>
+        <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日分享</span><span class="mine-go">›</span></button>
+      </div>
+      <div class="mine-list">
+        <a class="mine-it" href="terms.html"><span class="mine-it-t">用户协议</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="privacy.html"><span class="mine-it-t">隐私政策</span><span class="mine-go">›</span></a>
+      </div>
+      <div class="mine-foot"><b>内容仅供参考，请相信科学。</b>全部在本机计算，不上传、不外传</div>
     </div>
   </div>
 
@@ -20892,6 +20933,35 @@ var RhythmEngine = (() => {
           tab.addEventListener('click', function(){ setScreen(i); });
         });
       });
+      // 「我的」hub:生辰作为一项(不再整页),含一生能量/分享/协议。tab-mine 图标不在切屏映射,单独开 overlay
+      (function(){
+        var mov = document.getElementById('mine-ov');
+        if(!mov) return;
+        function openMine(){
+          var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
+          if(!p) p=window.APP_PERSON||null;
+          var nm=document.getElementById('mine-name'), bs=document.getElementById('mine-birth');
+          if(p&&p.year){
+            var mn=(p.minute!=null?p.minute:0); mn=(mn<10?'0':'')+mn;
+            var hr=(p.hour!=null?p.hour:0);
+            if(nm) nm.textContent=p.year+'年'+p.month+'月'+p.day+'日';
+            if(bs) bs.textContent=hr+':'+mn+(p.gender?' · '+p.gender:'');
+          } else {
+            if(nm) nm.textContent='未设置生辰';
+            if(bs) bs.textContent='填写后即可查看';
+          }
+          mov.classList.add('on');
+          window.shihe&&window.shihe.track&&window.shihe.track('mine_open',{});
+        }
+        function closeMine(){ mov.classList.remove('on'); }
+        document.querySelectorAll('.tab-mine').forEach(function(t){ t.addEventListener('click', openMine); });
+        var mc=document.getElementById('mine-close'); if(mc) mc.addEventListener('click', closeMine);
+        var ml=document.getElementById('mine-life'); if(ml) ml.addEventListener('click', function(){ closeMine(); setScreen(1); });
+        var ms=document.getElementById('mine-share'); if(ms) ms.addEventListener('click', function(){
+          closeMine(); setScreen(0);
+          var ts=document.getElementById('t-share'); if(ts) setTimeout(function(){ ts.click(); }, 80);
+        });
+      })();
       if (!document.body.hasAttribute('data-screen')) document.body.dataset.screen = '0';
     })();
     // PWA:注册离线缓存(失败不影响使用)
