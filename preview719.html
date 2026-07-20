@@ -18777,28 +18777,18 @@ var RhythmEngine = (() => {
           else if (hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
           // 日期下方文字优先级:节气 > 节假日名 > 民俗节日 > 农历(让重点信息突出，不显杂乱)
           let sub, subCls='ln';
-          // 民俗节日/大吉名:优先用引擎 folk 数据(d.tagName,与卡片同源、含天贶节/天赦日等),≤5字才显防溢出;
-          //   本地 festOf 半套表作兜底(它缺天贶节等,故退居其次)。这样 7/19 底下直接显「天赦日」而非「初六」。
-          const folkName = (['节日','赦日','神诞','五腊'].indexOf(d.tagType)>=0 && d.tagName && d.tagName.length<=5) ? d.tagName : '';
-          const fst = folkName || festOf(m.year, m.month, d.g, d.lunarLabel);
+          // 日期下方文字:节气 > 节假日 > 传统节日(festOf) > 农历。不在月历上把吉日/神诞挑出来标注(那属"择日",归点开的今日卡/老黄历/近期吉日,别泼满日历)。
+          const fst = festOf(m.year, m.month, d.g, d.lunarLabel);
           if (jq){ sub=jq; subCls='ln jq'; }
           else if (hol && hol.name){ sub=hol.name; subCls='ln fest'; }
           else if (fst){ sub=fst; subCls='ln fest'; }
           else sub=d.lunarDayCN;
-          // 重点日:本机自定义(生日/纪念日/提醒)。标注统一改为「数字染色」:
-          //   民俗→金、放假→暖红(h-off)、重点日→陶土，不再叠小圆点。
           const mks = MARKS.forDate(m.year, m.month, d.g);
-          // 金点(数字染金)+ ✦星标:只给 S级大吉 或 具名民俗(节日/天赦/神诞/五腊);泛化黄道约占半月、不占金标(点开当日卡仍可见)
-          const gj = d.gongJi;
-          const isDaji = !!(gj && gj.names && gj.names.length);   // 具名公吉:天赦/大节/一级圣诞等
-          const namedFolk = ['节日','赦日','神诞','五腊'].indexOf(d.tagType) >= 0;
-          if (isDaji || namedFolk) cls.push('d-fk');
+          if (d.fk) cls.push('d-fk');   // 民俗日金点(原有,克制),不再叠 ✦ 大吉星标
           if (mks.length) cls.push('d-mk');
-          // 能量在「点开/悬停」时呈现,格子保持极简留白。
-          const sheMark = isDaji ? '<span class="tsmark" aria-label="'+esc(gj.names[0]||'黄历大吉')+'">✦</span>' : '';
-          const eTip = (isDaji?gj.names.slice(0,2).join(' · ')+' · 黄历大吉 · ':'')+'能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
+          const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
           html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
-                  restBadge+sheMark+
+                  restBadge+
                   '<b>'+d.g+'</b>'+
                   '<span class="'+subCls+'">'+sub+'</span></div>';
         });
