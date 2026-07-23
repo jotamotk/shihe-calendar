@@ -198,7 +198,7 @@
       <!-- 核对面板:生成后先看四柱命盘，确认排盘无误再保存进入 -->
       <div class="cf-ov" id="confirm">
         <div class="cf-card">
-          <div class="cf-h">核对你的命盘</div>
+          <div class="cf-h">核对出生信息</div>
           <div class="cf-sub">已按真太阳时校正、节气定月排盘</div>
           <div class="cf-info" id="cf-info"></div>
           <div class="cf-pwrap">
@@ -443,7 +443,7 @@
 
     function buildCardHTML(chart, APP){
       // 标题与命盘块:仅核对模式露出四柱原盘；普通用户只确认出生信息
-      document.querySelector('.cf-h').textContent   = VERIFY ? '核对你的命盘' : '核对你的八字';
+      document.querySelector('.cf-h').textContent   = VERIFY ? '核对出生信息' : '核对出生信息';
       document.querySelector('.cf-sub').textContent = VERIFY
         ? '已按真太阳时校正、节气定月排盘'
         : '已按真太阳时校正、节气定月排盘 · 核对无误后保存';
