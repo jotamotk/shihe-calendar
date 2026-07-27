@@ -12097,12 +12097,14 @@ var RhythmEngine = (() => {
         const weightsRaw = elementWeights(gans, zhis);
         const selfPower = weightsRaw[dayWx];
         const yinPower = weightsRaw[SHENG_ME[dayWx]];
-        const yinBuryRatio = yinPower / Math.max(selfPower, 0.01);
+        const yinBuryRatio = yinPower / Math.max(selfPower, 0.25);
         const totalWeight = WX_ALL.reduce((s, wx) => s + weightsRaw[wx], 0);
         const yinShare = yinPower / Math.max(totalWeight, 0.01);
         const noPeerStem = !gans.some((g, i) => i !== 2 && GAN_WX[g] === dayWx);
         const hasStrongRoot = zhis.some((z) => ZHI_WX[z] === dayWx);
-        const isYinHeavyWeak = yinBuryRatio >= 4.5 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
+        const yinDominant = yinBuryRatio >= 4.5 && yinPower >= 3 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
+        const isYinHeavyWeak = yinDominant && weightsRaw[KE_ME[dayWx]] < 1.5;
+        const isShaYinRescue = yinDominant && weightsRaw[KE_ME[dayWx]] >= 1.5;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
         const guanShaPower = weightsRaw[KE_ME[dayWx]];
         const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2;
@@ -12147,8 +12149,13 @@ var RhythmEngine = (() => {
         });
         score += detail.\u5F97\u52BF;
         const rooted = rootSupport;
+        const benQiHelp = zhis.some((z) => {
+          const t = tenGodType(dayWx, GAN_WX[ZHI_HIDE[z][0]]);
+          return t === "\u6BD4" || t === "\u5370";
+        });
+        const peerRootedStem = !noPeerStem && zhis.some((z) => ZHI_HIDE[z].some((g) => GAN_WX[g] === dayWx));
         let strength, isCong = false, congWx = null;
-        if (rooted < 0.6 && detail.\u5F97\u4EE4 < 0 && detail.\u5F97\u52BF <= 0) {
+        if ((rooted < 0.6 || !benQiHelp && rooted < 1.5 && !peerRootedStem) && detail.\u5F97\u4EE4 < 0 && detail.\u5F97\u52BF <= 0) {
           strength = "\u4ECE\u5F31";
           isCong = true;
           congWx = dominantWx(gans, zhis, dayWx, ["\u98DF", "\u8D22", "\u5B98"]);
@@ -12164,6 +12171,7 @@ var RhythmEngine = (() => {
           strength = "\u4E2D\u548C";
         }
         if (isYinHeavyWeak && !isCong) strength = "\u8EAB\u5F31";
+        else if (isShaYinRescue && !isCong) strength = "\u8EAB\u5F31";
         else if (isGuanShaWeak && !isCong && !["\u8EAB\u5F31", "\u4ECE\u5F31"].includes(strength)) strength = "\u504F\u5F31";
         const isStrong = strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A";
         const isWeak = strength === "\u8EAB\u5F31" || strength === "\u504F\u5F31";
@@ -12174,9 +12182,13 @@ var RhythmEngine = (() => {
         const totalPower = WX_ALL.reduce((s, wx) => s + weightsRaw[wx], 0);
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
         const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weightsRaw[KE_ME[dayWx]] < 0.5 && weightsRaw[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
+        const isTwoQi = !isCong && !isYinHeavyWeak && !isShaYinRescue && !isZhuanWang && (selfPower + weightsRaw[ME_SHENG[dayWx]]) / Math.max(totalPower, 0.01) >= 0.85 && hasStrongRoot && selfPower >= 2 && weightsRaw[KE_ME[dayWx]] < 0.5 && weightsRaw[ME_KE[dayWx]] < 1.4 && (ZHI_WX[monthZhi] === dayWx || ZHI_WX[monthZhi] === ME_SHENG[dayWx]);
+        if (isTwoQi && !["\u8EAB\u5F3A", "\u504F\u5F3A"].includes(strength)) strength = "\u504F\u5F3A";
         let effScore = score;
         if (isGuanShaWeak && !isCong) effScore = Math.min(effScore, -1);
         if (isYinHeavyWeak && !isCong) effScore = Math.min(effScore, -3);
+        if (isShaYinRescue && !isCong) effScore = Math.min(effScore, -2.5);
+        if (isTwoQi) effScore = Math.max(effScore, 3);
         const { t: bodyT, fav: favVec, clim } = buildFavVec({
           effScore,
           dayWx,
@@ -12188,7 +12200,8 @@ var RhythmEngine = (() => {
           isYinHeavyWeak,
           isZhuanWang,
           isDry,
-          isVentDamp
+          // 两气成象豁免燥土打折:火土成象局土即秀气主用(dtq#15 书取戌土),不作"燥土晦火"论
+          isVentDamp: isVentDamp && !isTwoQi
         });
         const { xiYong, jiShen, xiYongWeight: xiWeight, primaryXi } = deriveFromFav(favVec);
         const tiaohouGod = clim.god;
@@ -12215,8 +12228,10 @@ var RhythmEngine = (() => {
           congWx,
           weights,
           isYinHeavyWeak,
+          isShaYinRescue,
           isGuanShaWeak,
           isZhuanWang,
+          isTwoQi,
           isVentDamp,
           yinBuryRatio: Math.round(yinBuryRatio * 100) / 100,
           dryNote,
