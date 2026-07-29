@@ -4640,7 +4640,7 @@
 
       // 没有命主数据(极端兜底):引导去完善出生信息
       if (!R || !R.natal){
-        main.innerHTML = '<div class="jd-empty"><b>命书待生成</b>填好出生信息后，这里会在本机算出你的节律曲线和今年逐月的读数。'
+        main.innerHTML = '<div class="jd-empty"><b>读懂自己 · 待生成</b>填好出生信息后，这里会在本机算出你的节律曲线和今年逐月的读数。'
           + '<a class="jd-empty-cta" href="onboarding.html">录入出生信息 →</a></div>';
         return;
       }
@@ -4652,7 +4652,7 @@
       const birthEntry = hasPerson
         ? ''  // 已录入生辰:去掉这张卡(修改生辰改从底部导航「我的」进入,不再在解读页顶部占位)
         : '<a class="jd-birth is-demo" href="onboarding.html">'+birthIc
-            + '<span class="jd-birth-tx"><b>录入你的生辰</b><span>当前为示例命书 · 录入后即看你自己的</span></span>'
+            + '<span class="jd-birth-tx"><b>录入你的生辰</b><span>当前为示例 · 录入后即看你自己的</span></span>'
             + '<span class="jd-birth-cta">立即录入 →</span></a>';
 
       // 内联完整解读:解读页直接呈现六维完整报告(去掉「速览 → 点开深度报告」的中转层)
