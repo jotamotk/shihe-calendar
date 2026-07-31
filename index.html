@@ -1805,7 +1805,7 @@
 
             <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><button class="wdg-help" id="intro-open" type="button" aria-label="怎么用">怎么用?</button><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
@@ -4516,14 +4516,10 @@
         const line=(n.archetype&&n.archetype.line)?n.archetype.line:'';
         let dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
         const dimHtml=dims.map(function(d){ const lvl=d.v>=72?'hi':(d.v>=56?'mid':'lo'); return '<span class="jd-gl-dim" data-go="natal"><i class="mk '+lvl+'"></i><span>'+esc(d.k)+'</span></span>'; }).join('');
-        // 今年主轴:优先 yearVerdict;它约6成盘为空,缺则用已算的高能量月派生一句(纯描述数据,不写新文案),免顶卡留白
-        let axis=(R.yearMonths&&R.yearMonths.yearVerdict)?R.yearMonths.yearVerdict:'';
-        if(!axis){ const Ym=R.yearMonths; if(Ym&&Ym.highMonths&&Ym.highMonths.length) axis='气场高点在 '+Ym.highMonths.slice(0,3).join('、')+' 月'; }
         const xi=n.xiColor||{};
         el.innerHTML='<div class="jd-glance">'
           +(dimHtml?'<div class="jd-gl-dims">'+dimHtml+'</div>':'')
           +'<div class="jd-gl-foot">'
-          + (axis?'<div class="jd-gl-axis" data-go="months"><b>今年 ·</b> '+esc(axis)+'</div>':'<div class="jd-gl-axis"></div>')
           + (xi.hex?'<div class="jd-gl-color" data-go="natal"><span>宜 '+esc(xi.name||'')+'</span><i class="sw" style="background:'+xi.hex+'"></i></div>':'')
           +'</div></div>';
         // 顶卡元素是「直达章」不是「开关」:恒展开目标章+滚动(点默认已展开的壹章不该把它折叠)
@@ -4536,8 +4532,7 @@
           head.dataset.built='1';
           head.innerHTML='<span class="jd-ch-num">'+m.num+'</span>'
             +'<span class="jd-ch-tx">'+(m.eye?'<span class="jd-ch-eye">'+esc(m.eye)+'</span>':'')
-            +'<span class="jd-ch-name">'+esc(m.name)+'</span>'
-            +'<span class="jd-ch-sig">'+esc(jdSignal(m.p))+'</span></span>'
+            +'<span class="jd-ch-name">'+esc(m.name)+'</span></span>'
             +'<span class="jd-ch-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
           head.addEventListener('click',function(){ jdToggle(m.p); });
         });
