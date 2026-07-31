@@ -2,11 +2,7 @@
 var RhythmEngine = (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __commonJS = (cb, mod) => function __require() {
-    try {
-      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-    } catch (e) {
-      throw mod = 0, e;
-    }
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
   // engine/vendor/lunar.js
@@ -24,7 +20,7 @@ var RhythmEngine = (() => {
           }
         }
       })(exports, function() {
-        var Solar = /* @__PURE__ */ (function() {
+        var Solar = function() {
           var _fromDate = function(date) {
             return _fromYmdHms(date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
           };
@@ -623,8 +619,8 @@ var RhythmEngine = (() => {
               return _fromBaZi(yearGanZhi, monthGanZhi, dayGanZhi, timeGanZhi, sect, baseYear);
             }
           };
-        })();
-        var Lunar = /* @__PURE__ */ (function() {
+        }();
+        var Lunar = function() {
           var _computeJieQi = function(o, ly) {
             o["jieQiList"] = [];
             o["jieQi"] = {};
@@ -2093,8 +2089,8 @@ var RhythmEngine = (() => {
               return _fromDate(date);
             }
           };
-        })();
-        var SolarWeek = /* @__PURE__ */ (function() {
+        }();
+        var SolarWeek = function() {
           var _fromDate = function(date, start) {
             var solar = Solar.fromDate(date);
             return _fromYmd(solar.getYear(), solar.getMonth(), solar.getDay(), start);
@@ -2304,8 +2300,8 @@ var RhythmEngine = (() => {
               return _fromDate(date, start);
             }
           };
-        })();
-        var SolarMonth = /* @__PURE__ */ (function() {
+        }();
+        var SolarMonth = function() {
           var _fromDate = function(date) {
             var solar = Solar.fromDate(date);
             return _fromYm(solar.getYear(), solar.getMonth());
@@ -2394,8 +2390,8 @@ var RhythmEngine = (() => {
               return _fromDate(date);
             }
           };
-        })();
-        var SolarSeason = /* @__PURE__ */ (function() {
+        }();
+        var SolarSeason = function() {
           var _fromDate = function(date) {
             var solar = Solar.fromDate(date);
             return _fromYm(solar.getYear(), solar.getMonth());
@@ -2471,8 +2467,8 @@ var RhythmEngine = (() => {
               return _fromDate(date);
             }
           };
-        })();
-        var SolarHalfYear = /* @__PURE__ */ (function() {
+        }();
+        var SolarHalfYear = function() {
           var _fromDate = function(date) {
             var solar = Solar.fromDate(date);
             return _fromYm(solar.getYear(), solar.getMonth());
@@ -2548,8 +2544,8 @@ var RhythmEngine = (() => {
               return _fromDate(date);
             }
           };
-        })();
-        var SolarYear = /* @__PURE__ */ (function() {
+        }();
+        var SolarYear = function() {
           var _fromDate = function(date) {
             return _fromYear(Solar.fromDate(date).getYear());
           };
@@ -2599,8 +2595,8 @@ var RhythmEngine = (() => {
               return _fromDate(date);
             }
           };
-        })();
-        var LunarYear = /* @__PURE__ */ (function() {
+        }();
+        var LunarYear = function() {
           var _YUAN = ["\u4E0B", "\u4E0A", "\u4E2D"];
           var _YUN = ["\u4E03", "\u516B", "\u4E5D", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"];
           var _LEAP_11 = [75, 94, 170, 265, 322, 398, 469, 553, 583, 610, 678, 735, 754, 773, 849, 887, 936, 1050, 1069, 1126, 1145, 1164, 1183, 1259, 1278, 1308, 1373, 1403, 1441, 1460, 1498, 1555, 1593, 1612, 1631, 1642, 2033, 2128, 2147, 2242, 2614, 2728, 2910, 3062, 3244, 3339, 3616, 3711, 3730, 3825, 4007, 4159, 4197, 4322, 4341, 4379, 4417, 4531, 4599, 4694, 4713, 4789, 4808, 4971, 5085, 5104, 5161, 5180, 5199, 5294, 5305, 5476, 5677, 5696, 5772, 5791, 5848, 5886, 6049, 6068, 6144, 6163, 6258, 6402, 6440, 6497, 6516, 6630, 6641, 6660, 6679, 6736, 6774, 6850, 6869, 6899, 6918, 6994, 7013, 7032, 7051, 7070, 7089, 7108, 7127, 7146, 7222, 7271, 7290, 7309, 7366, 7385, 7404, 7442, 7461, 7480, 7491, 7499, 7594, 7624, 7643, 7662, 7681, 7719, 7738, 7814, 7863, 7882, 7901, 7939, 7958, 7977, 7996, 8034, 8053, 8072, 8091, 8121, 8159, 8186, 8216, 8235, 8254, 8273, 8311, 8330, 8341, 8349, 8368, 8444, 8463, 8474, 8493, 8531, 8569, 8588, 8626, 8664, 8683, 8694, 8702, 8713, 8721, 8751, 8789, 8808, 8816, 8827, 8846, 8884, 8903, 8922, 8941, 8971, 9036, 9066, 9085, 9104, 9123, 9142, 9161, 9180, 9199, 9218, 9256, 9294, 9313, 9324, 9343, 9362, 9381, 9419, 9438, 9476, 9514, 9533, 9544, 9552, 9563, 9571, 9582, 9601, 9639, 9658, 9666, 9677, 9696, 9734, 9753, 9772, 9791, 9802, 9821, 9886, 9897, 9916, 9935, 9954, 9973, 9992];
@@ -2621,7 +2617,7 @@ var RhythmEngine = (() => {
             if (isNaN(lunarYear)) {
               throw new Error("wrong lunar year " + oy);
             }
-            var _y = (function() {
+            var _y = function() {
               var offset = lunarYear - 4;
               var yearGanIndex = offset % 10;
               var yearZhiIndex = offset % 12;
@@ -2635,7 +2631,7 @@ var RhythmEngine = (() => {
                 ganIndex: yearGanIndex,
                 zhiIndex: yearZhiIndex
               };
-            })();
+            }();
             return {
               _p: {
                 year: lunarYear,
@@ -2937,8 +2933,8 @@ var RhythmEngine = (() => {
               return _fromCachedYear(lunarYear);
             }
           };
-        })();
-        var LunarMonth = /* @__PURE__ */ (function() {
+        }();
+        var LunarMonth = function() {
           var _fromYm = function(lunarYear, lunarMonth) {
             var oy = lunarYear;
             var om = lunarMonth;
@@ -3144,8 +3140,8 @@ var RhythmEngine = (() => {
               return _new(lunarYear, lunarMonth, dayCount, firstJulianDay, index);
             }
           };
-        })();
-        var ShouXingUtil = (function() {
+        }();
+        var ShouXingUtil = function() {
           var _decode = function(s) {
             var o = "0000000000";
             var o2 = o + o;
@@ -6440,8 +6436,8 @@ var RhythmEngine = (() => {
               return a;
             }
           };
-        })();
-        var SolarUtil = /* @__PURE__ */ (function() {
+        }();
+        var SolarUtil = function() {
           return {
             WEEK: ["{w.sun}", "{w.mon}", "{w.tues}", "{w.wed}", "{w.thur}", "{w.fri}", "{w.sat}"],
             DAYS_OF_MONTH: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
@@ -6731,8 +6727,8 @@ var RhythmEngine = (() => {
               return Math.ceil((this.getDaysOfMonth(year, month) + Solar.fromYmd(year, month, 1).getWeek() - start) / 7);
             }
           };
-        })();
-        var LunarUtil = /* @__PURE__ */ (function() {
+        }();
+        var LunarUtil = function() {
           return {
             BASE_MONTH_ZHI_INDEX: 2,
             JIE_QI: ["{jq.dongZhi}", "{jq.xiaoHan}", "{jq.daHan}", "{jq.liChun}", "{jq.yuShui}", "{jq.jingZhe}", "{jq.chunFen}", "{jq.qingMing}", "{jq.guYu}", "{jq.liXia}", "{jq.xiaoMan}", "{jq.mangZhong}", "{jq.xiaZhi}", "{jq.xiaoShu}", "{jq.daShu}", "{jq.liQiu}", "{jq.chuShu}", "{jq.baiLu}", "{jq.qiuFen}", "{jq.hanLu}", "{jq.shuangJiang}", "{jq.liDong}", "{jq.xiaoXue}", "{jq.daXue}"],
@@ -8198,8 +8194,8 @@ var RhythmEngine = (() => {
               return null;
             }
           };
-        })();
-        var HolidayUtil = (function(_NAMES) {
+        }();
+        var HolidayUtil = function(_NAMES) {
           var _SIZE = 18;
           var _ZERO = "0".charCodeAt(0);
           var _TAG_REMOVE = "~";
@@ -8425,8 +8421,8 @@ var RhythmEngine = (() => {
               _fix(arguments);
             }
           };
-        })(["\u5143\u65E6\u8282", "\u6625\u8282", "\u6E05\u660E\u8282", "\u52B3\u52A8\u8282", "\u7AEF\u5348\u8282", "\u4E2D\u79CB\u8282", "\u56FD\u5E86\u8282", "\u56FD\u5E86\u4E2D\u79CB", "\u6297\u6218\u80DC\u5229\u65E5"]);
-        var NineStar = /* @__PURE__ */ (function() {
+        }(["\u5143\u65E6\u8282", "\u6625\u8282", "\u6E05\u660E\u8282", "\u52B3\u52A8\u8282", "\u7AEF\u5348\u8282", "\u4E2D\u79CB\u8282", "\u56FD\u5E86\u8282", "\u56FD\u5E86\u4E2D\u79CB", "\u6297\u6218\u80DC\u5229\u65E5"]);
+        var NineStar = function() {
           var _fromIndex = function(index) {
             return {
               _p: { index },
@@ -8528,8 +8524,8 @@ var RhythmEngine = (() => {
               return _fromIndex(index);
             }
           };
-        })();
-        var EightChar = /* @__PURE__ */ (function() {
+        }();
+        var EightChar = function() {
           var _fromLunar = function(lunar) {
             return {
               _p: { sect: 2, lunar },
@@ -8776,7 +8772,7 @@ var RhythmEngine = (() => {
                 var yang = 0 === lunar2.getYearGanIndexExact() % 2;
                 var man = 1 === gender;
                 var forward = yang && man || !yang && !man;
-                var start = (function() {
+                var start = function() {
                   var prev = lunar2.getPrevJie();
                   var next = lunar2.getNextJie();
                   var current = lunar2.getSolar();
@@ -8816,7 +8812,7 @@ var RhythmEngine = (() => {
                     day,
                     hour
                   };
-                })();
+                }();
                 var buildLiuYue = function(liuNian, index) {
                   return {
                     _p: {
@@ -9085,8 +9081,8 @@ var RhythmEngine = (() => {
               return _fromLunar(lunar);
             }
           };
-        })();
-        var LunarTime = /* @__PURE__ */ (function() {
+        }();
+        var LunarTime = function() {
           var _fromYmdHms = function(lunarYear, lunarMonth, lunarDay, hour, minute, second) {
             var lunar = Lunar.fromYmdHms(lunarYear, lunarMonth, lunarDay, hour, minute, second);
             var zhiIndex = LunarUtil.getTimeZhiIndex([(hour < 10 ? "0" : "") + hour, (minute < 10 ? "0" : "") + minute].join(":"));
@@ -9239,8 +9235,8 @@ var RhythmEngine = (() => {
               return _fromYmdHms(lunarYear, lunarMonth, lunarDay, hour, minute, second);
             }
           };
-        })();
-        var FotoUtil = (function() {
+        }();
+        var FotoUtil = function() {
           var XIU_OFFSET = [11, 13, 15, 17, 19, 21, 24, 0, 2, 4, 7, 9];
           var _f = function(name, result, everyMonth, remark) {
             return {
@@ -9584,8 +9580,8 @@ var RhythmEngine = (() => {
               return _getXiu(m, d);
             }
           };
-        })();
-        var Foto = /* @__PURE__ */ (function() {
+        }();
+        var Foto = function() {
           var _fromYmdHms = function(y, m, d, hour, minute, second) {
             return _fromLunar(Lunar.fromYmdHms(y + Foto.DEAD_YEAR - 1, m, d, hour, minute, second));
           };
@@ -9726,8 +9722,8 @@ var RhythmEngine = (() => {
               return _fromLunar(lunar);
             }
           };
-        })();
-        var TaoFestival = /* @__PURE__ */ (function() {
+        }();
+        var TaoFestival = function() {
           var _f = function(name, remark) {
             return {
               _p: {
@@ -9757,8 +9753,8 @@ var RhythmEngine = (() => {
               return _f(name, remark);
             }
           };
-        })();
-        var TaoUtil = (function() {
+        }();
+        var TaoUtil = function() {
           var _f = TaoFestival.create;
           return {
             SAN_HUI: ["1-7", "7-7", "10-15"],
@@ -9884,8 +9880,8 @@ var RhythmEngine = (() => {
               "12-29": [_f("\u6E05\u9759\u5B59\u771F\u541B(\u5B59\u4E0D\u4E8C)\u6210\u9053")]
             }
           };
-        })();
-        var NineStarUtil = /* @__PURE__ */ (function() {
+        }();
+        var NineStarUtil = function() {
           return {
             NUMBER: [
               "{n.one}",
@@ -9954,8 +9950,8 @@ var RhythmEngine = (() => {
               "{s.purple}"
             ]
           };
-        })();
-        var Tao = /* @__PURE__ */ (function() {
+        }();
+        var Tao = function() {
           var _fromYmdHms = function(y, m, d, hour, minute, second) {
             return _fromLunar(Lunar.fromYmdHms(y + Tao.BIRTH_YEAR, m, d, hour, minute, second));
           };
@@ -10089,8 +10085,8 @@ var RhythmEngine = (() => {
               return _fromLunar(lunar);
             }
           };
-        })();
-        var I18n = (function() {
+        }();
+        var I18n = function() {
           var _defaultLang = "chs";
           var _lang = _defaultLang;
           var _inited = false;
@@ -11684,7 +11680,7 @@ var RhythmEngine = (() => {
               _setMessages(lang, messages);
             }
           };
-        })();
+        }();
         return {
           ShouXingUtil,
           SolarUtil,
@@ -11835,21 +11831,31 @@ var RhythmEngine = (() => {
       var ME_KE = { \u6728: "\u571F", \u706B: "\u91D1", \u571F: "\u6C34", \u91D1: "\u6728", \u6C34: "\u706B" };
       var KE_ME = { \u6728: "\u91D1", \u706B: "\u6C34", \u571F: "\u6728", \u91D1: "\u706B", \u6C34: "\u571F" };
       function tenGodType(dayWx, wx) {
-        if (wx === dayWx) return "\u6BD4";
-        if (SHENG_ME[dayWx] === wx) return "\u5370";
-        if (ME_SHENG[dayWx] === wx) return "\u98DF";
-        if (ME_KE[dayWx] === wx) return "\u8D22";
-        if (KE_ME[dayWx] === wx) return "\u5B98";
+        if (wx === dayWx)
+          return "\u6BD4";
+        if (SHENG_ME[dayWx] === wx)
+          return "\u5370";
+        if (ME_SHENG[dayWx] === wx)
+          return "\u98DF";
+        if (ME_KE[dayWx] === wx)
+          return "\u8D22";
+        if (KE_ME[dayWx] === wx)
+          return "\u5B98";
         return "?";
       }
       function tenGodFull(dayGan, targetGan) {
         const dayWx = GAN_WX[dayGan], tWx = GAN_WX[targetGan];
         const same = GAN_YIN[dayGan] === GAN_YIN[targetGan];
-        if (tWx === dayWx) return same ? "\u6BD4\u80A9" : "\u52AB\u8D22";
-        if (SHENG_ME[dayWx] === tWx) return same ? "\u504F\u5370" : "\u6B63\u5370";
-        if (ME_SHENG[dayWx] === tWx) return same ? "\u98DF\u795E" : "\u4F24\u5B98";
-        if (ME_KE[dayWx] === tWx) return same ? "\u504F\u8D22" : "\u6B63\u8D22";
-        if (KE_ME[dayWx] === tWx) return same ? "\u4E03\u6740" : "\u6B63\u5B98";
+        if (tWx === dayWx)
+          return same ? "\u6BD4\u80A9" : "\u52AB\u8D22";
+        if (SHENG_ME[dayWx] === tWx)
+          return same ? "\u504F\u5370" : "\u6B63\u5370";
+        if (ME_SHENG[dayWx] === tWx)
+          return same ? "\u98DF\u795E" : "\u4F24\u5B98";
+        if (ME_KE[dayWx] === tWx)
+          return same ? "\u504F\u8D22" : "\u6B63\u8D22";
+        if (KE_ME[dayWx] === tWx)
+          return same ? "\u4E03\u6740" : "\u6B63\u5B98";
         return "?";
       }
       var FULL_TO_TYPE = {
@@ -11887,41 +11893,49 @@ var RhythmEngine = (() => {
         if (typeof process === "undefined" || process.env.NO_GANHE !== "1") {
           for (let i = 0; i + 1 < gans.length; i++) {
             if (GAN_HE_MAP[gans[i]] === gans[i + 1]) {
-              if (i !== 2) stemMul[i] *= 0.65;
-              if (i + 1 !== 2) stemMul[i + 1] *= 0.65;
+              if (i !== 2)
+                stemMul[i] *= 0.65;
+              if (i + 1 !== 2)
+                stemMul[i + 1] *= 0.65;
             }
           }
         }
         if (typeof process === "undefined" || process.env.NO_HEJU !== "1") {
           const has = (z) => zhis.includes(z);
           let fullHit = null;
-          for (const j of SAN_HUI_JU) if (j.trio.every(has)) {
-            fullHit = { ...j, kind: "\u4F1A" };
-            break;
-          }
-          if (!fullHit) {
-            for (const j of SAN_HE_JU) if (j.trio.every(has)) {
-              fullHit = { ...j, kind: "\u5408" };
+          for (const j of SAN_HUI_JU)
+            if (j.trio.every(has)) {
+              fullHit = { ...j, kind: "\u4F1A" };
               break;
             }
+          if (!fullHit) {
+            for (const j of SAN_HE_JU)
+              if (j.trio.every(has)) {
+                fullHit = { ...j, kind: "\u5408" };
+                break;
+              }
           }
           if (fullHit) {
             const touGan = gans.some((g) => GAN_WX[g] === fullHit.wx);
             const wangDangLing = fullHit.wang && zhis[1] === fullHit.wang;
             const strong = fullHit.kind === "\u4F1A" || touGan || wangDangLing;
             juBonus[fullHit.wx] += fullHit.kind === "\u4F1A" ? 1.6 : strong ? 1.2 : 0.4;
-            if (strong) zhis.forEach((z, i) => {
-              if (fullHit.trio.includes(z)) branchMul[i] *= 0.6;
-            });
+            if (strong)
+              zhis.forEach((z, i) => {
+                if (fullHit.trio.includes(z))
+                  branchMul[i] *= 0.6;
+              });
           } else {
             for (const j of SAN_HE_JU) {
-              if (!has(j.wang)) continue;
+              if (!has(j.wang))
+                continue;
               const others = j.trio.filter((z) => z !== j.wang);
               for (const o of others) {
                 if (has(o)) {
                   juBonus[j.wx] += 0.5;
                   zhis.forEach((z, i) => {
-                    if (z === j.wang || z === o) branchMul[i] *= 0.8;
+                    if (z === j.wang || z === o)
+                      branchMul[i] *= 0.8;
                   });
                   break;
                 }
@@ -11931,18 +11945,19 @@ var RhythmEngine = (() => {
         }
         if (typeof process === "undefined" || process.env.NO_CHONG !== "1") {
           const KU = ["\u8FB0", "\u620C", "\u4E11", "\u672A"];
-          for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
-            if (ZHI_CHONG_MAP[zhis[i]] === zhis[j]) {
-              const kuChong = KU.includes(zhis[i]) && KU.includes(zhis[j]);
-              const mul = kuChong ? 0.85 : j - i === 1 ? 0.5 : 0.7;
-              branchMul[i] *= mul;
-              branchMul[j] *= mul;
-              if (!kuChong) {
-                chongIdx.add(i);
-                chongIdx.add(j);
+          for (let i = 0; i < n; i++)
+            for (let j = i + 1; j < n; j++) {
+              if (ZHI_CHONG_MAP[zhis[i]] === zhis[j]) {
+                const kuChong = KU.includes(zhis[i]) && KU.includes(zhis[j]);
+                const mul = kuChong ? 0.85 : j - i === 1 ? 0.5 : 0.7;
+                branchMul[i] *= mul;
+                branchMul[j] *= mul;
+                if (!kuChong) {
+                  chongIdx.add(i);
+                  chongIdx.add(j);
+                }
               }
             }
-          }
         }
         return { stemMul, branchMul, juBonus, chongIdx };
       }
@@ -11950,25 +11965,31 @@ var RhythmEngine = (() => {
       function elementWeights(gans, zhis, adj) {
         const w = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
         gans.forEach((g, i) => {
-          if (i !== 2) w[GAN_WX[g]] += 1 * (adj ? adj.stemMul[i] : 1);
+          if (i !== 2)
+            w[GAN_WX[g]] += 1 * (adj ? adj.stemMul[i] : 1);
         });
         zhis.forEach((z, zi) => {
           ZHI_HIDE[z].forEach((g, hi) => {
             let v = HIDE_WEIGHT[hi] ?? 0.3;
-            if (zi === 1) v *= 1.5;
+            if (zi === 1)
+              v *= 1.5;
             w[GAN_WX[g]] += v * (adj ? adj.branchMul[zi] : 1);
           });
         });
-        if (adj) WX_ALL_REF.forEach((wx) => {
-          w[wx] += adj.juBonus[wx] || 0;
-        });
+        if (adj)
+          WX_ALL_REF.forEach((wx) => {
+            w[wx] += adj.juBonus[wx] || 0;
+          });
         return w;
       }
       var WX_ALL_REF = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"];
       function seasonOf(monthZhi) {
-        if (["\u5BC5", "\u536F", "\u8FB0"].includes(monthZhi)) return "\u6625";
-        if (["\u5DF3", "\u5348", "\u672A"].includes(monthZhi)) return "\u590F";
-        if (["\u7533", "\u9149", "\u620C"].includes(monthZhi)) return "\u79CB";
+        if (["\u5BC5", "\u536F", "\u8FB0"].includes(monthZhi))
+          return "\u6625";
+        if (["\u5DF3", "\u5348", "\u672A"].includes(monthZhi))
+          return "\u590F";
+        if (["\u7533", "\u9149", "\u620C"].includes(monthZhi))
+          return "\u79CB";
         return "\u51AC";
       }
       var TIAOHOU = {
@@ -12006,20 +12027,28 @@ var RhythmEngine = (() => {
       function climateVec(dayGan, monthZhi, season) {
         const v = { \u6728: 0, \u706B: 0, \u571F: 0, \u91D1: 0, \u6C34: 0 };
         const god = (TIAOHOU[dayGan] || {})[monthZhi];
-        if (!god) return { vec: v, god: null, thWx: null, aligned: false, sev: 0 };
+        if (!god)
+          return { vec: v, god: null, thWx: null, aligned: false, sev: 0 };
         const thWx = GAN_WX[god];
         const aligned = season === "\u51AC" && (thWx === "\u706B" || thWx === "\u6728") || season === "\u590F" && (thWx === "\u6C34" || thWx === "\u91D1");
         let sev;
-        if (season === "\u51AC") sev = WINTER_SEV[monthZhi] ?? 0.6;
-        else if (season === "\u590F") sev = SUMMER_SEV[monthZhi] ?? 0.6;
-        else sev = 0.35;
+        if (season === "\u51AC")
+          sev = WINTER_SEV[monthZhi] ?? 0.6;
+        else if (season === "\u590F")
+          sev = SUMMER_SEV[monthZhi] ?? 0.6;
+        else
+          sev = 0.35;
         v[thWx] += sev * (aligned ? 1 : 0.55);
-        if (season === "\u51AC" && thWx === "\u706B") v["\u6728"] += sev * 0.4;
-        if (season === "\u590F" && thWx === "\u6C34") v["\u91D1"] += sev * 0.4;
+        if (season === "\u51AC" && thWx === "\u706B")
+          v["\u6728"] += sev * 0.4;
+        if (season === "\u590F" && thWx === "\u6C34")
+          v["\u91D1"] += sev * 0.4;
         return { vec: v, god, thWx, aligned, sev };
       }
       function shengOf(targetWx) {
-        for (const k in ME_SHENG) if (ME_SHENG[k] === targetWx) return k;
+        for (const k in ME_SHENG)
+          if (ME_SHENG[k] === targetWx)
+            return k;
         return null;
       }
       function buildFavVec(opts) {
@@ -12029,22 +12058,32 @@ var RhythmEngine = (() => {
         if (isCong) {
           const gen = shengOf(congWx);
           WX_ALL.forEach((wx) => {
-            if (wx === congWx) fav[wx] = 1;
-            else if (wx === gen) fav[wx] = 0.55;
-            else if (wx === dayWx) fav[wx] = -1;
-            else if (wx === SHENG_ME[dayWx]) fav[wx] = -0.7;
-            else fav[wx] = -0.3;
+            if (wx === congWx)
+              fav[wx] = 1;
+            else if (wx === gen)
+              fav[wx] = 0.55;
+            else if (wx === dayWx)
+              fav[wx] = -1;
+            else if (wx === SHENG_ME[dayWx])
+              fav[wx] = -0.7;
+            else
+              fav[wx] = -0.3;
           });
           return { t, fav, clim: { vec: fav, god: null, thWx: null, aligned: false, sev: 0 } };
         }
         if (isZhuanWang) {
           const yin = SHENG_ME[dayWx], shi = ME_SHENG[dayWx], cai = ME_KE[dayWx], guan = KE_ME[dayWx];
           WX_ALL.forEach((wx) => {
-            if (wx === shi) fav[wx] = 1;
-            else if (wx === dayWx) fav[wx] = 0.7;
-            else if (wx === yin) fav[wx] = 0.6;
-            else if (wx === cai) fav[wx] = -0.5;
-            else if (wx === guan) fav[wx] = -1;
+            if (wx === shi)
+              fav[wx] = 1;
+            else if (wx === dayWx)
+              fav[wx] = 0.7;
+            else if (wx === yin)
+              fav[wx] = 0.6;
+            else if (wx === cai)
+              fav[wx] = -0.5;
+            else if (wx === guan)
+              fav[wx] = -1;
           });
           WX_ALL.forEach((wx) => {
             fav[wx] = Math.max(-1, Math.min(1, Math.round(fav[wx] * 100) / 100));
@@ -12070,8 +12109,10 @@ var RhythmEngine = (() => {
         const flow = 0.3 * (1 - Math.abs(t));
         fav[ME_SHENG[dayWx]] += flow;
         fav[ME_KE[dayWx]] += flow * 0.6;
-        if (isDry) fav["\u571F"] -= 0.3;
-        if (isVentDamp && fav["\u571F"] > 0) fav["\u571F"] = Math.min(fav["\u571F"] * 0.5, 0.1);
+        if (isDry)
+          fav["\u571F"] -= 0.3;
+        if (isVentDamp && fav["\u571F"] > 0)
+          fav["\u571F"] = Math.min(fav["\u571F"] * 0.5, 0.1);
         WX_ALL.forEach((wx) => {
           fav[wx] = Math.max(-1, Math.min(1, Math.round(fav[wx] * 100) / 100));
         });
@@ -12121,28 +12162,38 @@ var RhythmEngine = (() => {
           hide.forEach((g, hi) => {
             const t = tenGodType(dayWx, GAN_WX[g]);
             let v = 0;
-            if (t === "\u6BD4") v = hi === 0 ? 2 : hi === 1 ? 1 : 0.5;
-            else if (t === "\u5370") v = hi === 0 ? 1.2 : hi === 1 ? 0.6 : 0.3;
-            else if (t === "\u98DF") v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
-            else if (t === "\u8D22") v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
-            else if (t === "\u5B98") v = hi === 0 ? -0.8 : hi === 1 ? -0.4 : -0.2;
-            if (idx === 1) v *= 1.3;
-            if (v > 0) rootSupport += v;
+            if (t === "\u6BD4")
+              v = hi === 0 ? 2 : hi === 1 ? 1 : 0.5;
+            else if (t === "\u5370")
+              v = hi === 0 ? 1.2 : hi === 1 ? 0.6 : 0.3;
+            else if (t === "\u98DF")
+              v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
+            else if (t === "\u8D22")
+              v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
+            else if (t === "\u5B98")
+              v = hi === 0 ? -0.8 : hi === 1 ? -0.4 : -0.2;
+            if (idx === 1)
+              v *= 1.3;
+            if (v > 0)
+              rootSupport += v;
             v *= adj.branchMul[idx];
             detail.\u5F97\u5730 += v;
           });
         });
         WX_ALL.forEach((wx) => {
           const b = adj.juBonus[wx];
-          if (!b) return;
+          if (!b)
+            return;
           const t = tenGodType(dayWx, wx);
           const juMap = { \u6BD4: 1, \u5370: 0.7, \u98DF: -0.5, \u8D22: -0.5, \u5B98: -0.7 };
           detail.\u5F97\u5730 += b * (juMap[t] ?? 0);
-          if ((juMap[t] ?? 0) > 0) rootSupport += b * juMap[t];
+          if ((juMap[t] ?? 0) > 0)
+            rootSupport += b * juMap[t];
         });
         score += detail.\u5F97\u5730;
         gans.forEach((g, idx) => {
-          if (idx === 2) return;
+          if (idx === 2)
+            return;
           const t = tenGodType(dayWx, GAN_WX[g]);
           const seMap = { \u6BD4: 1.5, \u5370: 1.5, \u98DF: -1, \u8D22: -1, \u5B98: -1.5 };
           detail.\u5F97\u52BF += (seMap[t] ?? 0) * adj.stemMul[idx];
@@ -12170,9 +12221,12 @@ var RhythmEngine = (() => {
         } else {
           strength = "\u4E2D\u548C";
         }
-        if (isYinHeavyWeak && !isCong) strength = "\u8EAB\u5F31";
-        else if (isShaYinRescue && !isCong) strength = "\u8EAB\u5F31";
-        else if (isGuanShaWeak && !isCong && !["\u8EAB\u5F31", "\u4ECE\u5F31"].includes(strength)) strength = "\u504F\u5F31";
+        if (isYinHeavyWeak && !isCong)
+          strength = "\u8EAB\u5F31";
+        else if (isShaYinRescue && !isCong)
+          strength = "\u8EAB\u5F31";
+        else if (isGuanShaWeak && !isCong && !["\u8EAB\u5F31", "\u4ECE\u5F31"].includes(strength))
+          strength = "\u504F\u5F31";
         const isStrong = strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A";
         const isWeak = strength === "\u8EAB\u5F31" || strength === "\u504F\u5F31";
         const season = seasonOf(monthZhi);
@@ -12183,12 +12237,17 @@ var RhythmEngine = (() => {
         const monthGodType = tenGodType(dayWx, ZHI_WX[monthZhi]);
         const isZhuanWang = !isCong && !isYinHeavyWeak && !isGuanShaWeak && (selfPower + yinPower) / Math.max(totalPower, 0.01) >= 0.68 && weightsRaw[KE_ME[dayWx]] < 0.5 && weightsRaw[ME_KE[dayWx]] < 1.2 && (monthGodType === "\u6BD4" || monthGodType === "\u5370") && hasStrongRoot && selfPower >= 2;
         const isTwoQi = !isCong && !isYinHeavyWeak && !isShaYinRescue && !isZhuanWang && (selfPower + weightsRaw[ME_SHENG[dayWx]]) / Math.max(totalPower, 0.01) >= 0.85 && hasStrongRoot && selfPower >= 2 && weightsRaw[KE_ME[dayWx]] < 0.5 && weightsRaw[ME_KE[dayWx]] < 1.4 && (ZHI_WX[monthZhi] === dayWx || ZHI_WX[monthZhi] === ME_SHENG[dayWx]);
-        if (isTwoQi && !["\u8EAB\u5F3A", "\u504F\u5F3A"].includes(strength)) strength = "\u504F\u5F3A";
+        if (isTwoQi && !["\u8EAB\u5F3A", "\u504F\u5F3A"].includes(strength))
+          strength = "\u504F\u5F3A";
         let effScore = score;
-        if (isGuanShaWeak && !isCong) effScore = Math.min(effScore, -1);
-        if (isYinHeavyWeak && !isCong) effScore = Math.min(effScore, -3);
-        if (isShaYinRescue && !isCong) effScore = Math.min(effScore, -2.5);
-        if (isTwoQi) effScore = Math.max(effScore, 3);
+        if (isGuanShaWeak && !isCong)
+          effScore = Math.min(effScore, -1);
+        if (isYinHeavyWeak && !isCong)
+          effScore = Math.min(effScore, -3);
+        if (isShaYinRescue && !isCong)
+          effScore = Math.min(effScore, -2.5);
+        if (isTwoQi)
+          effScore = Math.max(effScore, 3);
         const { t: bodyT, fav: favVec, clim } = buildFavVec({
           effScore,
           dayWx,
@@ -12220,6 +12279,8 @@ var RhythmEngine = (() => {
           monthZhi,
           season,
           strengthScore: Math.round(score * 10) / 10,
+          effScore: Math.round(effScore * 10) / 10,
+          // 折进 override 的有效旺衰分:dynamicXiYong 复用为基准,避免各自复刻漂移
           strengthDetail: detail,
           strength,
           bodyT: Math.round(bodyT * 100) / 100,
@@ -12273,39 +12334,51 @@ var RhythmEngine = (() => {
         return { xiYong, jiShen, xiYongWeight: xiWeight };
       }
       function bucketStrength(score) {
-        if (score >= 4.5) return "\u8EAB\u5F3A";
-        if (score >= 2.2) return "\u504F\u5F3A";
-        if (score <= -2.5) return "\u8EAB\u5F31";
-        if (score <= -0.6) return "\u504F\u5F31";
+        if (score >= 4.5)
+          return "\u8EAB\u5F3A";
+        if (score >= 2.2)
+          return "\u504F\u5F3A";
+        if (score <= -2.5)
+          return "\u8EAB\u5F31";
+        if (score <= -0.6)
+          return "\u504F\u5F31";
         return "\u4E2D\u548C";
       }
       function polarity(strength) {
-        if (strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A") return 1;
-        if (strength === "\u8EAB\u5F31" || strength === "\u504F\u5F31" || strength === "\u4ECE\u5F31") return -1;
+        if (strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A")
+          return 1;
+        if (strength === "\u8EAB\u5F31" || strength === "\u504F\u5F31" || strength === "\u4ECE\u5F31")
+          return -1;
         return 0;
       }
       function daYunAt(chart, year) {
         const list = chart.daYun && chart.daYun.list || [];
         let cur = null;
         for (const d of list) {
-          if (d.startYear <= year) cur = d;
-          else break;
+          if (d.startYear <= year)
+            cur = d;
+          else
+            break;
         }
         return cur;
       }
       function daYunStrengthDelta(chart, year) {
         const dy = daYunAt(chart, year);
-        if (!dy || !dy.gan) return { delta: 0, dy: null };
+        if (!dy || !dy.gan)
+          return { delta: 0, dy: null };
         const dayWx = GAN_WX[chart.dayGan];
         const ganMap = { \u6BD4: 1.5, \u5370: 1.5, \u98DF: -1, \u8D22: -1, \u5B98: -1.5 };
         const zhiMap = { \u6BD4: 2, \u5370: 1.5, \u98DF: -1.2, \u8D22: -1, \u5B98: -1.5 };
         let delta = ganMap[tenGodType(dayWx, GAN_WX[dy.gan])] ?? 0;
         delta += zhiMap[tenGodType(dayWx, ZHI_WX[dy.zhi])] ?? 0;
         (ZHI_HIDE[dy.zhi] || []).forEach((g, i) => {
-          if (i === 0) return;
+          if (i === 0)
+            return;
           const t = tenGodType(dayWx, GAN_WX[g]);
-          if (t === "\u6BD4") delta += i === 1 ? 0.4 : 0.2;
-          else if (t === "\u5370") delta += i === 1 ? 0.25 : 0.1;
+          if (t === "\u6BD4")
+            delta += i === 1 ? 0.4 : 0.2;
+          else if (t === "\u5370")
+            delta += i === 1 ? 0.25 : 0.1;
         });
         return { delta, dy };
       }
@@ -12321,14 +12394,14 @@ var RhythmEngine = (() => {
           dynScore: mj.strengthScore,
           dy: null
         };
-        if (mj.isCong || mj.isZhuanWang) return base;
+        if (mj.isCong || mj.isZhuanWang)
+          return base;
         const { delta, dy } = daYunStrengthDelta(chart, year);
         base.dy = dy;
-        if (!dy) return base;
+        if (!dy)
+          return base;
         const dayWx = GAN_WX[chart.dayGan];
-        let effBase = mj.strengthScore;
-        if (mj.isGuanShaWeak) effBase = Math.min(effBase, -1);
-        if (mj.isYinHeavyWeak) effBase = Math.min(effBase, -3);
+        const effBase = mj.effScore != null ? mj.effScore : mj.strengthScore;
         const dynEff = effBase + delta;
         const { t, fav } = buildFavVec({
           effScore: dynEff,
@@ -12363,17 +12436,20 @@ var RhythmEngine = (() => {
         const tally = {};
         const add = (wx, w) => {
           const t = tenGodType(dayWx, wx);
-          if (types.includes(t)) tally[wx] = (tally[wx] || 0) + w;
+          if (types.includes(t))
+            tally[wx] = (tally[wx] || 0) + w;
         };
         gans.forEach((g, i) => {
-          if (i !== 2) add(GAN_WX[g], 1);
+          if (i !== 2)
+            add(GAN_WX[g], 1);
         });
         zhis.forEach((z) => ZHI_HIDE[z].forEach((g, hi) => add(GAN_WX[g], hi === 0 ? 1 : 0.5)));
         let best = null, bv = -1;
-        for (const wx in tally) if (tally[wx] > bv) {
-          bv = tally[wx];
-          best = wx;
-        }
+        for (const wx in tally)
+          if (tally[wx] > bv) {
+            bv = tally[wx];
+            best = wx;
+          }
         return best;
       }
       function buildSummary({ dayGan, dayWx, monthZhi, season, strength, xiYong, jiShen, tiaohouNote }) {
@@ -12381,7 +12457,8 @@ var RhythmEngine = (() => {
         parts.push(`${dayGan}${dayWx}\u65E5\u4E3B\uFF0C\u751F\u4E8E${monthZhi}\u6708\uFF08${season}\uFF09\u3002`);
         parts.push(`\u7EFC\u5408\u5F97\u4EE4\u5F97\u5730\u5F97\u52BF\uFF0C\u547D\u5C40\u504F\u300C${strength}\u300D\u3002`);
         parts.push(`\u559C\u7528\uFF1A${xiYong.join("\u3001")}\uFF1B\u5FCC\uFF1A${jiShen.join("\u3001") || "\u2014"}\u3002`);
-        if (tiaohouNote) parts.push(tiaohouNote + "\u3002");
+        if (tiaohouNote)
+          parts.push(tiaohouNote + "\u3002");
         return parts.join("");
       }
       module.exports = {
@@ -12531,53 +12608,74 @@ var RhythmEngine = (() => {
         const hi = energy >= 66;
         const low = energy < 48;
         const byGod = (t, flatKey) => {
-          if (has(favTypes, t)) return { tone: hi ? "\u987A" : "\u5E73", line: (hi ? CUE[t].favHi : CUE[t].favLo).line };
-          if (has(jiTypes, t)) return { tone: "\u614E", line: (hi ? CUE[t].jiHi : CUE[t].jiLo).line };
+          if (has(favTypes, t))
+            return { tone: hi ? "\u987A" : "\u5E73", line: (hi ? CUE[t].favHi : CUE[t].favLo).line };
+          if (has(jiTypes, t))
+            return { tone: "\u614E", line: (hi ? CUE[t].jiHi : CUE[t].jiLo).line };
           return { tone: "\u5E73", line: FORTUNE_FLAT[flatKey] };
         };
         const career = byGod("\u5B98", "career");
         const money = byGod("\u8D22", "money");
         const study = byGod("\u5370", "study");
         let health;
-        if (jiShen.includes(hwx)) health = { tone: "\u614E", line: HEALTH[hwx].ji };
-        else if (low) health = { tone: "\u5E73", line: HEALTH_LOW };
+        if (jiShen.includes(hwx))
+          health = { tone: "\u614E", line: HEALTH[hwx].ji };
+        else if (low)
+          health = { tone: "\u5E73", line: HEALTH_LOW };
         else {
           const fw = xiYong.includes(hwx) ? xiW[hwx] ?? 1 : 0;
           health = fw >= 0.5 ? { tone: "\u987A", line: HEALTH[hwx].fav } : { tone: "\u5E73", line: FORTUNE_FLAT.health };
         }
         let love;
-        if (volatile_) love = { tone: "\u614E", line: "\u60C5\u7EEA\u6613\u4E0A\u5934\uFF0C\u8BDD\u5230\u5634\u8FB9\u5148\u505C\u4E09\u79D2\u3002" };
-        else if (he && low) love = { tone: "\u5E73", line: "\u4E0E\u4EBA\u6295\u7F18\u4F46\u7CBE\u529B\u4E0D\u8DB3\uFF0C\u804A\u51E0\u53E5\u5373\u53EF\u3002" };
-        else if (he) love = { tone: "\u987A", line: "\u4E0E\u4EBA\u5BF9\u5473\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002" };
-        else love = { tone: "\u5E73", line: FORTUNE_FLAT.love };
+        if (volatile_)
+          love = { tone: "\u614E", line: "\u60C5\u7EEA\u6613\u4E0A\u5934\uFF0C\u8BDD\u5230\u5634\u8FB9\u5148\u505C\u4E09\u79D2\u3002" };
+        else if (he && low)
+          love = { tone: "\u5E73", line: "\u4E0E\u4EBA\u6295\u7F18\u4F46\u7CBE\u529B\u4E0D\u8DB3\uFF0C\u804A\u51E0\u53E5\u5373\u53EF\u3002" };
+        else if (he)
+          love = { tone: "\u987A", line: "\u4E0E\u4EBA\u5BF9\u5473\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002" };
+        else
+          love = { tone: "\u5E73", line: FORTUNE_FLAT.love };
         let chance;
         const shi = has(favTypes, "\u98DF");
-        if ((shi || he) && low) chance = { tone: "\u5E73", line: "\u6709\u82D7\u5934\u4F46\u7CBE\u529B\u4E0D\u8DB3\uFF0C\u5148\u6309\u4F4F\uFF0C\u770B\u4E00\u4E24\u5929\u3002" };
-        else if (shi) chance = { tone: "\u987A", line: "\u8868\u8FBE\u987A\u3001\u8111\u5B50\u6D3B\uFF0C\u9002\u5408\u5C55\u793A\u81EA\u5DF1\u3001\u8BA4\u8BC6\u65B0\u670B\u53CB\u3002" };
-        else if (he) chance = { tone: "\u987A", line: DIM_HE.line };
-        else if (volatile_) chance = { tone: "\u614E", line: "\u53D8\u6570\u672A\u5B9A\uFF0C\u65B0\u673A\u4F1A\u7F13\u62CD\u677F\u3002" };
-        else chance = { tone: "\u5E73", line: FORTUNE_FLAT.chance };
+        if ((shi || he) && low)
+          chance = { tone: "\u5E73", line: "\u6709\u82D7\u5934\u4F46\u7CBE\u529B\u4E0D\u8DB3\uFF0C\u5148\u6309\u4F4F\uFF0C\u770B\u4E00\u4E24\u5929\u3002" };
+        else if (shi)
+          chance = { tone: "\u987A", line: "\u8868\u8FBE\u987A\u3001\u8111\u5B50\u6D3B\uFF0C\u9002\u5408\u5C55\u793A\u81EA\u5DF1\u3001\u8BA4\u8BC6\u65B0\u670B\u53CB\u3002" };
+        else if (he)
+          chance = { tone: "\u987A", line: DIM_HE.line };
+        else if (volatile_)
+          chance = { tone: "\u614E", line: "\u53D8\u6570\u672A\u5B9A\uFF0C\u65B0\u673A\u4F1A\u7F13\u62CD\u677F\u3002" };
+        else
+          chance = { tone: "\u5E73", line: FORTUNE_FLAT.chance };
         return { career, love, money, study, health, chance };
       }
       function stateLine(energy, axis) {
-        if (energy < 48) return "\u4F53\u529B\u504F\u4E4F\uFF0C\u5B9C\u6536\u5C3E\u65E9\u7761\u3002";
+        if (energy < 48)
+          return "\u4F53\u529B\u504F\u4E4F\uFF0C\u5B9C\u6536\u5C3E\u65E9\u7761\u3002";
         const side = axis < 40 ? "\u84C4" : axis > 60 ? "\u51B3" : "\u5E73";
         if (energy >= 66) {
-          if (side === "\u51B3") return "\u8FD9\u7C7B\u65E5\u5B50\u4EBA\u76F8\u5BF9\u62CE\u5F97\u6E05\uFF0C\u8981\u62CD\u677F\u7684\u4E8B\u522B\u518D\u5F80\u540E\u62D6\u3002";
-          if (side === "\u84C4") return "\u72B6\u6001\u4E0D\u9519\uFF0C\u5B9C\u7A33\u6B65\u63A8\u8FDB\uFF0C\u5FCC\u56FE\u5FEB\u3002";
+          if (side === "\u51B3")
+            return "\u8FD9\u7C7B\u65E5\u5B50\u4EBA\u76F8\u5BF9\u62CE\u5F97\u6E05\uFF0C\u8981\u62CD\u677F\u7684\u4E8B\u522B\u518D\u5F80\u540E\u62D6\u3002";
+          if (side === "\u84C4")
+            return "\u72B6\u6001\u4E0D\u9519\uFF0C\u5B9C\u7A33\u6B65\u63A8\u8FDB\uFF0C\u5FCC\u56FE\u5FEB\u3002";
           return "\u6E05\u723D\u6709\u52B2\uFF0C\u8BE5\u505A\u7684\u4E8B\u987A\u624B\u63A8\u8FDB\u3002";
         }
-        if (side === "\u51B3") return "\u6BD4\u8F83\u5916\u5411\uFF0C\u80FD\u8BF4\u4E5F\u80FD\u52A8\uFF0C\u5148\u529E\u59A5\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\u3002";
-        if (side === "\u84C4") return "\u653E\u6162\u8282\u594F\u3001\u7406\u6E05\u5934\u7EEA\uFF0C\u522B\u52C9\u5F3A\u3002";
+        if (side === "\u51B3")
+          return "\u6BD4\u8F83\u5916\u5411\uFF0C\u80FD\u8BF4\u4E5F\u80FD\u52A8\uFF0C\u5148\u529E\u59A5\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\u3002";
+        if (side === "\u84C4")
+          return "\u653E\u6162\u8282\u594F\u3001\u7406\u6E05\u5934\u7EEA\uFF0C\u522B\u52C9\u5F3A\u3002";
         return "\u5E73\u7A33\uFF0C\u7A33\u529E\u8981\u7D27\u4E00\u4E8C\u4EF6\uFF0C\u6742\u4E8B\u5FCC\u786C\u8D76\u3002";
       }
       function activeDaYun(chart, targetYear) {
         const list = chart.daYun && chart.daYun.list;
-        if (!list || !list.length) return null;
+        if (!list || !list.length)
+          return null;
         let cur = null;
         for (const seg of list) {
-          if (seg.startYear <= targetYear) cur = seg;
-          else break;
+          if (seg.startYear <= targetYear)
+            cur = seg;
+          else
+            break;
         }
         return cur;
       }
@@ -12622,11 +12720,15 @@ var RhythmEngine = (() => {
         const contribute = (wx, weight, isRiZhu) => {
           const t = tenGodType(dayWx, wx);
           const favW = xiYong.includes(wx) ? xiW[wx] ?? 1 : 0;
-          if (isRiZhu) seenGods.push({ t, wx, weight, favW, fav: favW > 0, ji: jiShen.includes(wx) });
-          if (favW > 0) raw += weight * (0.6 + favW * 0.9);
-          else if (jiShen.includes(wx)) raw -= weight;
+          if (isRiZhu)
+            seenGods.push({ t, wx, weight, favW, fav: favW > 0, ji: jiShen.includes(wx) });
+          if (favW > 0)
+            raw += weight * (0.6 + favW * 0.9);
+          else if (jiShen.includes(wx))
+            raw -= weight;
           const side = POLE_SIDE[t];
-          if (side) pole[side] += weight;
+          if (side)
+            pole[side] += weight;
         };
         const dy = activeDaYun(chart, year);
         if (dy) {
@@ -12666,9 +12768,10 @@ var RhythmEngine = (() => {
         let b = ym.get(year);
         if (b === void 0) {
           const xs = [];
-          for (let m = 1; m <= 12; m++) for (let d = 1; d <= 28; d += 3) {
-            xs.push(rawFor(mingju, chart, year, m, d).raw);
-          }
+          for (let m = 1; m <= 12; m++)
+            for (let d = 1; d <= 28; d += 3) {
+              xs.push(rawFor(mingju, chart, year, m, d).raw);
+            }
           const mean = xs.reduce((a, x) => a + x, 0) / (xs.length || 1);
           const sd = Math.sqrt(xs.reduce((a, x) => a + (x - mean) * (x - mean), 0) / (xs.length || 1)) || 1;
           b = { mean, sd };
@@ -12680,62 +12783,80 @@ var RhythmEngine = (() => {
         const { raw, pole, seenGods, volatile_, he_, note, gan, zhi, xiYong, jiShen, xiW } = rawFor(mingju, chart, year, month, day);
         const bl = yearBaseline(mingju, chart, year);
         let energy = 58 + (raw - bl.mean) / bl.sd * 10;
-        if (volatile_) energy -= 5;
+        if (volatile_)
+          energy -= 5;
         energy = Math.max(32, Math.min(100, Math.round(energy)));
         const sum = pole.\u84C4 + pole.\u51B3;
         const poleAxis = sum > 0 ? pole.\u51B3 / sum * 100 : 50;
         let axis = Math.round(50 + (energy - 58) * 1.4 + (poleAxis - 50) * 0.16);
         axis = Math.max(8, Math.min(92, axis));
         let tone;
-        if (axis < 40) tone = "\u84C4\u529B\xB7\u5185\u5B88";
-        else if (axis > 60) tone = "\u51B3\u65AD\xB7\u8FDB\u53D6";
-        else tone = "\u5E73\u7A33\xB7\u8FC7\u6E21";
+        if (axis < 40)
+          tone = "\u84C4\u529B\xB7\u5185\u5B88";
+        else if (axis > 60)
+          tone = "\u51B3\u65AD\xB7\u8FDB\u53D6";
+        else
+          tone = "\u5E73\u7A33\xB7\u8FC7\u6E21";
         const yiSet = [], huanSet = [];
         const favGods = uniqBy(seenGods.filter((s) => s.favW >= 0.5).sort((a, b) => b.favW * b.weight - a.favW * a.weight), "t");
         const jiGods = uniqBy(seenGods.filter((s) => s.ji).sort((a, b) => b.weight - a.weight), "t");
         favGods.forEach((s) => THEME[s.t] && yiSet.push(...THEME[s.t].yi));
         jiGods.forEach((s) => THEME[s.t] && huanSet.push(...THEME[s.t].huan));
-        if (volatile_) huanSet.unshift("\u91CD\u5927\u51B3\u5B9A");
+        if (volatile_)
+          huanSet.unshift("\u91CD\u5927\u51B3\u5B9A");
         let yi;
         if (energy < 48) {
           yi = ["\u9759\u517B\u84C4\u529B", "\u590D\u76D8\u6574\u7406", "\u5904\u7406\u7410\u4E8B"];
         } else {
           yi = uniq(yiSet).slice(0, 3);
-          if (!yi.length) yi = ["\u9759\u517B\u84C4\u529B", "\u5904\u7406\u7410\u4E8B"];
+          if (!yi.length)
+            yi = ["\u9759\u517B\u84C4\u529B", "\u5904\u7406\u7410\u4E8B"];
         }
         const huan = uniq(huanSet).slice(0, 2);
         const topJi = jiGods[0], topFav = favGods[0];
         const band = energy >= 66 ? "Hi" : "Lo";
         let cue = null;
-        if (volatile_) cue = CUE_VOLATILE;
+        if (volatile_)
+          cue = CUE_VOLATILE;
         else {
           const favStr = topFav ? topFav.weight * (topFav.favW || 1) : 0;
           const jiStr = topJi ? topJi.weight : 0;
-          if (topFav && favStr >= jiStr && CUE[topFav.t]) cue = CUE[topFav.t]["fav" + band];
-          else if (topJi && CUE[topJi.t]) cue = CUE[topJi.t]["ji" + band];
+          if (topFav && favStr >= jiStr && CUE[topFav.t])
+            cue = CUE[topFav.t]["fav" + band];
+          else if (topJi && CUE[topJi.t])
+            cue = CUE[topJi.t]["ji" + band];
         }
-        if (!cue) cue = he_ ? CUE_HE : energy < 48 ? CUE_REST : CUE_FLOW;
+        if (!cue)
+          cue = he_ ? CUE_HE : energy < 48 ? CUE_REST : CUE_FLOW;
         const state = stateLine(energy, axis);
         const cand = [];
         const dFavStr = topFav ? topFav.weight * (topFav.favW || 1) : 0;
         const dJiStr = topJi ? topJi.weight : 0;
         if (topFav && dFavStr >= dJiStr && DIM[topFav.t]) {
           cand.push({ key: "dom", label: DIM[topFav.t].label, line: DIM[topFav.t].fav, score: 2 + dFavStr });
-          if (topJi && dJiStr >= 0.8 && DIM[topJi.t]) cand.push({ key: "dom2", label: DIM[topJi.t].label, line: DIM[topJi.t].ji, score: 1 + dJiStr });
+          if (topJi && dJiStr >= 0.8 && DIM[topJi.t])
+            cand.push({ key: "dom2", label: DIM[topJi.t].label, line: DIM[topJi.t].ji, score: 1 + dJiStr });
         } else if (topJi && DIM[topJi.t]) {
           cand.push({ key: "dom", label: DIM[topJi.t].label, line: DIM[topJi.t].ji, score: 2 + dJiStr });
-          if (topFav && dFavStr >= 0.8 && DIM[topFav.t]) cand.push({ key: "dom2", label: DIM[topFav.t].label, line: DIM[topFav.t].fav, score: 1 + dFavStr });
+          if (topFav && dFavStr >= 0.8 && DIM[topFav.t])
+            cand.push({ key: "dom2", label: DIM[topFav.t].label, line: DIM[topFav.t].fav, score: 1 + dFavStr });
         }
         const hwx = GAN_WX[gan];
         const hFavW = xiYong.includes(hwx) ? xiW[hwx] ?? 1 : 0;
-        if (jiShen.includes(hwx)) cand.push({ key: "\u8EAB\u4F53", label: "\u8EAB\u4F53", line: HEALTH[hwx].ji, score: 1.6 });
-        else if (energy < 48) cand.push({ key: "\u8EAB\u4F53", label: "\u8EAB\u4F53", line: HEALTH_LOW, score: 1 });
-        else cand.push({ key: "\u8EAB\u4F53", label: "\u8EAB\u4F53", line: HEALTH[hwx].fav, score: hFavW >= 0.5 ? 1.1 : 0.85 });
-        if (volatile_) cand.push({ key: "\u51B2", label: DIM_CHONG.label, line: DIM_CHONG.line, score: 1.9 });
-        else if (he_) cand.push({ key: "\u5408", label: DIM_HE.label, line: DIM_HE.line, score: 1.3 });
+        if (jiShen.includes(hwx))
+          cand.push({ key: "\u8EAB\u4F53", label: "\u8EAB\u4F53", line: HEALTH[hwx].ji, score: 1.6 });
+        else if (energy < 48)
+          cand.push({ key: "\u8EAB\u4F53", label: "\u8EAB\u4F53", line: HEALTH_LOW, score: 1 });
+        else
+          cand.push({ key: "\u8EAB\u4F53", label: "\u8EAB\u4F53", line: HEALTH[hwx].fav, score: hFavW >= 0.5 ? 1.1 : 0.85 });
+        if (volatile_)
+          cand.push({ key: "\u51B2", label: DIM_CHONG.label, line: DIM_CHONG.line, score: 1.9 });
+        else if (he_)
+          cand.push({ key: "\u5408", label: DIM_HE.label, line: DIM_HE.line, score: 1.3 });
         if (!cand.some((c) => c.key === "dom")) {
           const topAny = seenGods.slice().sort((a, b) => b.weight - a.weight)[0];
-          if (topAny && DIM[topAny.t]) cand.push({ key: "dom", label: DIM[topAny.t].label, line: DIM[topAny.t].fav, score: 1.45 });
+          if (topAny && DIM[topAny.t])
+            cand.push({ key: "dom", label: DIM[topAny.t].label, line: DIM[topAny.t].fav, score: 1.45 });
         }
         const detail = uniqBy(cand.sort((a, b) => b.score - a.score), "label").slice(0, 3).map((c) => ({ label: c.label, line: c.line }));
         return {
@@ -12909,15 +13030,20 @@ var RhythmEngine = (() => {
         const dGZ = dGan + dZhi;
         const tags = [];
         const push = (type, name, level, yi) => tags.push({ type, name, level, yi });
-        if (TIANSHE[mZhi] === dGZ) push("\u8D66\u65E5", "\u5929\u8D66\u65E5", 3, "\u7948\u798F \xB7 \u4FEE\u9020 \xB7 \u8C0B\u4E8B \xB7 \u548C\u89E3");
+        if (TIANSHE[mZhi] === dGZ)
+          push("\u8D66\u65E5", "\u5929\u8D66\u65E5", 3, "\u7948\u798F \xB7 \u4FEE\u9020 \xB7 \u8C0B\u4E8B \xB7 \u548C\u89E3");
         const fest = FESTIVAL[`${lm}-${ld}`];
-        if (fest && !isLeap) push("\u8282\u65E5", fest, 1, FEST_YI[fest] || "\u5E94\u8282 \xB7 \u987A\u65F6");
+        if (fest && !isLeap)
+          push("\u8282\u65E5", fest, 1, FEST_YI[fest] || "\u5E94\u8282 \xB7 \u987A\u65F6");
         const jqName = lunar.getJieQi();
-        if (jqName === "\u6E05\u660E") push("\u8282\u65E5", "\u6E05\u660E", 1, "\u796D\u626B \xB7 \u8E0F\u9752");
-        else if (jqName === "\u51AC\u81F3") push("\u8282\u65E5", "\u51AC\u81F3", 1, "\u796D\u7956 \xB7 \u8FDB\u8865 \xB7 \u6570\u4E5D");
+        if (jqName === "\u6E05\u660E")
+          push("\u8282\u65E5", "\u6E05\u660E", 1, "\u796D\u626B \xB7 \u8E0F\u9752");
+        else if (jqName === "\u51AC\u81F3")
+          push("\u8282\u65E5", "\u51AC\u81F3", 1, "\u796D\u7956 \xB7 \u8FDB\u8865 \xB7 \u6570\u4E5D");
         try {
           const nl = Solar.fromYmdHms(year, month, day, 12, 0, 0).next(1).getLunar();
-          if (Math.abs(nl.getMonth()) === 1 && nl.getDay() === 1) push("\u8282\u65E5", "\u9664\u5915", 1, "\u5B88\u5C81 \xB7 \u56E2\u5706 \xB7 \u796D\u7956");
+          if (Math.abs(nl.getMonth()) === 1 && nl.getDay() === 1)
+            push("\u8282\u65E5", "\u9664\u5915", 1, "\u5B88\u5C81 \xB7 \u56E2\u5706 \xB7 \u796D\u7956");
         } catch (e) {
         }
         const wuRi = false;
@@ -12934,26 +13060,36 @@ var RhythmEngine = (() => {
           const hasSande = js.some((g) => /天德|月德/.test(g));
           const HARD = ["\u6708\u7834", "\u53D7\u6B7B", "\u56DB\u79BB", "\u56DB\u7EDD", "\u5C81\u7834"];
           const hardXiong = xs.some((g) => HARD.some((h) => g.indexOf(h) >= 0));
-          if (!hardXiong && tsType === "\u9EC4\u9053") push("\u5409\u795E", "\u9EC4\u9053\u5409\u65E5 \xB7 " + ts, 2, "\u9EC4\u9053\u5F53\u503C \xB7 \u8BF8\u4E8B\u53EF\u4E3A");
-          if (!hardXiong && hitJi.length) push("\u5409\u795E", hitJi.slice(0, 4).join(" \xB7 "), 2, "\u5409\u795E\u503C\u65E5 \xB7 \u5B9C\u7948\u798F\u529E\u6B63\u4E8B");
+          if (!hardXiong && tsType === "\u9EC4\u9053")
+            push("\u5409\u795E", "\u9EC4\u9053\u5409\u65E5 \xB7 " + ts, 2, "\u9EC4\u9053\u5F53\u503C \xB7 \u8BF8\u4E8B\u53EF\u4E3A");
+          if (!hardXiong && hitJi.length)
+            push("\u5409\u795E", hitJi.slice(0, 4).join(" \xB7 "), 2, "\u5409\u795E\u503C\u65E5 \xB7 \u5B9C\u7948\u798F\u529E\u6B63\u4E8B");
           const isBigFest = tags.some((t) => t.type === "\u8282\u65E5");
           const isLv1Shen = tags.some((t) => t.type === "\u795E\u8BDE" && t.level === 1);
           const isTianShe = TIANSHE[mZhi] === dGZ;
           const reasons = [];
-          if (isTianShe) reasons.push("\u5929\u8D66\u5F53\u5934");
-          if (hasSande) reasons.push("\u5929\u5FB7\u6708\u5FB7\u4E34");
-          if (fest) reasons.push(fest);
-          else if (jqName === "\u6E05\u660E" || jqName === "\u51AC\u81F3") reasons.push(jqName);
+          if (isTianShe)
+            reasons.push("\u5929\u8D66\u5F53\u5934");
+          if (hasSande)
+            reasons.push("\u5929\u5FB7\u6708\u5FB7\u4E34");
+          if (fest)
+            reasons.push(fest);
+          else if (jqName === "\u6E05\u660E" || jqName === "\u51AC\u81F3")
+            reasons.push(jqName);
           if (isLv1Shen) {
             const lv1 = tags.find((t) => t.type === "\u795E\u8BDE" && t.level === 1);
-            if (lv1) reasons.push(lv1.name);
+            if (lv1)
+              reasons.push(lv1.name);
           }
           let grade = null;
-          if (!hardXiong && (isTianShe || hasSande || isBigFest || isLv1Shen)) grade = "S";
+          if (!hardXiong && (isTianShe || hasSande || isBigFest || isLv1Shen))
+            grade = "S";
           else if (!hardXiong && (tsType === "\u9EC4\u9053" || hitJi.length)) {
             grade = "A";
-            if (tsType === "\u9EC4\u9053") reasons.push("\u9EC4\u9053\u5409\u65E5");
-            else if (hitJi.length) reasons.push("\u5409\u795E\u503C\u65E5");
+            if (tsType === "\u9EC4\u9053")
+              reasons.push("\u9EC4\u9053\u5409\u65E5");
+            else if (hitJi.length)
+              reasons.push("\u5409\u795E\u503C\u65E5");
           }
           const gjNames = tags.filter((t) => t.type === "\u8282\u65E5" || t.type === "\u8D66\u65E5").map((t) => t.name);
           const headYi = (tags.find((t) => t.type === "\u8282\u65E5") || tags.find((t) => t.type === "\u8D66\u65E5") || {}).yi || "";
@@ -12993,10 +13129,12 @@ var RhythmEngine = (() => {
           const ld = lunar.getDay();
           const isLeap = lunar.getMonth() < 0;
           const ents = deityEntriesOf(lm, ld, isLeap);
-          if (!ents.length) continue;
+          if (!ents.length)
+            continue;
           const lunarLabel = (isLeap ? "\u95F0" : "") + LMONTH_CN[lm] + LDAY_CN[ld];
           ents.forEach((e) => {
-            if (e.lv > maxLv) return;
+            if (e.lv > maxLv)
+              return;
             const hit = DEITY_DESC.find(([k]) => e.n.includes(k));
             out.push({
               name: e.n,
@@ -13510,26 +13648,26 @@ var RhythmEngine = (() => {
       var GAN_HE = { \u7532: "\u5DF1", \u5DF1: "\u7532", \u4E59: "\u5E9A", \u5E9A: "\u4E59", \u4E19: "\u8F9B", \u8F9B: "\u4E19", \u4E01: "\u58EC", \u58EC: "\u4E01", \u620A: "\u7678", \u7678: "\u620A" };
       var GANHE_HUA = { "\u7532\u5DF1": "\u571F", "\u4E59\u5E9A": "\u91D1", "\u4E19\u8F9B": "\u6C34", "\u4E01\u58EC": "\u6728", "\u620A\u7678": "\u706B" };
       var GAN_CHONG = { \u7532: "\u5E9A", \u5E9A: "\u7532", \u4E59: "\u8F9B", \u8F9B: "\u4E59", \u4E19: "\u58EC", \u58EC: "\u4E19", \u4E01: "\u7678", \u7678: "\u4E01" };
-      function key2(a, b) {
-        return [a, b].sort().join("");
-      }
       function liuheHua(a, b) {
-        return LIUHE_HUA[key2(a, b)] || null;
+        return LIUHE_HUA[a + b] || LIUHE_HUA[b + a] || null;
       }
       function ganheHua(a, b) {
-        return GANHE_HUA[key2(a, b)] || null;
+        return GANHE_HUA[a + b] || GANHE_HUA[b + a] || null;
       }
       function isXing(a, b) {
-        if (XING_PAIR[a] === b) return true;
+        if (XING_PAIR[a] === b)
+          return true;
         for (const t of XING_TRIOS) {
-          if (t.includes(a) && t.includes(b) && a !== b) return true;
+          if (t.includes(a) && t.includes(b) && a !== b)
+            return true;
         }
         return false;
       }
       function pillarRelations(tGan, tZhi, natal, daYun) {
         const events = [];
         const pillars = natal.map((p) => ({ gan: p.gan, zhi: p.zhi, pos: posLabel(p.pos) }));
-        if (daYun && daYun.gan) pillars.push({ gan: daYun.gan, zhi: daYun.zhi, pos: "\u5927\u8FD0" });
+        if (daYun && daYun.gan)
+          pillars.push({ gan: daYun.gan, zhi: daYun.zhi, pos: "\u5927\u8FD0" });
         for (const p of pillars) {
           const ganChong = GAN_CHONG[tGan] === p.gan;
           const zhiChong = ZHI_CHONG[tZhi] === p.zhi;
@@ -13564,7 +13702,8 @@ var RhythmEngine = (() => {
         }
         const allZhis = pillars.map((p) => p.zhi);
         for (const s of SAN_HE) {
-          if (!s.trio.includes(tZhi)) continue;
+          if (!s.trio.includes(tZhi))
+            continue;
           const others = s.trio.filter((z) => z !== tZhi);
           const present = others.filter((z) => allZhis.includes(z));
           if (present.length === 2) {
@@ -13574,7 +13713,8 @@ var RhythmEngine = (() => {
           }
         }
         for (const s of SAN_HUI) {
-          if (!s.trio.includes(tZhi)) continue;
+          if (!s.trio.includes(tZhi))
+            continue;
           const others = s.trio.filter((z) => z !== tZhi);
           if (others.every((z) => allZhis.includes(z))) {
             events.push({ kind: "\u4E09\u4F1A", target: "\u5C40", huaWx: s.wx, weight: 1.1, severe: false });
@@ -13785,8 +13925,10 @@ var RhythmEngine = (() => {
         \u7678: { short: "\u5B89\u9759\u3001\u5FC3\u7EC6", surface: "\u5B89\u9759\u6E05\u6DE1\uFF0C\u5FC3\u601D\u5374\u6781\u7EC6" }
       };
       function polarityOf(strength) {
-        if (strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A") return "\u5F3A";
-        if (strength === "\u4E2D\u548C") return "\u4E2D";
+        if (strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A")
+          return "\u5F3A";
+        if (strength === "\u4E2D\u548C")
+          return "\u4E2D";
         return "\u5F31";
       }
       var YINYANG_TURN = { \u9633: "\u60C5\u7EEA\u5927\u591A\u85CF\u4E0D\u4F4F\uFF0C", \u9634: "\u5FC3\u4E8B\u591A\u81EA\u5DF1\u6D88\u5316\uFF0C" };
@@ -13973,14 +14115,21 @@ var RhythmEngine = (() => {
               out.push({ kind: GAN_CHONG[a.gan] === b.gan ? "\u5929\u514B\u5730\u51B2" : "\u51B2", a: a.pos, b: b.pos });
               continue;
             }
-            if (ZHI_HE[a.zhi] === b.zhi) out.push({ kind: "\u5408", a: a.pos, b: b.pos });
-            if (isXing(a.zhi, b.zhi)) out.push({ kind: "\u5211", a: a.pos, b: b.pos });
-            if (ZHI_HARM[a.zhi] === b.zhi) out.push({ kind: "\u5BB3", a: a.pos, b: b.pos });
+            if (ZHI_HE[a.zhi] === b.zhi)
+              out.push({ kind: "\u5408", a: a.pos, b: b.pos });
+            if (isXing(a.zhi, b.zhi))
+              out.push({ kind: "\u5211", a: a.pos, b: b.pos });
+            if (ZHI_HARM[a.zhi] === b.zhi)
+              out.push({ kind: "\u5BB3", a: a.pos, b: b.pos });
           }
         }
         const zhis = P.map((p) => p.zhi);
-        for (const s of SAN_HE) if (s.trio.every((z) => zhis.includes(z))) out.push({ kind: "\u4E09\u5408", whole: true });
-        for (const s of SAN_HUI) if (s.trio.every((z) => zhis.includes(z))) out.push({ kind: "\u4E09\u4F1A", whole: true });
+        for (const s of SAN_HE)
+          if (s.trio.every((z) => zhis.includes(z)))
+            out.push({ kind: "\u4E09\u5408", whole: true });
+        for (const s of SAN_HUI)
+          if (s.trio.every((z) => zhis.includes(z)))
+            out.push({ kind: "\u4E09\u4F1A", whole: true });
         return out;
       }
       var PAIR_TENSION = {
@@ -14001,36 +14150,47 @@ var RhythmEngine = (() => {
       };
       function buildDialectics(mj, chart) {
         const out = [];
-        if (mj.isYinHeavyWeak) out.push({ t: "\u771F\u5230\u4E86\u5173\u53E3\uFF0C\u4F60\u6BD4\u81EA\u5DF1\u4EE5\u4E3A\u7684\u625B\u5F97\u4F4F", s: "\u9047\u4E0A\u62FF\u4E0D\u51C6\u7684\u4E8B\uFF0C\u4F60\u7684\u7B2C\u4E00\u53CD\u5E94\u5F80\u5F80\u662F\u60F3\u627E\u4E2A\u4EBA\u5546\u91CF\u3001\u60F3\u6709\u4E2A\u4F9D\u9760\uFF0C\u8FDF\u8FDF\u4E0D\u6562\u81EA\u5DF1\u62CD\u677F\u3002\u53EF\u4F60\u5FC3\u91CC\u5176\u5B9E\u6709\u6570\u3001\u4E5F\u625B\u5F97\u4F4F\u2014\u2014\u591A\u51E0\u6B21\u81EA\u5DF1\u505A\u4E3B\uFF0C\u4F60\u4F1A\u53D1\u73B0\uFF0C\u5F88\u591A\u5173\u4F60\u9760\u81EA\u5DF1\u5C31\u80FD\u8FC7\u3002" });
-        else if (mj.isGuanShaWeak) out.push({ t: "\u4F60\u80A9\u4E0A\u7684\u62C5\u5B50\uFF0C\u4E00\u76F4\u4E0D\u8F7B", s: "\u4F60\u5E38\u88AB\u63A8\u7740\u5F80\u524D\uFF0C\u625B\u5F97\u6BD4\u4E00\u822C\u4EBA\u591A\uFF0C\u7D2F\u4E86\u4E5F\u4E0D\u6562\u505C\u3002\u5148\u628A\u81EA\u5DF1\u517B\u4F4F\u3001\u628A\u6839\u57FA\u7A33\u4E0B\u6765\uFF0C\u538B\u529B\u624D\u4F1A\u53D8\u6210\u63A8\u4F60\u5411\u4E0A\u7684\u52B2\u3002" });
-        else if (mj.isCong) out.push({ t: "\u4F60\u6700\u5927\u7684\u672C\u4E8B\uFF0C\u662F\u987A\u52BF", s: "\u4F60\u4E0D\u9002\u5408\u786C\u78B0\u786C\uFF0C\u770B\u6E05\u65B9\u5411\u3001\u501F\u7740\u73AF\u5883\u7684\u52B2\u5F80\u524D\uFF0C\u53CD\u800C\u6700\u7A33\u3001\u6700\u7701\u529B\u3002\u5BF9\u4F60\u6765\u8BF4\uFF0C\u987A\u52BF\u4E0D\u662F\u6CA1\u4E3B\u89C1\uFF0C\u800C\u662F\u4E00\u79CD\u806A\u660E\u3002" });
+        if (mj.isYinHeavyWeak)
+          out.push({ t: "\u771F\u5230\u4E86\u5173\u53E3\uFF0C\u4F60\u6BD4\u81EA\u5DF1\u4EE5\u4E3A\u7684\u625B\u5F97\u4F4F", s: "\u9047\u4E0A\u62FF\u4E0D\u51C6\u7684\u4E8B\uFF0C\u4F60\u7684\u7B2C\u4E00\u53CD\u5E94\u5F80\u5F80\u662F\u60F3\u627E\u4E2A\u4EBA\u5546\u91CF\u3001\u60F3\u6709\u4E2A\u4F9D\u9760\uFF0C\u8FDF\u8FDF\u4E0D\u6562\u81EA\u5DF1\u62CD\u677F\u3002\u53EF\u4F60\u5FC3\u91CC\u5176\u5B9E\u6709\u6570\u3001\u4E5F\u625B\u5F97\u4F4F\u2014\u2014\u591A\u51E0\u6B21\u81EA\u5DF1\u505A\u4E3B\uFF0C\u4F60\u4F1A\u53D1\u73B0\uFF0C\u5F88\u591A\u5173\u4F60\u9760\u81EA\u5DF1\u5C31\u80FD\u8FC7\u3002" });
+        else if (mj.isGuanShaWeak)
+          out.push({ t: "\u4F60\u80A9\u4E0A\u7684\u62C5\u5B50\uFF0C\u4E00\u76F4\u4E0D\u8F7B", s: "\u4F60\u5E38\u88AB\u63A8\u7740\u5F80\u524D\uFF0C\u625B\u5F97\u6BD4\u4E00\u822C\u4EBA\u591A\uFF0C\u7D2F\u4E86\u4E5F\u4E0D\u6562\u505C\u3002\u5148\u628A\u81EA\u5DF1\u517B\u4F4F\u3001\u628A\u6839\u57FA\u7A33\u4E0B\u6765\uFF0C\u538B\u529B\u624D\u4F1A\u53D8\u6210\u63A8\u4F60\u5411\u4E0A\u7684\u52B2\u3002" });
+        else if (mj.isCong)
+          out.push({ t: "\u4F60\u6700\u5927\u7684\u672C\u4E8B\uFF0C\u662F\u987A\u52BF", s: "\u4F60\u4E0D\u9002\u5408\u786C\u78B0\u786C\uFF0C\u770B\u6E05\u65B9\u5411\u3001\u501F\u7740\u73AF\u5883\u7684\u52B2\u5F80\u524D\uFF0C\u53CD\u800C\u6700\u7A33\u3001\u6700\u7701\u529B\u3002\u5BF9\u4F60\u6765\u8BF4\uFF0C\u987A\u52BF\u4E0D\u662F\u6CA1\u4E3B\u89C1\uFF0C\u800C\u662F\u4E00\u79CD\u806A\u660E\u3002" });
         const rels = natalInternalRelations(chart);
-        if (rels.some((r) => r.whole)) out.push({ t: "\u8BA4\u51C6\u4E00\u4EF6\u4E8B\uFF0C\u4F60\u80FD\u94BB\u5F97\u5F88\u6DF1", s: "\u4F60\u8EAB\u4E0A\u6709\u80A1\u52B2\u7279\u522B\u96C6\u4E2D\uFF0C\u8BA4\u51C6\u7684\u4E8B\u5C31\u80FD\u6574\u4E2A\u4EBA\u624E\u8FDB\u53BB\u3001\u4F7F\u4E0A\u5168\u529B\u3002\u8FD9\u4EFD\u4E13\u6CE8\u5BB9\u6613\u8BA9\u4F60\u505A\u51FA\u540D\u5802\uFF0C\u53EA\u662F\u522B\u628A\u5FC3\u601D\u5168\u62BC\u5728\u4E00\u5904\uFF0C\u4E5F\u7ED9\u522B\u5904\u7559\u70B9\u4F59\u5730\u3002" });
+        if (rels.some((r) => r.whole))
+          out.push({ t: "\u8BA4\u51C6\u4E00\u4EF6\u4E8B\uFF0C\u4F60\u80FD\u94BB\u5F97\u5F88\u6DF1", s: "\u4F60\u8EAB\u4E0A\u6709\u80A1\u52B2\u7279\u522B\u96C6\u4E2D\uFF0C\u8BA4\u51C6\u7684\u4E8B\u5C31\u80FD\u6574\u4E2A\u4EBA\u624E\u8FDB\u53BB\u3001\u4F7F\u4E0A\u5168\u529B\u3002\u8FD9\u4EFD\u4E13\u6CE8\u5BB9\u6613\u8BA9\u4F60\u505A\u51FA\u540D\u5802\uFF0C\u53EA\u662F\u522B\u628A\u5FC3\u601D\u5168\u62BC\u5728\u4E00\u5904\uFF0C\u4E5F\u7ED9\u522B\u5904\u7559\u70B9\u4F59\u5730\u3002" });
         const RANK = { \u5929\u514B\u5730\u51B2: 4, \u51B2: 3, \u5408: 2, \u5211: 1 };
         const byPair = {};
         for (const r of rels) {
-          if (r.whole || !r.a || !r.b || !(r.kind in RANK)) continue;
+          if (r.whole || !r.a || !r.b || !(r.kind in RANK))
+            continue;
           const k = pairKey(r.a, r.b);
-          if (!byPair[k] || RANK[r.kind] > RANK[byPair[k]]) byPair[k] = r.kind;
+          if (!byPair[k] || RANK[r.kind] > RANK[byPair[k]])
+            byPair[k] = r.kind;
         }
         Object.keys(byPair).sort((a, b) => RANK[byPair[b]] - RANK[byPair[a]]).forEach((k) => {
-          if (mj.isYinHeavyWeak && k === "\u5E74\u6708" && byPair[k] !== "\u5408") return;
+          if (mj.isYinHeavyWeak && k === "\u5E74\u6708" && byPair[k] !== "\u5408")
+            return;
           const d = byPair[k] === "\u5408" ? PAIR_BOND[k] : PAIR_TENSION[k];
-          if (d) out.push(d);
+          if (d)
+            out.push(d);
         });
         const FAMILY_AKIN = /* @__PURE__ */ new Set(["\u5BB6\u91CC\u7684\u4E8B\uFF0C\u4F60\u59CB\u7EC8\u653E\u4E0D\u4E0B", "\u4F60\u548C\u5BB6\uFF0C\u7275\u7ECA\u5F88\u6DF1", "\u4F60\u628A\u5BB6\u770B\u5F97\u5F88\u91CD", "\u4F60\u662F\u5173\u7CFB\u91CC\u64CD\u5FC3\u66F4\u591A\u7684\u90A3\u4E2A"]);
         const seen = /* @__PURE__ */ new Set();
         const picked = [];
         let famAkinShown = false;
         for (const d of out) {
-          if (seen.has(d.t)) continue;
+          if (seen.has(d.t))
+            continue;
           if (FAMILY_AKIN.has(d.t)) {
-            if (famAkinShown) continue;
+            if (famAkinShown)
+              continue;
             famAkinShown = true;
           }
           seen.add(d.t);
           picked.push(d);
-          if (picked.length >= 3) break;
+          if (picked.length >= 3)
+            break;
         }
         return picked;
       }
@@ -14268,9 +14428,12 @@ var RhythmEngine = (() => {
         const suppressed = ME_KE[overWx];
         const pressure = KE_ME[dayWx];
         const care = [];
-        if (overWx === dayWx && heavyW(dayWx) && isJiW(dayWx)) care.push(dayWx);
-        if (heavyW(overWx) && isJiW(overWx) && suppressed && suppressed !== dayWx && !care.includes(suppressed)) care.push(suppressed);
-        if (isWeak && pressure && pressure !== dayWx && (heavyW(pressure) || isJiW(pressure)) && !care.includes(pressure)) care.push(pressure);
+        if (overWx === dayWx && heavyW(dayWx) && isJiW(dayWx))
+          care.push(dayWx);
+        if (heavyW(overWx) && isJiW(overWx) && suppressed && suppressed !== dayWx && !care.includes(suppressed))
+          care.push(suppressed);
+        if (isWeak && pressure && pressure !== dayWx && (heavyW(pressure) || isJiW(pressure)) && !care.includes(pressure))
+          care.push(pressure);
         const careList = care.slice(0, 2);
         let hText;
         const hDos = [];
@@ -14278,15 +14441,20 @@ var RhythmEngine = (() => {
         if (careList.length) {
           hText = `\u4F60\u7684\u8EAB\u4F53\uFF0C\u91CD\u70B9\u7167\u770B${careList.map(ORG).join("\u548C")}${careList.length > 1 ? "\u8FD9\u4E24\u5904" : "\u8FD9\u5757"}\u3002` + careList.map((wx) => TIP[wx]).join("\u3002") + "\u3002";
           hText += careList.includes(dayWx) ? "\u5E73\u65F6\u987A\u65F6\u8282\u3001\u7A33\u4F5C\u606F\u3001\u522B\u4E00\u4E2A\u4EBA\u786C\u625B\uFF0C\u5C31\u662F\u517B\u6839\u672C\u3002" : `${ORG(dayWx)}\u662F\u4F60\u7684\u5E95\u5B50\uFF0C\u987A\u65F6\u8282\u3001\u7A33\u4F5C\u606F\u3001\u522B\u72EC\u81EA\u786C\u625B\uFF0C\u517B\u7740\u5C31\u597D\u3002`;
-          if (FOOD(careList[0])) hDos.push("\u5B9C\u517B:" + FOOD(careList[0]));
-          if (careList[1] && FOOD(careList[1])) hDos.push("\u517C\u987E:" + FOOD(careList[1]));
+          if (FOOD(careList[0]))
+            hDos.push("\u5B9C\u517B:" + FOOD(careList[0]));
+          if (careList[1] && FOOD(careList[1]))
+            hDos.push("\u517C\u987E:" + FOOD(careList[1]));
           careList.forEach((wx) => {
-            if (HEALTH_AVOID[wx] && !hAvoid.includes(HEALTH_AVOID[wx])) hAvoid.push(HEALTH_AVOID[wx]);
+            if (HEALTH_AVOID[wx] && !hAvoid.includes(HEALTH_AVOID[wx]))
+              hAvoid.push(HEALTH_AVOID[wx]);
           });
         } else {
           hText = "\u4F60\u7684\u8EAB\u4F53\u5E95\u5B50\u8FD8\u7B97\u5300\u79F0\uFF0C\u6CA1\u6709\u7279\u522B\u62D6\u540E\u817F\u7684\u5730\u65B9\u3002\u987A\u7740\u65F6\u8282\u8D70\u3001\u628A\u4F5C\u606F\u7A33\u4F4F\u3001\u522B\u72EC\u81EA\u786C\u625B\uFF0C\u517B\u597D\u6839\u57FA\u5C31\u591F\u3002";
-          if (FOOD(dayWx)) hDos.push("\u996E\u98DF\u5B9C:" + FOOD(dayWx));
-          if (HEALTH_AVOID[dayWx]) hAvoid.push(HEALTH_AVOID[dayWx]);
+          if (FOOD(dayWx))
+            hDos.push("\u996E\u98DF\u5B9C:" + FOOD(dayWx));
+          if (HEALTH_AVOID[dayWx])
+            hAvoid.push(HEALTH_AVOID[dayWx]);
         }
         list.push({
           key: "health",
@@ -14378,11 +14546,13 @@ var RhythmEngine = (() => {
       }
       function pickRot(arr, seed, n) {
         const a = (arr || []).filter(Boolean);
-        if (!a.length) return [];
+        if (!a.length)
+          return [];
         const k = Math.min(n, a.length);
         const off = (seed % a.length + a.length) % a.length;
         const out = [];
-        for (let i = 0; i < k; i++) out.push(a[(off + i) % a.length]);
+        for (let i = 0; i < k; i++)
+          out.push(a[(off + i) % a.length]);
         return out;
       }
       function uniq(arr, n) {
@@ -14478,13 +14648,17 @@ var RhythmEngine = (() => {
         return "\u5E73\u6708\u4E5F\u6709\u5E73\u6708\u7684\u597D\uFF0C\u4E0D\u62A2\u4E0D\u8D76\uFF0C\u7A33\u91CC\u51FA\u6210\u679C\u3002";
       }
       function yearVerdict(avgs) {
-        if (!avgs || avgs.length < 12) return "";
+        if (!avgs || avgs.length < 12)
+          return "";
         const h1 = avgs.slice(0, 6).reduce((a, b) => a + b, 0) / 6;
         const h2 = avgs.slice(6).reduce((a, b) => a + b, 0) / 6;
         const spread = Math.max(...avgs) - Math.min(...avgs);
-        if (spread <= 6) return "\u4ECA\u5E74\u5341\u4E8C\u4E2A\u6708\u8BFB\u6570\u62C9\u4E0D\u5F00\u5DEE\u8DDD\u3002\u6CA1\u6709\u7279\u522B\u8981\u62A2\u7684\u7A97\u53E3\uFF0C\u6309\u81EA\u5DF1\u8282\u594F\u6765\u5C31\u884C\u3002";
-        if (h2 - h1 >= 4) return "\u4ECA\u5E74\u4E0A\u4E0B\u534A\u5E74\u8BFB\u6570\u5DEE\u5F97\u6BD4\u8F83\u660E\u663E\uFF0C\u4E0B\u534A\u5E74\u9AD8\u4E00\u4E9B\u3002\u80FD\u632A\u65F6\u95F4\u7684\u5927\u4E8B\u5F80\u540E\u534A\u5E74\u6392\u66F4\u4ECE\u5BB9\u3002";
-        if (h1 - h2 >= 4) return "\u4ECA\u5E74\u4E0A\u534A\u5E74\u8BFB\u6570\u6BD4\u4E0B\u534A\u5E74\u9AD8\u3002\u80FD\u632A\u7684\u786C\u4ED7\u6392\u524D\u534A\u5E74\uFF0C\u540E\u534A\u5E74\u7559\u7ED9\u6536\u5C3E\u3002";
+        if (spread <= 6)
+          return "\u4ECA\u5E74\u5341\u4E8C\u4E2A\u6708\u8BFB\u6570\u62C9\u4E0D\u5F00\u5DEE\u8DDD\u3002\u6CA1\u6709\u7279\u522B\u8981\u62A2\u7684\u7A97\u53E3\uFF0C\u6309\u81EA\u5DF1\u8282\u594F\u6765\u5C31\u884C\u3002";
+        if (h2 - h1 >= 4)
+          return "\u4ECA\u5E74\u4E0A\u4E0B\u534A\u5E74\u8BFB\u6570\u5DEE\u5F97\u6BD4\u8F83\u660E\u663E\uFF0C\u4E0B\u534A\u5E74\u9AD8\u4E00\u4E9B\u3002\u80FD\u632A\u65F6\u95F4\u7684\u5927\u4E8B\u5F80\u540E\u534A\u5E74\u6392\u66F4\u4ECE\u5BB9\u3002";
+        if (h1 - h2 >= 4)
+          return "\u4ECA\u5E74\u4E0A\u534A\u5E74\u8BFB\u6570\u6BD4\u4E0B\u534A\u5E74\u9AD8\u3002\u80FD\u632A\u7684\u786C\u4ED7\u6392\u524D\u534A\u5E74\uFF0C\u540E\u534A\u5E74\u7559\u7ED9\u6536\u5C3E\u3002";
         return "";
       }
       function natalPillars(chart) {
@@ -14494,14 +14668,19 @@ var RhythmEngine = (() => {
           { gan: p.month[0], zhi: p.month[1], pos: "\u6708" },
           { gan: p.day[0], zhi: p.day[1], pos: "\u65E5" }
         ];
-        if (p.time) arr.push({ gan: p.time[0], zhi: p.time[1], pos: "\u65F6" });
+        if (p.time)
+          arr.push({ gan: p.time[0], zhi: p.time[1], pos: "\u65F6" });
         return arr;
       }
       function favWx(dyn, wx) {
-        if (!wx) return 0;
-        if (dyn.favVec && wx in dyn.favVec) return dyn.favVec[wx];
-        if (dyn.xiYong.includes(wx)) return (dyn.xiYongWeight || {})[wx] ?? 1;
-        if (dyn.jiShen.includes(wx)) return -1;
+        if (!wx)
+          return 0;
+        if (dyn.favVec && wx in dyn.favVec)
+          return dyn.favVec[wx];
+        if (dyn.xiYong.includes(wx))
+          return (dyn.xiYongWeight || {})[wx] ?? 1;
+        if (dyn.jiShen.includes(wx))
+          return -1;
         return 0;
       }
       var TARGET_MEAN = {
@@ -14540,7 +14719,8 @@ var RhythmEngine = (() => {
       function deriveDomains(dayWx, godType, ganWx, tags, dyn, energy) {
         const agg = {};
         const add = (d, score) => {
-          if (!d || !score) return;
+          if (!d || !score)
+            return;
           (agg[d.key] = agg[d.key] || { key: d.key, label: d.label, score: 0 }).score += score;
         };
         add(GOD_DOMAIN[godType], favWx(dyn, ganWx) * 0.6);
@@ -14551,9 +14731,11 @@ var RhythmEngine = (() => {
           if (t.huaWx && (t.kind === "\u4E09\u5408" || t.kind === "\u4E09\u4F1A" || t.kind === "\u534A\u5408" || t.kind === "\u5408")) {
             add(GOD_DOMAIN[tenGodType(dayWx, t.huaWx)], t.fav * Math.abs(t.weight || 1) * kw * 0.8);
           }
-          if (t.kind === "\u5211" || t.kind === "\u5BB3") xingHai = true;
+          if (t.kind === "\u5211" || t.kind === "\u5BB3")
+            xingHai = true;
         }
-        if (energy <= 50 && xingHai) add({ key: "health", label: "\u5065\u5EB7\u517B\u62A4" }, -0.6);
+        if (energy <= 50 && xingHai)
+          add({ key: "health", label: "\u5065\u5EB7\u517B\u62A4" }, -0.6);
         const tone = (v) => v >= 0.4 ? "\u987A" : v <= -0.55 ? "\u614E" : "\u5E73";
         return Object.values(agg).filter((d) => Math.abs(d.score) >= 0.4).sort((a, b) => Math.abs(b.score) - Math.abs(a.score)).slice(0, 3).map((d) => ({ key: d.key, label: d.label, tone: tone(d.score) }));
       }
@@ -14563,12 +14745,14 @@ var RhythmEngine = (() => {
         natal.forEach((p) => {
           posWx[POS_LABEL[p.pos] || p.pos] = ZHI_WX[p.zhi];
         });
-        if (dy && dy.zhi) posWx["\u5927\u8FD0"] = ZHI_WX[dy.zhi];
+        if (dy && dy.zhi)
+          posWx["\u5927\u8FD0"] = ZHI_WX[dy.zhi];
         const dyFav = dy ? favWx(dyn, ZHI_WX[dy.zhi]) + favWx(dyn, GAN_WX[dy.gan]) : 0;
         let eDelta = 0, severe = false;
         const tags = [];
         for (const ev of events) {
-          if (ev.severe) severe = true;
+          if (ev.severe)
+            severe = true;
           let fav = 0, contrib = 0;
           const baseTarget = ev.target.replace("\xB7\u5E72", "");
           if (ev.kind === "\u4E09\u5408" || ev.kind === "\u4E09\u4F1A" || ev.kind === "\u534A\u5408") {
@@ -14594,26 +14778,41 @@ var RhythmEngine = (() => {
         return { eDelta, severe, tags };
       }
       function dominantTag(tags) {
-        if (!tags.length) return null;
+        if (!tags.length)
+          return null;
         const significant = tags.filter((t) => {
-          if (t.kind === "\u5408" && !t.huaWx && Math.abs(t.fav) < 0.5) return false;
+          if (t.kind === "\u5408" && !t.huaWx && Math.abs(t.fav) < 0.5)
+            return false;
           return true;
         });
-        if (!significant.length) return null;
+        if (!significant.length)
+          return null;
         tags = significant;
         const rank = (t) => {
-          if (t.kind === "\u5929\u514B\u5730\u51B2") return 100;
-          if (t.kind === "\u5C81\u8FD0\u5E76\u4E34") return 95;
-          if (t.kind === "\u51B2" && t.severe) return 90;
-          if (t.kind === "\u4E09\u4F1A") return 85;
-          if (t.kind === "\u4E09\u5408") return 80;
-          if (t.kind === "\u534A\u5408") return 60;
-          if (t.kind === "\u51B2") return 55;
-          if (t.kind === "\u5408" && t.huaWx) return 50;
-          if (t.kind === "\u5211") return 45;
-          if (t.kind === "\u5BB3") return 40;
-          if (t.kind === "\u5408") return 35;
-          if (t.kind === "\u4F0F\u541F") return 30;
+          if (t.kind === "\u5929\u514B\u5730\u51B2")
+            return 100;
+          if (t.kind === "\u5C81\u8FD0\u5E76\u4E34")
+            return 95;
+          if (t.kind === "\u51B2" && t.severe)
+            return 90;
+          if (t.kind === "\u4E09\u4F1A")
+            return 85;
+          if (t.kind === "\u4E09\u5408")
+            return 80;
+          if (t.kind === "\u534A\u5408")
+            return 60;
+          if (t.kind === "\u51B2")
+            return 55;
+          if (t.kind === "\u5408" && t.huaWx)
+            return 50;
+          if (t.kind === "\u5211")
+            return 45;
+          if (t.kind === "\u5BB3")
+            return 40;
+          if (t.kind === "\u5408")
+            return 35;
+          if (t.kind === "\u4F0F\u541F")
+            return 30;
           return 10;
         };
         return [...tags].sort((a, b) => rank(b) - rank(a) || Math.abs(b.fav) - Math.abs(a.fav))[0];
@@ -14632,12 +14831,13 @@ var RhythmEngine = (() => {
           const sd = seed || 0;
           const pv = (arr, off) => arr[((sd + (off || 0)) % arr.length + arr.length) % arr.length];
           if (tag.kind === "\u5929\u514B\u5730\u51B2" || tag.kind === "\u51B2" && tag.severe) {
-            if (positive) return {
-              headline: `${pv(["\u7834\u5C40", "\u7A81\u7834", "\u677E\u52A8"], 0)}${PER} \xB7 \u51B2\u5F00${dom}\u65E7\u7ED3`,
-              trait: `${u}\u53D8\u52A8\u4E0D\u5C0F\uFF0C${dom}\u4E0A\u4E00\u4E9B\u62D6\u4E86\u5F88\u4E45\u3001\u4E0D\u987A\u7684\u8001\u95EE\u9898\uFF0C\u8FD9\u9635\u5B50\u6700\u5BB9\u6613\u4E86\u7ED3\u3002\u8D81\u673A\u6E05\u4E00\u6E05\u3001\u6362\u4E2A\u65B0\u5F00\u59CB\u3002${shiftNote}`,
-              yi: uniq(pv([["\u4E86\u7ED3\u60AC\u800C\u672A\u51B3\u4E4B\u4E8B", "\u4E3B\u52A8\u8F6C\u6362\u73AF\u5883\u3001\u9664\u65E7\u5E03\u65B0"], ["\u6E05\u7406\u79EF\u538B\u5DF2\u4E45\u7684\u65E7\u52A1", "\u4E3A\u751F\u6D3B\u505A\u4E00\u6B21\u65AD\u820D\u79BB"]], 2).concat(pickRot(doHi, sd, 1)), 3),
-              ji: pv([["\u5FF5\u65E7\u4E0D\u653E\u3001\u539F\u5730\u7EA0\u7F20", "\u5728\u52A8\u8361\u4E2D\u4ED3\u4FC3\u4F5C\u91CD\u5927\u51B3\u5B9A"], ["\u7559\u604B\u65E7\u52A1\u4E0D\u80AF\u653E\u624B", "\u72B9\u8C6B\u800C\u9519\u8FC7\u677E\u52A8\u7684\u7A97\u53E3"]], 1)
-            };
+            if (positive)
+              return {
+                headline: `${pv(["\u7834\u5C40", "\u7A81\u7834", "\u677E\u52A8"], 0)}${PER} \xB7 \u51B2\u5F00${dom}\u65E7\u7ED3`,
+                trait: `${u}\u53D8\u52A8\u4E0D\u5C0F\uFF0C${dom}\u4E0A\u4E00\u4E9B\u62D6\u4E86\u5F88\u4E45\u3001\u4E0D\u987A\u7684\u8001\u95EE\u9898\uFF0C\u8FD9\u9635\u5B50\u6700\u5BB9\u6613\u4E86\u7ED3\u3002\u8D81\u673A\u6E05\u4E00\u6E05\u3001\u6362\u4E2A\u65B0\u5F00\u59CB\u3002${shiftNote}`,
+                yi: uniq(pv([["\u4E86\u7ED3\u60AC\u800C\u672A\u51B3\u4E4B\u4E8B", "\u4E3B\u52A8\u8F6C\u6362\u73AF\u5883\u3001\u9664\u65E7\u5E03\u65B0"], ["\u6E05\u7406\u79EF\u538B\u5DF2\u4E45\u7684\u65E7\u52A1", "\u4E3A\u751F\u6D3B\u505A\u4E00\u6B21\u65AD\u820D\u79BB"]], 2).concat(pickRot(doHi, sd, 1)), 3),
+                ji: pv([["\u5FF5\u65E7\u4E0D\u653E\u3001\u539F\u5730\u7EA0\u7F20", "\u5728\u52A8\u8361\u4E2D\u4ED3\u4FC3\u4F5C\u91CD\u5927\u51B3\u5B9A"], ["\u7559\u604B\u65E7\u52A1\u4E0D\u80AF\u653E\u624B", "\u72B9\u8C6B\u800C\u9519\u8FC7\u677E\u52A8\u7684\u7A97\u53E3"]], 1)
+              };
             return {
               headline: `${pv(["\u591A\u53D8", "\u8D77\u4F0F", "\u52A8\u8361"], 0)}${PER} \xB7 ${dom}\u6709\u6CE2\u52A8`,
               trait: `${u}\u5916\u9762\u53D8\u5316\u591A\uFF0C${dom}\u5BB9\u6613\u8D77\u8D77\u4F0F\u4F0F\u3002\u5148\u522B\u5927\u52A8\uFF0C\u5B88\u4F4F\u624B\u91CC\u6709\u7684\uFF0C\u7B49\u8FD9\u9635\u4E71\u52B2\u8FC7\u53BB\u518D\u505A\u5927\u6253\u7B97\u3002${shiftNote}`,
@@ -14893,13 +15093,17 @@ var RhythmEngine = (() => {
         return yr;
       }
       function decadeVerdict(avgs) {
-        if (!avgs || avgs.length < 10) return "";
+        if (!avgs || avgs.length < 10)
+          return "";
         const h1 = avgs.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
         const h2 = avgs.slice(5).reduce((a, b) => a + b, 0) / 5;
         const spread = Math.max(...avgs) - Math.min(...avgs);
-        if (spread <= 8) return "\u8FD9\u5341\u5E74\u7684\u8BFB\u6570\u6CA1\u62C9\u5F00\u660E\u663E\u9AD8\u4F4E\u3002";
-        if (h2 - h1 >= 5) return "\u8FD9\u5341\u5E74\u540E\u534A\u7A0B\u7684\u8BFB\u6570\u6BD4\u524D\u534A\u7A0B\u9AD8\u3002";
-        if (h1 - h2 >= 5) return "\u8FD9\u5341\u5E74\u524D\u534A\u7A0B\u7684\u8BFB\u6570\u6BD4\u540E\u534A\u7A0B\u9AD8\u3002";
+        if (spread <= 8)
+          return "\u8FD9\u5341\u5E74\u7684\u8BFB\u6570\u6CA1\u62C9\u5F00\u660E\u663E\u9AD8\u4F4E\u3002";
+        if (h2 - h1 >= 5)
+          return "\u8FD9\u5341\u5E74\u540E\u534A\u7A0B\u7684\u8BFB\u6570\u6BD4\u524D\u534A\u7A0B\u9AD8\u3002";
+        if (h1 - h2 >= 5)
+          return "\u8FD9\u5341\u5E74\u524D\u534A\u7A0B\u7684\u8BFB\u6570\u6BD4\u540E\u534A\u7A0B\u9AD8\u3002";
         return "";
       }
       var PICK_SPAN = 60;
@@ -15020,8 +15224,10 @@ var RhythmEngine = (() => {
         return { span: PICK_SPAN, from: today, categories, series };
       }
       function heroPersonaOf(mj) {
-        if (!mj) return "\u5747\u8861";
-        if (mj.isYinHeavyWeak) return "\u5370\u91CD";
+        if (!mj)
+          return "\u5747\u8861";
+        if (mj.isYinHeavyWeak)
+          return "\u5370\u91CD";
         const dayWx = mj.dayMaster && mj.dayMaster[1] || "";
         const w = mj.weights || {};
         const gsum = { \u6BD4: 0, \u5370: 0, \u98DF: 0, \u8D22: 0, \u5B98: 0 };
@@ -15034,8 +15240,10 @@ var RhythmEngine = (() => {
           pct[k] = gsum[k] / total * 100;
         });
         const nonBi = ["\u5370", "\u98DF", "\u8D22", "\u5B98"].map((k) => ({ k, v: pct[k] })).sort((a, b) => b.v - a.v);
-        if (pct["\u6BD4"] >= 32 && pct["\u6BD4"] >= nonBi[0].v) return "\u6BD4";
-        if (nonBi[0].v - nonBi[1].v < 7 && nonBi[0].v < 30) return "\u5747\u8861";
+        if (pct["\u6BD4"] >= 32 && pct["\u6BD4"] >= nonBi[0].v)
+          return "\u6BD4";
+        if (nonBi[0].v - nonBi[1].v < 7 && nonBi[0].v < 30)
+          return "\u5747\u8861";
         return nonBi[0].k;
       }
       function heroLine(personaKey, fortune, energy) {
@@ -15045,19 +15253,27 @@ var RhythmEngine = (() => {
         const ups = [], warns = [];
         ORDER.forEach((dom) => {
           const f = fortune[dom];
-          if (!f || !f.line) return;
-          if (f.tone === "\u987A") ups.push({ dom, up: true, line: f.line });
-          else if (f.tone === "\u614E" || f.tone === "\u517B") warns.push({ dom, up: false, line: f.line });
+          if (!f || !f.line)
+            return;
+          if (f.tone === "\u987A")
+            ups.push({ dom, up: true, line: f.line });
+          else if (f.tone === "\u614E" || f.tone === "\u517B")
+            warns.push({ dom, up: false, line: f.line });
         });
         const seg = (o, lead) => {
           const pre = lead ? "\u4ECA\u5929" : "";
-          if (o.dom === "health") return pre + (o.up ? "\u4F53\u611F\u4F73\u2014\u2014" : "\u5B9C\u517B\u2014\u2014") + o.line;
+          if (o.dom === "health")
+            return pre + (o.up ? "\u4F53\u611F\u4F73\u2014\u2014" : "\u5B9C\u517B\u2014\u2014") + o.line;
           return pre + LABEL[o.dom] + (o.up ? "\u987A\u624B\u2014\u2014" : "\u8981\u5F53\u5FC3\u2014\u2014") + o.line;
         };
-        if (ups.length && warns.length) return seg(ups[0], true) + "\u3000" + seg(warns[0], false);
-        if (ups.length) return seg(ups[0], true);
-        if (warns.length) return seg(warns[0], true);
-        if (energy != null && energy < 48) return "\u4ECA\u5929\u7CBE\u529B\u504F\u4F4E\u2014\u2014\u628A\u6700\u8981\u7D27\u7684\u4E00\u4EF6\u505A\u5B8C\uFF0C\u522B\u786C\u8D76\uFF0C\u65E9\u70B9\u6B47\u3002";
+        if (ups.length && warns.length)
+          return seg(ups[0], true) + "\u3000" + seg(warns[0], false);
+        if (ups.length)
+          return seg(ups[0], true);
+        if (warns.length)
+          return seg(warns[0], true);
+        if (energy != null && energy < 48)
+          return "\u4ECA\u5929\u7CBE\u529B\u504F\u4F4E\u2014\u2014\u628A\u6700\u8981\u7D27\u7684\u4E00\u4EF6\u505A\u5B8C\uFF0C\u522B\u786C\u8D76\uFF0C\u65E9\u70B9\u6B47\u3002";
         return "\u4ECA\u5929\u5404\u65B9\u9762\u90FD\u5E73\u7A33\u2014\u2014\u6311\u6700\u8981\u7D27\u7684\u4E00\u4EF6\uFF0C\u7A33\u7A33\u505A\u5B8C\u5C31\u597D\u3002";
       }
       function buildReport(mj, chart, today, ctx) {
@@ -15105,24 +15321,34 @@ var RhythmEngine = (() => {
       var { Solar } = require_lunar();
       var WEEK = ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"];
       function fill(e) {
-        if (e < 46) return "f0";
-        if (e < 55) return "f1";
-        if (e < 64) return "f2";
-        if (e < 73) return "f3";
-        if (e < 82) return "f4";
+        if (e < 46)
+          return "f0";
+        if (e < 55)
+          return "f1";
+        if (e < 64)
+          return "f2";
+        if (e < 73)
+          return "f3";
+        if (e < 82)
+          return "f4";
         return "f5";
       }
       var TONE_SHORT = { "\u84C4\u529B\xB7\u5185\u5B88": "\u84C4\u529B", "\u51B3\u65AD\xB7\u8FDB\u53D6": "\u51B3\u65AD", "\u5E73\u7A33\xB7\u8FC7\u6E21": "\u5E73\u7A33" };
       function energyWord(e) {
-        if (e >= 78) return "\u795E\u6E05\u6C14\u723D";
-        if (e >= 66) return "\u795E\u5B8C\u6C14\u8DB3";
-        if (e >= 56) return "\u4E0D\u75BE\u4E0D\u5F90";
-        if (e >= 48) return "\u7A0D\u6B20\u7CBE\u795E";
+        if (e >= 78)
+          return "\u795E\u6E05\u6C14\u723D";
+        if (e >= 66)
+          return "\u795E\u5B8C\u6C14\u8DB3";
+        if (e >= 56)
+          return "\u4E0D\u75BE\u4E0D\u5F90";
+        if (e >= 48)
+          return "\u7A0D\u6B20\u7CBE\u795E";
         return "\u7CBE\u795E\u4E0D\u6D4E";
       }
       var GOOD = 72;
       function sanitizeYi(yi, wuRi) {
-        if (!wuRi) return yi;
+        if (!wuRi)
+          return yi;
         return yi.replace("\u4E0A\u9999 \xB7 \u5FF5\u7ECF \xB7 \u658B\u6212", "\u8BF5\u7ECF \xB7 \u658B\u6212(\u4E0D\u711A\u9999)").replace("\u4E0A\u9999 \xB7 \u793C\u62DC \xB7 \u884C\u5584", "\u793C\u62DC \xB7 \u884C\u5584(\u4E0D\u711A\u9999)").replace("\u4E0A\u9999 \xB7 ", "").replace("\u4E0A\u9999", "\u793C\u62DC");
       }
       function pickTag(folk) {
@@ -15144,7 +15370,8 @@ var RhythmEngine = (() => {
         const days = my.list.map((d) => {
           const g = +d.date.slice(8);
           const folk = folkOf(ym.year, ym.month, g);
-          if (folk.band && !band) band = folk.band;
+          if (folk.band && !band)
+            band = folk.band;
           const tag = pickTag(folk);
           const lun = Solar.fromYmd(ym.year, ym.month, g).getLunar();
           const ganZhi = {
@@ -15277,8 +15504,10 @@ var RhythmEngine = (() => {
           const xiW = mj.xiYongWeight || {};
           const add = (wx, w) => {
             const favW = mj.xiYong.includes(wx) ? xiW[wx] ?? 1 : 0;
-            if (favW > 0) raw += w * (0.6 + favW * 0.9);
-            else if (mj.jiShen.includes(wx)) raw -= w;
+            if (favW > 0)
+              raw += w * (0.6 + favW * 0.9);
+            else if (mj.jiShen.includes(wx))
+              raw -= w;
           };
           const dy = activeDaYun(chart, Y);
           if (dy) {
@@ -15304,13 +15533,15 @@ var RhythmEngine = (() => {
           bounds = [.../* @__PURE__ */ new Set([0, ...starts])].sort((a, b) => a - b);
         } else {
           bounds = [];
-          for (let s = 0; s < LIFE_SPAN; s += 10) bounds.push(s);
+          for (let s = 0; s < LIFE_SPAN; s += 10)
+            bounds.push(s);
         }
         for (let i = 0; i < bounds.length; i++) {
           const from = bounds[i];
           const to = (i + 1 < bounds.length ? bounds[i + 1] : LIFE_SPAN) - 1;
           const seg = lifeItems.slice(from, to + 1);
-          if (!seg.length) continue;
+          if (!seg.length)
+            continue;
           const dy = dyList.find((d) => d.startAge === from);
           decades.push({
             from,
