@@ -2083,21 +2083,6 @@
             <div class="hl-note">顺时调养参考，非医疗建议 · 本机计算不外传</div>
           </div>
 
-          <!-- 工具:方位罗盘 -->
-          <div class="tb-panel" data-panel="compass">
-            <div class="cps-read">
-              <div class="cps-deg" id="cps-deg">—</div>
-              <div class="cps-dir" id="cps-dir">待开启 · 读取朝向</div>
-            </div>
-            <div class="cps-stage">
-              <svg class="cps-dial" id="cps-dial" viewBox="-160 -160 320 320" aria-hidden="true"></svg>
-              <div class="cps-index" aria-hidden="true"></div>
-            </div>
-            <button class="cps-start" id="cps-start">开 启 罗 盘</button>
-            <div class="cps-hint" id="cps-hint">手机水平放平，顶端对准你要测的方向</div>
-            <div class="hl-note">磁北定向(与系统指南针一致)· 仅用本机方向传感器，不联网、不外传</div>
-          </div>
-
           <!-- 工具:重点日管理 -->
           <div class="tb-panel" data-panel="mark">
             <div class="mk-add">
@@ -2150,13 +2135,6 @@
               <div class="sw-lab">今日一则</div>
               <div class="sw-text" id="sw-text">心安即是归处。</div>
             </div>
-          </div>
-
-          <!-- 工具:法定节假日 -->
-          <div class="tb-panel" data-panel="holiday">
-            <div class="tb-h2">2026 年 · 法定节假日</div>
-            <div class="tb-note">按国务院办公厅 2026 年放假安排；<b>休</b>=放假，<b>班</b>=调休上班。</div>
-            <div class="tb-list" id="tb-hols"></div>
           </div>
 
           <div class="tb-panel" data-panel="fujiu">
@@ -4891,13 +4869,6 @@
       const m=APP.month;
       const empty=(t)=>'<div class="tb-empty">'+t+'</div>';
       // 神诞民俗/戊日 已下线
-      $('tb-hols').innerHTML = HOL_LIST.map((h)=>
-        '<div class="tb-row hol"><div class="tb-dd big"><b>'+h.days+'</b><span>天</span></div>'
-        + '<div class="tb-info"><div class="tb-rname">'+h.name+'</div>'
-        + '<div class="tb-ryi">'+h.range+' 放假</div>'
-        + '<div class="tb-rdesc">'+(h.work?('调休 '+h.work):'不调休')+'</div>'
-        + '</div></div>'
-      ).join('');
       if (APP.season && APP.season.jieqi) $('tb-c-jieqi').textContent = APP.season.jieqi.name;
     })();
 
