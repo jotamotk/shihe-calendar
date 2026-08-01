@@ -1625,6 +1625,10 @@
   .mk-item .mk-del:hover{border-color:var(--clay);color:var(--clay);}
   .mk-empty{text-align:center;font-size:12px;color:var(--muted);font-weight:300;padding:22px 10px;line-height:1.7;}
   /* 近期吉日 */
+  .luck-chips{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:1px 1px 11px;margin:0 -1px;scrollbar-width:none;}
+  .luck-chips::-webkit-scrollbar{display:none;}
+  .luck-chip{flex:0 0 auto;font-size:12px;font-weight:300;color:var(--ink-2);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;white-space:nowrap;transition:all .18s;font-family:inherit;}
+  .luck-chip.on{color:#231A0C;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;font-weight:500;}
   .luck-intro{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.7;margin:2px 2px 13px;}
   .tb-row.luck .tb-dd.big b{color:var(--gold-d);font-weight:600;}
   /* 本命养生速查 */
@@ -2034,7 +2038,7 @@
           </button>
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
-              <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
+              <div><b>近期吉日 · 按事项择日</b><small id="tb-c-luck">黄历吉日 + 签约谈判拓展好日子</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2068,10 +2072,11 @@
 
           <!-- 工具:近期吉日 -->
           <div class="tb-panel" data-panel="luckyday">
+            <div class="luck-chips" id="luck-chips"></div>
             <div class="luck-intro" id="luck-intro"></div>
             <div class="luck-nav"><button id="luck-prev" type="button" aria-label="上一季">‹</button><span id="luck-range"></span><button id="luck-next" type="button" aria-label="下一季">›</button></div>
             <div id="luck-list"></div>
-            <div class="hl-note">吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传</div>
+            <div class="hl-note" id="luck-note">吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传</div>
           </div>
 
           <!-- 工具:本命养生速查 -->
@@ -4733,6 +4738,37 @@
         const prev=$('luck-prev'), next=$('luck-next');
         if(prev) prev.addEventListener('click',(e)=>{ e.stopPropagation(); if(offset>0){ offset--; draw(); } });
         if(next) next.addEventListener('click',(e)=>{ e.stopPropagation(); offset++; draw(); });
+        // —— 事业择日器:意图 chips(复用报告已算好的 picker.categories,纯前端切换,不重算)——
+        const R=window.APP&&window.APP.report, PK=R&&R.picker;
+        const nav=document.querySelector('.tb-panel[data-panel="luckyday"] .luck-nav');
+        const note=$('luck-note'), chipBox=$('luck-chips');
+        const CATLABEL={sign:'签约拍板',talk:'谈判沟通',push:'拓展合作',act:'办要紧事',rest:'复盘调整',hold:'宜缓避险'};
+        const cats=(PK&&PK.categories)?PK.categories.filter((c)=>CATLABEL[c.key]):[];
+        function intentRow(x){
+          const eCls=x.energy>=72?'hi':(x.energy>=56?'mid':'lo');
+          const why=(x.reason||'').replace(/^能量\d+\s*·\s*/,''); // reason 已带「能量X · 」前缀,badge 已显能量,去重
+          return '<div class="lk-day"><div class="lk-dt"><b>'+esc(x.md)+'</b><span>'+esc(x.weekday)+'</span></div>'
+            +'<div class="lk-main"><div class="lk-tags"><span class="lk-e '+eCls+'">能量'+x.energy+'</span></div>'
+            +'<div class="lk-why">'+esc(why)+'</div></div></div>';
+        }
+        function renderIntent(c){
+          if(nav) nav.style.display='none';
+          if($('luck-intro')) $('luck-intro').textContent=c.desc||'';
+          const ds=(c.days||[]).filter(Boolean);
+          list.innerHTML= ds.length? ds.map(intentRow).join('') : '<div class="tb-empty">未来两月办这类事没有特别突出的日子，按平日节奏推进即可</div>';
+          if(note) note.textContent='按你的流日状态，挑出办这类事最顺手的日子 · 描述状态、非吉凶预测 · 本机计算不外传';
+        }
+        function setMode(m){
+          if(chipBox) Array.prototype.forEach.call(chipBox.children,(el)=>el.classList.toggle('on',el.dataset.m===m));
+          if(m==='luck'){ if(nav) nav.style.display=''; if(note) note.textContent='吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传'; draw(); }
+          else { const c=cats.find((x)=>x.key===m); if(c) renderIntent(c); }
+        }
+        if(chipBox && cats.length){
+          let html='<button class="luck-chip on" type="button" data-m="luck">黄历吉日</button>';
+          cats.forEach((c)=>{ html+='<button class="luck-chip" type="button" data-m="'+c.key+'">'+esc(CATLABEL[c.key])+'</button>'; });
+          chipBox.innerHTML=html;
+          Array.prototype.forEach.call(chipBox.children,(el)=>el.addEventListener('click',(e)=>{ e.stopPropagation(); setMode(el.dataset.m); }));
+        }
         draw();
       })();
 
