@@ -1625,12 +1625,25 @@
   .mk-item .mk-del:hover{border-color:var(--clay);color:var(--clay);}
   .mk-empty{text-align:center;font-size:12px;color:var(--muted);font-weight:300;padding:22px 10px;line-height:1.7;}
   /* 近期吉日 */
-  .luck-chips{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:1px 1px 11px;margin:0 -1px;scrollbar-width:none;}
-  .luck-chips::-webkit-scrollbar{display:none;}
-  .luck-chip{flex:0 0 auto;font-size:12px;font-weight:300;color:var(--ink-2);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;white-space:nowrap;transition:all .18s;font-family:inherit;}
-  .luck-chip.on{color:#231A0C;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;font-weight:500;}
   .luck-intro{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.7;margin:2px 2px 13px;}
   .tb-row.luck .tb-dd.big b{color:var(--gold-d);font-weight:600;}
+  /* 事业 · 天赋与方向 */
+  .cr-wrap{display:flex;flex-direction:column;gap:12px;}
+  .cr-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px 16px;}
+  .cr-h{font-size:13px;color:var(--ink);font-weight:600;letter-spacing:1px;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .cr-tone{font-size:10.5px;font-weight:400;padding:2px 8px;border-radius:7px;background:var(--gold-soft);color:var(--gold-d);}
+  .cr-tone.warn{color:#C98B6A;background:rgba(180,110,70,.12);}
+  .cr-card p{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.85;margin:0;}
+  .cr-adv{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.7;padding:9px 0;border-top:1px solid var(--line);}
+  .cr-adv:first-of-type{border-top:none;padding-top:0;}
+  .cr-cols{display:flex;gap:16px;}
+  .cr-col{flex:1;min-width:0;}
+  .cr-k{display:inline-block;font-size:10.5px;font-weight:500;letter-spacing:1px;padding:2px 9px;border-radius:7px;margin-bottom:8px;}
+  .cr-k.do{color:var(--gold-d);background:var(--gold-soft);}
+  .cr-k.avoid{color:#C98B6A;background:rgba(180,110,70,.1);}
+  .cr-col ul{list-style:none;margin:0;padding:0;}
+  .cr-col li{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.5;padding-left:12px;position:relative;margin:5px 0;}
+  .cr-col li:before{content:'·';position:absolute;left:2px;color:var(--gold);}
   /* 本命养生速查 */
   .bm-id{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-bottom:12px;}
   .bm-id b{font-size:15px;color:var(--ink);font-weight:600;letter-spacing:1px;}
@@ -1735,6 +1748,7 @@
 <symbol id="i-lucky" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14l-7 11L5 9ZM5 9l3-4h8l3 4M9 5l3 4 3-4M5 9h14"/></symbol>
 <symbol id="i-benming" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.2-7-9.2A3.8 3.8 0 0 1 12 7a3.8 3.8 0 0 1 7 3.8C19 15.8 12 20 12 20Z"/><path d="M12 11.4v4M10 13.4h4"/></symbol>
 <symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.5L6 20V5a1 1 0 0 1 1-1Z"/></symbol>
+<symbol id="i-career" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7.5" width="17" height="12" rx="2.5"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M3.5 12.5h17"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5 12 15.5 18 9.5"/></symbol>
 <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.7 9.3 10.6 10.6 9.3 14.7 13.4 13.4 14.7 9.3Z"/><circle cx="12" cy="12" r="0.7" fill="currentColor" stroke="none"/></symbol>
 </defs></svg>
@@ -2031,6 +2045,11 @@
           </button>
 
           <div class="tb-group-h">本命</div>
+          <button class="tb-feat" data-tool="career" data-title="事业天赋">
+            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-career"></use></svg>
+              <div><b>事业 · 天赋与方向</b><small id="tb-c-career">做事风格 · 适合的方向</small></div></div>
+            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
+          </button>
           <button class="tb-feat" data-tool="benming" data-title="本命养生">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-benming"></use></svg>
               <div><b>本命养生 · 速查</b><small id="tb-c-bm">顺你的气调养</small></div></div>
@@ -2038,7 +2057,7 @@
           </button>
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
-              <div><b>近期吉日 · 按事项择日</b><small id="tb-c-luck">黄历吉日 + 签约谈判拓展好日子</small></div></div>
+              <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2072,11 +2091,16 @@
 
           <!-- 工具:近期吉日 -->
           <div class="tb-panel" data-panel="luckyday">
-            <div class="luck-chips" id="luck-chips"></div>
             <div class="luck-intro" id="luck-intro"></div>
             <div class="luck-nav"><button id="luck-prev" type="button" aria-label="上一季">‹</button><span id="luck-range"></span><button id="luck-next" type="button" aria-label="下一季">›</button></div>
             <div id="luck-list"></div>
-            <div class="hl-note" id="luck-note">吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传</div>
+            <div class="hl-note">吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传</div>
+          </div>
+
+          <!-- 工具:事业 · 天赋与方向 -->
+          <div class="tb-panel" data-panel="career">
+            <div class="cr-wrap" id="cr-wrap"></div>
+            <div class="hl-note">据你的本命命局(做事风格 × 主导面向)推演 · 传统命理参考，非人生结论 · 本机计算不外传</div>
           </div>
 
           <!-- 工具:本命养生速查 -->
@@ -4654,6 +4678,29 @@
       // 切到其它标签页时回到目录，下次进工具箱从干净目录开始
       window.__tbReset = back;
 
+      // —— 事业 · 天赋与方向(读 APP.report.natal.aspects 的 career 域:做事风格 × 主导面向,命局层,与择日无关)——
+      (function careerTool(){
+        const wrap=$('cr-wrap'); if(!wrap) return;
+        const R=window.APP&&window.APP.report;
+        const asp=(R&&R.natal&&R.natal.aspects)?R.natal.aspects.find(function(a){return a.key==='career';}):null;
+        const chip=$('tb-c-career');
+        if(!asp){ wrap.innerHTML='<div class="tb-empty">事业解读需先录入生辰</div>'; if(chip) chip.textContent='录入生辰后查看'; return; }
+        const TONE={顺:'顺势区',慎:'需留心',平:'平稳'};
+        const toneLabel=TONE[asp.tone]||'平稳', warn=(asp.tone==='慎')?' warn':'';
+        let html='<div class="cr-card"><div class="cr-h">做事的你<span class="cr-tone'+warn+'">'+esc(toneLabel)+'</span></div><p>'+esc(asp.text||'')+'</p></div>';
+        if(asp.advice&&asp.advice.length){
+          html+='<div class="cr-card"><div class="cr-h">发力方向</div>'+asp.advice.map(function(a){return '<div class="cr-adv">'+esc(a)+'</div>';}).join('')+'</div>';
+        }
+        const dos=(asp.dos||[]).slice(0,3), avoid=(asp.avoid||[]).slice(0,2);
+        if(dos.length||avoid.length){
+          html+='<div class="cr-card"><div class="cr-cols">';
+          if(dos.length) html+='<div class="cr-col"><span class="cr-k do">顺手做</span><ul>'+dos.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+          if(avoid.length) html+='<div class="cr-col"><span class="cr-k avoid">要留意</span><ul>'+avoid.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+          html+='</div></div>';
+        }
+        wrap.innerHTML=html;
+      })();
+
       // —— 本命养生速查(读 APP.report.natal,免费速览 + 引导完整报告)——
       (function benming(){
         const R=APP.report; if(!R||!R.natal) return;
@@ -4738,37 +4785,6 @@
         const prev=$('luck-prev'), next=$('luck-next');
         if(prev) prev.addEventListener('click',(e)=>{ e.stopPropagation(); if(offset>0){ offset--; draw(); } });
         if(next) next.addEventListener('click',(e)=>{ e.stopPropagation(); offset++; draw(); });
-        // —— 事业择日器:意图 chips(复用报告已算好的 picker.categories,纯前端切换,不重算)——
-        const R=window.APP&&window.APP.report, PK=R&&R.picker;
-        const nav=document.querySelector('.tb-panel[data-panel="luckyday"] .luck-nav');
-        const note=$('luck-note'), chipBox=$('luck-chips');
-        const CATLABEL={sign:'签约拍板',talk:'谈判沟通',push:'拓展合作',act:'办要紧事',rest:'复盘调整',hold:'宜缓避险'};
-        const cats=(PK&&PK.categories)?PK.categories.filter((c)=>CATLABEL[c.key]):[];
-        function intentRow(x){
-          const eCls=x.energy>=72?'hi':(x.energy>=56?'mid':'lo');
-          const why=(x.reason||'').replace(/^能量\d+\s*·\s*/,''); // reason 已带「能量X · 」前缀,badge 已显能量,去重
-          return '<div class="lk-day"><div class="lk-dt"><b>'+esc(x.md)+'</b><span>'+esc(x.weekday)+'</span></div>'
-            +'<div class="lk-main"><div class="lk-tags"><span class="lk-e '+eCls+'">能量'+x.energy+'</span></div>'
-            +'<div class="lk-why">'+esc(why)+'</div></div></div>';
-        }
-        function renderIntent(c){
-          if(nav) nav.style.display='none';
-          if($('luck-intro')) $('luck-intro').textContent=c.desc||'';
-          const ds=(c.days||[]).filter(Boolean);
-          list.innerHTML= ds.length? ds.map(intentRow).join('') : '<div class="tb-empty">未来两月办这类事没有特别突出的日子，按平日节奏推进即可</div>';
-          if(note) note.textContent='按你的流日状态，挑出办这类事最顺手的日子 · 描述状态、非吉凶预测 · 本机计算不外传';
-        }
-        function setMode(m){
-          if(chipBox) Array.prototype.forEach.call(chipBox.children,(el)=>el.classList.toggle('on',el.dataset.m===m));
-          if(m==='luck'){ if(nav) nav.style.display=''; if(note) note.textContent='吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传'; draw(); }
-          else { const c=cats.find((x)=>x.key===m); if(c) renderIntent(c); }
-        }
-        if(chipBox && cats.length){
-          let html='<button class="luck-chip on" type="button" data-m="luck">黄历吉日</button>';
-          cats.forEach((c)=>{ html+='<button class="luck-chip" type="button" data-m="'+c.key+'">'+esc(CATLABEL[c.key])+'</button>'; });
-          chipBox.innerHTML=html;
-          Array.prototype.forEach.call(chipBox.children,(el)=>el.addEventListener('click',(e)=>{ e.stopPropagation(); setMode(el.dataset.m); }));
-        }
         draw();
       })();
 
