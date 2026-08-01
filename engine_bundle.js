@@ -12596,12 +12596,12 @@ var RhythmEngine = (() => {
       var DIM_CHONG = { label: "\u51FA\u884C", line: "\u8BA1\u5212\u6613\u53D8\uFF0C\u51FA\u95E8\u591A\u7559\u5FC3\uFF0C\u5927\u51B3\u5B9A\u7F13\u4E00\u4E24\u5929\u3002" };
       var DIM_HE = { label: "\u673A\u7F18", line: "\u4E0E\u4EBA\u6295\u7F18\uFF0C\u5B9C\u8C08\u5408\u4F5C\u3001\u6258\u4E8B\uFF0C\u4E3B\u52A8\u5F00\u53E3\u3002" };
       var FORTUNE_FLAT = {
-        career: "\u6309\u81EA\u8EAB\u8282\u594F\uFF0C\u505A\u5B8C\u4E00\u4EF6\uFF0C\u5FCC\u8D2A\u591A\u3002",
-        love: "\u5C11\u8BBA\u5BF9\u9519\uFF0C\u591A\u503E\u542C\u3002",
-        money: "\u5927\u989D\u652F\u51FA\u9694\u5929\u518D\u5B9A\u3002",
-        study: "\u5FCC\u5F00\u65B0\u5751\uFF0C\u5148\u8865\u4E0A\u5468\u672A\u8BFB\u4E00\u7AE0\u3002",
-        health: "\u7A33\u4F4F\u4F5C\u606F\uFF0C\u8BE5\u505C\u5219\u505C\u3002",
-        chance: "\u5FCC\u7B49\u5927\u673A\u4F1A\uFF0C\u628A\u624B\u5934\u4E00\u4EF6\u505A\u624E\u5B9E\u3002"
+        career: "\u5B9C\u6536\u5C3E\u3001\u63A8\u8FDB\u624B\u5934\u4E8B\uFF0C\u4E0D\u5F00\u65B0\u644A\u3002",
+        love: "\u5B9C\u503E\u542C\uFF0C\u4E3B\u52A8\u966A\u4F34\u3002",
+        money: "\u5B9C\u5BF9\u8D26\u3001\u7406\u6536\u652F\uFF0C\u5927\u989D\u7F13\u4E00\u7F13\u3002",
+        study: "\u5B9C\u8865\u8FDB\u5EA6\u3001\u590D\u76D8\u65E7\u7684\uFF0C\u522B\u5F00\u65B0\u5751\u3002",
+        health: "\u5B9C\u89C4\u5F8B\u4F5C\u606F\uFF0C\u522B\u786C\u6491\u3002",
+        chance: "\u5B9C\u4E13\u6CE8\u624B\u5934\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002"
       };
       function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy) {
         const has = (arr, t) => arr.indexOf(t) >= 0;
@@ -12630,7 +12630,7 @@ var RhythmEngine = (() => {
         if (volatile_)
           love = { tone: "\u614E", line: "\u60C5\u7EEA\u6613\u4E0A\u5934\uFF0C\u8BDD\u5230\u5634\u8FB9\u5148\u505C\u4E09\u79D2\u3002" };
         else if (he && low)
-          love = { tone: "\u5E73", line: "\u4E0E\u4EBA\u6295\u7F18\u4F46\u7CBE\u529B\u4E0D\u8DB3\uFF0C\u804A\u51E0\u53E5\u5373\u53EF\u3002" };
+          love = { tone: "\u5E73", line: "\u5B9C\u7B80\u5355\u966A\u4F34\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002" };
         else if (he)
           love = { tone: "\u987A", line: "\u4E0E\u4EBA\u5BF9\u5473\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002" };
         else
@@ -12638,7 +12638,7 @@ var RhythmEngine = (() => {
         let chance;
         const shi = has(favTypes, "\u98DF");
         if ((shi || he) && low)
-          chance = { tone: "\u5E73", line: "\u6709\u82D7\u5934\u4F46\u7CBE\u529B\u4E0D\u8DB3\uFF0C\u5148\u6309\u4F4F\uFF0C\u770B\u4E00\u4E24\u5929\u3002" };
+          chance = { tone: "\u5E73", line: "\u5B9C\u6309\u4F4F\u4E0D\u52A8\uFF0C\u770B\u4E00\u4E24\u5929\u518D\u8BF4\u3002" };
         else if (shi)
           chance = { tone: "\u987A", line: "\u8868\u8FBE\u987A\u3001\u8111\u5B50\u6D3B\uFF0C\u9002\u5408\u5C55\u793A\u81EA\u5DF1\u3001\u8BA4\u8BC6\u65B0\u670B\u53CB\u3002" };
         else if (he)
@@ -14632,7 +14632,7 @@ var RhythmEngine = (() => {
           };
         }
         return {
-          headline: `\u5E73\u7A33\u8FC7\u6E21 \xB7 \u592F\u5B9E${field}`,
+          headline: `\u5B9C\u5B88\u6210 \xB7 \u592F\u5B9E${field}`,
           trait: `\u6CA1\u6709\u5927\u8D77\u5927\u843D\uFF0C\u6B63\u597D\u628A${field}\u7684\u6839\u57FA\u6253\u7262\uFF0C\u4E0D\u62A2\u4E0D\u8D76\u4E5F\u80FD\u51FA\u6210\u679C\u3002`,
           yi: uniq(pickRot(doMid.concat(doHi), s, 3), 3),
           ji: ["\u597D\u9AD8\u9A9B\u8FDC", "\u65F6\u65AD\u65F6\u7EED\u3001\u96BE\u4EE5\u4E3A\u7EE7"]
@@ -14654,7 +14654,7 @@ var RhythmEngine = (() => {
         const h2 = avgs.slice(6).reduce((a, b) => a + b, 0) / 6;
         const spread = Math.max(...avgs) - Math.min(...avgs);
         if (spread <= 6)
-          return "\u4ECA\u5E74\u5341\u4E8C\u4E2A\u6708\u8BFB\u6570\u62C9\u4E0D\u5F00\u5DEE\u8DDD\u3002\u6CA1\u6709\u7279\u522B\u8981\u62A2\u7684\u7A97\u53E3\uFF0C\u6309\u81EA\u5DF1\u8282\u594F\u6765\u5C31\u884C\u3002";
+          return "\u4ECA\u5E74\u5404\u6708\u8282\u594F\u63A5\u8FD1\uFF0C\u6CA1\u6709\u975E\u62A2\u4E0D\u53EF\u7684\u7A97\u53E3\u2014\u2014\u5B9C\u6DF1\u8015\u4E3B\u7EBF\u3001\u7A33\u624E\u7A33\u6253\u3002";
         if (h2 - h1 >= 4)
           return "\u4ECA\u5E74\u4E0A\u4E0B\u534A\u5E74\u8BFB\u6570\u5DEE\u5F97\u6BD4\u8F83\u660E\u663E\uFF0C\u4E0B\u534A\u5E74\u9AD8\u4E00\u4E9B\u3002\u80FD\u632A\u65F6\u95F4\u7684\u5927\u4E8B\u5F80\u540E\u534A\u5E74\u6392\u66F4\u4ECE\u5BB9\u3002";
         if (h1 - h2 >= 4)
@@ -15246,7 +15246,7 @@ var RhythmEngine = (() => {
           return "\u5747\u8861";
         return nonBi[0].k;
       }
-      function heroLine(personaKey, fortune, energy) {
+      function heroLine(personaKey, fortune, energy, axis) {
         fortune = fortune || {};
         const LABEL = { career: "\u4E8B\u4E1A", chance: "\u673A\u4F1A", health: "\u5065\u5EB7", love: "\u611F\u60C5", money: "\u94B1\u8D22", study: "\u5B66\u4E60" };
         const ORDER = ["chance", "love", "health", "career", "money", "study"];
@@ -15274,7 +15274,11 @@ var RhythmEngine = (() => {
           return seg(warns[0], true);
         if (energy != null && energy < 48)
           return "\u4ECA\u5929\u7CBE\u529B\u504F\u4F4E\u2014\u2014\u628A\u6700\u8981\u7D27\u7684\u4E00\u4EF6\u505A\u5B8C\uFF0C\u522B\u786C\u8D76\uFF0C\u65E9\u70B9\u6B47\u3002";
-        return "\u4ECA\u5929\u5404\u65B9\u9762\u90FD\u5E73\u7A33\u2014\u2014\u6311\u6700\u8981\u7D27\u7684\u4E00\u4EF6\uFF0C\u7A33\u7A33\u505A\u5B8C\u5C31\u597D\u3002";
+        if (axis != null && axis >= 58)
+          return "\u4ECA\u5929\u5B9C\u62CD\u677F\u3001\u4E86\u7ED3\u6401\u7F6E\u7684\u5C0F\u4E8B\u3002";
+        if (axis != null && axis <= 42)
+          return "\u4ECA\u5929\u5B9C\u6574\u7406\u3001\u590D\u76D8\uFF0C\u522B\u6025\u7740\u5F00\u65B0\u5C40\u3002";
+        return "\u4ECA\u5929\u5B9C\u6536\u5C3E\uFF0C\u628A\u624B\u5934\u7684\u4E8B\u505A\u624E\u5B9E\u3002";
       }
       function buildReport(mj, chart, today, ctx) {
         const monthAvgs = ctx && ctx.monthAvgs || null;
@@ -15398,7 +15402,7 @@ var RhythmEngine = (() => {
             state: d.state,
             detail: d.detail,
             fortune: d.fortune,
-            heroLine: heroLine(heroP, d.fortune, d.energy),
+            heroLine: heroLine(heroP, d.fortune, d.energy, d.axis),
             // 干货主句:说中你+能照做(月历日也带,供当日卡/分享卡)
             yi: d.yi,
             huan: d.huan,
@@ -15472,7 +15476,7 @@ var RhythmEngine = (() => {
             // 高能量吉日，供选日标记(统一口径)
             gongJi: folk.gongJi,
             // 通用黄历吉凶(大吉当头,与个人能量解耦)
-            heroLine: heroLine(heroP, LR.fortune, LR.energy)
+            heroLine: heroLine(heroP, LR.fortune, LR.energy, LR.axis)
             // 干货主句:说中你+能照做
           };
         }

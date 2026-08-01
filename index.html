@@ -3129,7 +3129,7 @@
       function build(d){
         if (!d) return '';
         const M=APP.month.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
-        const kw=esc(d.cueWord||d.cue||'顺其自然'), line=poeticBreak(d.cueLine||('今天平平，挑一件要紧事稳稳做完就好。'));
+        const kw=esc(d.cueWord||d.cue||'顺其自然'), line=poeticBreak(d.cueLine||('今天宜收尾，把手头的事做扎实。'));
         const e=Math.min(100,d.e), word=esc(d.word||''), xi=XI||GOLD;
         const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'挑最要紧的一件做完');
         const huan=esc((d.huan&&d.huan.length&&d.huan.join('')!=='—')?d.huan.slice(0,2).join(' · '):'无须刻意避忌');
@@ -4768,7 +4768,7 @@
           if(chip && offset===0) chip.textContent= top.length? ('本季 '+top.length+' 个吉日') : '本季平稳';
           if($('luck-intro')) $('luck-intro').textContent= top.length
             ? '按黄历神煞 × 你的能量，挑出这一季的好日子，把要紧事往这几天排。'
-            : '这一季暂无特别突出的吉日，按平日节奏推进即可。';
+            : '这一季没有格外突出的吉日，要紧事挑能量高的几天办即可。';
           list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">这一季暂无特别突出的吉日</div>';
         }
         function rowHtml(x){
