@@ -556,26 +556,25 @@
     background:radial-gradient(72% 56% at 50% -4%,color-mix(in srgb,var(--gold) 15%,transparent),transparent 70%);opacity:.6;}
   .jd-gl-eye{position:relative;font-size:10px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;font-weight:500;opacity:.82;}
   .jd-gl-line{position:relative;font-family:var(--serif);font-size:20px;line-height:1.55;color:var(--gold-d);font-weight:400;margin:12px 0 2px;text-wrap:balance;letter-spacing:.5px;}
-  /* 开篇「当年运势」卡:今年要做/要注意 + 左右翻年 */
-  .jd-yr{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:16px;padding:15px 15px 14px;margin:0 0 16px;}
-  .jd-yr-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;}
-  .jd-yr-arw{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);background:var(--card);color:var(--gold-d);font-size:19px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:all .16s var(--ease);-webkit-tap-highlight-color:transparent;}
-  .jd-yr-arw:active{background:var(--gold-soft);transform:scale(.94);}
-  .jd-yr-ttl{text-align:center;flex:1;min-width:0;}
-  .jd-yr-ttl b{font-family:var(--serif);font-size:21px;font-weight:500;color:var(--gold-d);letter-spacing:1px;}
-  .jd-yr-ttl span{display:block;font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
-  .jd-yr-trait{font-size:14px;line-height:1.72;color:var(--ink);margin-bottom:13px;position:relative;padding-left:13px;}
-  .jd-yr-dot{position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;}
-  .jd-yr-dot.hi{background:var(--gold);box-shadow:0 0 6px -1px var(--gold);}
-  .jd-yr-dot.mid{background:var(--muted);}
-  .jd-yr-dot.lo{background:#6b7a86;}
-  .jd-yr-yj{display:flex;flex-direction:column;gap:11px;}
-  .jd-yr-k{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;padding:2px 9px;border-radius:7px;margin-bottom:7px;}
-  .jd-yr-k.do{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
-  .jd-yr-k.watch{color:var(--rest);background:color-mix(in srgb,var(--rest) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 28%,transparent);}
-  .jd-yr-col ul{list-style:none;margin:0;padding:0;}
-  .jd-yr-col li{font-size:13.5px;line-height:1.65;color:var(--ink-2);padding-left:14px;position:relative;}
-  .jd-yr-col li::before{content:"";position:absolute;left:4px;top:9px;width:4px;height:4px;border-radius:50%;background:var(--gold-d);opacity:.7;}
+  /* 开篇「当年运势」· 章回卷首(重设计:大字纪年 + 转向标题 + 宜做/要注意) */
+  .yc{margin:2px 0 22px;padding:2px 2px 22px;border-bottom:1px solid var(--line);}
+  .yc-nav{display:flex;align-items:center;justify-content:center;gap:18px;}
+  .yc-arw{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);background:transparent;color:var(--gold-d);font-size:19px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:all .16s var(--ease);-webkit-tap-highlight-color:transparent;}
+  .yc-arw:active{background:var(--gold-soft);transform:scale(.94);}
+  .yc-ttl{display:flex;align-items:baseline;gap:6px;}
+  .yc-ttl b{font-family:var(--serif);font-size:38px;font-weight:600;color:var(--gold-d);letter-spacing:2px;line-height:1;font-variant-numeric:tabular-nums;}
+  .yc-ttl span{font-family:var(--serif);font-size:16px;color:var(--gold-d);opacity:.82;}
+  .yc-sub{text-align:center;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:9px;}
+  .yc-hl{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--ink);letter-spacing:1px;text-align:center;margin:18px 0 0;text-wrap:balance;}
+  .yc-trait{font-size:13.5px;line-height:1.85;color:var(--ink-2);font-weight:300;text-align:center;max-width:290px;margin:11px auto 0;text-wrap:pretty;}
+  .yc-yj{display:flex;flex-direction:column;gap:16px;margin-top:22px;}
+  .yc-k{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;padding:3px 10px;border-radius:7px;margin-bottom:10px;}
+  .yc-k.do{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
+  .yc-k.watch{color:var(--rest);background:color-mix(in srgb,var(--rest) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 28%,transparent);}
+  .yc-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .yc-col li{font-size:14px;line-height:1.7;color:var(--ink-2);font-weight:300;padding-left:15px;position:relative;}
+  .yc-col li::before{content:"";position:absolute;left:3px;top:9px;width:4px;height:4px;border-radius:50%;background:var(--gold-d);opacity:.75;}
+  .yc-col.watch li::before{background:var(--rest);opacity:.7;}
   .jd-gl-dims{position:relative;display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 2px;}
   .jd-gl-dim{display:flex;align-items:center;gap:7px;cursor:pointer;}
   .jd-gl-dim .mk{width:9px;height:9px;border-radius:50%;flex:none;}
@@ -588,6 +587,40 @@
   .jd-gl-color .sw{width:20px;height:20px;border-radius:50%;border:1px solid var(--gold-line);box-shadow:inset 0 0 0 2px var(--bg-top);}
   .jd-gl-color span{font-size:11px;color:var(--muted);letter-spacing:1px;}
   /* 六章手风琴 */
+  /* ===== 命书 · 回目(目录) → 章节页 外壳(2026-08 重设计:取代顶部两卡+六章手风琴)===== */
+  #jd-toc{padding:2px 0 6px;}
+  .toc-cover{text-align:center;padding:12px 0 16px;}
+  .toc-eye{font-size:10.5px;letter-spacing:8px;color:var(--gold);font-weight:500;opacity:.9;padding-left:8px;}
+  .toc-seal{margin:18px auto 0;width:38px;height:38px;border-radius:8px;background:rgba(196,106,84,.14);border:1px solid rgba(196,106,84,.5);color:#C4866A;font-family:var(--serif);font-size:19px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(196,106,84,.06);}
+  .toc-id{font-family:var(--serif);font-size:17px;color:var(--ink-2);letter-spacing:2px;margin-top:16px;font-weight:400;}
+  .toc-rule{display:flex;align-items:center;gap:11px;margin:15px auto 0;width:170px;}
+  .toc-rule i{flex:1;height:1px;}
+  .toc-rule i:first-child{background:linear-gradient(90deg,transparent,var(--gold-line));}
+  .toc-rule i:last-child{background:linear-gradient(90deg,var(--gold-line),transparent);}
+  .toc-rule b{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);border-radius:1px;}
+  .toc-label{font-size:10px;letter-spacing:5px;color:var(--muted);margin:6px 2px 2px;}
+  .toc-list{display:flex;flex-direction:column;}
+  .toc-row{display:flex;align-items:center;gap:16px;padding:18px 2px;border:none;border-top:1px solid var(--line);background:none;width:100%;text-align:left;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;}
+  .toc-row:last-child{border-bottom:1px solid var(--line);}
+  .toc-row:active{opacity:.55;}
+  .toc-row-num{font-family:var(--serif);font-size:27px;color:var(--gold-d);font-weight:500;line-height:1;flex:none;width:30px;text-align:center;}
+  .toc-row-tx{flex:1;min-width:0;}
+  .toc-row-name{display:flex;align-items:baseline;gap:9px;margin-bottom:4px;}
+  .toc-row-name b{font-family:var(--serif);font-size:18px;color:var(--ink);letter-spacing:2px;font-weight:500;}
+  .toc-row-tag{font-size:9.5px;color:var(--gold-d);letter-spacing:1px;border:1px solid var(--gold-line);border-radius:10px;padding:1px 7px;}
+  .toc-row-sub{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .toc-row-go{color:var(--muted);font-size:15px;flex:none;}
+  /* 章节页 */
+  .ch-bar{display:flex;align-items:center;justify-content:space-between;padding:0 0 13px;margin-bottom:4px;border-bottom:1px solid var(--line);}
+  .ch-back{background:none;border:none;font-family:inherit;font-size:13px;color:var(--gold-d);letter-spacing:1px;cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent;}
+  .ch-back:active{opacity:.6;}
+  .ch-bar-t{font-size:11px;letter-spacing:3px;color:var(--muted);}
+  .ch-open{display:flex;align-items:flex-end;gap:15px;margin:16px 0 0;}
+  .ch-open b{font-family:var(--serif);font-size:50px;font-weight:600;color:var(--gold-d);line-height:.78;}
+  .ch-open span{font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:3px;color:var(--ink);padding-bottom:5px;}
+  .ch-open-rule{height:1px;background:linear-gradient(90deg,var(--gold-line),transparent);margin:16px 0 4px;}
+  .ch-grp>.rp-page{display:block;padding:2px 0 30px;}
+  #jd-chapter .rp-sec:first-child{margin-top:14px;}
   .jd-acc{display:flex;flex-direction:column;padding:0;}
   .jd-ch{border-top:1px solid var(--line);}
   .jd-ch:last-child{border-bottom:1px solid var(--line);}
@@ -1173,7 +1206,7 @@
   .yi-row{display:flex;align-items:flex-start;gap:11px;}
   .yi-k{flex:none;width:24px;height:24px;border-radius:8px;background:var(--gold-soft);color:var(--gold-d);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;}
   .yi-k.huan{background:color-mix(in srgb,var(--clay) 16%,var(--card));color:var(--clay);}
-  .yi-v{flex:1;font-size:13.5px;color:var(--ink);font-weight:400;line-height:1.6;padding-top:2px;}
+  .yi-v{flex:1;font-size:13.5px;color:var(--ink);font-weight:400;line-height:1.55;padding-top:3px;text-wrap:pretty;}
   /* W4.5 今日养生 */
   .wdg-care{display:flex;flex-direction:column;gap:0;}
   .wcare-h{font-size:13px;font-weight:600;color:var(--gold-d);letter-spacing:.5px;margin-bottom:11px;display:flex;align-items:center;gap:7px;}
@@ -1220,7 +1253,7 @@
   .wdg-help.hint{color:var(--gold-d);border-color:var(--gold-line);animation:helpPulse 2.4s ease-in-out infinite;}
   @keyframes helpPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,172,120,0);}50%{box-shadow:0 0 0 4px rgba(200,172,120,.13);}}
   .collapsed>.wdg-toggle .wdg-help{display:none;}
-  .today-hero{display:flex;align-items:center;gap:18px;margin:2px 0 18px;position:relative;}
+  .today-hero{display:flex;align-items:center;gap:14px;margin:2px 0 18px;position:relative;}
   /* 能量光球:按住浮出整体能量 0-100(平时藏,按住才露) */
   #w-orb{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none;}
   .orb-peek{position:absolute;left:50px;top:52px;transform:translate(-50%,-50%) scale(.94);
@@ -1230,12 +1263,12 @@
   .orb-peek.on{opacity:1;transform:translate(-50%,-50%) scale(1);}
   .orb-peek b{font-family:var(--serif);font-size:30px;line-height:1;color:var(--gold-d);font-weight:500;letter-spacing:1px;}
   .orb-peek s{font-size:9.5px;letter-spacing:2px;color:var(--muted);text-decoration:none;}
-  .th-orb{flex:none;width:100px;height:106px;display:flex;align-items:center;justify-content:center;}
+  .th-orb{flex:none;width:82px;height:88px;display:flex;align-items:center;justify-content:center;}
   .th-orb svg{display:block;overflow:visible;}
   .th-score{flex:none;display:flex;align-items:baseline;}
   .th-num{font-family:var(--serif);font-size:50px;font-weight:500;color:var(--gold-d);line-height:1;letter-spacing:0;}
   .th-max{font-size:14px;color:var(--muted);font-weight:300;margin-left:2px;}
-  .th-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;}
+  .th-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:11px;}
   .today-say{font-family:var(--serif);font-size:16px;line-height:1.78;color:var(--ink);margin:16px 2px 2px;letter-spacing:.3px;text-wrap:pretty;}
   .today-say:empty{display:none;}
   .th-word{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);letter-spacing:1.5px;}
@@ -1728,8 +1761,85 @@
   }
   /* 即便宽屏也让 tab 可点(切屏 JS 通用) */
   .tab{cursor:pointer;}
+  /* ============ 解读页 · 章回内页视觉升级(2026-08:只覆盖视觉,不改 JS/数据/字段)============ */
+  /* 判语 → 居中宋体标题(流年/十年的「转向年·该换打法」高光时刻),取代金框左边线 */
+  #jd-chapter .rp-verdict,#jd-chapter .rp-verdict-yr{
+    background:none;border:none;border-left:none;border-radius:0;padding:6px 6px 4px;margin:4px 0 6px;
+    font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.6;letter-spacing:1px;
+    color:var(--ink);text-align:center;text-wrap:balance;position:relative;}
+  #jd-chapter .rp-verdict::before{content:"";position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:22px;height:1px;background:var(--gold-line);}
+  /* 章内节标题:宋体更大、去金条,改细分隔线 */
+  #jd-chapter .rp-sec{margin-top:30px;}
+  #jd-chapter .rp-sec-h{gap:0;align-items:baseline;margin-bottom:14px;}
+  #jd-chapter .rp-sec-h .rp-bar{display:none;}
+  #jd-chapter .rp-sec-h b{font-size:16px;letter-spacing:2px;}
+  #jd-chapter .rp-sec-h span{margin-left:auto;font-size:10px;letter-spacing:1.5px;}
+  #jd-chapter .rp-lede{font-size:12.5px;line-height:1.9;}
+  /* 逐月/逐年卡 → 扁平栏线行(去卡框/底色,留白呼吸;大字宋体序号) */
+  #jd-chapter .rp-mo{border:none;border-radius:0;background:none;margin-bottom:0;border-top:1px solid var(--line);overflow:visible;}
+  #jd-chapter .rp-mo:first-of-type{border-top:none;}
+  #jd-chapter .rp-mo.cur{border-color:var(--line);position:relative;}
+  #jd-chapter .rp-mo.cur::before{content:"本月";position:absolute;left:0;top:15px;font-size:9px;color:var(--gold-d);letter-spacing:1px;}
+  #jd-chapter .rp-mo-top{padding:15px 2px;}
+  #jd-chapter .rp-mo-m b{font-size:24px;color:var(--gold-d);}
+  #jd-chapter .rp-mo.cur .rp-mo-m b{color:var(--gold-d);}
+  #jd-chapter .rp-mo-e b{font-size:22px;}
+  #jd-chapter .rp-mo-trait{font-size:13px;line-height:1.85;padding:12px 0 2px;}
+  #jd-chapter .rp-mo-body{padding:0 2px 16px;}
+  /* 宜忌 → 金/朱两色胶囊标签行 */
+  #jd-chapter .rp-mo-row{border-top:none;padding:3px 0;align-items:baseline;}
+  #jd-chapter .rp-mo-row .k{font-size:11px;font-weight:600;letter-spacing:1px;width:auto;padding:2px 9px;border-radius:6px;color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);margin-right:9px;}
+  #jd-chapter .rp-mo-row.caution .k{color:var(--clay);background:color-mix(in srgb,var(--clay) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--clay) 28%,transparent);}
+  #jd-chapter .rp-mo-row .v{font-size:13px;line-height:1.7;padding-top:1px;}
+  /* 走势卡:去重边框,融进页面 */
+  #jd-chapter .rp-chart-wrap{border-color:var(--line);background:radial-gradient(120% 100% at 50% 0,rgba(200,172,120,.07),transparent 60%),var(--card);}
+  #jd-chapter .rp-mlegend{margin-top:2px;}
+  /* 食养/动养/情志/身体:去厚卡框,栏线分区 */
+  #jd-chapter .rp-card{border:none;border-radius:0;background:none;padding:0;}
+  #jd-chapter .rp-cl-h{font-size:11px;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px;}
+  #jd-chapter .rp-pill{padding:6px 14px;border-radius:20px;background:var(--card-2);border-color:var(--line-2);font-size:12px;}
+  #jd-chapter .rp-wx-care{font-size:12.5px;line-height:1.75;}
+  /* 择日:类目宋体大标题 + 扁平日行 */
+  #jd-chapter .rp-pk-intro{font-size:13px;line-height:1.8;color:var(--ink-2);margin-bottom:20px;}
+  #jd-chapter .rp-cat{margin-bottom:0;border-top:1px solid var(--line);padding:18px 2px 6px;}
+  #jd-chapter .rp-cat-h{gap:9px;margin-bottom:6px;}
+  #jd-chapter .rp-cat-ic{display:none;}
+  #jd-chapter .rp-cat-t{font-family:var(--serif);font-size:16px;letter-spacing:2px;color:var(--ink);font-weight:500;}
+  #jd-chapter .rp-cat-d{font-size:11px;color:var(--muted);}
+  #jd-chapter .rp-days{gap:0;}
+  #jd-chapter .rp-day{border:none;border-radius:0;background:none;padding:11px 0;gap:12px;border-top:1px solid var(--line);}
+  #jd-chapter .rp-cat .rp-day:first-child{border-top:none;}
+  #jd-chapter .rp-day-dd b{font-size:16px;}
+  /* —— 本命章(壹)统一到章回语言 —— */
+  /* 读懂你:金左线要点行,标签更聚焦 */
+  #jd-chapter .np-row-lab{font-size:15px;}
+  #jd-chapter .np-row-tx{font-size:13.5px;line-height:1.95;}
+  /* 深层辩证「刺」→ 通栏居中宋体金句(说中你的高光,取代小卡) */
+  #jd-chapter .rp-dia{gap:0;}
+  #jd-chapter .rp-dia-it{border:none;border-radius:0;background:none;padding:24px 10px;text-align:center;border-top:1px solid var(--line);}
+  #jd-chapter .rp-dia-it:first-child{border-top:none;}
+  #jd-chapter .rp-dia-t{justify-content:center;font-family:var(--serif);font-size:18.5px;font-weight:500;letter-spacing:.5px;color:var(--ink);margin-bottom:11px;line-height:1.55;text-wrap:balance;}
+  #jd-chapter .rp-dia-t::before{display:none;}
+  #jd-chapter .rp-dia-s{font-size:13px;line-height:1.9;max-width:280px;margin:0 auto;}
+  /* 四种状态:栏线行 */
+  #jd-chapter .rp-rhythm{gap:0;}
+  #jd-chapter .rp-rh{padding:12px 0;border-top:1px solid var(--line);}
+  #jd-chapter .rp-rhythm .rp-rh:first-child{border-top:none;padding-top:2px;}
+  #jd-chapter .rp-rh-lab{font-size:15px;width:42px;}
+  #jd-chapter .rp-rh-line{font-size:13px;}
+  #jd-chapter .rp-rh-foot{font-size:11.5px;color:var(--muted);font-weight:300;line-height:1.7;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
+  /* 生活方面分段 tab:去实心底,细描边 */
+  #jd-chapter .np-tabs{background:none;border:none;border-bottom:1px solid var(--line);border-radius:0;padding:0 0 2px;gap:2px;}
+  #jd-chapter .np-tab{border-radius:8px 8px 0 0;padding:9px 2px;}
+  #jd-chapter .np-tab.on{color:var(--gold-d);background:none;box-shadow:inset 0 -2px 0 var(--gold-d);font-weight:600;}
+  #jd-chapter .np-panel-tx{font-size:13.5px;line-height:1.9;}
+  /* 需要注意 / 幸运色:融进栏线,去卡框(rp-card 已扁平) */
+  #jd-chapter .rp-color{gap:16px;}
+  #jd-chapter .rp-color-sw{width:46px;height:46px;border-radius:12px;}
+  /* 收束金句:居中宋体,去金框 */
+  #jd-chapter .rp-closing{background:none;border:none;border-top:1px solid var(--line);border-radius:0;padding:26px 14px 6px;text-align:center;font-size:16px;line-height:1.7;letter-spacing:.5px;text-wrap:balance;}
+  #jd-chapter .rp-closing::before{content:"";left:50%;top:-6px;transform:translateX(-50%);width:22px;height:1px;background:var(--gold-line);font-size:0;}
 </style>
-</head>
 <body>
 <!-- 统一图标精灵(线性几何，描边随 currentColor) -->
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
@@ -2213,35 +2323,38 @@
       <div class="rp-cover" id="rp-cover"></div>
       <!-- 已解锁内容 -->
       <div id="rp-body" style="display:none">
-        <!-- 开篇「当年运势」卡:讲今年要做什么/要注意(干货),可左右翻年看上一年/下一年 -->
-        <div id="jd-year"></div>
-        <!-- 一目了然层:常驻不折叠的「能量底色卡」(JS 填充,全部引用现有已算字段,缺失走 if-guard) -->
-        <div id="jd-glance"></div>
-        <!-- 六章手风琴:章头由 JS 填(章序/眉标/章名/信号 chip);章内容=原 rp-page 原样搬入(内容一字不改) -->
-        <div class="jd-acc" id="jd-acc">
-          <div class="jd-ch open" data-p="natal">
-            <button class="jd-ch-head" type="button"></button>
-            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="natal" id="rp-p-natal"></div></div></div>
+        <!-- 命书 · 回目(目录):四卷入口,点开进章节页(取代原「顶部两卡 + 六章手风琴」) -->
+        <div id="jd-toc">
+          <div class="toc-cover">
+            <div class="toc-eye">本 命 命 书</div>
+            <div class="toc-seal">命</div>
+            <div class="toc-id" id="toc-id">—</div>
+            <div class="toc-rule"><i></i><b></b><i></i></div>
           </div>
-          <div class="jd-ch" data-p="care">
-            <button class="jd-ch-head" type="button"></button>
-            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="care" id="rp-p-care"></div></div></div>
+          <div class="toc-label">目 录</div>
+          <div class="toc-list" id="toc-list"></div>
+        </div>
+        <!-- 章节页:一次一卷,顶部「返回目录」;章内容=原 rp-page 原样搬入(内容一字不改) -->
+        <div id="jd-chapter" style="display:none">
+          <div class="ch-bar"><button class="ch-back" id="ch-back" type="button">‹ 返回目录</button><span class="ch-bar-t">命书</span><span style="width:52px"></span></div>
+          <div class="ch-grp" data-ch="natal">
+            <div class="ch-open"><b>壹</b><span>本命</span></div><div class="ch-open-rule"></div>
+            <div class="rp-page on" data-p="natal" id="rp-p-natal"></div>
           </div>
-          <div class="jd-ch" data-p="months">
-            <button class="jd-ch-head" type="button"></button>
-            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="months" id="rp-p-months"></div></div></div>
+          <div class="ch-grp" data-ch="liunian" style="display:none">
+            <div class="ch-open"><b>貳</b><span>流年</span></div><div class="ch-open-rule"></div>
+            <div id="jd-year"></div>
+            <div class="rp-page on" data-p="months" id="rp-p-months"></div>
+            <div class="rp-page on" data-p="years" id="rp-p-years"></div>
+            <div class="rp-page on" data-p="ahead" id="rp-p-ahead"></div>
           </div>
-          <div class="jd-ch" data-p="picker">
-            <button class="jd-ch-head" type="button"></button>
-            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="picker" id="rp-p-picker"></div></div></div>
+          <div class="ch-grp" data-ch="picker" style="display:none">
+            <div class="ch-open"><b>叄</b><span>择日</span></div><div class="ch-open-rule"></div>
+            <div class="rp-page on" data-p="picker" id="rp-p-picker"></div>
           </div>
-          <div class="jd-ch jd-future" data-p="years">
-            <button class="jd-ch-head" type="button"></button>
-            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="years" id="rp-p-years"></div></div></div>
-          </div>
-          <div class="jd-ch jd-future jd-far" data-p="ahead">
-            <button class="jd-ch-head" type="button"></button>
-            <div class="jd-ch-panel"><div class="jd-ch-inner"><div class="rp-page on" data-p="ahead" id="rp-p-ahead"></div></div></div>
+          <div class="ch-grp" data-ch="care" style="display:none">
+            <div class="ch-open"><b>肆</b><span>调养</span></div><div class="ch-open-rule"></div>
+            <div class="rp-page on" data-p="care" id="rp-p-care"></div>
           </div>
         </div>
         <div class="rp-foot"><b class="rp-foot-em">本报告是传统历法与民俗文化的整理，不是预测。</b>全部依据你填写的出生信息在本机计算 · 不上传、不外传<br>内容用于安排作息与自我调养，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果</div>
@@ -4309,7 +4422,7 @@
           : '今年各月起伏不大，按平时节奏安排就好。';
         const cpts=Y.months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:m.month===Y.curMonth, key:'m'+m.month}));
         $('rp-p-months').innerHTML =
-          rpBanner('sec-rhythm','高能量月','')
+          ''
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b></div>'
           + (Y.yearVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.yearVerdict)+'</div>':'')
           + chartCard(cpts, Y.year+' 年逐月气场', '')
@@ -4382,7 +4495,7 @@
           : '未来十年气场大体平稳，起伏不大，按自己的节奏稳步推进即可。';
         const cpts=Y.years.map((y)=>({label:String(y.year).slice(2), value:y.energy, level:y.level, cur:y.year===Y.curYear, key:'y'+y.year}));
         $('rp-p-years').innerHTML =
-          rpBanner('sec-rhythm','高能量年','')
+          ''
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b></div>'
           + (Y.decadeVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.decadeVerdict)+'</div>':'')
           + chartCard(cpts, '未来十年气场走势', '')
@@ -4408,7 +4521,7 @@
         const pills=(arr)=> '<div class="rp-pills">'+arr.map((v)=>'<span class="rp-pill">'+esc(v)+'</span>').join('')+'</div>';
         const splitItems=(s)=> String(s||'').split(/[、,，;；]/).map((x)=>x.trim()).filter(Boolean);
         // 顺时养生:删掉空泛的「养生总纲 / 高能时段」两框(说了等于没说),开门见山直接给「吃 / 动 / 心 / 身」四类可执行建议
-        let html = rpBanner('sec-wellness','顺时养生','非医疗建议');
+        let html = '';
         // 食养(把各路宜补的食物合并去重，直接列清单)
         const foods=[...new Set(xs.flatMap((x)=>splitItems(x.food)))];
         html += sec('','食养 · 平时多吃这些','',
@@ -4464,7 +4577,7 @@
           + '</div>';
         const from=P.from;
         $('rp-p-picker').innerHTML =
-          rpBanner('sec-timing','重要择日','')
+          ''
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>替你挑好的日子</b><span>未来 '+P.span+' 天</span></div>'
           + '<div class="rp-pk-intro">从 '+from.month+'月'+from.day+'日 起两个月内，按事情性质挑出你状态最配的日子。</div>'
           + pickerBand(P.series)
@@ -4572,16 +4685,17 @@
         var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
         var doL=li(y.yi), watchL=li(y.ji);
         el.innerHTML=
-          '<div class="jd-yr">'
-          +'<div class="jd-yr-nav">'
-          +'<button class="jd-yr-arw" id="jd-yr-prev" type="button" aria-label="上一年">‹</button>'
-          +'<div class="jd-yr-ttl"><b>'+_jdYearY+' 年</b>'+(sub?'<span>'+esc(sub)+'</span>':'')+'</div>'
-          +'<button class="jd-yr-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
+          '<div class="yc">'
+          +'<div class="yc-nav">'
+          +'<button class="yc-arw" id="jd-yr-prev" type="button" aria-label="上一年">‹</button>'
+          +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
+          +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
-          +(y.trait?'<div class="jd-yr-trait"><i class="jd-yr-dot '+lvl+'"></i>'+esc(y.trait)+'</div>':'')
-          +'<div class="jd-yr-yj">'
-          +(doL?'<div class="jd-yr-col"><span class="jd-yr-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
-          +(watchL?'<div class="jd-yr-col"><span class="jd-yr-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
+          +(sub?'<div class="yc-sub">'+esc(sub)+'</div>':'')
+          +(y.trait?'<div class="yc-trait">'+esc(y.trait)+'</div>':'')
+          +'<div class="yc-yj">'
+          +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
+          +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
           +'</div>'
           +'</div>';
         var go=function(d){ _jdYearY+=d; renderYearCard(); };
@@ -4594,7 +4708,44 @@
           card.addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)<45)return; go(dx<0?1:-1); },{passive:true});
         }
       }
-      function buildJiedu(){ try{ renderYearCard(); buildGlance(); buildHeads(); jdReveal(); }catch(e){} }
+      function jdToc(){
+        var el=$('toc-list'); if(!el) return;
+        var n=R.natal||{}, pe=n.persona||{};
+        var idEl=$('toc-id'); if(idEl) idEl.textContent=pe.identity||'本命命书';
+        var jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
+        var curY=(R.years&&R.years.curYear)||'';
+        var yObj=(R.years&&R.years.years)?R.years.years.filter(function(y){return y.year===curY;})[0]:null;
+        var yTease=curY?(curY+(yObj&&yObj.headline?(' · '+yObj.headline):' · 今年的节奏')):'今年的节奏';
+        var pN=0; if(R.picker&&R.picker.categories&&R.picker.categories[0]&&R.picker.categories[0].days) pN=R.picker.categories[0].days.length;
+        var pTease=pN?('未来两月 · 宜进取 '+pN+' 天'):'为要紧事挑好日子';
+        var rows=[
+          {ch:'natal',num:'壹',name:'本命',tag:'',sub:pe.tagline||'你是什么样的人'},
+          {ch:'liunian',num:'貳',name:'流年',tag:'今年',sub:yTease},
+          {ch:'picker',num:'叄',name:'择日',tag:'',sub:pTease},
+          {ch:'care',num:'肆',name:'调养',tag:jq||'',sub:jq?('眼下'+jq+' · 顺时怎么养'):'顺时养生'}
+        ];
+        el.innerHTML=rows.map(function(r){
+          return '<button class="toc-row" type="button" data-ch="'+r.ch+'">'
+            +'<span class="toc-row-num">'+r.num+'</span>'
+            +'<span class="toc-row-tx"><span class="toc-row-name"><b>'+esc(r.name)+'</b>'+(r.tag?'<span class="toc-row-tag">'+esc(r.tag)+'</span>':'')+'</span>'
+            +'<span class="toc-row-sub">'+esc(r.sub)+'</span></span>'
+            +'<span class="toc-row-go">›</span></button>';
+        }).join('');
+        el.querySelectorAll('.toc-row').forEach(function(b){ b.addEventListener('click',function(){ jdShowChapter(b.getAttribute('data-ch')); }); });
+      }
+      function jdShowChapter(ch){
+        var toc=$('jd-toc'), chap=$('jd-chapter'); if(!toc||!chap) return;
+        toc.style.display='none'; chap.style.display='block';
+        chap.querySelectorAll('.ch-grp').forEach(function(g){ g.style.display=(g.getAttribute('data-ch')===ch)?'block':'none'; });
+        var sc=chap.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
+      }
+      window.__jdShowChapter=jdShowChapter;
+      function jdShowToc(){
+        var toc=$('jd-toc'), chap=$('jd-chapter'); if(!toc||!chap) return;
+        chap.style.display='none'; toc.style.display='block';
+        var sc=toc.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
+      }
+      function buildJiedu(){ try{ renderYearCard(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
 
       function showBody(){
         cover.style.display='none'; body.style.display='block';
@@ -4611,7 +4762,7 @@
       // 供工具箱「本命养生速查」跳转到完整报告指定 tab(全免费:打开即完整内容)
       // 内联化:报告主体常驻「解读」页；工具深链只切到解读页并定位子页(不再开 overlay)
       window.__rpInlineInto = function(host){ if(host && body && body.parentNode!==host) host.appendChild(body); showBody(); };
-      window.__rpGoTab = function(tab){ if(!tab) return; const t=document.querySelector('#jd-acc .jd-ch[data-p="'+tab+'"]'); if(!t) return; document.querySelectorAll('#jd-acc .jd-ch').forEach(function(c){ c.classList.toggle('open', c===t); }); const h=t.querySelector('.jd-ch-head'); setTimeout(function(){ jdScrollTo(h||t); }, 370); };
+      window.__rpGoTab = function(tab){ var map={natal:'natal',care:'care',picker:'picker',months:'liunian',years:'liunian',ahead:'liunian'}; var ch=map[tab]; if(ch && window.__jdShowChapter) window.__jdShowChapter(ch); };
       window.__openReport=(tab)=>{
         if(window.__setScreen) window.__setScreen(2);
         window.shihe && window.shihe.track('report_open', { source:'tool', tab: tab||'' });
