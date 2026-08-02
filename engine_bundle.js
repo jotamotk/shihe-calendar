@@ -14257,7 +14257,6 @@ var RhythmEngine = (() => {
           dayMaster: mj.dayMaster,
           dayGan,
           dayWx,
-          archetype: arche,
           monthZhi: mj.monthZhi,
           season: mj.season,
           strength: mj.strength,
@@ -14277,7 +14276,6 @@ var RhythmEngine = (() => {
           tiaohouNote: mj.tiaohouNote,
           colorAdvice,
           aspects,
-          signature,
           persona,
           // {identity,tagline,coreText[p1,p2,p3],love,work,closing}
           dialectics
