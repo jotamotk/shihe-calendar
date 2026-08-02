@@ -2348,12 +2348,8 @@
             <div class="rp-page on" data-p="years" id="rp-p-years"></div>
             <div class="rp-page on" data-p="ahead" id="rp-p-ahead"></div>
           </div>
-          <div class="ch-grp" data-ch="picker" style="display:none">
-            <div class="ch-open"><b>叄</b><span>择日</span></div><div class="ch-open-rule"></div>
-            <div class="rp-page on" data-p="picker" id="rp-p-picker"></div>
-          </div>
           <div class="ch-grp" data-ch="care" style="display:none">
-            <div class="ch-open"><b>肆</b><span>调养</span></div><div class="ch-open-rule"></div>
+            <div class="ch-open"><b>叄</b><span>调养</span></div><div class="ch-open-rule"></div>
             <div class="rp-page on" data-p="care" id="rp-p-care"></div>
           </div>
         </div>
@@ -4559,6 +4555,7 @@
 
       // —— 报告3:重要择日 ——
       function renderPicker(){
+        if(!$('rp-p-picker')) return; // 择日已从解读移除(归工具箱近期吉日),元素不存在则跳过
         const P=R.picker;
         // 守卫:旧存档(report.picker 字段出现前的引擎版本写入)回落时 R.picker 可能缺失——
         // 对齐 renderMonths/renderYears/renderAhead 的 if(!X)return,免裸取 P.from 抛错中断整个脚本块。
@@ -4721,8 +4718,7 @@
         var rows=[
           {ch:'natal',num:'壹',name:'本命',tag:'',sub:pe.tagline||'你是什么样的人'},
           {ch:'liunian',num:'貳',name:'流年',tag:'今年',sub:yTease},
-          {ch:'picker',num:'叄',name:'择日',tag:'',sub:pTease},
-          {ch:'care',num:'肆',name:'调养',tag:jq||'',sub:jq?('眼下'+jq+' · 顺时怎么养'):'顺时养生'}
+          {ch:'care',num:'叄',name:'调养',tag:jq||'',sub:jq?('眼下'+jq+' · 顺时怎么养'):'顺时养生'}
         ];
         el.innerHTML=rows.map(function(r){
           return '<button class="toc-row" type="button" data-ch="'+r.ch+'">'
@@ -4751,7 +4747,7 @@
         cover.style.display='none'; body.style.display='block';
         if($('rp-head-sub')) $('rp-head-sub').textContent='';
         // 纵深防御:逐段包 try/catch(单段坏不连累其余与工具箱)
-        [renderNatal, renderMonths, renderYears, renderCare, renderPicker, renderAhead].forEach(function(fn){
+        [renderNatal, renderMonths, renderYears, renderCare, renderAhead].forEach(function(fn){
           try{ fn(); }catch(e){}
         });
         buildJiedu();
@@ -4762,7 +4758,7 @@
       // 供工具箱「本命养生速查」跳转到完整报告指定 tab(全免费:打开即完整内容)
       // 内联化:报告主体常驻「解读」页；工具深链只切到解读页并定位子页(不再开 overlay)
       window.__rpInlineInto = function(host){ if(host && body && body.parentNode!==host) host.appendChild(body); showBody(); };
-      window.__rpGoTab = function(tab){ var map={natal:'natal',care:'care',picker:'picker',months:'liunian',years:'liunian',ahead:'liunian'}; var ch=map[tab]; if(ch && window.__jdShowChapter) window.__jdShowChapter(ch); };
+      window.__rpGoTab = function(tab){ var map={natal:'natal',care:'care',months:'liunian',years:'liunian',ahead:'liunian'}; var ch=map[tab]; if(ch && window.__jdShowChapter) window.__jdShowChapter(ch); };
       window.__openReport=(tab)=>{
         if(window.__setScreen) window.__setScreen(2);
         window.shihe && window.shihe.track('report_open', { source:'tool', tab: tab||'' });
