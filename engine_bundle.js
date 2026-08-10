@@ -15603,7 +15603,8 @@ var RhythmEngine = (() => {
       function buildYearCardFor(person, Y) {
         const chart = paipan(person);
         const mj = analyze(chart);
-        return buildYearCard(mj, chart, Y);
+        const y = Math.max(person.year, Math.min(person.year + 99, Y));
+        return buildYearCard(mj, chart, y);
       }
       module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor };
     }
