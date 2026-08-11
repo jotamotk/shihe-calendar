@@ -1779,7 +1779,8 @@
   #jd-chapter .rp-mo{border:none;border-radius:0;background:none;margin-bottom:0;border-top:1px solid var(--line);overflow:visible;}
   #jd-chapter .rp-mo:first-of-type{border-top:none;}
   #jd-chapter .rp-mo.cur{border-color:var(--line);position:relative;}
-  #jd-chapter .rp-mo.cur::before{content:"本月";position:absolute;left:0;top:15px;font-size:9px;color:var(--gold-d);letter-spacing:1px;}
+  /* 「你在这里」标记:直接把卡片自带的副标(今年/本月)点亮成金色,不再叠一个会压住大字、且年/月混用的 ::before 角标 */
+  #jd-chapter .rp-mo.cur .rp-mo-m span{color:var(--gold-d);}
   #jd-chapter .rp-mo-top{padding:15px 2px;}
   #jd-chapter .rp-mo-m b{font-size:24px;color:var(--gold-d);}
   #jd-chapter .rp-mo.cur .rp-mo-m b{color:var(--gold-d);}
@@ -4412,8 +4413,8 @@
         };
         const hi=Y.highMonths.join('、'), lo=Y.lowMonths.join('、');
         const ledeM = (hi||lo)
-          ? ((hi?'今年 <b>'+hi+' 月</b>你的读数最高。这类月份人通常更耐折腾，想集中干一件难事可以排这几个月；':'')
-             + (lo?'<b>'+lo+' 月</b>更适合沉淀蓄力、打好基础，稳一稳再发力；':'')
+          ? ((hi?'今年 <b>'+hi+' 月</b>你的读数最高，状态更经得起消耗。想集中做一件难事，适合排在这几个月；':'')
+             + (lo?'<b>'+lo+' 月</b>更适合休整、打好基础，稳一稳再发力；':'')
              + '其余月份按自己的节奏稳步推进即可。')
           : '今年各月起伏不大，按平时节奏安排就好。';
         const cpts=Y.months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:m.month===Y.curMonth, key:'m'+m.month}));
@@ -4485,10 +4486,10 @@
         };
         const hi=Y.highYears.join('、'), lo=Y.lowYears.join('、');
         const ledeY = (hi||lo)
-          ? ((hi?'这十年里 <b>'+hi+' 年</b>的读数相对高。要不要把大事放这几年你自己拿主意——读数只说你的节律，说不了外部的事；':'')
-             + (lo?'<b>'+lo+' 年</b>宜深耕守成、稳住根基，积蓄之后再起势；':'')
+          ? ((hi?'这十年里 <b>'+hi+' 年</b>的读数相对高，你自己的状态更在线。重要的事是否安排在这几年，由你自己决定；读数反映的是你的节律，不代表外部环境。':'')
+             + (lo?'<b>'+lo+' 年</b>更适合稳守、打好基础，积蓄之后再发力；':'')
              + '其余年份按自己的节奏稳步推进即可。')
-          : '未来十年气场大体平稳，起伏不大，按自己的节奏稳步推进即可。';
+          : '未来十年读数大体平稳，起伏不大，按自己的节奏稳步推进即可。';
         const cpts=Y.years.map((y)=>({label:String(y.year).slice(2), value:y.energy, level:y.level, cur:y.year===Y.curYear, key:'y'+y.year}));
         $('rp-p-years').innerHTML =
           ''
