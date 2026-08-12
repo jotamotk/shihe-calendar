@@ -926,6 +926,17 @@
   .rel-seg{display:inline-flex;gap:2px;background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:3px;margin-bottom:13px;}
   .rel-seg button{border:0;background:transparent;color:var(--muted);font-size:11.5px;font-family:inherit;font-weight:400;letter-spacing:.5px;padding:4px 12px;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .18s,background .18s;}
   .rel-seg button.on{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);font-weight:500;}
+  /* 章内子块折叠:整齐、可跳读 */
+  .sec-fold > .rp-sec-h{display:flex;align-items:center;gap:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .sec-fold > .rp-sec-h > b{flex:none;}
+  .sec-fold-sum{flex:1;min-width:0;font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
+  .sec-fold.open > .rp-sec-h .sec-fold-sum{display:none;}
+  .sec-fold-chev{flex:none;margin-left:auto;width:18px;height:18px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;transition:transform .26s var(--ease),color .26s;}
+  .sec-fold-chev svg{width:13px;height:13px;}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev{transform:rotate(180deg);color:var(--gold-d);}
+  .sec-fold-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease);}
+  .sec-fold.open > .sec-fold-body{grid-template-rows:1fr;}
+  .sec-fold-inner{overflow:hidden;min-height:0;}
   .mood-taohua{margin-top:11px;display:flex;gap:9px;align-items:baseline;font-size:12.5px;line-height:1.85;color:var(--ink-2);font-weight:300;}
   .mood-taohua em{flex:none;font-style:normal;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);border-radius:6px;padding:2px 9px;box-shadow:inset 0 0 0 1px var(--gold-line);}
   .np-panel-tags{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
@@ -4201,6 +4212,37 @@
             if(moodA&&body) body.innerHTML=moodBodyHtml(moodA,rel);
           });
         });
+        // —— 章内子块折叠(整齐·可跳读·一眼知道每块讲什么):第一块默认展开,其余收起+一句概括 ——
+        (function foldNatalSections(){
+          const SUMM={
+            '读懂你': pe.tagline || '你是什么样的人',
+            '四种状态': '精力 · 专注 · 情绪 · 人际',
+            '生活方面': '学习 · 事业 · 钱财 · 情感 · 健康',
+            '近期调养窗口': '接下来适合养一养的时段',
+            '需要注意': (n.jiShen&&n.jiShen.length)? n.jiShen.map((j)=>j.caution).slice(0,2).join(' · ') : '你要留心的几点',
+            '你的幸运色': (n.xiColor&&n.xiColor.name||'') + ' · 随身养气场',
+          };
+          const CHEV='<span class="sec-fold-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+          let idx=0;
+          wrap.querySelectorAll(':scope > .rp-sec').forEach((sec)=>{
+            let h=sec.querySelector(':scope > .rp-sec-h'); let title='';
+            if(h){ title=(h.querySelector('b')||{}).textContent||''; }
+            else if(sec.querySelector(':scope > .rp-dia')){   // 深层解读无标题:补一个可折叠头
+              h=document.createElement('div'); h.className='rp-sec-h';
+              h.innerHTML='<i class="rp-bar"></i><b>说中你的</b>';
+              sec.insertBefore(h, sec.firstChild); title='说中你的'; SUMM[title]='几句一针见血的洞察';
+            } else { return; }   // 收束金句等无头块不折叠
+            const ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex) ex.remove(); // 幸运色原有色名span,去重复
+            const body=document.createElement('div'); body.className='sec-fold-body';
+            const inner=document.createElement('div'); inner.className='sec-fold-inner';
+            while(h.nextSibling) inner.appendChild(h.nextSibling);
+            body.appendChild(inner); sec.appendChild(body);
+            const sm=SUMM[title]; if(sm){ const s=document.createElement('span'); s.className='sec-fold-sum'; s.textContent=sm; h.appendChild(s); }
+            h.insertAdjacentHTML('beforeend', CHEV);
+            sec.classList.add('sec-fold'); if(idx===0) sec.classList.add('open'); idx++;
+            h.addEventListener('click', ()=> sec.classList.toggle('open'));
+          });
+        })();
       }
 
       // 精简:移除每张月/年卡上的领域小标签(↑·⚠ 一长串),减少视觉噪声
