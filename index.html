@@ -4838,6 +4838,40 @@
       }
       function buildJiedu(){ try{ renderYearCard(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
 
+      // —— 通用章内折叠(整齐·可跳读·一眼知道每块讲什么);与本命章 foldNatalSections 同款 ——
+      var FOLD_CHEV='<span class="sec-fold-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+      // 把整个容器内容包成一个折叠块(用于流年的四大块:当年/逐月/十年/三年)
+      function wrapContainerAsFold(container, title, summary, open){
+        if(!container || container.dataset.folded==='1' || !container.innerHTML.trim()) return;
+        container.dataset.folded='1';
+        var h=document.createElement('div'); h.className='rp-sec-h';
+        h.innerHTML='<i class="rp-bar"></i><b>'+title+'</b>';
+        var body=document.createElement('div'); body.className='sec-fold-body';
+        var inner=document.createElement('div'); inner.className='sec-fold-inner';
+        while(container.firstChild) inner.appendChild(container.firstChild);
+        body.appendChild(inner); container.appendChild(h); container.appendChild(body);
+        if(summary){ var s=document.createElement('span'); s.className='sec-fold-sum'; s.textContent=summary; h.appendChild(s); }
+        h.insertAdjacentHTML('beforeend', FOLD_CHEV);
+        container.classList.add('sec-fold'); if(open) container.classList.add('open');
+        h.addEventListener('click', function(){ container.classList.toggle('open'); });
+      }
+      // 把容器内每个带标题 .rp-sec 各折一块(用于调养章;标题自带说明,不另加概括)
+      function foldRpSecsIn(container, firstOpen){
+        if(!container) return; var idx=0;
+        container.querySelectorAll(':scope > .rp-sec').forEach(function(sec){
+          if(sec.dataset.folded==='1') return;
+          var h=sec.querySelector(':scope > .rp-sec-h'); if(!h){ return; }
+          sec.dataset.folded='1';
+          var ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex){ var s2=document.createElement('span'); s2.className='sec-fold-sum'; s2.textContent=ex.textContent; ex.remove(); h.appendChild(s2); }
+          var body=document.createElement('div'); body.className='sec-fold-body';
+          var inner=document.createElement('div'); inner.className='sec-fold-inner';
+          while(h.nextSibling) inner.appendChild(h.nextSibling);
+          body.appendChild(inner); sec.appendChild(body);
+          h.insertAdjacentHTML('beforeend', FOLD_CHEV);
+          sec.classList.add('sec-fold'); if(idx===0 && firstOpen) sec.classList.add('open'); idx++;
+          h.addEventListener('click', function(){ sec.classList.toggle('open'); });
+        });
+      }
       function showBody(){
         cover.style.display='none'; body.style.display='block';
         if($('rp-head-sub')) $('rp-head-sub').textContent='';
@@ -4846,6 +4880,14 @@
           try{ fn(); }catch(e){}
         });
         buildJiedu();
+        // 贰流年:四大块各折一块(当年运势默认展开);叁调养:各节折叠(食养默认展开)
+        try{
+          wrapContainerAsFold($('jd-year'),     '当年运势', '今年宜做什么 · 要注意什么', true);
+          wrapContainerAsFold($('rp-p-months'), '逐月能量', '今年哪几个月状态最足',   false);
+          wrapContainerAsFold($('rp-p-years'),  '十年起伏', '未来十年的高低走势',     false);
+          wrapContainerAsFold($('rp-p-ahead'),  '未来三年', '逐月看更远的节奏',       false);
+          foldRpSecsIn($('rp-p-care'), true);
+        }catch(e){}
       }
       // 章头点击在 buildHeads() 内逐章绑定单开手风琴(取代原六 Tab 横切)
       // open/close(节律页入口已移除，报告统一由「解读」页 #jd-report 打开)
