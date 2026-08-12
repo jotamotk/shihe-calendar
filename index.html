@@ -1135,6 +1135,7 @@
     background:
     radial-gradient(120% 90% at 88% -10%,color-mix(in srgb,var(--gold) 16%,transparent),transparent 56%),
     linear-gradient(168deg,var(--card-2),var(--card));border:1px solid var(--line);border-radius:20px;padding:16px 17px;box-shadow:var(--shadow-sm);}
+  .demo-badge{font-size:10px;font-weight:500;letter-spacing:.5px;color:var(--gold-d);background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:20px;padding:2px 10px;text-decoration:none;-webkit-tap-highlight-color:transparent;white-space:nowrap;margin-left:2px;}
   .wdg-daterow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
   .wdg-daterow b{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:.5px;}
   .wdg-daterow #w-lunar{font-size:12px;color:var(--muted);font-weight:300;}
@@ -1681,41 +1682,7 @@
   /* 近期吉日 */
   .luck-intro{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.7;margin:2px 2px 13px;}
   .tb-row.luck .tb-dd.big b{color:var(--gold-d);font-weight:600;}
-  /* 事业 · 天赋与方向 */
-  .cr-wrap{display:flex;flex-direction:column;gap:12px;}
-  .cr-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px 16px;}
-  .cr-h{font-size:13px;color:var(--ink);font-weight:600;letter-spacing:1px;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
-  .cr-tone{font-size:10.5px;font-weight:400;padding:2px 8px;border-radius:7px;background:var(--gold-soft);color:var(--gold-d);}
-  .cr-tone.warn{color:#C98B6A;background:rgba(180,110,70,.12);}
-  .cr-card p{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.85;margin:0;}
-  .cr-adv{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.7;padding:9px 0;border-top:1px solid var(--line);}
-  .cr-adv:first-of-type{border-top:none;padding-top:0;}
-  .cr-cols{display:flex;gap:16px;}
-  .cr-col{flex:1;min-width:0;}
-  .cr-k{display:inline-block;font-size:10.5px;font-weight:500;letter-spacing:1px;padding:2px 9px;border-radius:7px;margin-bottom:8px;}
-  .cr-k.do{color:var(--gold-d);background:var(--gold-soft);}
-  .cr-k.avoid{color:#C98B6A;background:rgba(180,110,70,.1);}
-  .cr-col ul{list-style:none;margin:0;padding:0;}
-  .cr-col li{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.5;padding-left:12px;position:relative;margin:5px 0;}
-  .cr-col li:before{content:'·';position:absolute;left:2px;color:var(--gold);}
-  /* 本命养生速查 */
-  .bm-id{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-bottom:12px;}
-  .bm-id b{font-size:15px;color:var(--ink);font-weight:600;letter-spacing:1px;}
-  .bm-id .bm-id-arch{font-size:12px;color:var(--gold-d);font-weight:400;margin:3px 0 8px;}
-  .bm-id .bm-id-tags{display:flex;gap:7px;flex-wrap:wrap;}
-  .bm-id .bm-id-tags span{font-size:10.5px;color:var(--ink-2);font-weight:300;background:var(--gold-soft);border-radius:7px;padding:4px 9px;}
-  .bm-id .bm-id-tags b{font-size:11px;color:var(--gold-d);font-weight:600;margin-left:2px;}
-  .bm-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
-  .bm-cell{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 12px;}
-  .bm-cell .bm-k{font-size:10px;letter-spacing:1px;color:var(--muted);font-weight:400;margin-bottom:5px;}
-  .bm-cell .bm-v{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.55;}
-  .bm-care{background:var(--gold-soft);border-radius:13px;padding:12px 14px;margin-bottom:14px;}
-  .bm-care .bm-k{font-size:10px;letter-spacing:1px;color:var(--gold-d);font-weight:400;margin-bottom:6px;}
-  .bm-care p{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.7;margin:0 0 6px;}
-  .bm-care p:last-child{margin-bottom:0;}
-  .bm-care p b{color:var(--gold-d);font-weight:600;margin-right:2px;}
-  .bm-more{width:100%;background:linear-gradient(135deg,var(--gold-d),var(--gold));color:#231A0C;border:none;border-radius:13px;padding:13px;font-size:13px;font-weight:600;letter-spacing:1px;font-family:inherit;cursor:pointer;margin-bottom:10px;transition:filter .2s;}
-  .bm-more:hover{filter:brightness(1.06);}
+  /* (工具箱事业/本命养生已删,对应 .cr-*/.bm-* 死 CSS 已清) */
   .tb-h2{font-size:15px;font-weight:600;letter-spacing:1px;margin:2px 2px 6px;}
   .tb-note{font-size:11.5px;color:var(--muted);font-weight:300;line-height:1.6;margin:0 2px 14px;}
   .tb-note b{color:var(--rest);font-weight:500;}
@@ -1878,9 +1845,7 @@
 <symbol id="i-fujiu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V6a2 2 0 0 0-4 0v8.8a4 4 0 1 0 4 0Z"/><path d="M12 15V9"/></symbol>
 <symbol id="i-fangwei" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5 13.7 12 12 17.5 10.3 12 12 6.5Z"/></symbol>
 <symbol id="i-lucky" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14l-7 11L5 9ZM5 9l3-4h8l3 4M9 5l3 4 3-4M5 9h14"/></symbol>
-<symbol id="i-benming" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.2-7-9.2A3.8 3.8 0 0 1 12 7a3.8 3.8 0 0 1 7 3.8C19 15.8 12 20 12 20Z"/><path d="M12 11.4v4M10 13.4h4"/></symbol>
 <symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.5L6 20V5a1 1 0 0 1 1-1Z"/></symbol>
-<symbol id="i-career" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7.5" width="17" height="12" rx="2.5"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M3.5 12.5h17"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5 12 15.5 18 9.5"/></symbol>
 <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.7 9.3 10.6 10.6 9.3 14.7 13.4 13.4 14.7 9.3Z"/><circle cx="12" cy="12" r="0.7" fill="currentColor" stroke="none"/></symbol>
 </defs></svg>
@@ -1905,7 +1870,7 @@
             <div class="intro-rows">
               <div class="intro-row"><span class="intro-orb" id="intro-orb"></span><div class="intro-tx"><b>光球越满 = 能量越足</b><span>球满，状态舒展、宜放手去做；球浅，则宜收宜养、内守蓄力。</span></div></div>
               <div class="intro-row"><span class="intro-ic">▦</span><div class="intro-tx"><b>点开某天 · 看当日状态</b><span>轻点日历上任意一天，下方卡片即显当日光球、宜 / 缓与宜色。</span></div></div>
-              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>要紧事，挑高能量日</b><span>长按某天，会浮出当日的节律读数。数越高说明你自己那天余力越足，要紧事排在这几天，主要是给自己留余量。日历上标金的，是黄历大吉与民俗吉日，另作择日参考。</span></div></div>
+              <div class="intro-row"><span class="intro-ic">❂</span><div class="intro-tx"><b>要紧事，挑高能量日</b><span>长按某天，会浮出当日的节律读数。数越高说明你自己那天余力越足，要紧事排在这几天，主要是给自己留余量。日历上标金点的，是你自己记的重点日。</span></div></div>
             </div>
             <button class="intro-go" id="intro-go">知道了</button>
             <div class="intro-fine">全部在本机计算 · 不上传、不外传</div>
@@ -1953,7 +1918,7 @@
 
             <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><a class="demo-badge" id="w-demo-badge" href="onboarding.html" style="display:none" onclick="event.stopPropagation()">示例 · 换成你的</a><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
@@ -1991,7 +1956,7 @@
               </div>
               <!-- 十二时辰吉凶 -->
               <div class="hl2-shi">
-                <div class="hl2-shi-h">十二时辰 · 吉凶<span class="hl2-shi-sub" id="hl2-shi-now"></span></div>
+                <div class="hl2-shi-h">十二时辰 · 宜忌<span class="hl2-shi-sub" id="hl2-shi-now"></span></div>
                 <div class="hl2-shi-grid" id="hl2-shi-grid"></div>
                 <div class="hl2-shi-detail" id="hl2-shi-detail"></div>
               </div>
@@ -2407,7 +2372,7 @@
       try{
         if (person && window.RhythmEngine && RhythmEngine.buildApp){
           window.APP = RhythmEngine.buildApp(person, today);
-          window.APP_PERSON = person;
+          window.APP_PERSON = person; window.__IS_DEMO = false;
           try{ localStorage.setItem('shihe_app', JSON.stringify(window.APP)); }catch(e){}
           return;
         }
@@ -2415,17 +2380,18 @@
       // ② 有存档但引擎不可用 → 用存档兜底
       try{
         var saved = localStorage.getItem('shihe_app');
-        if (saved){ window.APP = JSON.parse(saved); return; }
+        if (saved){ window.APP = JSON.parse(saved); window.__IS_DEMO = false; return; }
       }catch(e){}
       // ③ 无存档 → 演示命主 + 真实今天(分享给朋友打开时,「今日」永远是当天)
       try{
         if (window.RhythmEngine && RhythmEngine.buildApp){
           var DEMO = { year:1995, month:8, day:17, hour:14, minute:30, longitude:104.07, gender:'女' };
           window.APP = RhythmEngine.buildApp(DEMO, today);
-          window.APP_PERSON = DEMO;
+          window.APP_PERSON = DEMO; window.__IS_DEMO = true;
           return;
         }
       }catch(e){}
+      window.__IS_DEMO = true;
       document.write('<scr'+'ipt src="app_data.js"></scr'+'ipt>');
     })();
   </script>
@@ -2936,7 +2902,7 @@
         // 本命冲日:当日「日支」冲用户生肖 → 传统「要事宜避」提示(纯历法规则,非吉凶预测)
         (function(){ const el=$('w-chong'); if(!el) return;
           if(isChongDay(d) && APP.user && APP.user.shengXiao){
-            el.innerHTML='<i></i>今日与你的生肖（属'+APP.user.shengXiao+'）相冲，要紧事可避开、或缓一缓。';
+            el.innerHTML='<i></i>按传统老黄历，今天是属'+APP.user.shengXiao+'的「冲日」——旧俗里要紧事会挪一挪，当个参考即可。';
             el.style.display='';
           } else el.style.display='none';
         })();
@@ -3113,7 +3079,7 @@
           else if (fst){ sub=fst; subCls='ln fest'; }
           else sub=d.lunarDayCN;
           const mks = MARKS.forDate(m.year, m.month, d.g);
-          if (d.fk) cls.push('d-fk');   // 民俗日金点(原有,克制),不再叠 ✦ 大吉星标
+          // 民俗吉日不在月历标金(按用户意愿不把吉日泼满日历;金点只留给「重点日」d-mk);原 d-fk 有类无样式,已去
           if (mks.length) cls.push('d-mk');
           if (isChongDay(d)) cls.push('chong-day');   // 本命冲日:数字旁一枚极淡冷点,详情在日卡说明
           const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
@@ -4131,7 +4097,7 @@
         const moodAdv=(a,rel)=> rel==='single'?(a.adviceSingle||a.advice) : rel==='partner'?(a.advicePartner||a.advice) : a.advice;
         const moodBodyHtml=(a,rel)=> (a.tone?'<span class="np-panel-tone">'+esc(NP_TONE[a.tone]||a.tone)+'</span>':'')
           + '<div class="np-panel-tx">'+esc(moodTx(a,rel))+'</div>'
-          + (a.taohua?'<div class="mood-taohua"><em>桃花</em><span>'+esc(a.taohua)+'</span></div>':'')
+          + (a.taohua?'<div class="mood-taohua"><em>亲和力</em><span>'+esc(a.taohua)+'</span></div>':'')
           + advBlock(moodAdv(a,rel));
         const panels=asps.map((a,i)=>{
           const head='<div class="np-panel'+(i===0?' on':'')+'" data-i="'+i+'">';
@@ -4497,7 +4463,7 @@
           + rpFlourish();
         // 展开/收起 + 默认展开本月
         $('rp-p-months').querySelectorAll('.rp-mo').forEach((el)=>{
-          el.classList.add('open');   // 全部月份默认展开(用户要求,不只当前月)
+          if(el.classList.contains('cur')) el.classList.add('open');   // 只当前月默认展开;其余收起(留月+能量条,点开看详情),配合外层折叠不再一堵墙
           el.querySelector('.rp-mo-top').addEventListener('click', ()=> el.classList.toggle('open'));
         });
         bindChartJump($('rp-p-months'), (k)=> $('rp-p-months').querySelector('.rp-mo[data-mo="'+k.slice(1)+'"]'));
@@ -4569,7 +4535,7 @@
           + '</div>'
           + rpFlourish();
         $('rp-p-years').querySelectorAll('.rp-mo').forEach((el)=>{
-          el.classList.add('open');   // 全部年份默认展开(用户要求,不只当前年)
+          if(el.classList.contains('cur')) el.classList.add('open');   // 只当前年默认展开;其余收起(留年+能量条),配合外层折叠
           el.querySelector('.rp-mo-top').addEventListener('click', ()=> el.classList.toggle('open'));
         });
         bindChartJump($('rp-p-years'), (k)=> $('rp-p-years').querySelector('.rp-mo[data-yr="'+k.slice(1)+'"]'));
@@ -4739,17 +4705,19 @@
       }
       function renderYearCard(){
         var el=$('jd-year'); if(!el) return;
-        if(!R.years||!R.years.years||!R.years.years.length){ el.innerHTML=''; return; }
+        // 写进固定内层 #jd-year-body(而非 #jd-year 本体):翻年重渲染只换内层,外层折叠头(wrapContainerAsFold 加的)不被抹掉
+        var host=$('jd-year-body'); if(!host){ host=document.createElement('div'); host.id='jd-year-body'; el.appendChild(host); }
+        if(!R.years||!R.years.years||!R.years.years.length){ host.innerHTML=''; return; }
         var curY=R.years.curYear||R.years.years[0].year;
         var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
         if(_jdYearY==null) _jdYearY=curY;
         _jdYearY=Math.max(birthY, Math.min(birthY+99, _jdYearY));
-        var y=jdYearData(_jdYearY); if(!y){ el.innerHTML=''; return; }
+        var y=jdYearData(_jdYearY); if(!y){ host.innerHTML=''; return; }
         var lvl=y.level==='高'?'hi':(y.level==='低'?'lo':'mid');
         var sub=[(y.age!=null?y.age+'岁':''), y.ganZhi, (_jdYearY===curY?'今年':'')].filter(Boolean).join(' · ');
         var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
         var doL=li(y.yi), watchL=li(y.ji);
-        el.innerHTML=
+        host.innerHTML=
           '<div class="yc">'
           +'<div class="yc-nav">'
           +'<button class="yc-arw" id="jd-yr-prev" type="button" aria-label="上一年">‹</button>'
@@ -4767,7 +4735,7 @@
         var p=$('jd-yr-prev'), nx=$('jd-yr-next');
         if(p) p.onclick=function(){ go(-1); };
         if(nx) nx.onclick=function(){ go(1); };
-        var card=el.querySelector('.jd-yr'), x0=null;
+        var card=host.querySelector('.yc'), x0=null;
         if(card){
           card.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
           card.addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)<45)return; go(dx<0?1:-1); },{passive:true});
@@ -4855,7 +4823,7 @@
         buildJiedu();
         // 贰流年:四大块各折一块(当年运势默认展开);叁调养:各节折叠(食养默认展开)
         try{
-          wrapContainerAsFold($('jd-year'),     '当年运势', '今年宜做什么 · 要注意什么', true);
+          wrapContainerAsFold($('jd-year'),     '当年状态', '今年宜做什么 · 要注意什么', true);
           wrapContainerAsFold($('rp-p-months'), '逐月能量', '今年哪几个月状态最足',   false);
           wrapContainerAsFold($('rp-p-years'),  '十年起伏', '未来十年的高低走势',     false);
           wrapContainerAsFold($('rp-p-ahead'),  '未来三年', '逐月看更远的节奏',       false);
@@ -5330,9 +5298,11 @@
       (function(){
         var mov = document.getElementById('mine-ov');
         if(!mov) return;
+        // 示例态:今日卡挂「示例·换成你的」角标(与我的/解读页的示例引导一致,防演示数据冒充用户本人)
+        if(window.__IS_DEMO){ var _db=document.getElementById('w-demo-badge'); if(_db) _db.style.display=''; }
         function openMine(){
           var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
-          if(!p) p=window.APP_PERSON||null;
+          if(!p && window.__IS_DEMO===false) p=window.APP_PERSON||null;   // 仅真实用户才回落 APP_PERSON;示例态不冒充,走「未设置生辰」
           var nm=document.getElementById('mine-name'), bs=document.getElementById('mine-birth');
           if(p&&p.year){
             var mn=(p.minute!=null?p.minute:0); mn=(mn<10?'0':'')+mn;

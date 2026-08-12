@@ -12148,7 +12148,7 @@ var RhythmEngine = (() => {
         const isShaYinRescue = yinDominant && weightsRaw[KE_ME[dayWx]] >= 1.5;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
         const guanShaPower = weightsRaw[KE_ME[dayWx]];
-        const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2;
+        const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2 && yinPower < guanShaPower;
         let score = 0;
         const detail = { \u5F97\u4EE4: 0, \u5F97\u5730: 0, \u5F97\u52BF: 0 };
         const monthBenWx = ZHI_WX[monthZhi];
@@ -14043,10 +14043,10 @@ var RhythmEngine = (() => {
         const star = TAOHUA_STAR[zhis[0]];
         const n = zhis.filter((z) => z === star).length;
         if (n >= 2)
-          return "\u4F60\u547D\u91CC\u6843\u82B1\u504F\u65FA\uFF0C\u5F02\u6027\u7F18\u597D\u3001\u5728\u4EBA\u7FA4\u91CC\u5BB9\u6613\u88AB\u6CE8\u610F\u5230\uFF0C\u793E\u4EA4\u573A\u5408\u6709\u5929\u7136\u7684\u5438\u5F15\u529B\u3002";
+          return "\u4F60\u5929\u751F\u4EB2\u548C\u529B\u5F3A\u3001\u6C14\u573A\u5438\u5F15\u4EBA\uFF0C\u5728\u4EBA\u7FA4\u91CC\u5BB9\u6613\u88AB\u6CE8\u610F\u5230\uFF0C\u793E\u4EA4\u573A\u5408\u5F88\u6709\u5B58\u5728\u611F\u3002";
         if (n === 1)
-          return "\u4F60\u547D\u91CC\u5E26\u4E00\u70B9\u6843\u82B1\uFF0C\u5F02\u6027\u7F18\u4E0D\u9519\uFF0C\u9047\u5230\u6295\u7F18\u7684\u4EBA\u5BB9\u6613\u64E6\u51FA\u706B\u82B1\u3002";
-        return "\u4F60\u7684\u5F02\u6027\u7F18\u504F\u5E73\u548C\uFF0C\u611F\u60C5\u591A\u662F\u65E5\u4E45\u751F\u60C5\u3001\u6162\u6162\u8D70\u8FD1\uFF0C\u4E0D\u592A\u9760\u4E00\u89C1\u503E\u5FC3\u3002";
+          return "\u4F60\u7684\u4EB2\u548C\u529B\u4E0D\u9519\uFF0C\u5BB9\u6613\u548C\u4EBA\u6295\u7F18\uFF0C\u9047\u5230\u804A\u5F97\u6765\u7684\u4EBA\u4E5F\u5BB9\u6613\u8D70\u8FD1\u3002";
+        return "\u4F60\u504F\u6162\u70ED\uFF0C\u4E0E\u4EBA\u591A\u662F\u65E5\u4E45\u751F\u60C5\u3001\u6162\u6162\u719F\u7EDC\uFF0C\u4E0D\u592A\u4E00\u89C1\u5982\u6545\u3002";
       }
       var ADVICE_MOOD_SINGLE = {
         \u5370: ["\u770B\u4EBA\u522B\u53EA\u770B\u5BF9\u4F60\u597D\u4E0D\u597D\uFF0C\u4E5F\u770B\u4F60\u4EEC\u80FD\u4E0D\u80FD\u957F\u4E45\u804A\u5230\u4E00\u8D77", "\u522B\u7528\u4ED8\u51FA\u53BB\u6362\u5173\u7CFB\uFF0C\u5148\u8BA9\u81EA\u5DF1\u88AB\u559C\u6B22\uFF0C\u518D\u8C08\u4ED8\u51FA"],
@@ -14482,7 +14482,7 @@ var RhythmEngine = (() => {
         const hDos = [];
         const hAvoid = [];
         if (careList.length) {
-          hText = `\u4F60\u7684\u8EAB\u4F53\uFF0C\u91CD\u70B9\u7167\u770B${careList.map(ORG).join("\u548C")}${careList.length > 1 ? "\u8FD9\u4E24\u5904" : "\u8FD9\u5757"}\u3002` + careList.map((wx) => TIP[wx]).join("\u3002") + "\u3002";
+          hText = `\u4F5C\u606F\u4E0A\uFF0C\u53EF\u4EE5\u591A\u7559\u610F${careList.map(ORG).join("\u548C")}${careList.length > 1 ? "\u8FD9\u4E24\u65B9\u9762" : "\u8FD9\u65B9\u9762"}\u3002` + careList.map((wx) => TIP[wx]).join("\u3002") + "\u3002";
           hText += careList.includes(dayWx) ? "\u5E73\u65F6\u987A\u5E94\u65F6\u8282\u3001\u7A33\u4F4F\u4F5C\u606F\u3001\u522B\u4E00\u4E2A\u4EBA\u786C\u625B\uFF0C\u5C31\u662F\u517B\u6839\u672C\u3002" : `${ORG(dayWx)}\u662F\u4F60\u7684\u5E95\u5B50\uFF0C\u987A\u5E94\u65F6\u8282\u3001\u7A33\u4F4F\u4F5C\u606F\u3001\u522B\u72EC\u81EA\u786C\u625B\uFF0C\u517B\u7740\u5C31\u597D\u3002`;
           if (FOOD(careList[0]))
             hDos.push("\u5B9C\u517B:" + FOOD(careList[0]));
@@ -14868,7 +14868,7 @@ var RhythmEngine = (() => {
         const u = unit || "\u8FD9\u4E00\u7A0B";
         const PER = unit === "\u8FD9\u4E2A\u6708" ? "\u6708" : unit === "\u8FD9\u4E00\u5E74" ? "\u5E74" : "\u671F";
         const dom = TARGET_MEAN[tag && tag.baseTarget] || field;
-        const shiftNote = dyn.shifted ? ["\u540C\u65F6\u4F60\u6B63\u5904\u5728\u8FD0\u52BF\u8F6C\u6362\u671F\uFF0C\u8FC7\u53BB\u7684\u65B9\u6CD5\u672A\u5FC5\u518D\u9002\u7528\u3002", "\u8FD9\u6BB5\u65F6\u95F4\u8FD0\u52BF\u9636\u6BB5\u4E5F\u5728\u5207\u6362\uFF0C\u65E7\u7684\u505A\u6CD5\u5148\u522B\u5168\u4F9D\u8D56\u3002"][(seed || 0) % 2] : "";
+        const shiftNote = dyn.shifted ? ["\u540C\u65F6\u4F60\u6B63\u5904\u5728\u72B6\u6001\u8F6C\u6362\u671F\uFF0C\u8FC7\u53BB\u7684\u65B9\u6CD5\u672A\u5FC5\u518D\u9002\u7528\u3002", "\u8FD9\u6BB5\u65F6\u95F4\u6574\u4F53\u72B6\u6001\u4E5F\u5728\u5207\u6362\uFF0C\u65E7\u7684\u505A\u6CD5\u5148\u522B\u5168\u4F9D\u8D56\u3002"][(seed || 0) % 2] : "";
         if (tag) {
           const positive = level === "\u9AD8" ? true : level === "\u4F4E" ? false : tag.fav >= 0;
           const sd = seed || 0;
@@ -15018,12 +15018,12 @@ var RhythmEngine = (() => {
           const strong = dyn.strength === "\u8EAB\u5F3A" || dyn.strength === "\u504F\u5F3A";
           const st = seed || 0;
           const shifted = [
-            `\u4F60\u6B63\u8FDB\u5165\u4E00\u4E2A\u65B0\u7684\u8FD0\u52BF\u9636\u6BB5\uFF0C\u8FC7\u53BB\u6709\u6548\u7684\u505A\u6CD5\u672A\u5FC5\u518D\u9002\u5408\u3002${strong ? `\u8FD9\u6BB5\u65F6\u95F4\u5B9C\u4E3B\u52A8\u8FDB\u53D6\uFF0C\u628A${field}\u505A\u5927\u505A\u5B9E` : `\u8FD9\u6BB5\u65F6\u95F4\u5B9C\u7A33\u5B88\u6536\u655B\uFF0C\u5148\u6253\u597D${field}\u7684\u57FA\u7840`}\u3002`,
-            `\u4F60\u6B63\u5904\u5728\u8FD0\u52BF\u7684\u8F6C\u6362\u671F\uFF0C\u4EE5\u524D\u987A\u624B\u7684\u65B9\u5F0F\u53EF\u80FD\u4E0D\u518D\u5408\u7528\u3002${strong ? `\u9002\u5408\u653E\u5F00\u624B\u811A\uFF0C\u628A${field}\u5F80\u5927\u505A` : `\u9002\u5408\u5148\u6536\u4E00\u6536\uFF0C\u628A${field}\u7684\u6839\u57FA\u624E\u7A33`}\u3002`,
-            `\u4F60\u7684\u8FD0\u52BF\u9636\u6BB5\u6B63\u5728\u5207\u6362\uFF0C\u65E7\u7684\u505A\u4E8B\u65B9\u5F0F\u6E10\u6E10\u4E0D\u9002\u7528\u4E86\u3002${strong ? `\u8FD9\u4E00\u7A0B\u5B9C\u8FDB\u53D6\u6269\u5F20\uFF0C\u628A${field}\u505A\u8D77\u6765` : `\u8FD9\u4E00\u7A0B\u5B9C\u5B88\u7A33\u6C89\u6DC0\uFF0C\u5148\u592F\u5B9E${field}\u7684\u57FA\u7840`}\u3002`
+            `\u4F60\u6B63\u8FDB\u5165\u4E00\u4E2A\u65B0\u7684\u9636\u6BB5\uFF0C\u8FC7\u53BB\u6709\u6548\u7684\u505A\u6CD5\u672A\u5FC5\u518D\u9002\u5408\u3002${strong ? `\u8FD9\u6BB5\u65F6\u95F4\u5B9C\u4E3B\u52A8\u8FDB\u53D6\uFF0C\u628A${field}\u505A\u5927\u505A\u5B9E` : `\u8FD9\u6BB5\u65F6\u95F4\u5B9C\u7A33\u5B88\u6536\u655B\uFF0C\u5148\u6253\u597D${field}\u7684\u57FA\u7840`}\u3002`,
+            `\u4F60\u6B63\u5904\u5728\u72B6\u6001\u7684\u8F6C\u6362\u671F\uFF0C\u4EE5\u524D\u987A\u624B\u7684\u65B9\u5F0F\u53EF\u80FD\u4E0D\u518D\u5408\u7528\u3002${strong ? `\u9002\u5408\u653E\u5F00\u624B\u811A\uFF0C\u628A${field}\u5F80\u5927\u505A` : `\u9002\u5408\u5148\u6536\u4E00\u6536\uFF0C\u628A${field}\u7684\u6839\u57FA\u624E\u7A33`}\u3002`,
+            `\u4F60\u7684\u6574\u4F53\u72B6\u6001\u6B63\u5728\u5207\u6362\uFF0C\u65E7\u7684\u505A\u4E8B\u65B9\u5F0F\u6E10\u6E10\u4E0D\u9002\u7528\u4E86\u3002${strong ? `\u8FD9\u4E00\u7A0B\u5B9C\u8FDB\u53D6\u6269\u5F20\uFF0C\u628A${field}\u505A\u8D77\u6765` : `\u8FD9\u4E00\u7A0B\u5B9C\u5B88\u7A33\u6C89\u6DC0\uFF0C\u5148\u592F\u5B9E${field}\u7684\u57FA\u7840`}\u3002`
           ];
           return {
-            headline: `\u8F6C\u5411${PER} \xB7 \u8BE5\u6362\u6253\u6CD5`,
+            headline: `\u8F6C\u5411${PER} \xB7 \u6362\u4E2A\u8282\u594F`,
             trait: shifted[st % shifted.length],
             yi: uniq(pickRot(strong ? doHi.concat(doMid) : rest, seed, 3), 3),
             ji: ["\u6CBF\u7528\u4EE5\u5F80\u7684\u65E7\u6709\u6253\u6CD5", strong ? "\u754F\u7F29\u4E0D\u524D\u3001\u9519\u5931\u8F6C\u673A" : "\u52C9\u529B\u652F\u6491\u3001\u4E0D\u80AF\u653E\u7F13"]
@@ -15412,7 +15412,7 @@ var RhythmEngine = (() => {
     "engine/buildApp.js"(exports, module) {
       "use strict";
       var { paipan } = require_paipan();
-      var { analyze, GAN_WX, ZHI_HIDE } = require_analyze();
+      var { analyze, dynamicXiYong, GAN_WX, ZHI_HIDE } = require_analyze();
       var { liuri, liuyue, liunian, activeDaYun } = require_liuri();
       var { folkOf, upcomingDeities } = require_folk();
       var { seasonView } = require_content();
@@ -15600,12 +15600,13 @@ var RhythmEngine = (() => {
         };
         function yearEnergy(yGan, yZhi, Y) {
           let raw = 0;
-          const xiW = mj.xiYongWeight || {};
+          const dyn = dynamicXiYong(mj, chart, Y);
+          const xiW = dyn.xiYongWeight || {};
           const add = (wx, w) => {
-            const favW = mj.xiYong.includes(wx) ? xiW[wx] ?? 1 : 0;
+            const favW = dyn.xiYong.includes(wx) ? xiW[wx] ?? 1 : 0;
             if (favW > 0)
               raw += w * (0.6 + favW * 0.9);
-            else if (mj.jiShen.includes(wx))
+            else if (dyn.jiShen.includes(wx))
               raw -= w;
           };
           const dy = activeDaYun(chart, Y);

@@ -1,6 +1,6 @@
 {
-  "name": "时和 · 节律日历",
-  "short_name": "时和",
+  "name": "顺时黄历",
+  "short_name": "顺时黄历",
   "description": "跟着节气过日子,顺时而养 —— 每日能量节律与传统民俗日历,数据全本机计算。",
   "start_url": "./index.html",
   "scope": "./",

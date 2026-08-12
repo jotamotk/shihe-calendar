@@ -44,7 +44,11 @@
     '.shc-btn:active{transform:scale(.985);}' +
     '.shc-primary{color:#231A0C;background:linear-gradient(135deg,#E6CF9E,#C8AC78);box-shadow:0 8px 22px -10px rgba(205,168,98,.6);}' +
     '.shc-ghost{color:#948F86;background:transparent;border:1px solid #33323A;font-weight:400;font-size:14px;}' +
-    '.shc-deny-note{display:none;margin-top:12px;text-align:center;font-size:12.5px;color:#C89A6E;line-height:1.7;}';
+    '.shc-deny-note{display:none;margin-top:12px;text-align:center;font-size:12.5px;color:#C89A6E;line-height:1.7;}' +
+    '.shc-check{display:flex;align-items:flex-start;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid #33323A;cursor:pointer;font-size:12px;color:#C2BDB3;line-height:1.6;}' +
+    '.shc-check input{margin-top:2px;flex:none;width:16px;height:16px;accent-color:#C8AC78;cursor:pointer;}' +
+    '.shc-check b{color:#E6CF9E;font-weight:500;}' +
+    '.shc-primary[disabled]{opacity:.5;cursor:not-allowed;filter:grayscale(.3);}';
 
   var HTML =
     '<div class="shc-card" role="dialog" aria-modal="true" aria-label="使用前必读">' +
@@ -58,6 +62,7 @@
           '你输入的出生日期、出生时间、出生地与性别，仅用于在<b>你的设备本地</b>推算，' +
           '<b>不上传服务器、不对外共享</b>。其中出生日期、出生时间属敏感个人信息，需经你' +
           '<b>单独同意</b>后方在本机处理。' +
+          '<label class="shc-check"><input type="checkbox" id="shc-sens"><span>我<b>单独同意</b>在本机处理我的出生日期、出生时间等敏感个人信息</span></label>' +
         '</div>' +
         '<div class="shc-note-box">' +
           '<p style="margin:0 0 6px"><b>关于内容性质</b></p>' +
@@ -99,8 +104,16 @@
       if (st.parentNode) st.parentNode.removeChild(st);
     }
 
-    root.querySelector('#shc-agree').addEventListener('click', function () {
-      try { localStorage.setItem(KEY, JSON.stringify({ v: VER, ts: Date.now() })); } catch (e) {}
+    // PIPL 单独同意:出生日期/时间等敏感信息处理需独立勾选,勾选前「同意并开始」禁用(与总协议同意分开动作)
+    var agreeBtn = root.querySelector('#shc-agree');
+    var sensChk = root.querySelector('#shc-sens');
+    if (agreeBtn && sensChk) {
+      agreeBtn.disabled = true;
+      sensChk.addEventListener('change', function () { agreeBtn.disabled = !sensChk.checked; });
+    }
+    agreeBtn.addEventListener('click', function () {
+      if (sensChk && !sensChk.checked) { var n0 = root.querySelector('#shc-deny-note'); if (n0) { n0.textContent = '请先勾选「单独同意」处理敏感信息，再开始使用。'; n0.style.display = 'block'; } return; }
+      try { localStorage.setItem(KEY, JSON.stringify({ v: VER, ts: Date.now(), sens: true })); } catch (e) {}
       dismiss();
     });
     root.querySelector('#shc-deny').addEventListener('click', function () {
