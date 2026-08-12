@@ -192,7 +192,11 @@
   .px b{font-size:16px;font-weight:300;color:var(--ink);line-height:1;letter-spacing:.5px;position:relative;z-index:1;}
   .px .ln{font-size:8px;font-weight:300;color:var(--muted);opacity:.72;line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px;position:relative;z-index:1;}
   /* 数字统一色:不再按民俗/节庆染金(用户反馈"有的金有的白看不懂");节庆仍在数字下方显示节日名。放假=暖红数字(红色假期通用惯例)、重点日=顶部金点。 */
-  .px.h-off b{color:var(--rest);font-weight:500;}
+  .px.we-day b{color:#C6A585;}  /* 普通周末:降饱和暖金弱标,比放假(--rest红)/节日(--clay)更淡,守黑金极简 */
+.px.chong-day::before{content:'';position:absolute;right:6px;bottom:6px;width:4px;height:4px;border-radius:50%;background:#7C8A99;opacity:.85;z-index:1;}  /* 本命冲日:冷灰蓝小点,与金点(吉)区分,详情在日卡 */
+.we-chong{margin-top:7px;font-size:11.5px;line-height:1.5;color:#93A0AD;display:flex;align-items:center;gap:6px;}
+.we-chong i{flex:none;width:5px;height:5px;border-radius:50%;background:#7C8A99;}
+.h-off b{color:var(--rest);font-weight:500;}
   .px.h-off .ln.fest{color:var(--rest);}
   .px.d-mk::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold-d);box-shadow:0 0 6px -1px var(--gold-d);z-index:1;}
   /* 已过去的日子:保持清晰、不变暗(与未来日一致),只靠「今日」高亮区分 */
@@ -1908,7 +1912,7 @@
             </div>
           </div>
 
-          <div class="week"><span class="we">日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span class="we">六</span></div>
+          <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span class="we">六</span><span class="we">日</span></div>
           <div class="pgrid" id="pgrid"></div>
 
           <!-- ====== 选中日 · 小部件流 ====== -->
@@ -1922,6 +1926,7 @@
                 <span id="w-lunar">农历四月廿二</span>
                 <span class="w-festival" id="w-festival"></span>
               </div>
+              <div class="we-chong" id="w-chong" style="display:none"></div>
               <div class="we-folk" id="w-folk" style="display:none">
                 <span class="we-folk-n" id="w-folk-n"></span>
                 <span class="we-folk-d" id="w-folk-d"></span>
@@ -2502,6 +2507,11 @@
       window.addEventListener('touchend', hide);
     }
     const WEEK = ['日','一','二','三','四','五','六'];
+    // 冲煞:某日「日支」冲用户「年支(生肖)」→ 传统老黄历「本命冲日、要事宜避」。地支六冲对表。
+    const ZHI_CHONG = {子:'午',午:'子',丑:'未',未:'丑',寅:'申',申:'寅',卯:'酉',酉:'卯',辰:'戌',戌:'辰',巳:'亥',亥:'巳'};
+    const userChongZhi = ()=> (typeof APP!=='undefined' && APP.user && APP.user.yearZhi) ? (ZHI_CHONG[APP.user.yearZhi]||'') : '';
+    const dayZhiOf = (d)=> (d && d.ganZhi && d.ganZhi.day && d.ganZhi.day.length>=2) ? d.ganZhi.day.charAt(1) : '';
+    const isChongDay = (d)=>{ const cz=userChongZhi(); return !!cz && dayZhiOf(d)===cz; };
     const fillOf = (e)=> e<46?'f0':e<55?'f1':e<64?'f2':e<73?'f3':e<82?'f4':'f5';
 
     // ===== 法定节假日(2026 国务院办公厅官方安排)=====
@@ -2929,6 +2939,13 @@
             + ' <span style="color:var(--gold-d);font-weight:500;">'+rel+'</span>';
         })();
         $('w-lunar').textContent = '农历'+d.lunarLabel;
+        // 本命冲日:当日「日支」冲用户生肖 → 传统「要事宜避」提示(纯历法规则,非吉凶预测)
+        (function(){ const el=$('w-chong'); if(!el) return;
+          if(isChongDay(d) && APP.user && APP.user.shengXiao){
+            el.innerHTML='<i></i>今日与你的生肖（属'+APP.user.shengXiao+'）相冲，要紧事可避开、或缓一缓。';
+            el.style.display='';
+          } else el.style.display='none';
+        })();
         // 当日重点日(本机自定义):有则在能量卡上方点名
         (function(){
           const el=$('w-mk'); if(!el) return;
@@ -3088,6 +3105,7 @@
           const cls = ['px'];
           if (d.today) cls.push('today');
           if (hol) cls.push(hol.type==='off' ? 'h-off' : 'h-work');
+          else if (!d.today && (dow===0 || dow===6)) cls.push('we-day');   // 普通周末(非放假/调休/今日)数字暖色弱标;放假走h-off自有色,调休班日按工作日不标
           // 休/班 角标(仅国务院法定节假日调休):放假日标「休」、调休补班标「班」;普通周末不标(只由列头/字色区分),这是中华/系统日历统一惯例
           let restBadge='';
           if (hol && hol.type==='work') restBadge='<span class="hbadge b-work">班</span>';
@@ -3103,6 +3121,7 @@
           const mks = MARKS.forDate(m.year, m.month, d.g);
           if (d.fk) cls.push('d-fk');   // 民俗日金点(原有,克制),不再叠 ✦ 大吉星标
           if (mks.length) cls.push('d-mk');
+          if (isChongDay(d)) cls.push('chong-day');   // 本命冲日:数字旁一枚极淡冷点,详情在日卡说明
           const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
           html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
                   restBadge+

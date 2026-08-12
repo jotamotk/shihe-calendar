@@ -12596,12 +12596,12 @@ var RhythmEngine = (() => {
       var DIM_CHONG = { label: "\u51FA\u884C", line: "\u8BA1\u5212\u6613\u53D8\uFF0C\u51FA\u95E8\u591A\u7559\u5FC3\uFF0C\u5927\u51B3\u5B9A\u7F13\u4E00\u4E24\u5929\u3002" };
       var DIM_HE = { label: "\u673A\u7F18", line: "\u4E0E\u4EBA\u6295\u7F18\uFF0C\u5B9C\u8C08\u5408\u4F5C\u3001\u6258\u4E8B\uFF0C\u4E3B\u52A8\u5F00\u53E3\u3002" };
       var FORTUNE_FLAT = {
-        career: "\u5B9C\u6536\u5C3E\u3001\u63A8\u8FDB\u624B\u5934\u4E8B\uFF0C\u4E0D\u542F\u65B0\u4E8B\u3002",
-        love: "\u5B9C\u503E\u542C\uFF0C\u4E3B\u52A8\u966A\u4F34\u3002",
-        money: "\u5B9C\u5BF9\u8D26\u3001\u7406\u6536\u652F\uFF0C\u5927\u989D\u7F13\u4E00\u7F13\u3002",
-        study: "\u5B9C\u8865\u8FDB\u5EA6\u3001\u590D\u76D8\u65E7\u4E8B\uFF0C\u4E0D\u8D77\u65B0\u5934\u3002",
-        health: "\u5B9C\u89C4\u5F8B\u4F5C\u606F\uFF0C\u522B\u786C\u6491\u3002",
-        chance: "\u5B9C\u4E13\u6CE8\u624B\u5934\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002"
+        career: "\u6536\u5C3E\u3001\u63A8\u8FDB\u624B\u5934\u4E8B\uFF0C\u522B\u5F00\u65B0\u5C40\u3002",
+        love: "\u591A\u503E\u542C\uFF0C\u4E3B\u52A8\u966A\u4F34\u5C31\u597D\u3002",
+        money: "\u9002\u5408\u5BF9\u8D26\u7406\u6536\u652F\uFF0C\u5927\u989D\u5148\u7F13\u3002",
+        study: "\u8865\u8FDB\u5EA6\u3001\u590D\u76D8\u65E7\u4E8B\u66F4\u987A\u624B\u3002",
+        health: "\u4F5C\u606F\u89C4\u5F8B\u4E9B\uFF0C\u522B\u786C\u6491\u3002",
+        chance: "\u4E13\u6CE8\u624B\u5934\u5373\u53EF\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002"
       };
       function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy) {
         const has = (arr, t) => arr.indexOf(t) >= 0;
@@ -12630,15 +12630,15 @@ var RhythmEngine = (() => {
         if (volatile_)
           love = { tone: "\u614E", line: "\u60C5\u7EEA\u5BB9\u6613\u4E0A\u6765\uFF0C\u8BDD\u5230\u5634\u8FB9\u5148\u505C\u4E09\u79D2\u3002" };
         else if (he && low)
-          love = { tone: "\u5E73", line: "\u5B9C\u7B80\u5355\u966A\u4F34\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002" };
+          love = { tone: "\u5E73", line: "\u7B80\u5355\u966A\u4F34\u5C31\u597D\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002" };
         else if (he)
-          love = { tone: "\u987A", line: "\u4E0E\u4EBA\u5BF9\u5473\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002" };
+          love = { tone: "\u987A", line: "\u4E0E\u4EBA\u5BF9\u5473\uFF0C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u66F4\u987A\u3002" };
         else
           love = { tone: "\u5E73", line: FORTUNE_FLAT.love };
         let chance;
         const shi = has(favTypes, "\u98DF");
         if ((shi || he) && low)
-          chance = { tone: "\u5E73", line: "\u5B9C\u6309\u4F4F\u4E0D\u52A8\uFF0C\u770B\u4E00\u4E24\u5929\u518D\u8BF4\u3002" };
+          chance = { tone: "\u5E73", line: "\u5148\u6309\u4F4F\u4E0D\u52A8\uFF0C\u770B\u4E00\u4E24\u5929\u518D\u8BF4\u3002" };
         else if (shi)
           chance = { tone: "\u987A", line: "\u8868\u8FBE\u987A\u3001\u8111\u5B50\u6D3B\uFF0C\u9002\u5408\u5C55\u793A\u81EA\u5DF1\u3001\u8BA4\u8BC6\u65B0\u670B\u53CB\u3002" };
         else if (he)
@@ -15419,7 +15419,7 @@ var RhythmEngine = (() => {
       }
       function buildMonthObj(mj, chart, heroP, ym) {
         const my = liuyue(mj, chart, { year: ym.year, month: ym.month });
-        const firstDow = new Date(ym.year, ym.month - 1, 1).getDay();
+        const firstDow = (new Date(ym.year, ym.month - 1, 1).getDay() + 6) % 7;
         let band = null;
         const days = my.list.map((d) => {
           const g = +d.date.slice(8);
@@ -15613,14 +15613,21 @@ var RhythmEngine = (() => {
           decades
         };
         return {
-          user: {
-            dayMaster: mj.dayMaster,
-            strength: mj.strength,
-            xiYong: mj.xiYong,
-            xiColor: mj.xiColor,
-            hourUnknown: !!chart.hourUnknown
-            // 时辰未知:UI 据此弱化「晚年/夜间」等时柱相关话术
-          },
+          user: function() {
+            const SX = { \u5B50: "\u9F20", \u4E11: "\u725B", \u5BC5: "\u864E", \u536F: "\u5154", \u8FB0: "\u9F99", \u5DF3: "\u86C7", \u5348: "\u9A6C", \u672A: "\u7F8A", \u7533: "\u7334", \u9149: "\u9E21", \u620C: "\u72D7", \u4EA5: "\u732A" };
+            const yearZhi = chart.zhis[0];
+            return {
+              dayMaster: mj.dayMaster,
+              strength: mj.strength,
+              xiYong: mj.xiYong,
+              xiColor: mj.xiColor,
+              hourUnknown: !!chart.hourUnknown,
+              // 时辰未知:UI 据此弱化「晚年/夜间」等时柱相关话术
+              yearZhi,
+              shengXiao: SX[yearZhi] || ""
+              // 用户生肖(年支),月历标「冲你生肖」的日子
+            };
+          }(),
           today: todayCard,
           days: todayList,
           month,
