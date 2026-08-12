@@ -2177,24 +2177,12 @@
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
-          <div class="tb-group-h">本命</div>
-          <button class="tb-feat" data-tool="career" data-title="事业天赋">
-            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-career"></use></svg>
-              <div><b>事业 · 天赋与方向</b><small id="tb-c-career">做事风格 · 适合的方向</small></div></div>
-            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
-          </button>
-          <button class="tb-feat" data-tool="benming" data-title="本命养生">
-            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-benming"></use></svg>
-              <div><b>本命养生 · 速查</b><small id="tb-c-bm">顺你的气调养</small></div></div>
-            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
-          </button>
+          <div class="tb-group-h">民俗</div>
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
               <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
-
-          <div class="tb-group-h">民俗</div>
           <button class="tb-feat" data-tool="fangwei" data-title="传统方位">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fangwei"></use></svg>
               <div><b>传统方位 · 喜财福贵</b><small id="tb-c-fw">喜 · 财 · 福 · 阳贵 · 阴贵</small></div></div>
@@ -2228,21 +2216,6 @@
             <div class="luck-nav"><button id="luck-prev" type="button" aria-label="上一季">‹</button><span id="luck-range"></span><button id="luck-next" type="button" aria-label="下一季">›</button></div>
             <div id="luck-list"></div>
             <div class="hl-note">吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传</div>
-          </div>
-
-          <!-- 工具:事业 · 天赋与方向 -->
-          <div class="tb-panel" data-panel="career">
-            <div class="cr-wrap" id="cr-wrap"></div>
-            <div class="hl-note">据你的本命命局(做事风格 × 主导面向)推演 · 传统历法参考，非人生结论 · 本机计算不外传</div>
-          </div>
-
-          <!-- 工具:本命养生速查 -->
-          <div class="tb-panel" data-panel="benming">
-            <div class="bm-id" id="bm-id"></div>
-            <div class="bm-grid" id="bm-grid"></div>
-            <div class="bm-care" id="bm-care"></div>
-            <button class="bm-more" id="bm-more">看完整本命养生报告 ›</button>
-            <div class="hl-note">顺时调养参考，非医疗建议 · 本机计算不外传</div>
           </div>
 
           <!-- 工具:重点日管理 -->
@@ -4962,54 +4935,7 @@
       // 切到其它标签页时回到目录，下次进工具箱从干净目录开始
       window.__tbReset = back;
 
-      // —— 事业 · 天赋与方向(读 APP.report.natal.aspects 的 career 域:做事风格 × 主导面向,命局层,与择日无关)——
-      (function careerTool(){
-        const wrap=$('cr-wrap'); if(!wrap) return;
-        const R=window.APP&&window.APP.report;
-        const asp=(R&&R.natal&&R.natal.aspects)?R.natal.aspects.find(function(a){return a.key==='career';}):null;
-        const chip=$('tb-c-career');
-        if(!asp){ wrap.innerHTML='<div class="tb-empty">事业解读需先录入生辰</div>'; if(chip) chip.textContent='录入生辰后查看'; return; }
-        const TONE={顺:'顺势区',慎:'需留心',平:'平稳'};
-        const toneLabel=TONE[asp.tone]||'平稳', warn=(asp.tone==='慎')?' warn':'';
-        let html='<div class="cr-card"><div class="cr-h">做事的你<span class="cr-tone'+warn+'">'+esc(toneLabel)+'</span></div><p>'+esc(asp.text||'')+'</p></div>';
-        if(asp.advice&&asp.advice.length){
-          html+='<div class="cr-card"><div class="cr-h">发力方向</div>'+asp.advice.map(function(a){return '<div class="cr-adv">'+esc(a)+'</div>';}).join('')+'</div>';
-        }
-        const dos=(asp.dos||[]).slice(0,3), avoid=(asp.avoid||[]).slice(0,2);
-        if(dos.length||avoid.length){
-          html+='<div class="cr-card"><div class="cr-cols">';
-          if(dos.length) html+='<div class="cr-col"><span class="cr-k do">顺手做</span><ul>'+dos.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
-          if(avoid.length) html+='<div class="cr-col"><span class="cr-k avoid">要留意</span><ul>'+avoid.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
-          html+='</div></div>';
-        }
-        wrap.innerHTML=html;
-      })();
-
-      // —— 本命养生速查(读 APP.report.natal,免费速览 + 引导完整报告)——
-      (function benming(){
-        const R=APP.report; if(!R||!R.natal) return;
-        const n=R.natal, pe=n.persona||{}, xs=n.xiYong||[], primary=xs[0]||{};
-        const S=APP.season||{}, JQ=S.jieqi||{};
-        const STR_LABEL={'身强':'自给型','偏强':'略偏自给','中和':'均衡型','偏弱':'略宜助力','身弱':'得助型','从弱':'顺势型'};
-        $('tb-c-bm').textContent='顺你的气 · 调养速查';
-        $('bm-id').innerHTML =
-          '<b>'+esc(pe.identity||'')+'</b>'
-          + '<div class="bm-id-arch">'+esc(pe.tagline||'')+'</div>'
-          + '<div class="bm-id-tags"><span>能量<b>'+esc(STR_LABEL[n.strength]||n.strength)+'</b></span>'
-          + '<span>补给源<b>'+xs.length+' 类</b></span>'
-          + '<span>宜色<b>'+esc(n.xiColor.name)+'</b></span></div>';
-        const cell=(k,v)=>'<div class="bm-cell"><div class="bm-k">'+k+'</div><div class="bm-v">'+esc(v)+'</div></div>';
-        $('bm-grid').innerHTML =
-          cell('高能时辰', xs.map((x)=>x.time).join(' / '))
-          + cell('该多吃', primary.food||'—')
-          + cell('适合的活动', primary.activity||'—')
-          + cell('多关照', xs.map((x)=>x.organ).join(' / '));
-        $('bm-care').innerHTML =
-          '<div class="bm-k">调养速记</div>'
-          + '<p><b>本命·</b>'+esc(primary.care||'')+'</p>'
-          + (S.health?'<p><b>'+esc(JQ.name||'时令')+'·</b>'+esc(S.health.care)+'</p>':'');
-        $('bm-more').addEventListener('click', ()=>{ if(window.__openReport) window.__openReport('care'); });
-      })();
+      // (工具箱「事业·天赋与方向」「本命养生·速查」已删:与解读页「生活方面→事业」「叁·调养」重复,报告里已完整呈现)
 
       // —— 近期吉日(读 APP.days 未来高能量日，免费速览 + 引导完整择日)——
       // —— 近期吉日(季度视图):黄历神煞(lunar.js 吉神 + 黄道值神) × 你的流日能量,双维筛吉日并标注「为什么吉」——
