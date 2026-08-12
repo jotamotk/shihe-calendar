@@ -922,6 +922,12 @@
   .np-adv ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
   .np-adv li{position:relative;padding-left:15px;font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.85;letter-spacing:.2px;}
   .np-adv li::before{content:"";position:absolute;left:1px;top:8px;width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.85;}
+  /* 感情:单身/有伴侣 分段切换 */
+  .rel-seg{display:inline-flex;gap:2px;background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:3px;margin-bottom:13px;}
+  .rel-seg button{border:0;background:transparent;color:var(--muted);font-size:11.5px;font-family:inherit;font-weight:400;letter-spacing:.5px;padding:4px 12px;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .18s,background .18s;}
+  .rel-seg button.on{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);font-weight:500;}
+  .mood-taohua{margin-top:11px;display:flex;gap:9px;align-items:baseline;font-size:12.5px;line-height:1.85;color:var(--ink-2);font-weight:300;}
+  .mood-taohua em{flex:none;font-style:normal;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);border-radius:6px;padding:2px 9px;box-shadow:inset 0 0 0 1px var(--gold-line);}
   .np-panel-tags{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
   .np-panel-tags:empty{display:none;}
   .np-panel-note{font-size:9.5px;color:var(--muted);font-weight:300;margin-top:9px;letter-spacing:.5px;}
@@ -2512,6 +2518,10 @@
     const userChongZhi = ()=> (typeof APP!=='undefined' && APP.user && APP.user.yearZhi) ? (ZHI_CHONG[APP.user.yearZhi]||'') : '';
     const dayZhiOf = (d)=> (d && d.ganZhi && d.ganZhi.day && d.ganZhi.day.length>=2) ? d.ganZhi.day.charAt(1) : '';
     const isChongDay = (d)=>{ const cz=userChongZhi(); return !!cz && dayZhiOf(d)===cz; };
+    // 感情状态(单身/有伴侣)存本机,仅用于挑选感情建议版本,不上传、不改命盘
+    const REL_KEY='shihe_relstatus';
+    const getRelStatus = ()=>{ try{ return localStorage.getItem(REL_KEY)||''; }catch(e){ return ''; } };
+    const setRelStatus = (v)=>{ try{ v?localStorage.setItem(REL_KEY,v):localStorage.removeItem(REL_KEY); }catch(e){} };
     const fillOf = (e)=> e<46?'f0':e<55?'f1':e<64?'f2':e<73?'f3':e<82?'f4':'f5';
 
     // ===== 法定节假日(2026 国务院办公厅官方安排)=====
@@ -4132,13 +4142,27 @@
         const advBlock=(arr)=>(arr&&arr.length)?'<div class="np-adv"><em>建议</em><ul>'+arr.map((x)=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>':'';
         const asps=n.aspects||[];
         const tabsNav=asps.map((a,i)=>'<div class="np-tab'+(i===0?' on':'')+'" data-i="'+i+'">'+esc(NP_TAB_LAB[a.key]||a.title)+'</div>').join('');
-        const panels=asps.map((a,i)=>'<div class="np-panel'+(i===0?' on':'')+'" data-i="'+i+'">'
-          + (a.tone?'<span class="np-panel-tone">'+esc(NP_TONE[a.tone]||a.tone)+'</span>':'')
-          + '<div class="np-panel-tx">'+esc(a.text)+'</div>'
-          + advBlock(a.advice)
-          + '<div class="np-panel-tags">'+aspAct('适合',a.dos,'do')+aspAct('避免',a.avoid,'no')+'</div>'
-          + (a.note?'<div class="np-panel-note">'+esc(a.note)+'</div>':'')
-          + '</div>').join('');
+        // 感情按「单身/有伴侣」状态显示不同正文+建议(状态存本机);未选=通用。桃花为纯描述行。
+        const moodTx=(a,rel)=> rel==='single'?(a.textSingle||a.text) : rel==='partner'?(a.textPartner||a.text) : a.text;
+        const moodAdv=(a,rel)=> rel==='single'?(a.adviceSingle||a.advice) : rel==='partner'?(a.advicePartner||a.advice) : a.advice;
+        const moodBodyHtml=(a,rel)=> (a.tone?'<span class="np-panel-tone">'+esc(NP_TONE[a.tone]||a.tone)+'</span>':'')
+          + '<div class="np-panel-tx">'+esc(moodTx(a,rel))+'</div>'
+          + (a.taohua?'<div class="mood-taohua"><em>桃花</em><span>'+esc(a.taohua)+'</span></div>':'')
+          + advBlock(moodAdv(a,rel));
+        const panels=asps.map((a,i)=>{
+          const head='<div class="np-panel'+(i===0?' on':'')+'" data-i="'+i+'">';
+          const tags='<div class="np-panel-tags">'+aspAct('适合',a.dos,'do')+aspAct('避免',a.avoid,'no')+'</div>'+(a.note?'<div class="np-panel-note">'+esc(a.note)+'</div>':'');
+          if(a.key==='mood'){
+            const rel=getRelStatus();
+            const seg='<div class="rel-seg">'+[['','通用'],['single','单身'],['partner','有伴侣']].map((o)=>'<button type="button" data-rel="'+o[0]+'"'+(rel===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>';
+            return head+seg+'<div class="mood-body">'+moodBodyHtml(a,rel)+'</div>'+tags+'</div>';
+          }
+          return head
+            + (a.tone?'<span class="np-panel-tone">'+esc(NP_TONE[a.tone]||a.tone)+'</span>':'')
+            + '<div class="np-panel-tx">'+esc(a.text)+'</div>'
+            + advBlock(a.advice)
+            + tags+'</div>';
+        }).join('');
         const life=asps.length
           ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>生活方面</b></div>'
             + '<div class="np-tabs">'+tabsNav+'</div>'+panels+'</div>' : '';
@@ -4166,6 +4190,15 @@
             const i=t.dataset.i;
             wrap.querySelectorAll('.np-tab').forEach((x)=>x.classList.toggle('on', x.dataset.i===i));
             wrap.querySelectorAll('.np-panel').forEach((x)=>x.classList.toggle('on', x.dataset.i===i));
+          });
+        });
+        // 感情:单身/有伴侣切换 → 存本机 + 就地换正文/建议(不重算命盘)
+        wrap.querySelectorAll('.rel-seg button').forEach((b)=>{
+          b.addEventListener('click', ()=>{
+            const rel=b.dataset.rel; setRelStatus(rel);
+            const seg=b.closest('.rel-seg'); seg.querySelectorAll('button').forEach((x)=>x.classList.toggle('on', x.dataset.rel===rel));
+            const moodA=asps.find((a)=>a.key==='mood'); const body=b.closest('.np-panel').querySelector('.mood-body');
+            if(moodA&&body) body.innerHTML=moodBodyHtml(moodA,rel);
           });
         });
       }
