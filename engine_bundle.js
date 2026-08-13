@@ -12148,7 +12148,7 @@ var RhythmEngine = (() => {
         const isShaYinRescue = yinDominant && weightsRaw[KE_ME[dayWx]] >= 1.5;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
         const guanShaPower = weightsRaw[KE_ME[dayWx]];
-        const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2 && yinPower < guanShaPower;
+        const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2 && yinPower < guanShaPower * 1.5;
         let score = 0;
         const detail = { \u5F97\u4EE4: 0, \u5F97\u5730: 0, \u5F97\u52BF: 0 };
         const monthBenWx = ZHI_WX[monthZhi];
