@@ -2590,6 +2590,7 @@
       }
       return { CATS, add, remove, all, forDate, daysTo, onChange, pad, ics };
     })();
+    try{ window.MARKS = MARKS; }catch(e){}   // 暴露给 native.js(原生壳按此排本地通知);网页下无副作用
 
     // 演示数据:首次进入且本机尚无重点日时，预置几个示例，让「重点日」在日历上立刻可见;
     //   用了独立标记位，用户清空后不会再被补回。全部仅存本机。
@@ -5330,9 +5331,10 @@
     // PWA:注册离线缓存(失败不影响使用)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function(){
-        navigator.serviceWorker.register('sw.js').catch(function(){});
+        if(!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) navigator.serviceWorker.register('sw.js').catch(function(){});  // 原生壳(Capacitor)跳过SW,防WKWebView白屏
       });
     }
   </script>
+  <script src="native.js"></script>
 </body>
 </html>
