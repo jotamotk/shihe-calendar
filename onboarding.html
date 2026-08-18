@@ -61,6 +61,15 @@
   .seg button{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--ink-2);padding:9px 0;border-radius:9px;cursor:pointer;transition:all .3s var(--ease);font-weight:400;}
   .seg button.on{background:var(--card-2);color:var(--gold-d);box-shadow:var(--shadow-sm),inset 0 0 0 1px rgba(205,168,98,.28);font-weight:500;}
   .city-row{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;}
+  .city-search{position:relative;}
+  .city-search input{width:100%;box-sizing:border-box;background:var(--card,#17161A);border:1px solid var(--line,#33323A);border-radius:12px;padding:12px 14px;color:var(--ink,#F1EDE6);font-size:15px;font-family:inherit;outline:none;}
+  .city-search input:focus{border-color:var(--gold,#C8AC78);}
+  .city-results{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:20;background:#17161A;border:1px solid var(--line,#33323A);border-radius:12px;max-height:230px;overflow-y:auto;display:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.6);}
+  .city-results.on{display:block;}
+  .city-res-item{padding:11px 14px;font-size:14px;color:var(--ink-2,#C2BDB3);cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);}
+  .city-res-item:hover,.city-res-item:active{background:var(--gold-soft,#201C14);color:var(--gold-d,#E6CF9E);}
+  .city-res-item span{font-size:11px;color:var(--muted,#948F86);margin-left:6px;}
+  .city-res-empty{padding:12px 14px;font-size:13px;color:var(--muted,#948F86);}
   .pick{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line-2);border-radius:13px;padding:13px 15px;cursor:pointer;transition:border-color .25s,background .25s;}
   .pick:hover{border-color:var(--sage);background:var(--sage-soft);}
   .pick .pv{font-size:14px;font-weight:400;color:var(--ink);}
@@ -180,11 +189,12 @@
         </div>
 
         <div class="field" style="margin-bottom:14px;">
-          <div class="flabel">出生地 · 精确到市即可</div>
-          <div class="city-row">
-            <div class="pick"><select id="in-prov"></select><span class="chev">›</span></div>
-            <div class="pick"><select id="in-city"></select><span class="chev">›</span></div>
+          <div class="flabel">出生地 · 城市即可（中/英，海外自动校时区）</div>
+          <div class="city-search">
+            <input id="in-city-q" type="text" placeholder="搜索出生城市，如 成都 / New York" autocomplete="off">
+            <div class="city-results" id="city-results"></div>
           </div>
+          <input type="hidden" id="in-lon"><input type="hidden" id="in-tz"><input type="hidden" id="in-cityname">
           <div class="truesun">
             <span class="ts-ico"></span>
             <span class="ts-txt" id="ts-note">已按真太阳时校正</span>
@@ -271,21 +281,24 @@
     ];
     const ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
     const provSel = document.getElementById('in-prov');
-    const citySel = document.getElementById('in-city');
-    const DEF_PROV = '四川', DEF_CITY = '成都';
-    PROV.forEach(([p],i)=>{
-      const o=document.createElement('option');o.value=i;o.textContent=p;
-      if(p===DEF_PROV)o.selected=true;provSel.appendChild(o);
-    });
-    function fillCities(pi){
-      citySel.innerHTML='';
-      PROV[pi][1].forEach(([n,lon])=>{
-        const o=document.createElement('option');o.value=lon;o.textContent=n;
-        if(PROV[pi][0]===DEF_PROV && n===DEF_CITY)o.selected=true;citySel.appendChild(o);
-      });
-    }
-    fillCities(PROV.findIndex(([p])=>p===DEF_PROV));
-    provSel.addEventListener('change',()=>{ fillCities(+provSel.value); updateTrueSun(); });
+    // —— 全球城市搜索(GeoNames + 中国中文名):出生地 → 经度 + IANA时区 ——
+    const cityQ=document.getElementById('in-city-q'), cityRes=document.getElementById('city-results');
+    const lonEl=document.getElementById('in-lon'), tzEl=document.getElementById('in-tz'), cnameEl=document.getElementById('in-cityname');
+    let GEO=null;
+    const CC_NAME={CN:'中国',TW:'台湾',HK:'香港',MO:'澳门',US:'美国',CA:'加拿大',GB:'英国',AU:'澳大利亚',NZ:'新西兰',JP:'日本',KR:'韩国',SG:'新加坡',MY:'马来西亚',TH:'泰国',VN:'越南',FR:'法国',DE:'德国',IT:'意大利',ES:'西班牙',NL:'荷兰',SE:'瑞典',RU:'俄罗斯',IN:'印度',ID:'印尼',PH:'菲律宾'};
+    const ccName=(cc)=>CC_NAME[cc]||cc;
+    function pickCity(name,lon,tz,cc){ lonEl.value=lon; tzEl.value=tz; cnameEl.value=name; cityQ.value=name+' · '+ccName(cc); cityRes.classList.remove('on'); cityRes.innerHTML=''; updateTrueSun(); }
+    function searchCity(q){ if(!GEO||!q||!q.trim()){ cityRes.classList.remove('on'); return; } const t=q.trim().toLowerCase(); const hits=[]; for(const c of GEO.c){ if(c[0].toLowerCase().indexOf(t)>=0){ hits.push(c); if(hits.length>=300)break; } } hits.sort((a,b)=>b[4]-a[4]); const top=hits.slice(0,20);
+      cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+GEO.tz[c[2]]+'" data-cc="'+c[3]+'" data-name="'+String(c[0]).replace(/"/g,'')+'">'+c[0]+' <span>'+ccName(c[3])+'</span></div>').join('') : '<div class="city-res-empty">没找到，换个写法试试</div>';
+      cityRes.classList.add('on'); }
+    cityQ.addEventListener('input',()=>searchCity(cityQ.value));
+    cityQ.addEventListener('focus',()=>{ if(cityRes.innerHTML)cityRes.classList.add('on'); });
+    cityRes.addEventListener('click',(e)=>{ const it=e.target.closest('.city-res-item'); if(!it)return; pickCity(it.dataset.name,parseFloat(it.dataset.lon),it.dataset.tz,it.dataset.cc); });
+    document.addEventListener('click',(e)=>{ if(!e.target.closest('.city-search'))cityRes.classList.remove('on'); });
+    fetch('geocities.json').then(r=>r.json()).then(d=>{ GEO=d; if(!lonEl.value)pickCity('成都',104.07,'Asia/Shanghai','CN'); }).catch(()=>{ if(!lonEl.value){ lonEl.value=104.07;tzEl.value='Asia/Shanghai';cnameEl.value='成都';cityQ.value='成都 · 中国'; } });
+    // 当地时间(IANA时区)→ 北京时间(UTC+8)墙钟,含历史夏令时(Intl内置tzdata)
+    function tzOffsetMin(utcMs,zone){ const dtf=new Intl.DateTimeFormat('en-US',{timeZone:zone,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}); const p={}; dtf.formatToParts(new Date(utcMs)).forEach(x=>p[x.type]=x.value); const asUTC=Date.UTC(p.year,p.month-1,p.day,p.hour==='24'?0:p.hour,p.minute,p.second); return Math.round((asUTC-utcMs)/60000); }
+    function localToBeijing(y,mo,d,h,mi,zone){ const wall=Date.UTC(y,mo-1,d,h,mi,0); const off=tzOffsetMin(wall,zone); const utc=wall-off*60000; const bj=new Date(utc+8*3600000); return {year:bj.getUTCFullYear(),month:bj.getUTCMonth()+1,day:bj.getUTCDate(),hour:bj.getUTCHours(),minute:bj.getUTCMinutes()}; }
 
     // 段选器:点选即切 .on,值存 data-v
     function segBind(id){
@@ -362,31 +375,28 @@
         const t = document.getElementById('in-time').value.split(':').map(Number);
         hh = t[0]||0; mi = t[1]||0;
       }
-      const lon = parseFloat(document.getElementById('in-city').value);
+      const lon = parseFloat(lonEl.value)||104.07;
+      const tz = tzEl.value || 'Asia/Shanghai';
       let sy=y, sm=m, sd=d;
       if (cal === '农历'){ const leap=!Number.isInteger(m), mm=Math.floor(m); const s = RhythmEngine.lunarToSolar(y,mm,d,leap); sy=s.year; sm=s.month; sd=s.day; }
-      return { year:sy, month:sm, day:sd, hour:hh||0, minute:mi||0, longitude:lon, gender:segVal('seg-sex'), hourUnknown: timeMode==='unknown',
-        // 原始录入(供返回时按用户当初的口径回填，避免农历用户看到公历)
-        calInput: cal, inY: y, inM: m, inD: d };
+      // 海外:当地时间换算成北京基准喂冻结引擎(引擎按经度做真太阳时,基准须UTC+8);中国(Asia/Shanghai)保持原样,向后兼容逐字一致。
+      let eY=sy,eM=sm,eD=sd,eH=hh||0,eMin=mi||0;
+      if (tz && tz!=='Asia/Shanghai' && timeMode!=='unknown'){ const bj=localToBeijing(sy,sm,sd,hh||0,mi||0,tz); eY=bj.year;eM=bj.month;eD=bj.day;eH=bj.hour;eMin=bj.minute; }
+      return { year:eY, month:eM, day:eD, hour:eH, minute:eMin, longitude:lon, gender:segVal('seg-sex'), hourUnknown: timeMode==='unknown',
+        calInput: cal, inY: y, inM: m, inD: d, tz, cityName: cnameEl.value,
+        srcY: sy, srcM: sm, srcD: sd, srcH: hh||0, srcMin: mi||0 };
     }
 
     // —— 真太阳时实时校正提示 ——
     function updateTrueSun(){
-      if (timeMode==='unknown') return; // 无时辰:不显示真太阳时校正提示
+      if (timeMode==='unknown'){ const el=document.getElementById('ts-note'); if(el)el.textContent='出生时辰未知 · 按当日推算'; return; }
       try{
-        const p = readPerson();
-        const corr = RhythmEngine.trueSolarCorrection(p.year,p.month,p.day,p.longitude); // 分钟
-        const total = p.hour*60 + p.minute + Math.round(corr);
-        let mins = ((total%1440)+1440)%1440;
-        const ch = Math.floor(mins/60), cm = mins%60;
-        const pad = (n)=>String(n).padStart(2,'0');
-        const zhiIdx = Math.floor(((ch+1)%24)/2); // 23~1=子
-        const sign = corr>=0 ? '+' : '−';
-        document.getElementById('ts-note').innerHTML =
-          '已按真太阳时校正 → <b>'+pad(ch)+':'+pad(cm)+' · '+ZHI[zhiIdx]+'时</b>（约 '+sign+Math.abs(Math.round(corr))+' 分钟）';
+        const chart = RhythmEngine.paipan(readPerson());
+        const tzhi = chart.pillars.time ? chart.pillars.time.charAt(1) : '';
+        document.getElementById('ts-note').innerHTML = '已按真太阳时校正 → <b>'+chart.trueSolarClock+(tzhi?' · '+tzhi+'时':'')+'</b>';
       }catch(e){ /* 输入未完整时忽略 */ }
     }
-    ['in-date','in-time','in-city'].forEach(id=>document.getElementById(id).addEventListener('change',updateTrueSun));
+    ['in-date','in-time'].forEach(id=>document.getElementById(id).addEventListener('change',updateTrueSun));
     document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',updateTrueSun));
     updateTrueSun();
 
@@ -405,18 +415,12 @@
       if (saved.gender) document.querySelectorAll('#seg-sex button').forEach(b=>b.classList.toggle('on', b.dataset.v===saved.gender));
       // 出生日期:有原始录入用原始(农历填的就显示农历那串数字),否则回退到公历换算值
       const dY = saved.inY || saved.year, dM = saved.inM || saved.month, dD = saved.inD || saved.day;
-      const sh = saved.hour||0, smi = saved.minute||0;
+      const sh = (saved.srcH!=null?saved.srcH:saved.hour)||0, smi = (saved.srcMin!=null?saved.srcMin:saved.minute)||0;
       if (dY && dM && dD){ setWheelsDateTime(dY, dM, dD, sh, smi); syncHidden(); }
-      // 出生地:按经度反查省 / 市
+      // 出生地:还原上次选的城市(新数据用 cityName,老数据回退按经度显示)
       if (typeof saved.longitude === 'number'){
-        let pi = -1;
-        for (let i=0;i<PROV.length;i++){
-          if (PROV[i][1].some(([n,lon])=>Math.abs(lon-saved.longitude)<0.005)){ pi=i; break; }
-        }
-        if (pi>=0){
-          provSel.value = pi; fillCities(pi);
-          Array.from(citySel.options).forEach(o=>{ o.selected = Math.abs(parseFloat(o.value)-saved.longitude)<0.005; });
-        }
+        lonEl.value = saved.longitude; tzEl.value = saved.tz || 'Asia/Shanghai'; cnameEl.value = saved.cityName || '';
+        cityQ.value = saved.cityName ? (saved.cityName + (saved.cc?(' · '+ccName(saved.cc)):'')) : (cnameEl.value||'');
       }
       // 出生时间模式:点对应模式按钮(触发显示切换),再回填具体值
       // 兼容旧数据:历史「大致时段」(timeApprox)已废弃，统一归入「不确定→三柱」。
@@ -462,7 +466,7 @@
       const corr = Math.round(chart.correctionMin);
       const sign = corr>=0?'+':'−';
       document.getElementById('cf-info').innerHTML =
-        '公历 <b>'+p.year+'年'+p.month+'月'+p.day+'日</b> · '+p.gender+' · '+document.getElementById('in-city').selectedOptions[0].text+'<br>'+
+        '<b>'+(p.srcY||p.year)+'年'+(p.srcM||p.month)+'月'+(p.srcD||p.day)+'日</b> · '+p.gender+' · '+(p.cityName||'')+'<br>'+
         '农历 <b>'+chart.lunarText+'</b><br>'+
         (p.hourUnknown
           ? '出生时辰 <b>未知</b> · 按当日推算'
