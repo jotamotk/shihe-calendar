@@ -379,9 +379,11 @@
       const tz = tzEl.value || 'Asia/Shanghai';
       let sy=y, sm=m, sd=d;
       if (cal === '农历'){ const leap=!Number.isInteger(m), mm=Math.floor(m); const s = RhythmEngine.lunarToSolar(y,mm,d,leap); sy=s.year; sm=s.month; sd=s.day; }
-      // 海外:当地时间换算成北京基准喂冻结引擎(引擎按经度做真太阳时,基准须UTC+8);中国(Asia/Shanghai)保持原样,向后兼容逐字一致。
+      // 海外:当地时间换算成北京基准喂冻结引擎(引擎按经度做真太阳时,基准须UTC+8);中国保持原样,向后兼容逐字一致。
+      // ⚠️ 中国全境民用钟统一北京时(UTC+8):新疆虽属 Asia/Urumqi(+6),出生证/医院仍记北京时,必须直通不换算,否则凭空+2h污染时柱/日柱。
+      const cnBeijingTz = (tz==='Asia/Shanghai' || tz==='Asia/Urumqi');
       let eY=sy,eM=sm,eD=sd,eH=hh||0,eMin=mi||0;
-      if (tz && tz!=='Asia/Shanghai' && timeMode!=='unknown'){ const bj=localToBeijing(sy,sm,sd,hh||0,mi||0,tz); eY=bj.year;eM=bj.month;eD=bj.day;eH=bj.hour;eMin=bj.minute; }
+      if (tz && !cnBeijingTz && timeMode!=='unknown'){ const bj=localToBeijing(sy,sm,sd,hh||0,mi||0,tz); eY=bj.year;eM=bj.month;eD=bj.day;eH=bj.hour;eMin=bj.minute; }
       return { year:eY, month:eM, day:eD, hour:eH, minute:eMin, longitude:lon, gender:segVal('seg-sex'), hourUnknown: timeMode==='unknown',
         calInput: cal, inY: y, inM: m, inD: d, tz, cityName: cnameEl.value,
         srcY: sy, srcM: sm, srcD: sd, srcH: hh||0, srcMin: mi||0 };
