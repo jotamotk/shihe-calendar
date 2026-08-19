@@ -318,11 +318,6 @@
   .sc-tA .sc-rule{display:flex;align-items:center;gap:10px;margin:16px 0 6px;}
   .sc-tA .sc-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-line),transparent);}
   .sc-tA .sc-rule span{font-size:9px;color:var(--gold);opacity:.7;}
-  .sc-tA .sc-hero{text-align:center;padding:8px 0 4px;}
-  .sc-tA .sc-kwlab{font-size:9px;letter-spacing:7px;color:var(--gold);margin-bottom:12px;padding-left:7px;}
-  .sc-tA .sc-kwwrap{position:relative;display:inline-flex;align-items:flex-end;}
-  .sc-tA .sc-kw{font-family:var(--serif);font-weight:500;letter-spacing:8px;color:var(--ink);padding-left:8px;line-height:1;}
-  .sc-tA .sc-kwseal{position:absolute;right:-26px;bottom:6px;width:24px;height:24px;border-radius:6px;background:rgba(196,106,84,.16);border:1px solid rgba(196,106,84,.55);color:#C4866A;font-family:var(--serif);font-size:12px;display:flex;align-items:center;justify-content:center;}
   .sc-tA .sc-line{font-size:12px;color:var(--ink-2);line-height:1.85;font-weight:300;letter-spacing:.5px;margin:14px auto 0;max-width:215px;}
   .sc-tA .sc-energy{display:flex;align-items:center;gap:16px;margin:20px 2px 4px;padding:14px 16px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:16px;}
   .sc-tA .sc-ring{position:relative;width:72px;height:72px;flex:none;}
@@ -359,8 +354,7 @@
   .sc-tB .sc-bandimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
   .sc-tB .sc-band--img::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(11,10,9,.18) 30%,rgba(11,10,9,.82));}
   .sc-tB .sc-bin{flex:1;padding:24px 24px 20px;display:flex;flex-direction:column;}
-  .sc-tB .sc-kw{font-family:var(--serif);font-size:33px;font-weight:500;letter-spacing:5px;color:var(--ink);text-align:center;}
-  .sc-tB .sc-line{font-size:12px;color:var(--ink-2);line-height:1.95;font-weight:300;text-align:center;margin-top:16px;letter-spacing:.5px;}
+  .sc-tB .sc-line{flex:1;display:flex;flex-direction:column;justify-content:center;font-family:var(--serif);font-size:19px;color:var(--ink);line-height:1.95;font-weight:400;text-align:center;letter-spacing:1.5px;}
   .sc-tB .sc-bmeta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);}
   .sc-tB .sc-bmeta .sc-gz{font-family:var(--serif);color:var(--ink-2);letter-spacing:1px;}
 
@@ -371,10 +365,9 @@
   .sc-tC .sc-cbrand .sc-cs{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--gold-d),var(--gold));color:#241c0d;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;}
   .sc-tC .sc-ce{font-size:10px;color:var(--gold-d);letter-spacing:1px;}
   .sc-tC .sc-cmid{flex:1;display:flex;flex-direction:column;justify-content:center;}
-  .sc-tC .sc-kw{font-family:var(--serif);font-size:56px;font-weight:600;letter-spacing:4px;line-height:1.05;
+  .sc-tC .sc-line{font-family:var(--serif);font-size:21px;line-height:1.9;font-weight:500;letter-spacing:1.5px;text-align:center;
     color:#E0C88A;  /* 兜底:不支持 background-clip:text 的浏览器仍显示金色，不会透明消失 */
     background:linear-gradient(120deg,#F4E4BD 8%,#C8AC78 50%,#EBD7A6 92%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-  .sc-tC .sc-line{font-size:12.5px;color:var(--ink-2);line-height:1.95;font-weight:300;margin-top:18px;letter-spacing:.5px;}
   .sc-tC .sc-cbar{margin-top:20px;}
   .sc-tC .sc-cbar .sc-t{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:7px;}
   .sc-tC .sc-cbar .sc-t b{color:var(--gold-d);font-weight:500;}
@@ -388,9 +381,6 @@
   .share-go:active{transform:translateY(1px);}
   .share-close{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);color:#fff;font-family:inherit;font-size:12px;border-radius:20px;padding:8px 28px;cursor:pointer;font-weight:300;letter-spacing:2px;transition:background .25s;}
   .share-close:hover{background:rgba(255,255,255,.22);}
-  /* 篆刻落款印(今日一字) */
-  .sc-tA .sc-kwwrap{position:relative;display:inline-flex;align-items:flex-end;justify-content:center;}
-  .sc-tA .sc-kwseal{position:absolute;right:-30px;bottom:6px;width:25px;height:25px;border-radius:6px;background:rgba(196,106,84,.16);border:1px solid rgba(196,106,84,.55);color:#C4866A;font-family:var(--serif);font-size:13px;display:flex;align-items:center;justify-content:center;}
   /* D · 本周能量回顾周卡 */
   .share-card.sc-tD{background:radial-gradient(130% 88% at 50% 0%,#1a1814 0%,#0b0a09 62%);border:1px solid var(--line);padding:26px 22px;min-height:372px;}
   .sc-tD .sc-wkhead{display:flex;align-items:center;gap:11px;}
@@ -3184,7 +3174,6 @@
         try{ return RhythmEngine.Solar.fromYmd(APP.month.year,APP.month.month,d.g).getLunar().getDayInGanZhi()+'日'; }catch(e){ return ''; }
       }
       function poeticBreak(s){ s=esc(s||''); return s.replace(/([，。；])/, '$1\n'); }
-      function kwSize(kw,base){ const n=(kw||'').length; return n>=4?Math.round(base*0.66):n===3?Math.round(base*0.82):base; }
       const RING_C=2*Math.PI*31;
       function ringSVG(e){ const o=(RING_C*(1-Math.min(100,e)/100)).toFixed(1);
         return '<svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="31" fill="none" stroke="#33323A" stroke-width="3.5"/>'
@@ -3193,7 +3182,7 @@
       function build(d){
         if (!d) return '';
         const M=APP.month.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
-        const kw=esc(d.cueWord||d.cue||'照常'), line=poeticBreak(d.cueLine||('今天宜收尾，把手头的事做扎实。'));
+        const line=poeticBreak(d.cueLine||('今天宜收尾，把手头的事做扎实。'));
         const e=Math.min(100,d.e), word=esc(d.word||''), xi=XI||GOLD;
         const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'挑最要紧的一件做完');
         const huan=esc((d.huan&&d.huan.length&&d.huan.join('')!=='—')?d.huan.slice(0,2).join(' · '):'无须刻意避忌');
@@ -3207,15 +3196,13 @@
           return '<div class="sc-band sc-band--img">'
             +'<img class="sc-bandimg" src="assets/img/'+shareImg(d.e)+'.jpg" alt="" loading="lazy">'+WAVE
             +'<div class="sc-bseal">时</div><div class="sc-bjq">'+esc(band)+'</div></div>'
-            +'<div class="sc-bin"><div class="sc-kw" style="font-size:'+kwSize(kw,33)+'px">'+kw+'</div>'
-            +'<div class="sc-line">'+line+'</div>'
+            +'<div class="sc-bin"><div class="sc-line">'+line+'</div>'
             +'<div class="sc-bmeta"><span class="sc-gz">农历'+lunar+(gz?' · '+gz:'')+'</span><span>能量 '+d.e+'</span></div></div>';
         }
         if(THEME==='C'){
           return '<div class="sc-ctop"><div class="sc-cbrand"><span class="sc-cs">顺</span>顺时黄历</div>'
             +'<div class="sc-ce">能量 '+d.e+(word?' · '+word:'')+'</div></div>'
-            +'<div class="sc-cmid"><div class="sc-kw" style="font-size:'+kwSize(kw,56)+'px">'+kw+'</div>'
-            +'<div class="sc-line">'+line+'</div>'
+            +'<div class="sc-cmid"><div class="sc-line">'+line+'</div>'
             +'<div class="sc-cbar"><div class="sc-t"><b>今日宜 '+yi+'</b><span>'+esc(XINAME||'')+'</span></div>'
             +'<div class="sc-bar"><i style="width:'+e+'%"></i></div></div></div>'
             +'<div class="sc-cfoot"><span>'+M+'月'+d.g+'日 · 农历'+lunar+'</span><span>顺天而养，应时而行</span></div>';
@@ -3274,7 +3261,6 @@
         if(!navigator.share){ go.style.display='none'; return; }   // 不支持系统分享 → 退回「长按存图」
         go.addEventListener('click', async ()=>{
           const d=SHARE_DAY; if(!d) return;
-          const kw=(d.cueWord||d.cue||'照常');
           const txt='顺时黄历 · '+APP.month.month+'月'+d.g+'日 · 我今天的状态。顺天而养，应时而行。';
           try{
             await navigator.share({ title:'顺时黄历', text:txt, url:location.origin+location.pathname });
