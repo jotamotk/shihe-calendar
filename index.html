@@ -3208,7 +3208,7 @@
       function build(d){
         if (!d) return '';
         const M=APP.month.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
-        const kw=esc(d.cueWord||d.cue||'顺其自然'), line=poeticBreak(d.cueLine||('今天宜收尾，把手头的事做扎实。'));
+        const kw=esc(d.cueWord||d.cue||'照常'), line=poeticBreak(d.cueLine||('今天宜收尾，把手头的事做扎实。'));
         const e=Math.min(100,d.e), word=esc(d.word||''), xi=XI||GOLD;
         const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'挑最要紧的一件做完');
         const huan=esc((d.huan&&d.huan.length&&d.huan.join('')!=='—')?d.huan.slice(0,2).join(' · '):'无须刻意避忌');
@@ -3289,7 +3289,7 @@
         if(!navigator.share){ go.style.display='none'; return; }   // 不支持系统分享 → 退回「长按存图」
         go.addEventListener('click', async ()=>{
           const d=SHARE_DAY; if(!d) return;
-          const kw=(d.cueWord||d.cue||'顺其自然');
+          const kw=(d.cueWord||d.cue||'照常');
           const txt='顺时黄历 · '+APP.month.month+'月'+d.g+'日 · 我今天的状态。顺天而养，应时而行。';
           try{
             await navigator.share({ title:'顺时黄历', text:txt, url:location.origin+location.pathname });
@@ -4034,7 +4034,7 @@
           + '<span class="rp-rh-lab">'+d.k+'</span>'
           + '<span class="rp-rh-line">'+esc(rhDesc(d.k,d.v))+'</span>'
           + '</div>';
-        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四种状态</b></div>'
+        return '<div class="rp-sec">'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
           + '</div></div>';
       }
@@ -4068,7 +4068,7 @@
         const pe=n.persona||{};
         // 开篇:去掉原型名/人设/关键词(占地大、又易失准),改以一句本色金句轻起头
         const quote=pe.tagline
-          ? '<div class="np-quote np-quote-lead"><div class="np-quote-eye">本 命 底 色</div>'
+          ? '<div class="np-quote np-quote-lead">'
             + '<div class="np-quote-tx">'+esc(pe.tagline)+'</div>'
             + '<div class="np-quote-rule"><i></i><b></b><i></i></div></div>' : '';
         // 读懂你:三段 coreText → 左线要点行(固定标签，一眼可扫，不再堆散文卡)
