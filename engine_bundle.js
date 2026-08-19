@@ -13894,18 +13894,6 @@ var RhythmEngine = (() => {
           avoid: ["\u4E0E\u4EBA\u786C\u78B0\u3001\u4E24\u8D25\u4FF1\u4F24", "\u81EA\u6211\u65BD\u538B\u8FC7\u91CD", "\u94BB\u725B\u89D2\u5C16\u3001\u56FA\u6267\u5230\u5E95", "\u4E3A\u96BE\u81EA\u5DF1\u3001\u8FC7\u5EA6\u81EA\u5F8B"]
         }
       };
-      var ARCHETYPE = {
-        \u7532: { title: "\u53C2\u5929\u5927\u6811", line: "\u6709\u4E3B\u89C1\u3001\u80AF\u62C5\u5F53\uFF0C\u8BA4\u51C6\u65B9\u5411\u5C31\u4E00\u8DEF\u8D70\u5230\u5E95\u3002" },
-        \u4E59: { title: "\u8513\u751F\u82B1\u8349", line: "\u67D4\u97E7\u3001\u4F1A\u53D8\u901A\uFF0C\u6362\u4E2A\u73AF\u5883\u4E5F\u80FD\u5F88\u5FEB\u624E\u4E0B\u6839\u3002" },
-        \u4E19: { title: "\u6B63\u5348\u592A\u9633", line: "\u70ED\u60C5\u3001\u7231\u8868\u8FBE\uFF0C\u60C5\u7EEA\u85CF\u4E0D\u4F4F\uFF0C\u5728\u4EBA\u7FA4\u91CC\u5F88\u663E\u773C\u3002" },
-        \u4E01: { title: "\u4E00\u76CF\u706F\u70DB", line: "\u4E13\u6CE8\u3001\u7EC6\u817B\uFF0C\u5728\u5C0F\u5904\u7ED9\u4EBA\u957F\u4E45\u7684\u6696\u3002" },
-        \u620A: { title: "\u5DCD\u5DCD\u9AD8\u5C71", line: "\u7A33\u91CD\u3001\u625B\u5F97\u4F4F\u4E8B\uFF0C\u662F\u65C1\u4EBA\u613F\u610F\u4F9D\u9760\u7684\u90A3\u4E2A\u3002" },
-        \u5DF1: { title: "\u7530\u56ED\u6C83\u571F", line: "\u5305\u5BB9\u3001\u80FD\u6ECB\u517B\u4EBA\uFF0C\u9ED8\u9ED8\u628A\u8EAB\u8FB9\u7684\u4EBA\u548C\u4E8B\u517B\u8D77\u6765\u3002" },
-        \u5E9A: { title: "\u672A\u7422\u4E4B\u94A2", line: "\u679C\u65AD\u3001\u6709\u950B\u8292\uFF0C\u8BB2\u539F\u5219\uFF0C\u4E5F\u6700\u91CD\u60C5\u4E49\u3002" },
-        \u8F9B: { title: "\u6E29\u6DA6\u73E0\u7389", line: "\u8BB2\u7A76\u3001\u654F\u611F\u3001\u7231\u7F8E\uFF0C\u5728\u610F\u7EC6\u8282\u4E0E\u4F53\u9762\u3002" },
-        \u58EC: { title: "\u5954\u6D41\u6C5F\u6CB3", line: "\u806A\u660E\u3001\u4E0D\u62D8\u4E00\u683C\uFF0C\u60F3\u5F97\u8FDC\uFF0C\u559C\u6B22\u65B0\u9C9C\u3002" },
-        \u7678: { title: "\u7EC6\u96E8\u7518\u9732", line: "\u6E29\u6DA6\u3001\u5584\u611F\u3001\u6709\u7075\u6027\uFF0C\u5FC3\u601D\u5F88\u7EC6\u3002" }
-      };
       var WEEK = ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"];
       function pad(n) {
         return String(n).padStart(2, "0");
@@ -14235,7 +14223,6 @@ var RhythmEngine = (() => {
       function buildNatal(mj, chart) {
         const dayGan = chart.dayGan;
         const dayWx = GAN_WX[dayGan];
-        const arche = ARCHETYPE[dayGan] || { title: dayWx + "\u65E5\u4E3B", line: "" };
         const strengthExplain = {
           \u8EAB\u5F3A: "\u4F60\u5E95\u5B50\u8DB3\u3001\u80FD\u72EC\u5F53\u4E00\u9762\uFF0C\u505A\u4E8B\u63A8\u5F97\u52A8\uFF1B\u4E0D\u5FC5\u4E00\u5473\u731B\u51B2\uFF0C\u7559\u4E9B\u4F59\u529B\u66F4\u597D\u3002",
           \u504F\u5F3A: "\u4F60\u505A\u4E8B\u72EC\u7ACB\u3001\u6709\u97E7\u6027\uFF0C\u625B\u5F97\u4F4F\u538B\u529B\uFF1B\u63A8\u8FDB\u65F6\u7559\u4E00\u624B\uFF0C\u522B\u628A\u81EA\u5DF1\u7EF7\u5F97\u592A\u7D27\u3002",
@@ -14287,7 +14274,6 @@ var RhythmEngine = (() => {
         });
         const primary = WX_INFO[mj.primaryXi];
         const colorAdvice = `\u968F\u8EAB\u5E26\u4E00\u70B9\u300C${mj.xiColor.name}\u300D\u6700\u517B\u6C14\u573A:\u5B89\u795E\u3001\u805A\u6C14\u3001\u5229\u6C9F\u901A\u3002\u6750\u8D28\u9009 ${primary.material} \u4E00\u7C7B\uFF0C\u505A\u6210\u624B\u4E32\u3001\u540A\u5760\u7B49\u8D34\u8EAB\u5C0F\u4EF6\u6700\u597D\u3002`;
-        const signature = `${arche.title} \xB7 ${STR_LABEL[mj.strength] || mj.strength} \xB7 \u5B9C\u8FD1\u300C${mj.xiColor.name}\u300D`;
         const persona = buildPersona(mj, chart);
         const dialectics = buildDialectics(mj, chart);
         const aspects = buildAspects(mj, dayWx, persona);
@@ -14320,14 +14306,6 @@ var RhythmEngine = (() => {
           // [{t,s}] 命局辩证段落
         };
       }
-      var STR_LABEL = {
-        \u8EAB\u5F3A: "\u81EA\u7ED9\u578B",
-        \u504F\u5F3A: "\u7565\u504F\u81EA\u7ED9",
-        \u4E2D\u548C: "\u5747\u8861\u578B",
-        \u504F\u5F31: "\u7565\u5B9C\u52A9\u529B",
-        \u8EAB\u5F31: "\u5F97\u52A9\u578B",
-        \u4ECE\u5F31: "\u987A\u52BF\u578B"
-      };
       function strengthHedgeOf(strength, bodyT) {
         const t = typeof bodyT === "number" ? bodyT : 0;
         const at = Math.abs(t);
@@ -15393,7 +15371,6 @@ var RhythmEngine = (() => {
         heroLine,
         WX_INFO,
         GOD_LIFE,
-        ARCHETYPE,
         buildYears,
         buildYearCard,
         buildYearMonths,
