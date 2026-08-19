@@ -1803,7 +1803,7 @@
   /* 读懂你:金左线要点行,标签更聚焦 */
   #jd-chapter .np-row-lab{font-size:15px;}
   #jd-chapter .np-row-tx{font-size:13.5px;line-height:1.95;}
-  /* 深层辩证「刺」→ 通栏居中宋体金句(说中你的高光,取代小卡) */
+  /* 深层辩证「刺」→ 通栏居中宋体金句(关于你高光,取代小卡) */
   #jd-chapter .rp-dia{gap:0;}
   #jd-chapter .rp-dia-it{border:none;border-radius:0;background:none;padding:24px 10px;text-align:center;border-top:1px solid var(--line);}
   #jd-chapter .rp-dia-it:first-child{border-top:none;}
@@ -2148,11 +2148,6 @@
               <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
-          <button class="tb-feat" data-tool="fangwei" data-title="传统方位">
-            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fangwei"></use></svg>
-              <div><b>传统方位 · 喜财福贵</b><small id="tb-c-fw">喜 · 财 · 福 · 阳贵 · 阴贵</small></div></div>
-            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
-          </button>
 
           <div class="tb-group-h">我的</div>
           <button class="tb-feat" data-tool="mark" data-title="重点日">
@@ -2252,12 +2247,6 @@
               <p>冬令宜温热饮食（如羊肉、山药），按自己体质来、别过量。</p>
               <p>重在少熬夜、多静养，为来年蓄力。</p></div>
             <div class="tb-note">三伏三九为传统节令，冬病夏治、冬令进补参考，非医疗建议</div>
-          </div>
-          <div class="tb-panel" data-panel="fangwei">
-            <div class="sc-now" id="fw-hero"></div>
-            <div class="fw-nav"><button id="fw-prev" type="button" aria-label="前一天">‹</button><span id="fw-date"></span><button id="fw-next" type="button" aria-label="后一天">›</button></div>
-            <div class="fw-grid" id="fw-grid"></div>
-            <div class="tb-note">诸神方位按当日日干、依传统通书口诀推算；传统通书栏目，只报方位、不涉宗教活动</div>
           </div>
          </div>
         </div>
@@ -4047,7 +4036,6 @@
           + '</div>';
         return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>四种状态</b></div>'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
-          + '<div class="rp-rh-foot">这是你天生的样子，无关好坏；顺着它安排张弛，最省力。</div>'
           + '</div></div>';
       }
       // 应期正向化:取现有流月低分月，改说成「调养窗口期」(蓄力，不是低谷)
@@ -4087,7 +4075,7 @@
         const core=(pe.coreText||[]).filter(Boolean);
         const rows=core.length
           ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>读懂你</b></div>'
-            + '<div class="np-rows">'+core.slice(0,3).map((p,i)=>'<div class="np-row"><div class="np-row-lab">'+esc(NP_ROW_LAB[i]||'')+'</div><div class="np-row-tx">'+esc(p)+'</div></div>').join('')+'</div></div>' : '';
+            + '<div class="np-rows">'+core.slice(0,3).map((p,i)=>'<div class="np-row"><div class="np-row-tx">'+esc(p)+'</div></div>').join('')+'</div></div>' : '';
         // 生活方面:5 项收进分段 Tab —— 点选逐面看，替代 5 张同款卡堆叠
         const aspAct=(lab,arr,cls)=>(arr&&arr.length)?'<div class="rp-asp-act '+cls+'"><em>'+lab+'</em><span>'+arr.map(esc).join(' · ')+'</span></div>':'';
         const advBlock=(arr)=>(arr&&arr.length)?'<div class="np-adv"><em>建议</em><ul>'+arr.map((x)=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>':'';
@@ -4096,7 +4084,7 @@
         // 感情按「单身/有伴侣」状态显示不同正文+建议(状态存本机);未选=通用。桃花为纯描述行。
         const moodTx=(a,rel)=> rel==='single'?(a.textSingle||a.text) : rel==='partner'?(a.textPartner||a.text) : a.text;
         const moodAdv=(a,rel)=> rel==='single'?(a.adviceSingle||a.advice) : rel==='partner'?(a.advicePartner||a.advice) : a.advice;
-        const moodBodyHtml=(a,rel)=> (a.tone?'<span class="np-panel-tone">'+esc(NP_TONE[a.tone]||a.tone)+'</span>':'')
+        const moodBodyHtml=(a,rel)=> ('')
           + '<div class="np-panel-tx">'+esc(moodTx(a,rel))+'</div>'
           + (a.taohua?'<div class="mood-taohua"><em>亲和力</em><span>'+esc(a.taohua)+'</span></div>':'')
           + advBlock(moodAdv(a,rel));
@@ -4109,7 +4097,7 @@
             return head+seg+'<div class="mood-body">'+moodBodyHtml(a,rel)+'</div>'+tags+'</div>';
           }
           return head
-            + (a.tone?'<span class="np-panel-tone">'+esc(NP_TONE[a.tone]||a.tone)+'</span>':'')
+            + ('')
             + '<div class="np-panel-tx">'+esc(a.text)+'</div>'
             + advBlock(a.advice)
             + tags+'</div>';
@@ -4169,8 +4157,8 @@
             if(h){ title=(h.querySelector('b')||{}).textContent||''; }
             else if(sec.querySelector(':scope > .rp-dia')){   // 深层解读无标题:补一个可折叠头
               h=document.createElement('div'); h.className='rp-sec-h';
-              h.innerHTML='<i class="rp-bar"></i><b>说中你的</b>';
-              sec.insertBefore(h, sec.firstChild); title='说中你的'; SUMM[title]='几句一针见血的洞察';
+              h.innerHTML='<i class="rp-bar"></i><b>关于你</b>';
+              sec.insertBefore(h, sec.firstChild); title='关于你'; SUMM[title]='几句一针见血的洞察';
             } else { return; }   // 收束金句等无头块不折叠
             const ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex) ex.remove(); // 幸运色原有色名span,去重复
             const body=document.createElement('div'); body.className='sec-fold-body';
