@@ -594,16 +594,16 @@
   .toc-rule b{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);border-radius:1px;}
   .toc-label{font-size:10px;letter-spacing:5px;color:var(--muted);margin:6px 2px 2px;}
   .toc-list{display:flex;flex-direction:column;}
-  .toc-row{display:flex;align-items:center;gap:16px;padding:18px 2px;border:none;border-top:1px solid var(--line);background:none;width:100%;text-align:left;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;}
-  .toc-row:last-child{border-bottom:1px solid var(--line);}
-  .toc-row:active{opacity:.55;}
+  .toc-row{display:flex;align-items:center;gap:15px;padding:17px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:10px;width:100%;text-align:left;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .18s,transform .1s,border-color .18s;}
+  .toc-row:last-child{margin-bottom:0;}
+  .toc-row:active{background:var(--card-2);border-color:var(--gold-line);transform:scale(.992);}
   .toc-row-num{font-family:var(--serif);font-size:27px;color:var(--gold-d);font-weight:500;line-height:1;flex:none;width:30px;text-align:center;}
   .toc-row-tx{flex:1;min-width:0;}
   .toc-row-name{display:flex;align-items:baseline;gap:9px;margin-bottom:4px;}
   .toc-row-name b{font-family:var(--serif);font-size:18px;color:var(--ink);letter-spacing:2px;font-weight:500;}
   .toc-row-tag{font-size:9.5px;color:var(--gold-d);letter-spacing:1px;border:1px solid var(--gold-line);border-radius:10px;padding:1px 7px;}
   .toc-row-sub{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .toc-row-go{color:var(--muted);font-size:15px;flex:none;}
+  .toc-row-go{flex:none;width:25px;height:25px;border:1px solid var(--gold-line);border-radius:50%;background:var(--gold-soft);color:var(--gold-d);font-size:13px;display:inline-flex;align-items:center;justify-content:center;line-height:1;}
   /* 章节页 */
   .ch-bar{display:flex;align-items:center;justify-content:space-between;padding:0 0 13px;margin-bottom:4px;border-bottom:1px solid var(--line);}
   .ch-back{background:none;border:none;font-family:inherit;font-size:13px;color:var(--gold-d);letter-spacing:1px;cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent;}
@@ -927,6 +927,13 @@
   .sec-fold-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease);}
   .sec-fold.open > .sec-fold-body{grid-template-rows:1fr;}
   .sec-fold-inner{overflow:hidden;min-height:0;}
+  /* —— 交互信号强化(2026-08-20):收起=浮成可按的卡片行,展开=融回正文保持干净阅读 —— */
+  .sec-fold > .rp-sec-h{border:1px solid transparent;border-radius:12px;padding:11px 13px;transition:background .2s,border-color .2s,transform .1s;}
+  .sec-fold:not(.open) > .rp-sec-h{background:var(--card);border-color:var(--line);}
+  .sec-fold:not(.open) > .rp-sec-h:active{background:var(--card-2);border-color:var(--gold-line);transform:scale(.99);}
+  .sec-fold-sum{margin-left:14px;}
+  .sec-fold-chev{width:22px;height:22px;border:1px solid var(--gold-line);border-radius:50%;background:var(--gold-soft);color:var(--gold-d);}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev{background:none;border-color:transparent;}
   .mood-taohua{margin-top:11px;display:flex;gap:9px;align-items:baseline;font-size:12.5px;line-height:1.85;color:var(--ink-2);font-weight:300;}
   .mood-taohua em{flex:none;font-style:normal;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);border-radius:6px;padding:2px 9px;box-shadow:inset 0 0 0 1px var(--gold-line);}
   .np-panel-tags{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
