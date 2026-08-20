@@ -15351,7 +15351,7 @@ var RhythmEngine = (() => {
           return "\u4ECA\u5929\u5B9C\u62CD\u677F\u3001\u4E86\u7ED3\u6401\u7F6E\u7684\u5C0F\u4E8B\u3002";
         if (axis != null && axis <= 42)
           return "\u4ECA\u5929\u5B9C\u6574\u7406\u3001\u590D\u76D8\uFF0C\u522B\u6025\u7740\u5F00\u65B0\u5C40\u3002";
-        return "\u4ECA\u5929\u5B9C\u6536\u5C3E\uFF0C\u628A\u624B\u5934\u7684\u4E8B\u505A\u624E\u5B9E\u3002";
+        return "\u4ECA\u5929\u5E73\u7A33\uFF0C\u5148\u628A\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\u505A\u5B8C\u3002";
       }
       function buildReport(mj, chart, today, ctx) {
         const monthAvgs = ctx && ctx.monthAvgs || null;
