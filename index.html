@@ -3771,7 +3771,7 @@
           ? '这一程气场舒展，宜顺势进取，将要紧的事放手推进、适度果决。'
           : curIt.e>=56
           ? '这一程平稳渐起，宜稳扎稳打，积累胜于冲刺、守好节奏。'
-          : '这一程宜收宜守、养精蓄锐，不必勉强，留待下一程发力。';
+          : '这一程宜收宜守、先养足精神，不必勉强，留待下一程发力。';
       }
 
       // —— 首次引导动画(转动圆环),看过一次后不再出现 ——
@@ -3972,7 +3972,7 @@
       // —— 四种状态禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
       //   精力=bodyT定方向+四维均值(喜忌口径)解饱和+季节 · 专注=学习×.6+事业×.4 · 情绪=情感×.7+健康×.3 · 人际=结构性外向度 socialTendency(食伤+比劫-印-官,独立于旺衰)
       const RH_DESC={
-        精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度、别硬透支'],[0,'精力细水长流，顺势蓄力、少熬夜']],
+        精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度'],[0,'精力细水长流，注意少熬夜']],
         专注:[[72,'沉得下心、钻得进去，宜深耕一处'],[56,'专注够用，固定节奏最出活'],[0,'思路活跳、点子多，宜分段推进']],
         情绪:[[72,'情绪来去顺、不太憋得住事，想得开'],[56,'情绪大体平稳，偶有波动也能自解'],[0,'情绪细腻敏感，多向外疏解、勤走动']],
         人际:[[72,'善张罗、合得来，人脉能帮衬'],[56,'社交有度，亲疏拿捏得当'],[0,'慢热、重深交，小圈子里更自在']],
@@ -4017,7 +4017,7 @@
         if(!up.length) return '';   // 今年后续已无低月:不回退显示已过去的月(「近期调养窗口」只谈未来,免指向过去)
         const pick=up.slice(0,2);
         const mtxt=pick.map((m)=>'<em>'+m+'</em>月').join('、');
-        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>近期调养窗口</b><span>顺时蓄力</span></div>'
+        return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>近期调养窗口</b></div>'
           + '<div class="rp-card"><div class="rp-win">'
           + '<div class="rp-win-ic"><span style="color:#BCD6EC;font-size:17px">☾</span></div>'
           + '<div class="rp-win-tx"><b>'+mtxt+'气场偏收，宜蓄力调养</b>'
@@ -4407,7 +4407,7 @@
           ? ((hi?'今年 <b>'+hi+' 月</b>你的读数最高，状态更经得起消耗。想集中做一件难事，适合排在这几个月；':'')
              + (lo?'<b>'+lo+' 月</b>更适合休整、打好基础，稳一稳再发力；':'')
              + '其余月份按自己的节奏稳步推进即可。')
-          : '今年各月起伏不大，按平时节奏安排就好。';
+          : '今年各月起伏不大，按平时节奏安排。';
         const cpts=Y.months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:m.month===Y.curMonth, key:'m'+m.month}));
         $('rp-p-months').innerHTML =
           ''
@@ -4562,7 +4562,7 @@
             + '</div>';
         };
         const cat=(c)=>'<div class="rp-cat"><div class="rp-cat-h"><span class="rp-cat-ic">'+esc(c.icon)+'</span><span class="rp-cat-t">'+esc(c.title)+'</span><span class="rp-cat-d">'+esc(c.desc)+'</span></div>'
-          + (c.days&&c.days.length ? '<div class="rp-days">'+c.days.slice(0,4).map(day).join('')+'</div>' : '<div class="rp-cat-empty">未来两个月内暂无特别合适的日子，宜顺势而行</div>')
+          + (c.days&&c.days.length ? '<div class="rp-days">'+c.days.slice(0,4).map(day).join('')+'</div>' : '<div class="rp-cat-empty">未来两个月内没有特别拔尖的日子，按平常节奏安排即可</div>')
           + '</div>';
         const from=P.from;
         $('rp-p-picker').innerHTML =
