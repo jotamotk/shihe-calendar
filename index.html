@@ -920,16 +920,15 @@
   .sec-fold > .rp-sec-h > b{flex:none;}
   .sec-fold-sum{flex:1;min-width:0;font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;margin-left:14px;}
   .sec-fold.open > .rp-sec-h .sec-fold-sum{display:none;}
-  /* 折叠按钮:金色「展开/收起」字样 + 箭头,一眼可见可点(不做盒子,守书目气质) */
-  .sec-fold-chev{flex:none;margin-left:12px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;color:var(--gold-d);}
-  .sec-fold-chev::before{content:'展开';font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:1.5px;color:var(--gold-d);}
-  .sec-fold.open > .rp-sec-h .sec-fold-chev::before{content:'收起';color:var(--muted);}
-  .sec-fold.open > .rp-sec-h .sec-fold-chev{color:var(--muted);}
-  .sec-fold-chev svg{width:12px;height:12px;transition:transform .26s var(--ease);}
-  .sec-fold.open > .rp-sec-h .sec-fold-chev svg{transform:rotate(180deg);}
-  /* 盖过章节页通配 #jd-chapter .rp-sec-h span{margin-left:auto} 造成的标题贴字 */
+  /* 折叠钮:金色细环 +/− 圆钮。加号=展开、减号=收起,同位同形不跳;固定最右端;不做实心盒子守书感 */
+  .sec-fold-chev{flex:none;margin-left:auto;width:27px;height:27px;border:1px solid var(--gold-line);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--gold-d);background:none;transition:border-color .2s,background .2s;}
+  .sec-fold-chev svg{display:none;}
+  .sec-fold-chev::before{content:'+';font-family:var(--sans);font-size:18px;font-weight:300;line-height:1;color:var(--gold-d);}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev::before{content:'\2212';}
+  .sec-fold > .rp-sec-h:active .sec-fold-chev{background:var(--gold-soft);border-color:var(--gold-d);}
+  /* 盖过章节页通配 #jd-chapter .rp-sec-h span{margin-left:auto} 造成的标题贴字/按钮左移 */
   #jd-chapter .rp-sec-h .sec-fold-sum{margin-left:16px;font-size:11px;}
-  #jd-chapter .rp-sec-h .sec-fold-chev{margin-left:12px;}
+  #jd-chapter .rp-sec-h .sec-fold-chev{margin-left:auto;}
   .sec-fold-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease);}
   .sec-fold.open > .sec-fold-body{grid-template-rows:1fr;}
   .sec-fold-inner{overflow:hidden;min-height:0;}
