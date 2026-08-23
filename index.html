@@ -605,7 +605,7 @@
   .toc-row-sub{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .toc-row-go{color:var(--muted);font-size:15px;flex:none;}
   /* 章节页 */
-  .ch-bar{display:flex;align-items:center;justify-content:space-between;padding:0 0 13px;margin-bottom:4px;border-bottom:1px solid var(--line);}
+  .ch-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0 13px;margin-bottom:4px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:6;background:var(--bg,#0B0B0C);}
   .ch-back{background:none;border:none;font-family:inherit;font-size:13px;color:var(--gold-d);letter-spacing:1px;cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent;}
   .ch-back:active{opacity:.6;}
   .ch-bar-t{font-size:11px;letter-spacing:3px;color:var(--muted);}
@@ -2308,7 +2308,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=92"></script>
+  <script src="engine_bundle.js?v=93"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2356,7 +2356,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=92"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=93"></scr'+'ipt>');
     })();
   </script>
   <script>

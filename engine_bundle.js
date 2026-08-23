@@ -15322,7 +15322,7 @@ var RhythmEngine = (() => {
       function heroLine(personaKey, fortune, energy, axis) {
         fortune = fortune || {};
         const LABEL = { career: "\u4E8B\u4E1A", chance: "\u673A\u4F1A", health: "\u5065\u5EB7", love: "\u611F\u60C5", money: "\u94B1\u8D22", study: "\u5B66\u4E60" };
-        const ORDER = ["chance", "love", "health", "career", "money", "study"];
+        const ORDER = ["chance", "love", "career", "money", "study"];
         const ups = [], warns = [];
         ORDER.forEach((dom) => {
           const f = fortune[dom];
