@@ -193,7 +193,6 @@
   .px .ln{font-size:8px;font-weight:300;color:var(--muted);opacity:.72;line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px;position:relative;z-index:1;}
   /* 数字统一色:不再按民俗/节庆染金(用户反馈"有的金有的白看不懂");节庆仍在数字下方显示节日名。放假=暖红数字(红色假期通用惯例)、重点日=顶部金点。 */
   .px.we-day b{color:#C6A585;}  /* 普通周末:降饱和暖金弱标,比放假(--rest红)/节日(--clay)更淡,守黑金极简 */
-.px.chong-day::before{content:'';position:absolute;right:6px;bottom:6px;width:4px;height:4px;border-radius:50%;background:#7C8A99;opacity:.85;z-index:1;}  /* 本命冲日:冷灰蓝小点,与金点(吉)区分,详情在日卡 */
 .we-chong{margin-top:7px;font-size:11.5px;line-height:1.5;color:#93A0AD;display:flex;align-items:center;gap:6px;}
 .we-chong i{flex:none;width:5px;height:5px;border-radius:50%;background:#7C8A99;}
 .h-off b{color:var(--rest);font-weight:500;}
@@ -919,11 +918,18 @@
   /* 章内子块折叠:整齐、可跳读 */
   .sec-fold > .rp-sec-h{display:flex;align-items:center;gap:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .sec-fold > .rp-sec-h > b{flex:none;}
-  .sec-fold-sum{flex:1;min-width:0;font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
+  .sec-fold-sum{flex:1;min-width:0;font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;margin-left:14px;}
   .sec-fold.open > .rp-sec-h .sec-fold-sum{display:none;}
-  .sec-fold-chev{flex:none;margin-left:auto;width:18px;height:18px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;transition:transform .26s var(--ease),color .26s;}
-  .sec-fold-chev svg{width:13px;height:13px;}
-  .sec-fold.open > .rp-sec-h .sec-fold-chev{transform:rotate(180deg);color:var(--gold-d);}
+  /* 折叠按钮:金色「展开/收起」字样 + 箭头,一眼可见可点(不做盒子,守书目气质) */
+  .sec-fold-chev{flex:none;margin-left:12px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;color:var(--gold-d);}
+  .sec-fold-chev::before{content:'展开';font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:1.5px;color:var(--gold-d);}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev::before{content:'收起';color:var(--muted);}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev{color:var(--muted);}
+  .sec-fold-chev svg{width:12px;height:12px;transition:transform .26s var(--ease);}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev svg{transform:rotate(180deg);}
+  /* 盖过章节页通配 #jd-chapter .rp-sec-h span{margin-left:auto} 造成的标题贴字 */
+  #jd-chapter .rp-sec-h .sec-fold-sum{margin-left:16px;font-size:11px;}
+  #jd-chapter .rp-sec-h .sec-fold-chev{margin-left:12px;}
   .sec-fold-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease);}
   .sec-fold.open > .sec-fold-body{grid-template-rows:1fr;}
   .sec-fold-inner{overflow:hidden;min-height:0;}
@@ -1883,7 +1889,6 @@
                 <span id="w-lunar">农历四月廿二</span>
                 <span class="w-festival" id="w-festival"></span>
               </div>
-              <div class="we-chong" id="w-chong" style="display:none"></div>
               <div class="we-folk" id="w-folk" style="display:none">
                 <span class="we-folk-n" id="w-folk-n"></span>
                 <span class="we-folk-d" id="w-folk-d"></span>
@@ -2427,11 +2432,6 @@
       window.addEventListener('touchend', hide);
     }
     const WEEK = ['日','一','二','三','四','五','六'];
-    // 冲煞:某日「日支」冲用户「年支(生肖)」→ 传统老黄历「本命冲日、要事宜避」。地支六冲对表。
-    const ZHI_CHONG = {子:'午',午:'子',丑:'未',未:'丑',寅:'申',申:'寅',卯:'酉',酉:'卯',辰:'戌',戌:'辰',巳:'亥',亥:'巳'};
-    const userChongZhi = ()=> (typeof APP!=='undefined' && APP.user && APP.user.yearZhi) ? (ZHI_CHONG[APP.user.yearZhi]||'') : '';
-    const dayZhiOf = (d)=> (d && d.ganZhi && d.ganZhi.day && d.ganZhi.day.length>=2) ? d.ganZhi.day.charAt(1) : '';
-    const isChongDay = (d)=>{ const cz=userChongZhi(); return !!cz && dayZhiOf(d)===cz; };
     // 感情状态(单身/有伴侣)存本机,仅用于挑选感情建议版本,不上传、不改命盘
     const REL_KEY='shihe_relstatus';
     const getRelStatus = ()=>{ try{ return localStorage.getItem(REL_KEY)||''; }catch(e){ return ''; } };
@@ -2864,13 +2864,6 @@
             + ' <span style="color:var(--gold-d);font-weight:500;">'+rel+'</span>';
         })();
         $('w-lunar').textContent = '农历'+d.lunarLabel;
-        // 本命冲日:当日「日支」冲用户生肖 → 传统「要事宜避」提示(纯历法规则,非吉凶预测)
-        (function(){ const el=$('w-chong'); if(!el) return;
-          if(isChongDay(d) && APP.user && APP.user.shengXiao){
-            el.innerHTML='<i></i>按传统老黄历，今天是属'+APP.user.shengXiao+'的「冲日」——旧俗里要紧事会挪一挪，当个参考即可。';
-            el.style.display='';
-          } else el.style.display='none';
-        })();
         // 当日重点日(本机自定义):有则在能量卡上方点名
         (function(){
           const el=$('w-mk'); if(!el) return;
@@ -3046,7 +3039,6 @@
           const mks = MARKS.forDate(m.year, m.month, d.g);
           // 民俗吉日不在月历标金(按用户意愿不把吉日泼满日历;金点只留给「重点日」d-mk);原 d-fk 有类无样式,已去
           if (mks.length) cls.push('d-mk');
-          if (isChongDay(d)) cls.push('chong-day');   // 本命冲日:数字旁一枚极淡冷点,详情在日卡说明
           const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
           html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
                   restBadge+
@@ -4006,6 +3998,7 @@
           + '<span class="rp-rh-line">'+esc(rhDesc(d.k,d.v))+'</span>'
           + '</div>';
         return '<div class="rp-sec">'
+          + '<div class="rp-sec-h"><b>四种状态</b></div>'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
           + '</div></div>';
       }
