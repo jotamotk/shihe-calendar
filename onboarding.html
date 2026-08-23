@@ -287,7 +287,7 @@
     let GEO=null;
     const CC_NAME={CN:'中国',TW:'台湾',HK:'香港',MO:'澳门',US:'美国',CA:'加拿大',GB:'英国',AU:'澳大利亚',NZ:'新西兰',JP:'日本',KR:'韩国',SG:'新加坡',MY:'马来西亚',TH:'泰国',VN:'越南',FR:'法国',DE:'德国',IT:'意大利',ES:'西班牙',NL:'荷兰',SE:'瑞典',RU:'俄罗斯',IN:'印度',ID:'印尼',PH:'菲律宾'};
     const ccName=(cc)=>CC_NAME[cc]||cc;
-    function pickCity(name,lon,tz,cc){ lonEl.value=lon; tzEl.value=tz; cnameEl.value=name; cityQ.value=name+' · '+ccName(cc); cityRes.classList.remove('on'); cityRes.innerHTML=''; updateTrueSun(); }
+    function pickCity(name,lon,tz,cc){ lonEl.value=lon; tzEl.value=tz; cnameEl.value=name; cityQ.value=name+' · '+ccName(cc); cityRes.classList.remove('on'); cityRes.innerHTML=''; cityQ.style.borderColor=''; var _h=document.getElementById('city-hint'); if(_h)_h.textContent=''; updateTrueSun(); }
     function searchCity(q){ if(!GEO||!q||!q.trim()){ cityRes.classList.remove('on'); return; } const t=q.trim().toLowerCase(); const hits=[]; for(const c of GEO.c){ if(c[0].toLowerCase().indexOf(t)>=0){ hits.push(c); if(hits.length>=300)break; } } hits.sort((a,b)=>b[4]-a[4]); const top=hits.slice(0,20);
       cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+GEO.tz[c[2]]+'" data-cc="'+c[3]+'" data-name="'+String(c[0]).replace(/"/g,'')+'">'+c[0]+' <span>'+ccName(c[3])+'</span></div>').join('') : '<div class="city-res-empty">没找到，换个写法试试</div>';
       cityRes.classList.add('on'); }
@@ -483,6 +483,15 @@
     }
 
     document.getElementById('btn-go').addEventListener('click',()=>{
+      // 🔴 防海外静默回落:输入框文本与已选城市不一致 = 打了字没从下拉点选 → 拦下,否则按默认成都/北京时把整盘算错(尤其海外)
+      const _pk=(cnameEl.value||'').trim(), _tp=(cityQ.value||'').trim();
+      if(!_pk || (_tp && _tp.indexOf(_pk)!==0)){
+        cityRes.classList.remove('on'); cityQ.style.borderColor='#C4866A'; cityQ.focus();
+        let hint=document.getElementById('city-hint');
+        if(!hint){ hint=document.createElement('div'); hint.id='city-hint'; hint.style.cssText='color:#C4866A;font-size:12px;margin-top:7px;line-height:1.5;'; cityQ.parentNode.appendChild(hint); }
+        hint.textContent='请从下拉列表里点选你的出生城市（海外城市会自动校准时区），不要只打字';
+        return;
+      }
       try{
         const person = readPerson();
         const now = new Date();
