@@ -915,20 +915,19 @@
   .rel-seg{display:inline-flex;gap:2px;background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:3px;margin-bottom:13px;}
   .rel-seg button{border:0;background:transparent;color:var(--muted);font-size:11.5px;font-family:inherit;font-weight:400;letter-spacing:.5px;padding:4px 12px;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .18s,background .18s;}
   .rel-seg button.on{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);font-weight:500;}
-  /* 章内子块折叠:整齐、可跳读 */
+  /* 章内子块折叠 · 书页「展开全文」式(C):内容末一条细金线夹金字,收起=展开全文/展开=收起,同一条、读完顺手收 */
   .sec-fold > .rp-sec-h{display:flex;align-items:center;gap:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .sec-fold > .rp-sec-h > b{flex:none;}
-  .sec-fold-sum{flex:1;min-width:0;font-size:11px;color:var(--muted);font-weight:300;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;margin-left:14px;}
-  .sec-fold.open > .rp-sec-h .sec-fold-sum{display:none;}
-  /* 折叠钮:金色细环 +/− 圆钮。加号=展开、减号=收起,同位同形不跳;固定最右端;不做实心盒子守书感 */
-  .sec-fold-chev{flex:none;margin-left:auto;width:27px;height:27px;border:1px solid var(--gold-line);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--gold-d);background:none;transition:border-color .2s,background .2s;}
-  .sec-fold-chev svg{display:none;}
-  .sec-fold-chev::before{content:'+';font-family:var(--sans);font-size:18px;font-weight:300;line-height:1;color:var(--gold-d);}
-  .sec-fold.open > .rp-sec-h .sec-fold-chev::before{content:'\2212';}
-  .sec-fold > .rp-sec-h:active .sec-fold-chev{background:var(--gold-soft);border-color:var(--gold-d);}
-  /* 盖过章节页通配 #jd-chapter .rp-sec-h span{margin-left:auto} 造成的标题贴字/按钮左移 */
-  #jd-chapter .rp-sec-h .sec-fold-sum{margin-left:16px;font-size:11px;}
-  #jd-chapter .rp-sec-h .sec-fold-chev{margin-left:auto;}
+  .sec-fold-bar{display:flex;align-items:center;gap:13px;padding:15px 2px 3px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;}
+  .sec-fold-bar::before,.sec-fold-bar::after{content:'';height:1px;flex:1;background:var(--gold-line);}
+  .sec-fold-bar .sfb-in{display:inline-flex;align-items:center;gap:6px;color:var(--gold-d);font-size:11px;letter-spacing:2px;font-weight:500;white-space:nowrap;font-style:normal;}
+  .sec-fold-bar .sfb-in::before{content:'展开全文';}
+  .sec-fold.open > .sec-fold-bar .sfb-in{color:var(--muted);}
+  .sec-fold.open > .sec-fold-bar .sfb-in::before{content:'收起';}
+  .sec-fold.open > .sec-fold-bar::before,.sec-fold.open > .sec-fold-bar::after{opacity:.4;}
+  .sec-fold-bar .sfb-in svg{width:11px;height:11px;transition:transform .26s var(--ease);}
+  .sec-fold.open > .sec-fold-bar .sfb-in svg{transform:rotate(180deg);}
+  .sec-fold-bar:active{opacity:.55;}
   .sec-fold-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease);}
   .sec-fold.open > .sec-fold-body{grid-template-rows:1fr;}
   .sec-fold-inner{overflow:hidden;min-height:0;}
@@ -4111,7 +4110,7 @@
             '需要注意': (n.jiShen&&n.jiShen.length)? n.jiShen.map((j)=>j.caution).slice(0,2).join(' · ') : '你要留心的几点',
             '你的幸运色': (n.xiColor&&n.xiColor.name||'') + ' · 随身养气场',
           };
-          const CHEV='<span class="sec-fold-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+          const BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
           let idx=0;
           wrap.querySelectorAll(':scope > .rp-sec').forEach((sec)=>{
             let h=sec.querySelector(':scope > .rp-sec-h'); let title='';
@@ -4126,10 +4125,10 @@
             const inner=document.createElement('div'); inner.className='sec-fold-inner';
             while(h.nextSibling) inner.appendChild(h.nextSibling);
             body.appendChild(inner); sec.appendChild(body);
-            const sm=SUMM[title]; if(sm){ const s=document.createElement('span'); s.className='sec-fold-sum'; s.textContent=sm; h.appendChild(s); }
-            h.insertAdjacentHTML('beforeend', CHEV);
+            const bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=BAR_IN; sec.appendChild(bar);
             sec.classList.add('sec-fold'); if(idx===0) sec.classList.add('open'); idx++;
-            h.addEventListener('click', ()=> sec.classList.toggle('open'));
+            const toggle=()=> sec.classList.toggle('open');
+            h.addEventListener('click', toggle); bar.addEventListener('click', toggle);
           });
         })();
       }
@@ -4730,7 +4729,7 @@
       function buildJiedu(){ try{ renderYearCard(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
 
       // —— 通用章内折叠(整齐·可跳读·一眼知道每块讲什么);与本命章 foldNatalSections 同款 ——
-      var FOLD_CHEV='<span class="sec-fold-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+      var FOLD_BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
       // 把整个容器内容包成一个折叠块(用于流年的四大块:当年/逐月/十年/三年)
       function wrapContainerAsFold(container, title, summary, open){
         if(!container || container.dataset.folded==='1' || !container.innerHTML.trim()) return;
@@ -4741,10 +4740,10 @@
         var inner=document.createElement('div'); inner.className='sec-fold-inner';
         while(container.firstChild) inner.appendChild(container.firstChild);
         body.appendChild(inner); container.appendChild(h); container.appendChild(body);
-        if(summary){ var s=document.createElement('span'); s.className='sec-fold-sum'; s.textContent=summary; h.appendChild(s); }
-        h.insertAdjacentHTML('beforeend', FOLD_CHEV);
+        var bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=FOLD_BAR_IN; container.appendChild(bar);
         container.classList.add('sec-fold'); if(open) container.classList.add('open');
-        h.addEventListener('click', function(){ container.classList.toggle('open'); });
+        var tg=function(){ container.classList.toggle('open'); };
+        h.addEventListener('click', tg); bar.addEventListener('click', tg);
       }
       // 把容器内每个带标题 .rp-sec 各折一块(用于调养章;标题自带说明,不另加概括)
       function foldRpSecsIn(container, firstOpen){
@@ -4753,14 +4752,15 @@
           if(sec.dataset.folded==='1') return;
           var h=sec.querySelector(':scope > .rp-sec-h'); if(!h){ return; }
           sec.dataset.folded='1';
-          var ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex){ var s2=document.createElement('span'); s2.className='sec-fold-sum'; s2.textContent=ex.textContent; ex.remove(); h.appendChild(s2); }
+          var ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex) ex.remove();
           var body=document.createElement('div'); body.className='sec-fold-body';
           var inner=document.createElement('div'); inner.className='sec-fold-inner';
           while(h.nextSibling) inner.appendChild(h.nextSibling);
           body.appendChild(inner); sec.appendChild(body);
-          h.insertAdjacentHTML('beforeend', FOLD_CHEV);
+          var bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=FOLD_BAR_IN; sec.appendChild(bar);
           sec.classList.add('sec-fold'); if(idx===0 && firstOpen) sec.classList.add('open'); idx++;
-          h.addEventListener('click', function(){ sec.classList.toggle('open'); });
+          var tg=function(){ sec.classList.toggle('open'); };
+          h.addEventListener('click', tg); bar.addEventListener('click', tg);
         });
       }
       function showBody(){
