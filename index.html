@@ -2010,6 +2010,10 @@
           <div class="life-top">
             <div class="life-h"><b>一生能量</b><span>逐年逐月</span></div>
           </div>
+          <a class="cal-demo-cta" id="life-demo-cta" href="onboarding.html" style="display:none;margin-top:2px">
+            <span class="cdc-tx"><b>当前为示例命主</b>这是示例的一生能量，录入你的生辰看你自己的</span>
+            <span class="cdc-go">立即录入 →</span>
+          </a>
 
           <div class="life-head">
             <div class="lh-big"><b id="lf-age">31</b><small>岁</small></div>
@@ -2869,6 +2873,8 @@
           const rel = diff===0 ? '今天' : (diff>0 ? diff+'天后' : (-diff)+'天前');
           $('w-date').innerHTML = curM+'月'+d.g+'日 · 周'+WEEK[dt.getDay()]
             + ' <span style="color:var(--gold-d);font-weight:500;">'+rel+'</span>';
+          // 个人卡标题随选中日:看别的天时不再写死「今日」(防同屏矛盾)
+          var _tt=document.querySelector('.wdg-today .wdg-htitle'); if(_tt) _tt.textContent=(diff===0?'今日':'该日')+' · 你的状态';
         })();
         $('w-lunar').textContent = '农历'+d.lunarLabel;
         // 当日重点日(本机自定义):有则在能量卡上方点名
@@ -5260,7 +5266,7 @@
         var mov = document.getElementById('mine-ov');
         if(!mov) return;
         // 示例态:今日卡挂「示例·换成你的」角标(与我的/解读页的示例引导一致,防演示数据冒充用户本人)
-        if(window.__IS_DEMO){ var _db=document.getElementById('w-demo-badge'); if(_db) _db.style.display=''; var _cta=document.getElementById('cal-demo-cta'); if(_cta) _cta.style.display='flex'; }
+        if(window.__IS_DEMO){ var _db=document.getElementById('w-demo-badge'); if(_db) _db.style.display=''; ['cal-demo-cta','life-demo-cta'].forEach(function(id){ var _c=document.getElementById(id); if(_c) _c.style.display='flex'; }); }
         function openMine(){
           var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
           if(!p && window.__IS_DEMO===false) p=window.APP_PERSON||null;   // 仅真实用户才回落 APP_PERSON;示例态不冒充,走「未设置生辰」

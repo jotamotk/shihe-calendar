@@ -362,7 +362,7 @@
     wBind(whD,onWheelChange); wBind(whH,onWheelChange); wBind(whMi,onWheelChange);
     document.querySelectorAll('#seg-cal button').forEach(b=>b.addEventListener('click',()=>{ rebuildMonth(); rebuildDay(); onWheelChange(); }));
     function setWheelsDateTime(y,m,d,hh,mi){ wSet(whY,y); rebuildMonth(); wSet(whMo,m); rebuildDay(); wSet(whD,d); wSet(whH,hh); wSet(whMi,mi); }
-    setWheelsDateTime(1995,8,17,14,30); syncHidden();
+    setWheelsDateTime(1990,1,1,12,0); syncHidden();   // 中性占位默认(非示例1995/8/17),逼用户主动拨到自己生日,防不拨轮直接存成本人
 
     // —— 收集表单 → person ——
     function readPerson(){
