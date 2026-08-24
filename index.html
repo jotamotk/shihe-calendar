@@ -1130,6 +1130,12 @@
     radial-gradient(120% 90% at 88% -10%,color-mix(in srgb,var(--gold) 16%,transparent),transparent 56%),
     linear-gradient(168deg,var(--card-2),var(--card));border:1px solid var(--line);border-radius:20px;padding:16px 17px;box-shadow:var(--shadow-sm);}
   .demo-badge{font-size:10px;font-weight:500;letter-spacing:.5px;color:var(--gold-d);background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:20px;padding:2px 10px;text-decoration:none;-webkit-tap-highlight-color:transparent;white-space:nowrap;margin-left:2px;}
+  /* 示例态首页转化条:把「浏览者」引到「录入生辰」——仅 __IS_DEMO 显示 */
+  .cal-demo-cta{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:13px 15px;border:1px solid var(--gold-line);border-radius:15px;background:linear-gradient(150deg,var(--gold-soft),color-mix(in srgb,var(--gold-soft) 40%,var(--card)));text-decoration:none;-webkit-tap-highlight-color:transparent;transition:border-color .2s,transform .1s;}
+  .cal-demo-cta:active{transform:scale(.992);border-color:var(--gold-d);}
+  .cal-demo-cta .cdc-tx{flex:1;min-width:0;font-size:12.5px;line-height:1.55;color:var(--ink-2);font-weight:300;}
+  .cal-demo-cta .cdc-tx b{display:block;font-size:13.5px;color:var(--gold-d);font-weight:600;letter-spacing:.5px;margin-bottom:2px;}
+  .cal-demo-cta .cdc-go{flex:none;font-size:12px;font-weight:600;letter-spacing:.5px;color:#241c0d;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-radius:20px;padding:7px 14px;white-space:nowrap;}
   .wdg-daterow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
   .wdg-daterow b{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:.5px;}
   .wdg-daterow #w-lunar{font-size:12px;color:var(--muted);font-weight:300;}
@@ -1878,6 +1884,10 @@
 
           <!-- ====== 选中日 · 小部件流 ====== -->
           <div class="widgets" id="widgets">
+            <a class="cal-demo-cta" id="cal-demo-cta" href="onboarding.html" style="display:none">
+              <span class="cdc-tx"><b>当前为示例命主</b>录入你的生辰，看你自己的每日状态</span>
+              <span class="cdc-go">立即录入 →</span>
+            </a>
             <div class="wdg-streak" id="wdg-streak" style="display:none"></div>
             <div class="wdg-hint" id="wdg-hint"></div>
             <!-- W1 能量(显眼) -->
@@ -1896,7 +1906,7 @@
 
             <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><a class="demo-badge" id="w-demo-badge" href="onboarding.html" style="display:none" onclick="event.stopPropagation()">示例 · 换成你的</a><span class="today-score-chip" id="w-score-chip"></span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><a class="demo-badge" id="w-demo-badge" href="onboarding.html" style="display:none" onclick="event.stopPropagation()">示例 · 换成你的</a><span class="today-score-chip" id="w-score-chip"></span><button class="wdg-help" id="intro-open" type="button" onclick="event.stopPropagation()">怎么用?</button><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
@@ -5226,6 +5236,8 @@
         if (i !== 3 && window.__tbReset) window.__tbReset();
       }
       window.__setScreen = setScreen; // 供「解读」内联报告 / 工具深链跨屏跳转
+      // 录入生辰后落地到「解读」命书(付出→回报可见):onboarding 存了 shihe_goRead
+      try{ if(localStorage.getItem('shihe_goRead')==='1'){ localStorage.removeItem('shihe_goRead'); setTimeout(function(){ setScreen(2); }, 80); } }catch(e){}
       // 通用跨屏入口:任意 [data-goto] 元素点击即切屏(日历今日卡 → 解读完整命书 等)
       var GOTO_SCREEN = { cal:0, rhythm:1, read:2, tools:3 };
       document.querySelectorAll('[data-goto]').forEach(function(el){
@@ -5248,7 +5260,7 @@
         var mov = document.getElementById('mine-ov');
         if(!mov) return;
         // 示例态:今日卡挂「示例·换成你的」角标(与我的/解读页的示例引导一致,防演示数据冒充用户本人)
-        if(window.__IS_DEMO){ var _db=document.getElementById('w-demo-badge'); if(_db) _db.style.display=''; }
+        if(window.__IS_DEMO){ var _db=document.getElementById('w-demo-badge'); if(_db) _db.style.display=''; var _cta=document.getElementById('cal-demo-cta'); if(_cta) _cta.style.display='flex'; }
         function openMine(){
           var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
           if(!p && window.__IS_DEMO===false) p=window.APP_PERSON||null;   // 仅真实用户才回落 APP_PERSON;示例态不冒充,走「未设置生辰」
