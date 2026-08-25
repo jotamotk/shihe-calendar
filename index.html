@@ -2337,7 +2337,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=106"></script>
+  <script src="engine_bundle.js?v=107"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2393,7 +2393,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=106"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=107"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4173,7 +4173,7 @@
             while(h.nextSibling) inner.appendChild(h.nextSibling);
             body.appendChild(inner); sec.appendChild(body);
             const bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=BAR_IN; sec.appendChild(bar);
-            sec.classList.add('sec-fold'); if(idx===0) sec.classList.add('open'); idx++;
+            sec.classList.add('sec-fold'); if(idx===0 || title==='关于你') sec.classList.add('open'); idx++;   // 「关于你」(深层辩证=最戳人的内容)默认展开,不再埋折叠里
             const toggle=()=> sec.classList.toggle('open');
             h.addEventListener('click', toggle); bar.addEventListener('click', toggle);
           });
