@@ -200,6 +200,8 @@
   .px.d-mk::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold-d);box-shadow:0 0 6px -1px var(--gold-d);z-index:1;}
   /* 已过去的日子:保持清晰、不变暗(与未来日一致),只靠「今日」高亮区分 */
   /* 今天:柔金底，数字描金(替代生硬金边，更简约高级) */
+  .px.en-hi::before{content:"";position:absolute;inset:1px;border-radius:12px;z-index:0;pointer-events:none;background:radial-gradient(62% 50% at 50% 42%,rgba(214,186,128,.28),transparent 72%);}
+  .px.en-hi b{color:var(--gold-d);}   /* 高能量日数字点亮金色,和光晕一起"一眼可感" */
   .px.today{background:var(--gold-soft);}
   .px.today b{color:var(--gold-d);font-weight:500;}
   .px.sel{background:var(--card-2);box-shadow:inset 0 0 0 1px var(--gold-line);z-index:2;}
@@ -1918,8 +1920,7 @@
                     <div class="yi-row"><span class="yi-k huan">缓</span><span class="yi-v" id="w-huan">无须刻意避忌</span></div>
                   </div>
                 </div>
-                <!-- 今日一句:干货生成器(说中你+能照做),据你人格×当天信号生成 -->
-                <div class="today-say" id="w-hero"></div>
+                <!-- 今日大字已去掉(与上方宜/缓重复+最重复的一句);今日各方面直接接在宜/缓下 -->
                 <!-- 今日各方面(tab 版:事业/财运/感情/机会/学习/健康,点 tab 看对应项;色点=顺/平/慎)-->
                 <div class="tf-wrap" id="w-fortune-wrap" style="display:none">
                   <div class="tf-h">今日各方面</div>
@@ -2918,7 +2919,6 @@
         // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)。整体能量值存 dataset,供「按住浮出 0-100」读取
         if($('w-orb')){ $('w-orb').innerHTML = energyOrb(d.e); $('w-orb').dataset.e = d.e; bindOrbPeek(); }
         // 今日一句:干货生成器主句(说中你+能照做)
-        if($('w-hero')) $('w-hero').textContent = d.heroLine || '';
         // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
         if($('w-score-chip')) $('w-score-chip').innerHTML = energyOrb(d.e, 26);   // 收起态显示小能量球(替代原状态标语)
         // 新手引导里的示意光球(满档,只填一次)
@@ -3048,6 +3048,9 @@
         const grid = $('pgrid');
         let html = '';
         const jqMap = jieqiDays(m.year, m.month);   // {日: 节气名}
+        // 月历能量层:标本月能量前~20%的日子(你这个月状态最好的几天)。能量是人×月相对值,故用本月分位不用绝对阈值
+        const _es = m.days.map((x)=>x.e).filter((v)=>typeof v==='number').sort((a,b)=>a-b);
+        const _enHiBar = _es.length ? Math.max(_es[_es.length-1]-5, _es[Math.floor(_es.length/2)]+6) : 999;  // 距本月峰值5分内 且 高于中位+6
         for (let i=0;i<m.firstDow;i++) html += '<div class="pad"></div>';
         m.days.forEach((d)=>{
           const hol = holiday(m.year, m.month, d.g);
@@ -3072,6 +3075,7 @@
           const mks = MARKS.forDate(m.year, m.month, d.g);
           // 民俗吉日不在月历标金(按用户意愿不把吉日泼满日历;金点只留给「重点日」d-mk);原 d-fk 有类无样式,已去
           if (mks.length) cls.push('d-mk');
+          if (typeof d.e==='number' && d.e>=_enHiBar) cls.push('en-hi');   // 月历能量层:本月前~20%的高能量日一层极淡金晕(不泼满;核心卖点在主界面露一眼)
           const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
           html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
                   restBadge+
