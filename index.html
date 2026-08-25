@@ -4276,43 +4276,6 @@
           + '<div class="rp-radar-lg"><span class="shun">● 顺势</span><span class="ping">● 平稳</span><span class="shen">● 留心</span><span class="yang">● 宜养</span></div>'
           + '</div></div>';
       }
-      // 择日 · 未来 60 天能量热力带(平滑曲线 + 高点日期，复用 .rp-chart 样式)
-      function pickerBand(series){
-        if(!series||series.length<4) return '';
-        const id=++_chartN;
-        const W=320,H=104,PL=8,PR=8,PT=22,PB=18, pw=W-PL-PR, ph=H-PT-PB, n=series.length;
-        const vals=series.map((s)=>s.e);
-        let lo=Math.min.apply(null,vals)-5, hi=Math.max.apply(null,vals)+5;
-        if(hi-lo<18){ const m=(hi+lo)/2; lo=m-9; hi=m+9; }
-        const X=(i)=> PL+(i/(n-1))*pw;
-        const Yv=(v)=> PT+(1-(v-lo)/(hi-lo))*ph;
-        const co=series.map((s,i)=>[X(i),Yv(s.e)]);
-        const line=smoothPath(co), base=(PT+ph).toFixed(1);
-        const area=line+' L'+co[n-1][0].toFixed(1)+','+base+' L'+co[0][0].toFixed(1)+','+base+' Z';
-        // 局部峰(energy>=68 且不低于左右),去相邻，取最高 4 个
-        let peaks=[];
-        for(let i=0;i<n;i++){ const e=series[i].e; if(e>=68 && e>=(series[i-1]?series[i-1].e:0) && e>=(series[i+1]?series[i+1].e:0)) peaks.push(i); }
-        peaks=peaks.filter((idx,k)=> k===0 || idx-peaks[k-1]>=4);
-        peaks=peaks.sort((a,b)=>series[b].e-series[a].e).slice(0,4).sort((a,b)=>a-b);
-        let dots='', labs='';
-        peaks.forEach((i)=>{ const x=co[i][0], y=co[i][1];
-          dots+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="6.5" fill="url(#eglow'+id+')"/>';
-          dots+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.4" fill="#EBD7A6"/>';
-          labs+='<text class="vlab" x="'+x.toFixed(1)+'" y="'+(y-8).toFixed(1)+'" text-anchor="middle">'+esc(series[i].md)+'</text>';
-        });
-        let axl='<text class="axl cur" x="'+co[0][0].toFixed(1)+'" y="'+(H-5)+'" text-anchor="start">今天</text>';
-        let lastMo=parseInt(series[0].md.split('/')[0],10);
-        for(let i=1;i<n;i++){ const mo=parseInt(series[i].md.split('/')[0],10); if(mo!==lastMo){ lastMo=mo; axl+='<text class="axl" x="'+co[i][0].toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle">'+mo+'月</text>'; } }
-        return '<div class="rp-chart-wrap"><svg class="rp-chart" viewBox="0 0 '+W+' '+H+'">'
-          + '<defs><linearGradient id="egf'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C8AC78" stop-opacity=".4"/><stop offset="1" stop-color="#C8AC78" stop-opacity="0"/></linearGradient>'
-          +   '<linearGradient id="egl'+id+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A8884F"/><stop offset=".5" stop-color="#EBD7A6"/><stop offset="1" stop-color="#A8884F"/></linearGradient>'
-          +   '<radialGradient id="eglow'+id+'"><stop offset="0" stop-color="#EBD7A6" stop-opacity=".75"/><stop offset="1" stop-color="#EBD7A6" stop-opacity="0"/></radialGradient></defs>'
-          + '<path d="'+area+'" fill="url(#egf'+id+')"/>'
-          + '<path d="'+line+'" fill="none" stroke="url(#egl'+id+')" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
-          + dots + labs + axl
-          + '</svg>'
-          + '<div class="rp-chart-cap"><b>未来 60 天状态起伏</b><span>金点是你状态最在线的日子</span></div></div>';
-      }
       // 分隔花纹:两侧渐隐细线 + 中央菱形回纹，作每页收束
       function rpFlourish(){
         const id=++_chartN;
@@ -4569,36 +4532,6 @@
             + '</div>');
         }
         $('rp-p-care').innerHTML = html + rpFlourish();
-      }
-
-      // —— 报告3:重要择日 ——
-      function renderPicker(){
-        if(!$('rp-p-picker')) return; // 择日已从解读移除(归工具箱近期吉日),元素不存在则跳过
-        const P=R.picker;
-        // 守卫:旧存档(report.picker 字段出现前的引擎版本写入)回落时 R.picker 可能缺失——
-        // 对齐 renderMonths/renderYears/renderAhead 的 if(!X)return,免裸取 P.from 抛错中断整个脚本块。
-        if(!P){ $('rp-p-picker').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">择日数据生成中…</div></div>'; return; }
-        const day=(d)=>{
-          const w=Math.max(8,Math.min(100,Math.round((d.energy-40)/0.6)));
-          const reason=String(d.reason||'').replace(/^能量\s*\d+\s*·\s*/,'');
-          return '<div class="rp-day">'
-            + '<div class="rp-day-dd"><b>'+esc(d.md)+'</b><span>'+esc(d.weekday)+'</span></div>'
-            + '<div class="rp-day-mid"><div class="rp-day-r">'+esc(reason)+'</div></div>'
-            + '<div class="rp-day-e"><b>'+d.energy+'</b><i><s style="width:'+w+'%"></s></i></div>'
-            + '</div>';
-        };
-        const cat=(c)=>'<div class="rp-cat"><div class="rp-cat-h"><span class="rp-cat-ic">'+esc(c.icon)+'</span><span class="rp-cat-t">'+esc(c.title)+'</span><span class="rp-cat-d">'+esc(c.desc)+'</span></div>'
-          + (c.days&&c.days.length ? '<div class="rp-days">'+c.days.slice(0,4).map(day).join('')+'</div>' : '<div class="rp-cat-empty">未来两个月内没有特别拔尖的日子，按平常节奏安排即可</div>')
-          + '</div>';
-        const from=P.from;
-        $('rp-p-picker').innerHTML =
-          ''
-          + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>替你挑好的日子</b><span>未来 '+P.span+' 天</span></div>'
-          + '<div class="rp-pk-intro">从 '+from.month+'月'+from.day+'日 起两个月内，按事情性质挑出你状态最配的日子。</div>'
-          + pickerBand(P.series)
-          + P.categories.map(cat).join('')
-          + '</div>'
-          + rpFlourish();
       }
 
       // ===== 解读页 · 渐进披露手风琴外壳(2026-07 大改) =====
@@ -5158,36 +5091,6 @@
     })();
 
     // ===== 工具箱 · 时辰养生(子午流注:十二时辰↔经络当令,静态 TCM 表 + 此刻高亮,每分钟刷新)=====
-    (function renderShichen_removed(){ return; // 时辰养生(子午流注)已下线
-      var list=null; if(!list) return;
-      var SC=[
-        {z:'子',t:'23–1',m:'胆经',y:'宜熟睡。子时胆经当令，安睡以养生发之气，忌熬夜。'},
-        {z:'丑',t:'1–3',m:'肝经',y:'宜深睡养肝。肝在此时藏血修复，熬夜最耗肝血。'},
-        {z:'寅',t:'3–5',m:'肺经',y:'宜安睡。肺朝百脉，此时深睡助气血匀布周身。'},
-        {z:'卯',t:'5–7',m:'大肠经',y:'宜起身、排便、饮一杯温水，助大肠排浊。'},
-        {z:'辰',t:'7–9',m:'胃经',y:'宜按时吃早餐。胃经当令，早食易化、供一日之能。'},
-        {z:'巳',t:'9–11',m:'脾经',y:'宜专注做事、多动脑。脾主运化，此时效率最佳。'},
-        {z:'午',t:'11–13',m:'心经',y:'宜午餐后小憩片刻，养心安神，忌剧烈运动。'},
-        {z:'未',t:'13–15',m:'小肠经',y:'宜多饮水、午后办事。小肠分清别浊，正当其时。'},
-        {z:'申',t:'15–17',m:'膀胱经',y:'宜多饮水、活动身体，代谢通利、头脑清明。'},
-        {z:'酉',t:'17–19',m:'肾经',y:'宜和缓收敛、适度进补。肾主藏精，宜静不宜劳。'},
-        {z:'戌',t:'19–21',m:'心包经',y:'宜放松心情、饭后散步。心包护心，宜舒不宜郁。'},
-        {z:'亥',t:'21–23',m:'三焦经',y:'宜静心准备入睡。三焦通百脉，安睡养一身之气。'}
-      ];
-      var now=document.getElementById('sc-now'), chip=document.getElementById('tb-c-sc');
-      function curIdx(){ var h=new Date().getHours(); return Math.floor(((h+1)%24)/2); }
-      function draw(){
-        var ci=curIdx(), c=SC[ci];
-        if(chip) chip.textContent='此刻 · '+c.m+'当令';
-        if(now) now.innerHTML='<div class="sc-now-t">此刻 · '+c.z+'时<small>'+c.t+'</small></div>'
-          +'<div class="sc-now-m">'+c.m+'当令</div><div class="sc-now-y">'+c.y+'</div>';
-        list.innerHTML=SC.map(function(s,i){
-          return '<div class="sc-row'+(i===ci?' on':'')+'"><div class="sc-zt"><b>'+s.z+'</b><small>'+s.t+'</small></div>'
-            +'<div class="sc-mm">'+s.m+'</div><div class="sc-yy">'+s.y+'</div></div>';
-        }).join('');
-      }
-      draw(); setInterval(draw,60000);
-    })();
 
     // ===== 工具箱 · 三伏三九(纯历法:夏至/立秋庚日推三伏,冬至起数九;冬病夏治·冬令进补,计算已核验)=====
     (function renderFuJiu(){
@@ -5221,29 +5124,6 @@
       if(nowEl) nowEl.innerHTML='<div class="sc-now-t">'+st.t+(st.m?'<small>'+st.m+'</small>':'')+'</div><div class="sc-now-y" style="margin-top:6px">'+st.y+'</div>';
     })();
 
-    // ===== 工具箱 · 诸神方位(按所选日日干,一律用 lunar.js 实算 喜/财/福/阳贵/阴贵 五方位(与老黄历卡同源),只报方位不断吉凶,可 ‹ › 翻日)=====
-    (function renderFangwei(){
-      var grid=document.getElementById('fw-grid'); if(!grid) return;
-      var RE=window.RhythmEngine, S=RE&&RE.Solar; if(!S) return;
-      // 方位一律用 lunar.js 实算(与老黄历卡同源,避免手表口径不一);补阳贵/阴贵两神
-      var offset=0, chip=document.getElementById('tb-c-fw');
-      function draw(){
-        var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+offset);
-        var lun=null, gz='', gan=''; try{ lun=S.fromYmd(d.getFullYear(),d.getMonth()+1,d.getDate()).getLunar(); gz=lun.getDayInGanZhi(); gan=gz.charAt(0); }catch(e){}
-        var P=function(f){ try{ var v=f(); return v==null?'—':String(v); }catch(e){ return '—'; } };
-        var xi=P(function(){return lun.getDayPositionXiDesc();}), cai=P(function(){return lun.getDayPositionCaiDesc();}), fu=P(function(){return lun.getDayPositionFuDesc();}), yg=P(function(){return lun.getDayPositionYangGuiDesc();}), yin=P(function(){return lun.getDayPositionYinGuiDesc();});
-        var hero=document.getElementById('fw-hero'), dateEl=document.getElementById('fw-date');
-        if(hero) hero.innerHTML='<div class="sc-now-t">'+(offset===0?'今日':'该日')+'宜朝向</div><div class="sc-now-m" style="margin:6px 0 0">依当日日干「'+gan+'」推算</div>';
-        if(dateEl) dateEl.textContent=(offset===0?'今日 · ':'')+(d.getMonth()+1)+'月'+d.getDate()+'日 · '+gz+'日';
-        if(chip && offset===0) chip.textContent='喜'+xi+' · 财'+cai;
-        var items=[{n:'喜神',d:xi,y:'会亲友、谈婚嫁、办喜事'},{n:'财神',d:cai,y:'开市、谈生意、求财'},{n:'福神',d:fu,y:'祈福纳祥、静心'},{n:'阳贵神',d:yg,y:'求贵人相助 · 日间'},{n:'阴贵神',d:yin,y:'求贵人相助 · 夜间'}];
-        grid.innerHTML=items.map(function(x){ return '<div class="fw-card"><div class="fw-dir">'+x.d+'</div><div class="fw-god">'+x.n+'</div><div class="fw-y">'+x.y+'</div></div>'; }).join('');
-      }
-      var prev=document.getElementById('fw-prev'), next=document.getElementById('fw-next');
-      if(prev&&!prev._b){prev._b=1; prev.addEventListener('click',function(e){e.stopPropagation(); offset--; draw();});}
-      if(next&&!next._b){next._b=1; next.addEventListener('click',function(e){e.stopPropagation(); offset++; draw();});}
-      draw();
-    })();
   </script>
 
   <!-- 全屏手机版:底部 tab 真正切屏(展示稿宽屏下无副作用) -->
