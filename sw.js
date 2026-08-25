@@ -1,10 +1,15 @@
 // 时和 · 离线缓存 Service Worker(纯静态,无追踪;失败不影响在线使用)
 // 策略:网络优先(始终拿最新),离线时回退缓存——避免更新后看到旧版本。
-const CACHE = 'shihe-v103';
-const ASSETS = [
+const CACHE = 'shihe-v104';
+// 核心资源:首屏必需,原子预缓存(任一失败则整体失败,保证一致)
+const CORE = [
   './', './index.html', './onboarding.html', './privacy.html', './terms.html',
-  './app_data.js', './engine_bundle.js', './geocities.json', './analytics.js', './consent.js',
-  './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png',
+  './app_data.js', './engine_bundle.js', './analytics.js', './consent.js',
+  './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png'
+];
+// 次要资源:图片等,逐个 best-effort 缓存(单张失败不拖挂整个 SW 安装)。
+// geocities.json(1.1MB,仅 onboarding 城市搜索用)不预缓存,由 fetch 处理器首次访问时按需缓存。
+const EXTRA = [
   './assets/img/share-high.jpg', './assets/img/share-calm.jpg', './assets/img/share-rest.jpg',
   './assets/img/report-cover.jpg',
   './assets/img/sec-rhythm.jpg', './assets/img/sec-wellness.jpg', './assets/img/sec-timing.jpg',
@@ -18,7 +23,9 @@ const ASSETS = [
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((c) => c.addAll(CORE).then(() => Promise.allSettled(EXTRA.map((u) => c.add(u)))))
+      .then(() => self.skipWaiting())
   );
 });
 
