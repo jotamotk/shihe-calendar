@@ -2361,12 +2361,20 @@
       var person=null;
       try{ person = JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
       var n=new Date(), today={ year:n.getFullYear(), month:n.getMonth()+1, day:n.getDate() };
-      // ① 有真实生日 + 引擎可用 → 实时重算:「今日」永远是当天，且带上最新引擎字段(如未来3年逐月)
+      var _todayKey = today.year+'-'+today.month+'-'+today.day;
+      // ①a 有真实生日 + 本机已有「今天」的缓存 → 直接用,免每次重跑 buildApp(百年人生+3年报告)约250-500ms
+      try{
+        if (person && localStorage.getItem('shihe_app_date')===_todayKey){
+          var _ca = localStorage.getItem('shihe_app');
+          if (_ca){ window.APP = JSON.parse(_ca); window.APP_PERSON = person; window.__IS_DEMO = false; return; }
+        }
+      }catch(e){}
+      // ①b 有真实生日但缓存跨天/缺失 → 重算:「今日」永远是当天,且带上最新引擎字段
       try{
         if (person && window.RhythmEngine && RhythmEngine.buildApp){
           window.APP = RhythmEngine.buildApp(person, today);
           window.APP_PERSON = person; window.__IS_DEMO = false;
-          try{ localStorage.setItem('shihe_app', JSON.stringify(window.APP)); }catch(e){}
+          try{ localStorage.setItem('shihe_app', JSON.stringify(window.APP)); localStorage.setItem('shihe_app_date', _todayKey); }catch(e){}
           return;
         }
       }catch(e){}

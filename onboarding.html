@@ -514,6 +514,7 @@
       try{
         localStorage.setItem('shihe_app', JSON.stringify(PENDING.APP));
         localStorage.setItem('shihe_person', JSON.stringify(PENDING.person)); // 供日历挑年月时实时重算
+        var _n=new Date(); localStorage.setItem('shihe_app_date', _n.getFullYear()+'-'+(_n.getMonth()+1)+'-'+_n.getDate()); // 标缓存为「今天」,首进index免重算
         localStorage.setItem('shihe_goRead','1'); // 录完落地到「解读」命书(付出→回报可见),index 启动读此标志
         // 运营埋点:完成建档(性别/出生年仅在 SHIHE_ANALYTICS_PROFILE 开启时上报，且永不含月/日/时)
         window.shihe && window.shihe.track('onboard_complete', { gender: PENDING.person.gender, birthYear: PENDING.person.year });
