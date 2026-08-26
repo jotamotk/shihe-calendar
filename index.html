@@ -307,7 +307,6 @@
   .xp-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
   .xp-xi{font-size:12px;color:#7C6E52;letter-spacing:1px;display:flex;align-items:center;gap:7px;}
   .xp-dot{width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 1px rgba(154,111,46,.4);}
-  .xp-seal{width:28px;height:28px;border-radius:6px;border:1px solid #9A6F2E;color:#9A6F2E;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(154,111,46,.05);}
   .sc-tA .sc-hd{display:flex;align-items:center;justify-content:space-between;}
   .sc-tA .sc-bd{display:flex;align-items:center;gap:9px;}
   .sc-tA .sc-bdt b{display:block;font-size:13px;font-weight:500;letter-spacing:2px;color:var(--ink);line-height:1.2;}
@@ -2344,7 +2343,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=116"></script>
+  <script src="engine_bundle.js?v=117"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2400,7 +2399,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=116"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=117"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3287,7 +3286,7 @@
           +'<div class="xp-hair"></div>'
           +'<div class="xp-orb">'+xorb+'</div>'
           +(xtipsHtml?'<div class="xp-tips">'+xtipsHtml+'</div>':'')
-          +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</span><span class="xp-seal">時</span></div>'
+          +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</span></div>'
           +'</div></div>';
       }
       function render(){
