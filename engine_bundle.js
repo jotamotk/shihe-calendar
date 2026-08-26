@@ -14368,9 +14368,9 @@ var RhythmEngine = (() => {
               W: "\u4F60\u5B66\u5F97\u5FEB\uFF0C\u5C24\u5F97\u5E08\u53CB\u4E4B\u529B\uFF0C\u6709\u4EBA\u5E26\u5219\u4E8B\u534A\u529F\u500D\uFF1B\u5B9C\u591A\u8BF7\u6559\u3002"
             },
             \u614E: {
-              S: "\u4F60\u6CBB\u5B66\u6C42\u5168\u3001\u5907\u800C\u540E\u52A8\uFF1B\u5B9C\u5B66\u5230\u4E03\u6210\u5148\u52A8\u624B\u3002",
-              M: "\u4F60\u5B66\u4E60\u4E25\u8C28\u3001\u60F3\u5F97\u5468\u5168\uFF1B\u5B9C\u4EE5\u7EC3\u5E26\u5B66\u3002",
-              W: "\u4F60\u5B66\u4E60\u7A33\u91CD\u3001\u4E60\u60EF\u5907\u8DB3\u518D\u52A8\uFF1B\u5B9C\u8BBE\u671F\u9650\u3001\u6309\u6B65\u63A8\u8FDB\u3002"
+              S: "\u4F60\u6CBB\u5B66\u6C42\u5168\u3001\u5907\u800C\u540E\u52A8\uFF1B\u5B9C\u5C3D\u65E9\u52A8\u624B\uFF0C\u4E0D\u5FC5\u7B49\u5168\u5B66\u900F\u3002",
+              M: "\u4F60\u5B66\u4E60\u4E25\u8C28\u3001\u60F3\u5F97\u5468\u5168\uFF1B\u5B9C\u591A\u7EC3\u4E60\u3001\u5C11\u7A7A\u8BFB\u3002",
+              W: "\u4F60\u5B66\u4E60\u7A33\u91CD\u3001\u4E60\u60EF\u5907\u8DB3\u518D\u52A8\uFF1B\u5B9C\u7ED9\u81EA\u5DF1\u5B9A\u4E2A\u5B8C\u6210\u671F\u9650\u3002"
             },
             \u5E73: {
               S: "\u4F60\u5B66\u4E60\u9760\u79EF\u7D2F\u3001\u8010\u529B\u8DB3\uFF0C\u540E\u52B2\u957F\uFF1B\u5B9C\u6301\u4E4B\u4EE5\u6052\u3002",
@@ -14431,7 +14431,7 @@ var RhythmEngine = (() => {
         const yinPct = Math.round(Math.max(0, (mj.weights || {})[yinWx] || 0) / wSum * 100);
         const yinStrongJi = tone(yinWx) === "\u614E" && (yinPct >= 28 || tenGodType(dayWx, ZHI_WX[mj.monthZhi]) === "\u5370");
         const tStudy = yinStrongJi ? "\u5E73" : tone(yinWx);
-        const studyText = yinStrongJi ? "\u4F60\u5B66\u5F97\u8FDB\u3001\u5750\u5F97\u4F4F\uFF0C\u5438\u6536\u4E0E\u94BB\u7814\u662F\u5F3A\u9879\uFF1B\u5B9C\u5B66\u5230\u4E03\u6210\u5148\u7528\u8D77\u6765\u3002" : CORE.study[tStudy][sb];
+        const studyText = yinStrongJi ? "\u4F60\u5B66\u5F97\u8FDB\u3001\u5750\u5F97\u4F4F\uFF0C\u5438\u6536\u4E0E\u94BB\u7814\u662F\u5F3A\u9879\uFF1B\u5B9C\u5C3D\u65E9\u4E0A\u624B\uFF0C\u4E0D\u5FC5\u7B49\u5168\u5B66\u900F\u3002" : CORE.study[tStudy][sb];
         list.push({
           key: "study",
           title: "\u5B66\u4E60\u6210\u957F",
@@ -14506,7 +14506,7 @@ var RhythmEngine = (() => {
         const hAvoid = [];
         if (careList.length) {
           hText = `\u4F5C\u606F\u4E0A\uFF0C\u53EF\u4EE5\u591A\u7559\u610F${careList.map(ORG).join("\u548C")}${careList.length > 1 ? "\u8FD9\u4E24\u65B9\u9762" : "\u8FD9\u65B9\u9762"}\u3002` + careList.map((wx) => TIP[wx]).join("\u3002") + "\u3002";
-          hText += careList.includes(dayWx) ? "\u987A\u65F6\u4F5C\u606F\uFF0C\u5373\u662F\u517B\u6839\u672C\u3002" : `${ORG(dayWx)}\u662F\u4F60\u7684\u5E95\u5B50\uFF0C\u987A\u65F6\u517B\u62A4\u5373\u53EF\u3002`;
+          hText += careList.includes(dayWx) ? "\u4F5C\u606F\u89C4\u5F8B\uFF0C\u5C31\u662F\u6700\u597D\u7684\u517B\u62A4\u3002" : `\u5E73\u65F6\u4E5F\u7167\u987E\u597D${ORG(dayWx)}\u3002`;
           if (FOOD(careList[0]))
             hDos.push("\u5B9C\u517B:" + FOOD(careList[0]));
           if (careList[1] && FOOD(careList[1]))
@@ -14517,7 +14517,7 @@ var RhythmEngine = (() => {
           });
         } else {
           const H_BASE = { \u6728: "\u5B9C\u8212\u5C55\u7B4B\u9AA8\u3001\u5C11\u71AC\u591C", \u706B: "\u5B9C\u7761\u7720\u5145\u8DB3\u3001\u5FC3\u5E73\u6C14\u548C", \u571F: "\u5B9C\u4E09\u9910\u89C4\u5F8B\u3001\u5C11\u601D\u8651", \u91D1: "\u5B9C\u8865\u6C34\u6DA6\u71E5\u3001\u5E38\u8212\u6C14", \u6C34: "\u5B9C\u4FDD\u6696\u7761\u8DB3\u3001\u4E0D\u8FC7\u5EA6\u8017\u795E" };
-          hText = `\u4F60\u5E95\u5B50\u5300\u79F0\u3001\u65E0\u660E\u663E\u77ED\u677F\uFF1B${ORG(dayWx)}\u662F\u4F60\u7684\u6839\u672C\uFF0C${H_BASE[dayWx] || "\u987A\u65F6\u517B\u62A4\u5373\u53EF"}\u3002`;
+          hText = `\u4F60\u5E95\u5B50\u5300\u79F0\u3001\u65E0\u660E\u663E\u77ED\u677F\uFF1B\u5E73\u65F6\u591A\u7167\u770B${ORG(dayWx)}\uFF0C${H_BASE[dayWx] || "\u4F5C\u606F\u89C4\u5F8B\u5373\u53EF"}\u3002`;
           if (FOOD(dayWx))
             hDos.push("\u996E\u98DF\u5B9C:" + FOOD(dayWx));
           if (HEALTH_AVOID[dayWx])
