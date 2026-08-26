@@ -300,10 +300,6 @@
   .xp-orb{display:flex;justify-content:center;margin:16px 0 16px;}
   .xp-orb svg{overflow:visible;}
   .xp-say{font-size:21px;line-height:1.72;letter-spacing:1px;color:#33291B;text-align:center;text-wrap:balance;}
-  /* 深色圆井:把日历页的夜色底"搬"进纸卡一小块,金球回到它的设计环境(浅底上光晕不成立) */
-  .xp-orb-well{display:flex;align-items:center;justify-content:center;width:148px;height:148px;border-radius:50%;
-    background:radial-gradient(120% 90% at 50% 28%,#1F1B14 0%,#0C0A08 68%);
-    box-shadow:inset 0 2px 10px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.5), 0 0 0 1px rgba(200,172,120,.35);}
   .xp-tips{margin:18px auto 0;display:flex;flex-direction:column;gap:10px;align-items:flex-start;width:fit-content;max-width:100%;}
   .xp-tip{display:flex;align-items:baseline;gap:11px;}
   .xp-tip .xp-k{flex:none;font-size:12.5px;color:#9A6F2E;letter-spacing:3px;white-space:nowrap;}
@@ -2348,7 +2344,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=115"></script>
+  <script src="engine_bundle.js?v=116"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2404,7 +2400,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=115"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=116"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2430,7 +2426,8 @@
     const GOLD = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#BC9550';
     // —— 能量光球:替代裸「N分」。一球金光,自下盛起、自内透光、缓缓呼吸;满=气足。空处透明随背景 ——
     let _orbN = 0;
-    function energyOrb(e, sz){
+    function energyOrb(e, sz, light){
+      // light=浅底模式(分享卡宣纸底):上半球加玻璃体积填充、描边加实、光晕收敛——深底调用(日历页)完全不变
       _orbN++; const id='eo'+_orbN, S=sz||100, cx=S/2, cy=S*0.46, r=S*0.38;
       const f=Math.max(0.07,Math.min(1,(e-36)/48));
       const level=cy-r+(1-f)*2*r;
@@ -2447,12 +2444,14 @@
         +'<radialGradient id="h'+id+'" cx=".5" cy=".5" r=".5"><stop offset=".36" stop-color="hsl(45,95%,60%)" stop-opacity="'+(0.14+f*0.30).toFixed(2)+'"/><stop offset="1" stop-color="hsl(45,95%,60%)" stop-opacity="0"/></radialGradient>'
         +'<linearGradient id="m'+id+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFF6D6" stop-opacity="0"/><stop offset=".5" stop-color="#FFFBEC" stop-opacity=".9"/><stop offset="1" stop-color="#FFF6D6" stop-opacity="0"/></linearGradient>'
         +'<clipPath id="c'+id+'"><circle cx="'+cx+'" cy="'+cy+'" r="'+(r-1)+'"/></clipPath>'
+        +(light?'<radialGradient id="lb'+id+'" cx=".38" cy=".28" r=".85"><stop offset="0" stop-color="#FFFEF9"/><stop offset=".62" stop-color="#F8F0DC"/><stop offset="1" stop-color="#EBDDB6"/></radialGradient>':'')
         +'</defs>'
-        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*1.7).toFixed(1)+'" fill="url(#h'+id+')"><animate attributeName="opacity" values="0.82;1;0.82" dur="4.5s" repeatCount="indefinite"/></circle>'
+        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*1.7).toFixed(1)+'" fill="url(#h'+id+')"'+(light?' opacity=".45"':'')+'><animate attributeName="opacity" values="0.82;1;0.82" dur="4.5s" repeatCount="indefinite"/></circle>'
+        +(light?'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r-1)+'" fill="url(#lb'+id+')"/>':'')
         +'<g clip-path="url(#c'+id+')"><g transform="translate(0 '+level.toFixed(1)+')"><path d="'+dd+'" fill="url(#g'+id+')"><animateTransform attributeName="transform" type="translate" from="0 0" to="'+(-L*2).toFixed(1)+' 0" dur="'+(6-f*1.4).toFixed(1)+'s" repeatCount="indefinite"/></path></g></g>'
         +'<ellipse cx="'+cx+'" cy="'+coreY.toFixed(1)+'" rx="'+(r*0.82).toFixed(1)+'" ry="'+(r*0.66).toFixed(1)+'" fill="url(#core'+id+')" clip-path="url(#c'+id+')"><animate attributeName="opacity" values="0.7;1;0.7" dur="4.5s" repeatCount="indefinite"/></ellipse>'
         +surf
-        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(214,165,60,.55)" stroke-width="1.1"/>'
+        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+(light?'rgba(176,132,46,.7)':'rgba(214,165,60,.55)')+'" stroke-width="'+(light?'1.3':'1.1')+'"/>'
         +'<path d="M '+(cx-r*0.64).toFixed(1)+' '+(cy-r*0.56).toFixed(1)+' A '+r+' '+r+' 0 0 1 '+(cx+r*0.36).toFixed(1)+' '+(cy-r*0.82).toFixed(1)+'" fill="none" stroke="#FFFDF2" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>'
         +'</svg>';
     }
@@ -3281,12 +3280,12 @@
         var XORD=['career','money','love','study','health'];
         var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};return {lab:lab,tone:f.tone||'',line:f.line||''};}).filter(function(x){return x.line;});
         var xtipsHtml=xtips.map(function(t){return '<div class="xp-tip"><span class="xp-k">'+t.lab+'</span><span class="xp-v">'+esc(t.line)+'</span></div>';}).join('');
-        var xorb=(typeof energyOrb==='function')?energyOrb(d.e,96):ringSVG(d.e);
+        var xorb=(typeof energyOrb==='function')?energyOrb(d.e,104,true):ringSVG(d.e);
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
           +'<div class="xp-in">'
           +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
           +'<div class="xp-hair"></div>'
-          +'<div class="xp-orb"><span class="xp-orb-well">'+xorb+'</span></div>'
+          +'<div class="xp-orb">'+xorb+'</div>'
           +(xtipsHtml?'<div class="xp-tips">'+xtipsHtml+'</div>':'')
           +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</span><span class="xp-seal">時</span></div>'
           +'</div></div>';
