@@ -227,7 +227,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=119"></script>
+  <script src="engine_bundle.js?v=120"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -298,7 +298,7 @@
       // 中文别名:整词或前缀命中 → 换成英文名搜(如"纽约"/"纽"→New York City)
       for(const k in CITY_ALIAS){ if(k===q.trim()||k.indexOf(q.trim())===0){ t=CITY_ALIAS[k].toLowerCase(); break; } }
       for(const c of GEO.c){ if(c[0].toLowerCase().indexOf(t)>=0){ hits.push(c); if(hits.length>=300)break; } } hits.sort((a,b)=>b[4]-a[4]); const top=hits.slice(0,20);
-      cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+GEO.tz[c[2]]+'" data-cc="'+c[3]+'" data-name="'+String(c[0]).replace(/"/g,'')+'">'+c[0]+' <span>'+ccName(c[3])+'</span></div>').join('') : '<div class="city-res-empty">没找到，换个写法试试</div>';
+      cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+GEO.tz[c[2]]+'" data-cc="'+c[3]+'" data-name="'+String(c[0]).replace(/"/g,'')+'">'+c[0]+' <span>'+ccName(c[3])+'</span></div>').join('') : '<div class="city-res-empty">没找到；可换中/英文写法，或选就近的大城市</div>';
       cityRes.classList.add('on'); }
     cityQ.addEventListener('input',()=>searchCity(cityQ.value));
     cityQ.addEventListener('focus',()=>{ if(cityRes.innerHTML)cityRes.classList.add('on'); });
