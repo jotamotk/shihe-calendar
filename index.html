@@ -2337,7 +2337,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=109"></script>
+  <script src="engine_bundle.js?v=110"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2393,7 +2393,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=109"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=110"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3805,7 +3805,7 @@
       $('lf-phase').textContent = (dIdx*10)+'–'+(dIdx*10+9)+' 岁 · 当前一程';
       if($('lf-act')){
         $('lf-act').textContent = curIt.e>=78
-          ? '这一程气场舒展，宜顺势进取，将要紧的事放手推进、适度果决。'
+          ? '这一程能量舒展，要紧的事放手推进、适度果决。'
           : curIt.e>=56
           ? '这一程平稳渐起，宜稳扎稳打，积累胜于冲刺、守好节奏。'
           : '这一程宜收宜守、先养足精神，不必勉强，留待下一程发力。';
@@ -4058,7 +4058,7 @@
         return '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>近期调养窗口</b></div>'
           + '<div class="rp-card"><div class="rp-win">'
           + '<div class="rp-win-ic"><span style="color:#BCD6EC;font-size:17px">☾</span></div>'
-          + '<div class="rp-win-tx"><b>'+mtxt+'气场偏收，宜蓄力调养</b>'
+          + '<div class="rp-win-tx"><b>'+mtxt+'能量偏收，宜蓄力调养</b>'
           + '<p>这几个月你的能量自然回落——不是低谷，而是身体让你慢下来的信号。适合沉淀、打基础、把作息养回来，不必强求突破；养足了，下一程才走得远。</p>'
           + '<div class="rp-win-more">想看每月起伏与宜忌，往下展开 <b>高能量月</b> 一章 ↓</div>'
           + '</div></div></div></div>';
@@ -4155,7 +4155,7 @@
             '生活方面': '学习 · 事业 · 钱财 · 情感 · 健康',
             '近期调养窗口': '接下来适合养一养的时段',
             '需要注意': (n.jiShen&&n.jiShen.length)? n.jiShen.map((j)=>j.caution).slice(0,2).join(' · ') : '你要留心的几点',
-            '你的幸运色': (n.xiColor&&n.xiColor.name||'') + ' · 随身养气场',
+            '你的幸运色': (n.xiColor&&n.xiColor.name||'') + ' · 随身带一点',
           };
           const BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
           let idx=0;
@@ -4385,7 +4385,7 @@
           pos = Math.max(4, Math.min(96, (v-42)/46*100));
         }
         return '<div class="rp-mo-mid"><div class="rp-mo-gauge"><i class="mk '+band+'" style="left:'+pos.toFixed(0)+'%"></i></div></div>'
-          + '<div class="rp-mo-e '+band+'"><b>'+v+'</b><span>气场</span></div>';
+          + '<div class="rp-mo-e '+band+'"><b>'+v+'</b><span>能量</span></div>';
       }
       function renderMonths(){
         const Y=R.yearMonths; if(!Y){ $('rp-p-months').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">年度数据生成中…</div></div>'; return; }
@@ -4414,7 +4414,7 @@
           ''
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.year+' 年 · 能量起伏</b></div>'
           + (Y.yearVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.yearVerdict)+'</div>':'')
-          + chartCard(cpts, Y.year+' 年逐月气场', '')
+          + chartCard(cpts, Y.year+' 年逐月能量', '')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeM+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余月份</span></div>'
           + Y.months.map(card).join('')
@@ -4450,7 +4450,7 @@
           const _av=months.map((m)=>m.avg), aLo=Math.min.apply(null,_av), aHi=Math.max.apply(null,_av);
           const cpts=months.map((m)=>({label:m.month, value:m.avg, level:m.level, cur:false, key:yObj.year+'-'+m.month}));
           html += '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+yObj.year+' 年</b><span>'+(hi.length?('相对高点 '+hi.join('、')+' 月'):'平稳为主')+'</span></div>'
-            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月气场', ''):'')
+            + (cpts.length>=2?chartCard(cpts, yObj.year+' 年逐月能量', ''):'')
             + months.map((m)=>monthCard(m,yObj.year,aLo,aHi)).join('')
             + '</div>';
         });
@@ -4487,7 +4487,7 @@
           ''
           + '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>'+Y.startYear+'–'+(Y.startYear+9)+' · 十年起伏</b></div>'
           + (Y.decadeVerdict?'<div class="rp-verdict rp-verdict-yr">'+esc(Y.decadeVerdict)+'</div>':'')
-          + chartCard(cpts, '未来十年气场走势', '')
+          + chartCard(cpts, '未来十年能量走势', '')
           + '<div class="rp-lede" style="margin-bottom:14px">'+ledeY+'</div>'
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余年份</span></div>'
           + Y.years.map(card).join('')
@@ -4562,7 +4562,7 @@
           const jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
           if(p==='natal') return '你的性子、内在驱动，与生活各面';
           if(p==='care')  return jq?('眼下「'+jq+'」· 顺时怎么养'):'顺时调养 · 眼下怎么养';
-          if(p==='months'){ const hi=(Y&&Y.highMonths&&Y.highMonths.length)?Y.highMonths.slice(0,3).join('·'):''; return hi?('气场高点在 '+hi+' 月'):'今年这一年的节奏起伏'; }
+          if(p==='months'){ const hi=(Y&&Y.highMonths&&Y.highMonths.length)?Y.highMonths.slice(0,3).join('·'):''; return hi?('能量高点在 '+hi+' 月'):'今年这一年的节奏起伏'; }
           if(p==='picker'){ let N=0; if(P&&P.categories) P.categories.forEach(function(c){ N+=(c.days&&c.days.length)?c.days.length:0; }); return N?('未来两月 · '+N+' 个好日子'):'为要紧事挑个好日子'; }
           if(p==='years'){ const hi=(YR&&YR.highYears&&YR.highYears.length)?YR.highYears.slice(0,3).join('·'):''; return hi?('能量高点年 '+hi):'未来十年的大势起伏'; }
           if(p==='ahead') return '三年逐月';
