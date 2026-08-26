@@ -30,6 +30,44 @@
     return dt;
   }
 
+  // —— 每日提醒:当日宜 + 能量(仅真实命主;预排未来 14 天,每次打开 App 滚动刷新)——
+  var NOTIFY_KEY = 'shihe_notify';
+  function notifyState() {
+    try { return JSON.parse(localStorage.getItem(NOTIFY_KEY) || '{"on":false,"time":"08:00"}'); }
+    catch (e) { return { on: false, time: '08:00' }; }
+  }
+  function dailyList() {
+    var st = notifyState(); if (!st.on) return [];
+    var person = null; try { person = JSON.parse(localStorage.getItem('shihe_person') || 'null'); } catch (e) {}
+    var RE = window.RhythmEngine;
+    if (!person || !RE || !RE.buildMonth) return [];   // 示例态不排(演示数据不冒充本人)
+    var hm = String(st.time || '08:00').split(':'), hh = (+hm[0] || 8), mi = (+hm[1] || 0);
+    var now = new Date(), list = [], cache = {};
+    for (var i = 0; i < 14; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, hh, mi, 0);
+      if (d <= now) continue;
+      var key = d.getFullYear() + '-' + (d.getMonth() + 1);
+      try {
+        if (!cache[key]) cache[key] = RE.buildMonth(person, d.getFullYear(), d.getMonth() + 1);
+        var day = (cache[key].days || []).find(function (x) { return x.g === d.getDate(); });
+        if (!day) continue;
+        var yi = (day.yi && day.yi.length && day.yi.join('') !== '—') ? day.yi.slice(0, 2).join('、') : '把要紧的一两件办妥';
+        list.push({
+          id: 900000001 + i,
+          title: '顺时黄历',
+          body: '能量 ' + day.e + ' · 宜' + yi,
+          schedule: { at: d, allowWhileIdle: true }
+        });
+      } catch (e) {}
+    }
+    return list;
+  }
+  // 暴露给「我的」设置行:改状态即重排
+  window.shiheNotify = {
+    state: notifyState,
+    set: function (st) { try { localStorage.setItem(NOTIFY_KEY, JSON.stringify(st)); } catch (e) {} reschedule(); }
+  };
+
   function scheduleAll(ln) {
     var marks = (window.MARKS && window.MARKS.all) ? window.MARKS.all() : [];
     var now = new Date();
@@ -44,6 +82,7 @@
         schedule: { at: at, allowWhileIdle: true }
       });
     });
+    list = list.concat(dailyList());
     if (list.length) ln.schedule({ notifications: list.slice(0, 60) }).catch(function () {});
   }
 

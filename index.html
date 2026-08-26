@@ -434,6 +434,9 @@
   .mine-ic{width:19px;height:19px;flex:none;color:var(--gold-d);opacity:.9;}
   .mine-it-t{flex:1;}
   .mine-go{color:var(--muted);font-size:18px;line-height:1;}
+  .mine-notify-time{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink-2);}
+  .mine-notify-time input{background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;color:var(--gold-d);font-family:inherit;font-size:14px;padding:6px 10px;color-scheme:dark;}
+  #mine-notify-st.on{color:var(--gold-d);}
   .mine-foot{text-align:center;font-size:10.5px;color:var(--muted);font-weight:300;line-height:1.9;padding:14px 20px 0;}
   .mine-foot b{color:var(--ink-2);font-weight:400;}
   /* ===== 解读页 · 免费命书速览(复用 .rp-* 卡片样式，只补少量专属类)===== */
@@ -1831,6 +1834,7 @@
 <symbol id="i-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 4 13.6 10.4 12 12 10.4 10.4 12 4Z"/><circle cx="12" cy="12" r="1.1"/></symbol>
 <symbol id="i-read" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.4C10.4 5 7.9 4.5 4 4.8V18c3.9-.3 6.4.2 8 1.7 1.6-1.5 4.1-2 8-1.7V4.8c-3.9-.3-6.4.2-8 1.6Z"/><path d="M12 6.4v13.3"/></symbol>
 <symbol id="i-mine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.9 3.1-6.4 7-6.4s7 2.5 7 6.4"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9.5c0-3.3-2.7-6-6-6s-6 2.7-6 6c0 5.2-2 6.2-2 6.2h16s-2-1-2-6.2z"/><path d="M10.2 19.5a2 2 0 0 0 3.6 0"/></symbol>
 <symbol id="i-jieqi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/></symbol>
 <symbol id="i-fujiu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V6a2 2 0 0 0-4 0v8.8a4 4 0 1 0 4 0Z"/><path d="M12 15V9"/></symbol>
 <symbol id="i-lucky" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14l-7 11L5 9ZM5 9l3-4h8l3 4M9 5l3 4 3-4M5 9h14"/></symbol>
@@ -2327,6 +2331,9 @@
         <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-go">›</span></a>
         <button class="mine-it" type="button" id="mine-life"><svg class="mine-ic"><use href="#i-rhythm"></use></svg><span class="mine-it-t">一生能量</span><span class="mine-go">›</span></button>
         <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日分享</span><span class="mine-go">›</span></button>
+        <!-- 每日提醒:仅原生壳+已录生辰显示(Web/示例态隐藏;本地通知,零上传) -->
+        <button class="mine-it" type="button" id="mine-notify" style="display:none"><svg class="mine-ic"><use href="#i-bell"></use></svg><span class="mine-it-t">每日提醒</span><span class="mine-go" id="mine-notify-st">未开启</span></button>
+        <div class="mine-notify-time" id="mine-notify-time" style="display:none"><span>提醒时间</span><input type="time" id="mine-notify-input" value="08:00"></div>
       </div>
       <div class="mine-list">
         <a class="mine-it" href="terms.html"><span class="mine-it-t">用户协议</span><span class="mine-go">›</span></a>
@@ -2337,7 +2344,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=112"></script>
+  <script src="engine_bundle.js?v=113"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2393,7 +2400,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=112"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=113"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3266,7 +3273,11 @@
         const xitems=XDOM.map(function(p){var f=(d.fortune&&d.fortune[p[0]])||{};return {lab:p[1],tone:f.tone||'',line:f.line||''};})
           .filter(function(x){return x.line;})
           .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
-        var xhero=d.heroLine||(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'挑要紧的一件，先做完。';
+        // 主句升级:优先用命主自己的辩证句(说中「我是谁」,可晒的身份句;按日期轮换,同一天固定、跨天更换),
+        //   辩证为空时回退当日操作句。获客主循环的核心一改:晒的是"关于我",不是"今天该干嘛"。
+        var _dia=(window.APP&&APP.report&&APP.report.natal&&APP.report.natal.dialectics)||[];
+        var _diaT=_dia.length?(_dia[(M*31+d.g)%_dia.length]||{}).t:'';
+        var xhero=_diaT||d.heroLine||(d.detail&&d.detail[0]&&d.detail[0].line)||(xitems[0]&&xitems[0].line)||d.cueLine||'挑要紧的一件，先做完。';
         var xci=xhero.indexOf('，'); if(xci<2) xci=xhero.indexOf('、');
         var xheroHtml=(xci>1&&xci<xhero.length-2)?(esc(xhero.slice(0,xci+1))+'<br>'+esc(xhero.slice(xci+1))):esc(xhero);
         var xtips=xitems.filter(function(x){return x.line!==xhero;}).slice(0,3);
@@ -5203,6 +5214,22 @@
           closeMine(); setScreen(0);
           var ts=document.getElementById('t-share'); if(ts) setTimeout(function(){ ts.click(); }, 80);
         });
+        // 每日提醒(仅原生壳+已录生辰;本地通知,内容=当日宜+能量,native.js 排未来14天)
+        (function(){
+          var row=document.getElementById('mine-notify'); if(!row) return;
+          var hasPerson=false; try{ hasPerson=!!JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
+          if(!window.__IS_NATIVE || !window.shiheNotify || !hasPerson) return;   // Web/示例态不露
+          row.style.display='';
+          var stEl=document.getElementById('mine-notify-st'), wrap=document.getElementById('mine-notify-time'), inp=document.getElementById('mine-notify-input');
+          function refresh(){ var s=window.shiheNotify.state();
+            stEl.textContent=s.on?('已开启 '+(s.time||'08:00')):'未开启';
+            stEl.classList.toggle('on', !!s.on);
+            wrap.style.display=s.on?'':'none';
+            if(inp) inp.value=s.time||'08:00'; }
+          row.addEventListener('click', function(){ var s=window.shiheNotify.state(); s.on=!s.on; window.shiheNotify.set(s); refresh(); });
+          if(inp) inp.addEventListener('change', function(){ var s=window.shiheNotify.state(); s.time=inp.value||'08:00'; window.shiheNotify.set(s); refresh(); });
+          refresh();
+        })();
       })();
       if (!document.body.hasAttribute('data-screen')) document.body.dataset.screen = '0';
     })();
