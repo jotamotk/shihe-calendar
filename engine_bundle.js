@@ -12628,13 +12628,13 @@ var RhythmEngine = (() => {
         }
         let love;
         if (volatile_)
-          love = { tone: "\u614E", line: "\u5B9C\u591A\u542C\u5C11\u8BF4\uFF0C\u91CD\u8981\u7684\u8BDD\u5148\u7F13\u4E00\u7F13\u3002" };
+          love = { tone: "\u614E", line: "\u5B9C\u591A\u542C\u5C11\u8BF4\uFF0C\u91CD\u8981\u7684\u8BDD\u5148\u7F13\u4E00\u7F13\u3002", lineSingle: "\u5FC3\u7EEA\u6613\u8D77\u4F0F\uFF0C\u91CD\u8981\u8868\u6001\u5148\u7F13\u3002", linePartner: "\u6613\u6709\u53E3\u89D2\uFF0C\u591A\u542C\u5C11\u8BF4\uFF0C\u522B\u7FFB\u65E7\u8D26\u3002" };
         else if (he && low)
-          love = { tone: "\u5E73", line: "\u7B80\u5355\u966A\u4F34\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002" };
+          love = { tone: "\u5E73", line: "\u7B80\u5355\u966A\u4F34\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002", lineSingle: "\u4E0D\u6025\u4E8E\u63A8\u8FDB\uFF0C\u5982\u5E38\u8054\u7CFB\u5373\u53EF\u3002", linePartner: "\u5B89\u9759\u966A\u4F34\u5373\u53EF\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002" };
         else if (he)
-          love = { tone: "\u987A", line: "\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002" };
+          love = { tone: "\u987A", line: "\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002", lineSingle: "\u4EBA\u7F18\u6B63\u987A\uFF0C\u5B9C\u4E3B\u52A8\u7ED3\u8BC6\u3001\u8D74\u7EA6\u3002", linePartner: "\u4E24\u4EBA\u6613\u5408\u62CD\uFF0C\u5B9C\u5B89\u6392\u76F8\u5904\u3001\u628A\u8BDD\u8BF4\u5F00\u3002" };
         else
-          love = { tone: "\u5E73", line: FORTUNE_FLAT.love };
+          love = { tone: "\u5E73", line: FORTUNE_FLAT.love, lineSingle: "\u5982\u5E38\u6765\u5F80\u5373\u53EF\uFF0C\u4E0D\u5FC5\u5F3A\u6C42\u8FDB\u5C55\u3002", linePartner: FORTUNE_FLAT.love };
         let chance;
         const shi = has(favTypes, "\u98DF");
         if ((shi || he) && low)

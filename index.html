@@ -950,6 +950,8 @@
   .rp-mo{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:9px;overflow:hidden;transition:border-color .2s;}
   .rp-mo.cur{border-color:var(--gold);}
   .rp-mo-top{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;}
+  .rp-mo-chev{width:15px;height:15px;color:var(--gold-d);flex:none;transition:transform .3s var(--ease);}
+  .rp-mo.open .rp-mo-chev{transform:rotate(180deg);}
   .rp-mo-m{flex:none;text-align:center;width:34px;}
   .rp-mo-m b{font-family:var(--serif);font-size:19px;color:var(--ink);font-weight:500;line-height:1;}
   .rp-mo-m span{font-size:9px;color:var(--muted);font-weight:300;display:block;margin-top:2px;}
@@ -2343,7 +2345,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=123"></script>
+  <script src="engine_bundle.js?v=124"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2399,7 +2401,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=123"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=124"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2667,6 +2669,7 @@
       var FT_ORDER = ['career','money','love','study','health'];  // 机会不再单列 tab,合并进事业面板;5个一行放下、免左右滑
       var FT_TONECLS = { '顺':'up', '平':'mid', '慎':'warn' };
       var _ftSel = null;   // 当前选中的方面(跨日粘滞:用户挑了就一直看那个)
+      function loveLineOf(it){ if(!it) return ''; var rel=''; try{ rel=localStorage.getItem(REL_KEY)||''; }catch(e){} return rel==='single'?(it.lineSingle||it.line) : rel==='partner'?(it.linePartner||it.line) : it.line; }
       function renderFortune(d){
         var wrap=$('w-fortune-wrap'); if(!wrap) return;
         var f=d.fortune;
@@ -2703,7 +2706,7 @@
         }
         $('w-fortune-body').innerHTML=
           '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
-          +'<div class="tf-body-line">'+esc(it.line)+'</div>'+extra;
+          +'<div class="tf-body-line">'+esc(_ftSel==='love'?loveLineOf(it):it.line)+'</div>'+extra;
         var note=$('w-fortune-note'); if(note) note.style.display=(_ftSel==='health')?'':'none';
       }
 
@@ -3280,7 +3283,7 @@
           .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
         // 无主句无数字(用户拍板):卡=纯状态呈现。提点固定五域顺序写满(与日历页「今日各方面」五tab对齐)。
         var XORD=['career','money','love','study','health'];
-        var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};return {lab:lab,tone:f.tone||'',line:f.line||''};}).filter(function(x){return x.line;});
+        var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};var ln=f.line; if(k==='love'){ var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){} ln=rel==='single'?(f.lineSingle||f.line):rel==='partner'?(f.linePartner||f.line):f.line; } return {lab:lab,tone:f.tone||'',line:ln||''};}).filter(function(x){return x.line;});
         var xtipsHtml=xtips.map(function(t){return '<div class="xp-tip"><span class="xp-k">'+t.lab+'</span><span class="xp-v">'+esc(t.line)+'</span></div>';}).join('');
         var xorb=(typeof energyOrb==='function')?energyOrb(d.e,104,true):ringSVG(d.e);
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
@@ -4406,6 +4409,7 @@
             + '<div class="rp-mo-top">'
             + '<div class="rp-mo-m"><b>'+m.month+'</b><span>月'+(isCur?' · 本月':'')+'</span></div>'
             + moEnergy(m.avg, m.level, mLo, mHi)
+            + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
             +   (m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
@@ -4447,6 +4451,7 @@
           + '<div class="rp-mo-top">'
           + '<div class="rp-mo-m"><b>'+m.month+'</b><span>月</span></div>'
           + moEnergy(m.avg, m.level, lo, hi)
+          + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
           + '</div>'
           + '<div class="rp-mo-body">'
           +   (m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
@@ -4479,6 +4484,7 @@
             + '<div class="rp-mo-top">'
             + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span></div>'
             + moEnergy(y.energy, y.level, yLo, yHi)
+            + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
             +   (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
