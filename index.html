@@ -606,7 +606,7 @@
   .toc-row-name b{font-family:var(--serif);font-size:18px;color:var(--ink);letter-spacing:2px;font-weight:500;}
   .toc-row-tag{font-size:9.5px;color:var(--gold-d);letter-spacing:1px;border:1px solid var(--gold-line);border-radius:10px;padding:1px 7px;}
   .toc-row-sub{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .toc-row-go{color:var(--muted);font-size:15px;flex:none;}
+  .toc-row-go{color:var(--gold-d);font-size:15px;flex:none;}
   /* 章节页 */
   .ch-bar{display:flex;align-items:center;justify-content:space-between;padding:0 0 13px;margin-bottom:4px;border-bottom:1px solid var(--line);}
   .ch-back{background:none;border:none;font-family:inherit;font-size:13px;color:var(--gold-d);letter-spacing:1px;cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent;}
@@ -1415,7 +1415,7 @@
   /* W5 民俗/戊日 */
   /* —— 可折叠小部件(点开展开，不删内容)—— */
   .wdg-toggle{cursor:pointer;-webkit-tap-highlight-color:transparent;}
-  .wdg-chev{width:15px;height:15px;color:var(--muted);flex:none;transition:transform .3s var(--ease);}
+  .wdg-chev{width:15px;height:15px;color:var(--gold-d);flex:none;transition:transform .3s var(--ease);}
   .collapsed>.wdg-toggle .wdg-chev,.wdg.collapsed .wdg-chev{transform:rotate(-90deg);}
   .wdg-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .32s var(--ease),opacity .26s var(--ease);}
   .wdg-body>.wdg-body-in{overflow:hidden;min-height:0;}
@@ -2182,7 +2182,7 @@
             <div class="luck-intro" id="luck-intro"></div>
             <div class="luck-nav"><button id="luck-prev" type="button" aria-label="上一季">‹</button><span id="luck-range"></span><button id="luck-next" type="button" aria-label="下一季">›</button></div>
             <div id="luck-list"></div>
-            <div class="hl-note">吉日由黄历神煞(天赦 / 天德 / 月德 / 三合 / 天医 等黄道吉日)与你的流日能量双维筛出 · 传统民俗参考 · 本机计算不外传</div>
+            <div class="hl-note">传统民俗参考 · 本机计算</div>
           </div>
 
           <!-- 工具:重点日管理 -->
@@ -2310,7 +2310,7 @@
             <div class="rp-page on" data-p="care" id="rp-p-care"></div>
           </div>
         </div>
-        <div class="rp-foot"><b class="rp-foot-em">本报告是传统历法与民俗文化的整理，不是预测。</b>全部依据你填写的出生信息在本机计算 · 不上传、不外传<br>内容用于安排作息与自我调养，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果</div>
+        <div class="rp-foot"><b class="rp-foot-em">传统历法与民俗文化整理，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果。</b>全部本机计算 · 不上传、不外传</div>
       </div>
     </div>
   </div>
@@ -2343,7 +2343,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=122"></script>
+  <script src="engine_bundle.js?v=123"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2399,7 +2399,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=122"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=123"></scr'+'ipt>');
     })();
   </script>
   <script>
