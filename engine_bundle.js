@@ -12603,7 +12603,38 @@ var RhythmEngine = (() => {
         health: "\u4F5C\u606F\u89C4\u5F8B\u4E9B\u3002",
         chance: "\u4E13\u6CE8\u624B\u5934\u5373\u53EF\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002"
       };
-      function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy) {
+      var FLAT_POOL = {
+        career: ["\u6536\u5C3E\u3001\u63A8\u8FDB\u624B\u5934\u4E8B\uFF0C\u522B\u5F00\u65B0\u5C40\u3002", "\u5148\u529E\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\uFF0C\u5176\u4F59\u987A\u5EF6\u3002", "\u7167\u5E38\u63A8\u8FDB\u5373\u53EF\uFF0C\u4E0D\u5B9C\u5927\u52A8\u3002"],
+        money: ["\u9002\u5408\u5BF9\u8D26\u7406\u6536\u652F\uFF0C\u5927\u989D\u5148\u7F13\u3002", "\u91CF\u5165\u4E3A\u51FA\uFF0C\u8D26\u76EE\u5FC3\u4E2D\u6709\u6570\u3002", "\u4E0D\u5FC5\u52A8\u94B1\uFF0C\u4E0D\u8FDB\u4E0D\u51FA\u4E5F\u662F\u7A33\u3002"],
+        study: ["\u8865\u8FDB\u5EA6\u3001\u590D\u76D8\u65E7\u4E8B\u66F4\u987A\u624B\u3002", "\u6574\u7406\u7B14\u8BB0\u3001\u6E29\u6545\u4E3A\u4E3B\u3002", "\u5B9C\u6E29\u4E60\uFF0C\u4E0D\u5B9C\u5F00\u65B0\u7BC7\u3002"],
+        health: ["\u4F5C\u606F\u89C4\u5F8B\u4E9B\u3002", "\u65E9\u7761\u4E3A\u8981\u3002", "\u4E09\u9910\u6309\u65F6\uFF0C\u591A\u559D\u6E29\u6C34\u3002"],
+        chance: ["\u4E13\u6CE8\u624B\u5934\u5373\u53EF\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002", "\u673A\u4F1A\u5148\u8BB0\u4E0B\uFF0C\u8FC7\u4E24\u5929\u518D\u770B\u3002", "\u5B88\u597D\u73B0\u6709\uFF0C\u4E0D\u8FFD\u65B0\u3002"]
+      };
+      var LOVE_POOL = {
+        \u987A: {
+          u: ["\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002", "\u5B9C\u8D70\u52A8\u76F8\u805A\uFF0C\u89C1\u60F3\u89C1\u7684\u4EBA\u3002", "\u5FC3\u91CC\u7684\u8BDD\u9002\u5408\u5F53\u9762\u8BF4\uFF0C\u53CD\u54CD\u4E0D\u5DEE\u3002"],
+          s: ["\u4EBA\u7F18\u6B63\u987A\uFF0C\u5B9C\u4E3B\u52A8\u7ED3\u8BC6\u3001\u8D74\u7EA6\u3002", "\u5B9C\u8D74\u7EA6\u3001\u591A\u8BA4\u8BC6\u4EBA\u3002", "\u6709\u5FC3\u4EEA\u7684\u4EBA\uFF0C\u9002\u5408\u5F00\u53E3\u3002"],
+          p: ["\u4E24\u4EBA\u5408\u62CD\uFF0C\u5B9C\u5B89\u6392\u76F8\u5904\u3001\u628A\u8BDD\u8BF4\u5F00\u3002", "\u5B9C\u4E00\u8D77\u5403\u987F\u996D\u3001\u8D70\u4E00\u8D70\u3002", "\u60F3\u63D0\u7684\u4E8B\u5C3D\u7BA1\u63D0\uFF0C\u5BF9\u65B9\u542C\u5F97\u8FDB\u3002"]
+        },
+        \u5408\u7F13: {
+          u: ["\u7B80\u5355\u966A\u4F34\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002", "\u5B89\u9759\u76F8\u5904\u5373\u53EF\uFF0C\u4E0D\u5FC5\u5B89\u6392\u592A\u591A\u3002", "\u5404\u81EA\u5FD9\u5404\u81EA\u7684\uFF0C\u95EE\u5019\u4E00\u58F0\u5373\u53EF\u3002"],
+          s: ["\u4E0D\u6025\u4E8E\u63A8\u8FDB\uFF0C\u5982\u5E38\u8054\u7CFB\u5373\u53EF\u3002", "\u4FDD\u6301\u95EE\u5019\u5373\u53EF\uFF0C\u4E0D\u5FC5\u523B\u610F\u3002", "\u5B9C\u9759\u4E00\u65E5\uFF0C\u6539\u5929\u518D\u7EA6\u3002"],
+          p: ["\u5B89\u9759\u966A\u4F34\u5373\u53EF\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002", "\u4E00\u8D77\u5B89\u9759\u5F85\u7740\uFF0C\u4E0D\u5FC5\u591A\u8A00\u3002", "\u76F8\u5904\u5B9C\u6E05\u6DE1\uFF0C\u5C11\u5B89\u6392\u3002"]
+        },
+        \u614E: {
+          u: ["\u5B9C\u591A\u542C\u5C11\u8BF4\uFF0C\u91CD\u8981\u7684\u8BDD\u5148\u7F13\u4E00\u7F13\u3002", "\u91CD\u8981\u5BF9\u8BDD\u53E6\u62E9\u65E5\uFF0C\u5148\u542C\u4E3A\u4E3B\u3002", "\u5C11\u8FA9\u5BF9\u9519\uFF0C\u5148\u987E\u60C5\u7EEA\u3002"],
+          s: ["\u91CD\u8981\u8868\u6001\u5148\u7F13\uFF0C\u591A\u89C2\u5BDF\u4E24\u5929\u3002", "\u8868\u767D\u3001\u644A\u724C\uFF0C\u5148\u7F13\u4E24\u5929\u3002", "\u5148\u770B\u4E24\u5929\uFF0C\u518D\u5B9A\u8FDB\u9000\u3002"],
+          p: ["\u591A\u542C\u5C11\u8BF4\uFF0C\u65E7\u4E8B\u4E0D\u518D\u63D0\u3002", "\u610F\u89C1\u4E0D\u5408\u5148\u6401\u7F6E\uFF0C\u660E\u65E5\u518D\u8C08\u3002", "\u8BA9\u4E00\u6B65\uFF0C\u4E0D\u5403\u4E8F\u3002"]
+        },
+        \u5E73: {
+          u: ["\u591A\u503E\u542C\uFF0C\u4E3B\u52A8\u966A\u4F34\u3002", "\u7559\u4E9B\u65F6\u95F4\u7ED9\u8EAB\u8FB9\u4EBA\u3002", "\u4E3B\u52A8\u95EE\u4E00\u58F0\uFF0C\u80DC\u8FC7\u7B49\u6D88\u606F\u3002"],
+          s: ["\u4FDD\u6301\u6765\u5F80\u5373\u53EF\u3002", "\u5982\u5E38\u6765\u5F80\uFF0C\u4E0D\u5FC5\u5F3A\u6C42\u3002", "\u5B9C\u591A\u8D70\u52A8\uFF0C\u591A\u89C1\u4EBA\u3002"],
+          p: ["\u591A\u503E\u542C\uFF0C\u4E3B\u52A8\u966A\u4F34\u3002", "\u7559\u4E00\u6BB5\u4E0D\u8C08\u6B63\u4E8B\u7684\u65F6\u95F4\u3002", "\u66FF\u5BF9\u65B9\u505A\u4E00\u4EF6\u5C0F\u4E8B\u3002"]
+        }
+      };
+      var pickV = (arr, seed) => arr[(seed % arr.length + arr.length) % arr.length];
+      function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy, seed) {
+        const sd = seed || 0;
         const has = (arr, t) => arr.indexOf(t) >= 0;
         const hi = energy >= 66;
         const low = energy < 48;
@@ -12612,7 +12643,7 @@ var RhythmEngine = (() => {
             return { tone: hi ? "\u987A" : "\u5E73", line: (hi ? CUE[t].favHi : CUE[t].favLo).line };
           if (has(jiTypes, t))
             return { tone: "\u614E", line: (hi ? CUE[t].jiHi : CUE[t].jiLo).line };
-          return { tone: "\u5E73", line: FORTUNE_FLAT[flatKey] };
+          return { tone: "\u5E73", line: pickV(FLAT_POOL[flatKey] || [FORTUNE_FLAT[flatKey]], sd) };
         };
         const career = byGod("\u5B98", "career");
         const money = byGod("\u8D22", "money");
@@ -12624,17 +12655,21 @@ var RhythmEngine = (() => {
           health = { tone: "\u5E73", line: HEALTH_LOW };
         else {
           const fw = xiYong.includes(hwx) ? xiW[hwx] ?? 1 : 0;
-          health = fw >= 0.5 ? { tone: "\u987A", line: HEALTH[hwx].fav } : { tone: "\u5E73", line: FORTUNE_FLAT.health };
+          health = fw >= 0.5 ? { tone: "\u987A", line: HEALTH[hwx].fav } : { tone: "\u5E73", line: pickV(FLAT_POOL.health, sd) };
         }
         let love;
+        const loveOf = (key, tone) => {
+          const g = LOVE_POOL[key];
+          return { tone, line: pickV(g.u, sd), lineSingle: pickV(g.s, sd), linePartner: pickV(g.p, sd) };
+        };
         if (volatile_)
-          love = { tone: "\u614E", line: "\u5B9C\u591A\u542C\u5C11\u8BF4\uFF0C\u91CD\u8981\u7684\u8BDD\u5148\u7F13\u4E00\u7F13\u3002", lineSingle: "\u5FC3\u7EEA\u6613\u8D77\u4F0F\uFF0C\u91CD\u8981\u8868\u6001\u5148\u7F13\u3002", linePartner: "\u6613\u6709\u53E3\u89D2\uFF0C\u591A\u542C\u5C11\u8BF4\uFF0C\u522B\u7FFB\u65E7\u8D26\u3002" };
+          love = loveOf("\u614E", "\u614E");
         else if (he && low)
-          love = { tone: "\u5E73", line: "\u7B80\u5355\u966A\u4F34\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002", lineSingle: "\u4E0D\u6025\u4E8E\u63A8\u8FDB\uFF0C\u5982\u5E38\u8054\u7CFB\u5373\u53EF\u3002", linePartner: "\u5B89\u9759\u966A\u4F34\u5373\u53EF\uFF0C\u8BDD\u4E0D\u7528\u591A\u3002" };
+          love = loveOf("\u5408\u7F13", "\u5E73");
         else if (he)
-          love = { tone: "\u987A", line: "\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002", lineSingle: "\u4EBA\u7F18\u6B63\u987A\uFF0C\u5B9C\u4E3B\u52A8\u7ED3\u8BC6\u3001\u8D74\u7EA6\u3002", linePartner: "\u4E24\u4EBA\u6613\u5408\u62CD\uFF0C\u5B9C\u5B89\u6392\u76F8\u5904\u3001\u628A\u8BDD\u8BF4\u5F00\u3002" };
+          love = loveOf("\u987A", "\u987A");
         else
-          love = { tone: "\u5E73", line: FORTUNE_FLAT.love, lineSingle: "\u5982\u5E38\u6765\u5F80\u5373\u53EF\uFF0C\u4E0D\u5FC5\u5F3A\u6C42\u8FDB\u5C55\u3002", linePartner: FORTUNE_FLAT.love };
+          love = loveOf("\u5E73", "\u5E73");
         let chance;
         const shi = has(favTypes, "\u98DF");
         if ((shi || he) && low)
@@ -12646,7 +12681,7 @@ var RhythmEngine = (() => {
         else if (volatile_)
           chance = { tone: "\u614E", line: "\u65B0\u673A\u4F1A\u5B9C\u5148\u7F13\u4E00\u7F13\uFF0C\u770B\u4E24\u5929\u518D\u5B9A\u3002" };
         else
-          chance = { tone: "\u5E73", line: FORTUNE_FLAT.chance };
+          chance = { tone: "\u5E73", line: pickV(FLAT_POOL.chance, sd) };
         return { career, love, money, study, health, chance };
       }
       function stateLine(energy, axis) {
@@ -12873,7 +12908,7 @@ var RhythmEngine = (() => {
           detail,
           // 今日详解:2~3 条 {label, line} 领域建议
           // 今日五维运(固定面板):事业/感情/财运/学习↔健康/机会，各含 {tone:顺|平|慎, line}
-          fortune: dailyFortune(favGods.map((s) => s.t), jiGods.map((s) => s.t), he_, volatile_, GAN_WX[gan], xiYong, jiShen, xiW, energy),
+          fortune: dailyFortune(favGods.map((s) => s.t), jiGods.map((s) => s.t), he_, volatile_, GAN_WX[gan], xiYong, jiShen, xiW, energy, month * 31 + day),
           yi: yi.length ? yi : ["\u9759\u517B\u84C4\u529B", "\u5904\u7406\u7410\u4E8B"],
           huan: huan.length ? huan : ["\u2014"],
           volatile: volatile_,
