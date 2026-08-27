@@ -12484,11 +12484,178 @@ var RhythmEngine = (() => {
     }
   });
 
+  // engine/relations.js
+  var require_relations = __commonJS({
+    "engine/relations.js"(exports, module) {
+      "use strict";
+      var { GAN_WX, ZHI_WX } = require_analyze();
+      var ZHI_CHONG = {
+        \u5B50: "\u5348",
+        \u5348: "\u5B50",
+        \u4E11: "\u672A",
+        \u672A: "\u4E11",
+        \u5BC5: "\u7533",
+        \u7533: "\u5BC5",
+        \u536F: "\u9149",
+        \u9149: "\u536F",
+        \u8FB0: "\u620C",
+        \u620C: "\u8FB0",
+        \u5DF3: "\u4EA5",
+        \u4EA5: "\u5DF3"
+      };
+      var ZHI_HE = {
+        \u5B50: "\u4E11",
+        \u4E11: "\u5B50",
+        \u5BC5: "\u4EA5",
+        \u4EA5: "\u5BC5",
+        \u536F: "\u620C",
+        \u620C: "\u536F",
+        \u8FB0: "\u9149",
+        \u9149: "\u8FB0",
+        \u5DF3: "\u7533",
+        \u7533: "\u5DF3",
+        \u5348: "\u672A",
+        \u672A: "\u5348"
+      };
+      var LIUHE_HUA = {
+        "\u5B50\u4E11": "\u571F",
+        "\u5BC5\u4EA5": "\u6728",
+        "\u536F\u620C": "\u706B",
+        "\u8FB0\u9149": "\u91D1",
+        "\u5DF3\u7533": "\u6C34",
+        "\u5348\u672A": null
+      };
+      var ZHI_HARM = {
+        \u5B50: "\u672A",
+        \u672A: "\u5B50",
+        \u4E11: "\u5348",
+        \u5348: "\u4E11",
+        \u5BC5: "\u5DF3",
+        \u5DF3: "\u5BC5",
+        \u536F: "\u8FB0",
+        \u8FB0: "\u536F",
+        \u7533: "\u4EA5",
+        \u4EA5: "\u7533",
+        \u9149: "\u620C",
+        \u620C: "\u9149"
+      };
+      var SAN_HE = [
+        { trio: ["\u7533", "\u5B50", "\u8FB0"], wang: "\u5B50", wx: "\u6C34" },
+        { trio: ["\u4EA5", "\u536F", "\u672A"], wang: "\u536F", wx: "\u6728" },
+        { trio: ["\u5BC5", "\u5348", "\u620C"], wang: "\u5348", wx: "\u706B" },
+        { trio: ["\u5DF3", "\u9149", "\u4E11"], wang: "\u9149", wx: "\u91D1" }
+      ];
+      var SAN_HUI = [
+        { trio: ["\u5BC5", "\u536F", "\u8FB0"], wx: "\u6728" },
+        { trio: ["\u5DF3", "\u5348", "\u672A"], wx: "\u706B" },
+        { trio: ["\u7533", "\u9149", "\u620C"], wx: "\u91D1" },
+        { trio: ["\u4EA5", "\u5B50", "\u4E11"], wx: "\u6C34" }
+      ];
+      var XING_TRIOS = [["\u5BC5", "\u5DF3", "\u7533"], ["\u4E11", "\u620C", "\u672A"]];
+      var XING_PAIR = { \u5B50: "\u536F", \u536F: "\u5B50" };
+      var ZI_XING = ["\u8FB0", "\u5348", "\u9149", "\u4EA5"];
+      var GAN_HE = { \u7532: "\u5DF1", \u5DF1: "\u7532", \u4E59: "\u5E9A", \u5E9A: "\u4E59", \u4E19: "\u8F9B", \u8F9B: "\u4E19", \u4E01: "\u58EC", \u58EC: "\u4E01", \u620A: "\u7678", \u7678: "\u620A" };
+      var GANHE_HUA = { "\u7532\u5DF1": "\u571F", "\u4E59\u5E9A": "\u91D1", "\u4E19\u8F9B": "\u6C34", "\u4E01\u58EC": "\u6728", "\u620A\u7678": "\u706B" };
+      var GAN_CHONG = { \u7532: "\u5E9A", \u5E9A: "\u7532", \u4E59: "\u8F9B", \u8F9B: "\u4E59", \u4E19: "\u58EC", \u58EC: "\u4E19", \u4E01: "\u7678", \u7678: "\u4E01" };
+      function liuheHua(a, b) {
+        return LIUHE_HUA[a + b] || LIUHE_HUA[b + a] || null;
+      }
+      function ganheHua(a, b) {
+        return GANHE_HUA[a + b] || GANHE_HUA[b + a] || null;
+      }
+      function isXing(a, b) {
+        if (XING_PAIR[a] === b)
+          return true;
+        for (const t of XING_TRIOS) {
+          if (t.includes(a) && t.includes(b) && a !== b)
+            return true;
+        }
+        return false;
+      }
+      function pillarRelations(tGan, tZhi, natal, daYun) {
+        const events = [];
+        const pillars = natal.map((p) => ({ gan: p.gan, zhi: p.zhi, pos: posLabel(p.pos) }));
+        if (daYun && daYun.gan)
+          pillars.push({ gan: daYun.gan, zhi: daYun.zhi, pos: "\u5927\u8FD0" });
+        for (const p of pillars) {
+          const ganChong = GAN_CHONG[tGan] === p.gan;
+          const zhiChong = ZHI_CHONG[tZhi] === p.zhi;
+          const proma = p.pos === "\u6708\u4EE4";
+          const isSelf = p.pos === "\u65E5\u652F";
+          if (ganChong && zhiChong) {
+            events.push({ kind: "\u5929\u514B\u5730\u51B2", target: p.pos, huaWx: null, weight: -1.6, severe: true });
+          } else if (zhiChong) {
+            events.push({ kind: "\u51B2", target: p.pos, huaWx: null, weight: -1.1, severe: proma || isSelf || p.pos === "\u5927\u8FD0" });
+          }
+          if (ZHI_HE[tZhi] === p.zhi) {
+            events.push({ kind: "\u5408", target: p.pos, huaWx: liuheHua(tZhi, p.zhi), weight: 0.5, severe: false });
+          }
+          if (isXing(tZhi, p.zhi)) {
+            events.push({ kind: "\u5211", target: p.pos, huaWx: null, weight: -0.7, severe: false });
+          }
+          if (ZI_XING.includes(tZhi) && tZhi === p.zhi) {
+            events.push({ kind: "\u5211", target: p.pos, huaWx: null, weight: -0.5, severe: false });
+          }
+          if (ZHI_HARM[tZhi] === p.zhi) {
+            events.push({ kind: "\u5BB3", target: p.pos, huaWx: null, weight: -0.5, severe: false });
+          }
+          if (GAN_HE[tGan] === p.gan) {
+            events.push({ kind: "\u5408", target: p.pos + "\xB7\u5E72", huaWx: ganheHua(tGan, p.gan), weight: 0.3, severe: false });
+          }
+          if (tGan === p.gan && tZhi === p.zhi && p.pos !== "\u5927\u8FD0") {
+            events.push({ kind: "\u4F0F\u541F", target: p.pos, huaWx: null, weight: -0.4, severe: false });
+          }
+        }
+        if (daYun && daYun.gan && tGan === daYun.gan && tZhi === daYun.zhi) {
+          events.push({ kind: "\u5C81\u8FD0\u5E76\u4E34", target: "\u5927\u8FD0", huaWx: null, weight: -1.4, severe: true });
+        }
+        const allZhis = pillars.map((p) => p.zhi);
+        for (const s of SAN_HE) {
+          if (!s.trio.includes(tZhi))
+            continue;
+          const others = s.trio.filter((z) => z !== tZhi);
+          const present = others.filter((z) => allZhis.includes(z));
+          if (present.length === 2) {
+            events.push({ kind: "\u4E09\u5408", target: "\u5C40", huaWx: s.wx, weight: 1, severe: false });
+          } else if (present.length === 1 && (tZhi === s.wang || present[0] === s.wang)) {
+            events.push({ kind: "\u534A\u5408", target: "\u5C40", huaWx: s.wx, weight: 0.6, severe: false });
+          }
+        }
+        for (const s of SAN_HUI) {
+          if (!s.trio.includes(tZhi))
+            continue;
+          const others = s.trio.filter((z) => z !== tZhi);
+          if (others.every((z) => allZhis.includes(z))) {
+            events.push({ kind: "\u4E09\u4F1A", target: "\u5C40", huaWx: s.wx, weight: 1.1, severe: false });
+          }
+        }
+        return events;
+      }
+      function posLabel(pos) {
+        return pos === "\u6708" ? "\u6708\u4EE4" : pos === "\u5E74" ? "\u5E74\u652F" : pos === "\u65E5" ? "\u65E5\u652F" : pos === "\u65F6" ? "\u65F6\u652F" : pos;
+      }
+      module.exports = {
+        pillarRelations,
+        isXing,
+        liuheHua,
+        ganheHua,
+        ZHI_CHONG,
+        ZHI_HE,
+        ZHI_HARM,
+        SAN_HE,
+        SAN_HUI,
+        GAN_HE,
+        GAN_CHONG
+      };
+    }
+  });
+
   // engine/liuri.js
   var require_liuri = __commonJS({
     "engine/liuri.js"(exports, module) {
       "use strict";
       var { Solar } = require_lunar();
+      var { isXing, ZHI_HARM } = require_relations();
       var {
         GAN_WX,
         ZHI_WX,
@@ -12611,6 +12778,31 @@ var RhythmEngine = (() => {
         chance: ["\u4E13\u6CE8\u624B\u5934\u5373\u53EF\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002", "\u673A\u4F1A\u5148\u8BB0\u4E0B\uFF0C\u8FC7\u4E24\u5929\u518D\u770B\u3002", "\u5B88\u597D\u73B0\u6709\uFF0C\u4E0D\u8FFD\u65B0\u3002"]
       };
       var LOVE_POOL = {
+        \u5211: {
+          u: ["\u611F\u60C5\u591A\u78E8\uFF0C\u5B9C\u5BBD\u5F85\uFF0C\u52FF\u6DF1\u7A76\u5BF9\u9519\u3002", "\u7EA0\u7ED3\u4E4B\u4E8B\u5B9C\u7F13\uFF0C\u4E0D\u5FC5\u6025\u4E8E\u7406\u6E05\u3002"],
+          s: ["\u60C5\u611F\u4E8B\u7EA0\u7ED3\uFF0C\u5B9C\u9759\u89C2\u3002", "\u7F18\u5206\u672A\u660E\uFF0C\u4E0D\u5FC5\u5F3A\u89E3\u3002"],
+          p: ["\u52FF\u8BBA\u65E7\u5BF9\u9519\uFF0C\u5B9C\u5BBD\u5F85\u5F7C\u6B64\u3002", "\u78E8\u64E6\u6613\u8D77\uFF0C\u5B9C\u5404\u81EA\u9759\u4E00\u9759\u3002"]
+        },
+        \u5BB3: {
+          u: ["\u6613\u751F\u5ACC\u9699\uFF0C\u52FF\u542C\u95F2\u8A00\u3002", "\u8A00\u8BED\u6613\u88AB\u8BEF\u89E3\uFF0C\u5B9C\u5C11\u8BAE\u8BBA\u3002"],
+          s: ["\u9632\u53E3\u820C\u8BEF\u4F1A\uFF0C\u95F2\u8BDD\u52FF\u4F20\u3002", "\u6240\u95FB\u672A\u5FC5\u5C5E\u5B9E\uFF0C\u5B9C\u81EA\u8FA8\u3002"],
+          p: ["\u52FF\u542C\u95F2\u8A00\u6311\u62E8\uFF0C\u4FE1\u4EFB\u4E3A\u5148\u3002", "\u5C0F\u5ACC\u9699\u52FF\u653E\u5927\uFF0C\u5B9C\u5766\u7136\u3002"]
+        },
+        \u593A: {
+          u: ["\u611F\u60C5\u4E8B\u5B9C\u5B88\uFF0C\u4E0D\u5B9C\u591A\u8BAE\u3002", "\u5916\u6270\u6613\u5165\uFF0C\u5B9C\u7A33\u4F4F\u672C\u5FC3\u3002"],
+          s: ["\u60C5\u611F\u4E8B\u5B9C\u4F4E\u8C03\uFF0C\u52FF\u6025\u8FDB\u3002", "\u611F\u60C5\u5B9C\u5B88\uFF0C\u4E0D\u5B9C\u5F3A\u6C42\u3002"],
+          p: ["\u52FF\u56E0\u5916\u4EBA\u7F6E\u6C14\uFF0C\u5B9C\u5B88\u5BB6\u548C\u3002", "\u5916\u4E8B\u52FF\u6270\u5BB6\u4E8B\uFF0C\u5B9C\u5206\u6E05\u3002"]
+        },
+        \u663E: {
+          u: ["\u60C5\u7F18\u6B63\u65FA\uFF0C\u5B9C\u8D70\u52A8\u76F8\u89C1\u3002", "\u611F\u60C5\u5B9C\u8FDB\uFF0C\u5B9C\u8868\u5FC3\u610F\u3002"],
+          s: ["\u60C5\u7F18\u65FA\uFF0C\u5B9C\u7ED3\u8BC6\u3001\u76F8\u89C1\u3002", "\u5B9C\u4E3B\u52A8\u8868\u610F\u3002"],
+          p: ["\u611F\u60C5\u5B9C\u8FDB\uFF0C\u5B9C\u540C\u884C\u76F8\u4F34\u3002", "\u5B9C\u8868\u5FC3\u610F\uFF0C\u52A0\u6DF1\u60C5\u5206\u3002"]
+        },
+        \u7F18: {
+          u: ["\u4EBA\u7F18\u6B63\u65FA\uFF0C\u5B9C\u7ED3\u8BC6\u5F80\u6765\u3002", "\u793E\u4EA4\u6C14\u65FA\uFF0C\u5B9C\u591A\u8D70\u52A8\u3002"],
+          s: ["\u4EBA\u7F18\u65FA\uFF0C\u5B9C\u8D74\u7EA6\u3001\u7ED3\u8BC6\u3002", "\u5B9C\u591A\u89C1\u4EBA\uFF0C\u5E7F\u7ED3\u826F\u7F18\u3002"],
+          p: ["\u4EBA\u7F18\u65FA\uFF0C\u5B9C\u540C\u51FA\u8D70\u52A8\u3002", "\u5B9C\u643A\u4F34\u4F1A\u53CB\u3002"]
+        },
         \u987A: {
           u: ["\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u5B9C\u4E3B\u52A8\u76F8\u7EA6\u3001\u5148\u5F00\u53E3\u3002", "\u5B9C\u4F1A\u53CB\u76F8\u805A\uFF0C\u591A\u8D70\u52A8\u3002", "\u4EBA\u4E8B\u548C\u987A\uFF0C\u5B9C\u591A\u6765\u5F80\u3002"],
           s: ["\u4EBA\u7F18\u6B63\u987A\uFF0C\u5B9C\u7ED3\u8BC6\u3001\u8D74\u7EA6\u3002", "\u5B9C\u8D74\u7EA6\u3001\u4F1A\u53CB\u3002", "\u5B9C\u4E3B\u52A8\u7ED3\u8BC6\u3002"],
@@ -12633,8 +12825,9 @@ var RhythmEngine = (() => {
         }
       };
       var pickV = (arr, seed) => arr[(seed % arr.length + arr.length) % arr.length];
-      function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy, seed) {
+      function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy, seed, loveSig) {
         const sd = seed || 0;
+        const { loveXing, loveHai, loveStarSeized, loveStarShine, loveTaohua } = loveSig || {};
         const has = (arr, t) => arr.indexOf(t) >= 0;
         const hi = energy >= 66;
         const low = energy < 48;
@@ -12664,10 +12857,20 @@ var RhythmEngine = (() => {
         };
         if (volatile_)
           love = loveOf("\u614E", "\u614E");
+        else if (loveXing)
+          love = loveOf("\u5211", "\u614E");
+        else if (loveHai)
+          love = loveOf("\u5BB3", "\u614E");
+        else if (loveStarSeized)
+          love = loveOf("\u593A", "\u614E");
         else if (he && low)
           love = loveOf("\u5408\u7F13", "\u5E73");
         else if (he)
           love = loveOf("\u987A", "\u987A");
+        else if (loveStarShine)
+          love = loveOf("\u663E", "\u987A");
+        else if (loveTaohua)
+          love = loveOf("\u7F18", "\u987A");
         else
           love = loveOf("\u5E73", "\u5E73");
         let chance;
@@ -12908,7 +13111,20 @@ var RhythmEngine = (() => {
           detail,
           // 今日详解:2~3 条 {label, line} 领域建议
           // 今日五维运(固定面板):事业/感情/财运/学习↔健康/机会，各含 {tone:顺|平|慎, line}
-          fortune: dailyFortune(favGods.map((s) => s.t), jiGods.map((s) => s.t), he_, volatile_, GAN_WX[gan], xiYong, jiShen, xiW, energy, month * 31 + day),
+          fortune: dailyFortune(favGods.map((s) => s.t), jiGods.map((s) => s.t), he_, volatile_, GAN_WX[gan], xiYong, jiShen, xiW, energy, month * 31 + day, function() {
+            const dayZhi = chart.zhis[2];
+            const gender = chart.input && chart.input.gender || "\u5973";
+            const dayGanWx = GAN_WX[chart.dayGan];
+            const t = tenGodType(dayGanWx, GAN_WX[gan]);
+            const TAOHUA = { \u7533: "\u9149", \u5B50: "\u9149", \u8FB0: "\u9149", \u5BC5: "\u536F", \u5348: "\u536F", \u620C: "\u536F", \u5DF3: "\u5348", \u9149: "\u5348", \u4E11: "\u5348", \u4EA5: "\u5B50", \u536F: "\u5B50", \u672A: "\u5B50" };
+            return {
+              loveXing: isXing(zhi, dayZhi),
+              loveHai: ZHI_HARM[zhi] === dayZhi,
+              loveStarSeized: gender === "\u7537" && t === "\u6BD4" || gender === "\u5973" && t === "\u98DF",
+              loveStarShine: gender === "\u7537" && t === "\u8D22" || gender === "\u5973" && t === "\u5B98",
+              loveTaohua: TAOHUA[chart.zhis[0]] === zhi
+            };
+          }()),
           yi: yi.length ? yi : ["\u9759\u517B\u84C4\u529B", "\u5904\u7406\u7410\u4E8B"],
           huan: huan.length ? huan : ["\u2014"],
           volatile: volatile_,
@@ -13610,172 +13826,6 @@ var RhythmEngine = (() => {
         };
       }
       module.exports = { JIEQI, WISDOM, seasonView };
-    }
-  });
-
-  // engine/relations.js
-  var require_relations = __commonJS({
-    "engine/relations.js"(exports, module) {
-      "use strict";
-      var { GAN_WX, ZHI_WX } = require_analyze();
-      var ZHI_CHONG = {
-        \u5B50: "\u5348",
-        \u5348: "\u5B50",
-        \u4E11: "\u672A",
-        \u672A: "\u4E11",
-        \u5BC5: "\u7533",
-        \u7533: "\u5BC5",
-        \u536F: "\u9149",
-        \u9149: "\u536F",
-        \u8FB0: "\u620C",
-        \u620C: "\u8FB0",
-        \u5DF3: "\u4EA5",
-        \u4EA5: "\u5DF3"
-      };
-      var ZHI_HE = {
-        \u5B50: "\u4E11",
-        \u4E11: "\u5B50",
-        \u5BC5: "\u4EA5",
-        \u4EA5: "\u5BC5",
-        \u536F: "\u620C",
-        \u620C: "\u536F",
-        \u8FB0: "\u9149",
-        \u9149: "\u8FB0",
-        \u5DF3: "\u7533",
-        \u7533: "\u5DF3",
-        \u5348: "\u672A",
-        \u672A: "\u5348"
-      };
-      var LIUHE_HUA = {
-        "\u5B50\u4E11": "\u571F",
-        "\u5BC5\u4EA5": "\u6728",
-        "\u536F\u620C": "\u706B",
-        "\u8FB0\u9149": "\u91D1",
-        "\u5DF3\u7533": "\u6C34",
-        "\u5348\u672A": null
-      };
-      var ZHI_HARM = {
-        \u5B50: "\u672A",
-        \u672A: "\u5B50",
-        \u4E11: "\u5348",
-        \u5348: "\u4E11",
-        \u5BC5: "\u5DF3",
-        \u5DF3: "\u5BC5",
-        \u536F: "\u8FB0",
-        \u8FB0: "\u536F",
-        \u7533: "\u4EA5",
-        \u4EA5: "\u7533",
-        \u9149: "\u620C",
-        \u620C: "\u9149"
-      };
-      var SAN_HE = [
-        { trio: ["\u7533", "\u5B50", "\u8FB0"], wang: "\u5B50", wx: "\u6C34" },
-        { trio: ["\u4EA5", "\u536F", "\u672A"], wang: "\u536F", wx: "\u6728" },
-        { trio: ["\u5BC5", "\u5348", "\u620C"], wang: "\u5348", wx: "\u706B" },
-        { trio: ["\u5DF3", "\u9149", "\u4E11"], wang: "\u9149", wx: "\u91D1" }
-      ];
-      var SAN_HUI = [
-        { trio: ["\u5BC5", "\u536F", "\u8FB0"], wx: "\u6728" },
-        { trio: ["\u5DF3", "\u5348", "\u672A"], wx: "\u706B" },
-        { trio: ["\u7533", "\u9149", "\u620C"], wx: "\u91D1" },
-        { trio: ["\u4EA5", "\u5B50", "\u4E11"], wx: "\u6C34" }
-      ];
-      var XING_TRIOS = [["\u5BC5", "\u5DF3", "\u7533"], ["\u4E11", "\u620C", "\u672A"]];
-      var XING_PAIR = { \u5B50: "\u536F", \u536F: "\u5B50" };
-      var ZI_XING = ["\u8FB0", "\u5348", "\u9149", "\u4EA5"];
-      var GAN_HE = { \u7532: "\u5DF1", \u5DF1: "\u7532", \u4E59: "\u5E9A", \u5E9A: "\u4E59", \u4E19: "\u8F9B", \u8F9B: "\u4E19", \u4E01: "\u58EC", \u58EC: "\u4E01", \u620A: "\u7678", \u7678: "\u620A" };
-      var GANHE_HUA = { "\u7532\u5DF1": "\u571F", "\u4E59\u5E9A": "\u91D1", "\u4E19\u8F9B": "\u6C34", "\u4E01\u58EC": "\u6728", "\u620A\u7678": "\u706B" };
-      var GAN_CHONG = { \u7532: "\u5E9A", \u5E9A: "\u7532", \u4E59: "\u8F9B", \u8F9B: "\u4E59", \u4E19: "\u58EC", \u58EC: "\u4E19", \u4E01: "\u7678", \u7678: "\u4E01" };
-      function liuheHua(a, b) {
-        return LIUHE_HUA[a + b] || LIUHE_HUA[b + a] || null;
-      }
-      function ganheHua(a, b) {
-        return GANHE_HUA[a + b] || GANHE_HUA[b + a] || null;
-      }
-      function isXing(a, b) {
-        if (XING_PAIR[a] === b)
-          return true;
-        for (const t of XING_TRIOS) {
-          if (t.includes(a) && t.includes(b) && a !== b)
-            return true;
-        }
-        return false;
-      }
-      function pillarRelations(tGan, tZhi, natal, daYun) {
-        const events = [];
-        const pillars = natal.map((p) => ({ gan: p.gan, zhi: p.zhi, pos: posLabel(p.pos) }));
-        if (daYun && daYun.gan)
-          pillars.push({ gan: daYun.gan, zhi: daYun.zhi, pos: "\u5927\u8FD0" });
-        for (const p of pillars) {
-          const ganChong = GAN_CHONG[tGan] === p.gan;
-          const zhiChong = ZHI_CHONG[tZhi] === p.zhi;
-          const proma = p.pos === "\u6708\u4EE4";
-          const isSelf = p.pos === "\u65E5\u652F";
-          if (ganChong && zhiChong) {
-            events.push({ kind: "\u5929\u514B\u5730\u51B2", target: p.pos, huaWx: null, weight: -1.6, severe: true });
-          } else if (zhiChong) {
-            events.push({ kind: "\u51B2", target: p.pos, huaWx: null, weight: -1.1, severe: proma || isSelf || p.pos === "\u5927\u8FD0" });
-          }
-          if (ZHI_HE[tZhi] === p.zhi) {
-            events.push({ kind: "\u5408", target: p.pos, huaWx: liuheHua(tZhi, p.zhi), weight: 0.5, severe: false });
-          }
-          if (isXing(tZhi, p.zhi)) {
-            events.push({ kind: "\u5211", target: p.pos, huaWx: null, weight: -0.7, severe: false });
-          }
-          if (ZI_XING.includes(tZhi) && tZhi === p.zhi) {
-            events.push({ kind: "\u5211", target: p.pos, huaWx: null, weight: -0.5, severe: false });
-          }
-          if (ZHI_HARM[tZhi] === p.zhi) {
-            events.push({ kind: "\u5BB3", target: p.pos, huaWx: null, weight: -0.5, severe: false });
-          }
-          if (GAN_HE[tGan] === p.gan) {
-            events.push({ kind: "\u5408", target: p.pos + "\xB7\u5E72", huaWx: ganheHua(tGan, p.gan), weight: 0.3, severe: false });
-          }
-          if (tGan === p.gan && tZhi === p.zhi && p.pos !== "\u5927\u8FD0") {
-            events.push({ kind: "\u4F0F\u541F", target: p.pos, huaWx: null, weight: -0.4, severe: false });
-          }
-        }
-        if (daYun && daYun.gan && tGan === daYun.gan && tZhi === daYun.zhi) {
-          events.push({ kind: "\u5C81\u8FD0\u5E76\u4E34", target: "\u5927\u8FD0", huaWx: null, weight: -1.4, severe: true });
-        }
-        const allZhis = pillars.map((p) => p.zhi);
-        for (const s of SAN_HE) {
-          if (!s.trio.includes(tZhi))
-            continue;
-          const others = s.trio.filter((z) => z !== tZhi);
-          const present = others.filter((z) => allZhis.includes(z));
-          if (present.length === 2) {
-            events.push({ kind: "\u4E09\u5408", target: "\u5C40", huaWx: s.wx, weight: 1, severe: false });
-          } else if (present.length === 1 && (tZhi === s.wang || present[0] === s.wang)) {
-            events.push({ kind: "\u534A\u5408", target: "\u5C40", huaWx: s.wx, weight: 0.6, severe: false });
-          }
-        }
-        for (const s of SAN_HUI) {
-          if (!s.trio.includes(tZhi))
-            continue;
-          const others = s.trio.filter((z) => z !== tZhi);
-          if (others.every((z) => allZhis.includes(z))) {
-            events.push({ kind: "\u4E09\u4F1A", target: "\u5C40", huaWx: s.wx, weight: 1.1, severe: false });
-          }
-        }
-        return events;
-      }
-      function posLabel(pos) {
-        return pos === "\u6708" ? "\u6708\u4EE4" : pos === "\u5E74" ? "\u5E74\u652F" : pos === "\u65E5" ? "\u65E5\u652F" : pos === "\u65F6" ? "\u65F6\u652F" : pos;
-      }
-      module.exports = {
-        pillarRelations,
-        isXing,
-        liuheHua,
-        ganheHua,
-        ZHI_CHONG,
-        ZHI_HE,
-        ZHI_HARM,
-        SAN_HE,
-        SAN_HUI,
-        GAN_HE,
-        GAN_CHONG
-      };
     }
   });
 
