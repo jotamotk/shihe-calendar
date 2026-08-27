@@ -1323,6 +1323,9 @@
   .tf-body-tone.up{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
   .tf-body-tone.mid{color:var(--muted);background:var(--card);box-shadow:inset 0 0 0 1px var(--line);}
   .tf-body-tone.warn{color:var(--rest);background:color-mix(in srgb,var(--rest) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rest) 30%,transparent);}
+  .tf-relpick{display:flex;gap:10px;padding:4px 0 2px;}
+  .tf-relpick button{flex:1;background:var(--card-2);border:1px solid var(--gold-line);border-radius:11px;color:var(--gold-d);font-family:inherit;font-size:13px;letter-spacing:1px;padding:10px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .tf-relpick button:active{background:var(--gold-soft);}
   .tf-body-line{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.78;letter-spacing:.2px;}
   /* 机会并入事业:事业正文下的「机会」子行(虚线分隔+金色小标) */
   .tf-body-sub{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.78;letter-spacing:.2px;}
@@ -2345,7 +2348,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=129"></script>
+  <script src="engine_bundle.js?v=130"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2401,7 +2404,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=129"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=130"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2698,6 +2701,20 @@
         }
         var it=f[_ftSel]||{tone:'平',line:''};
         var tc=FT_TONECLS[it.tone]||'mid';
+        // 感情未选状态:不给通用含糊话,给一次性二选(选完立即出精准版;与命书开关同存储)
+        if(_ftSel==='love'){
+          var _rel=''; try{ _rel=localStorage.getItem(REL_KEY)||''; }catch(e){}
+          if(_rel!=='single' && _rel!=='partner'){
+            $('w-fortune-body').innerHTML=
+              '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
+              +'<div class="tf-relpick"><button type="button" data-rel="single">单身</button><button type="button" data-rel="partner">有伴侣</button></div>';
+            var _rp=$('w-fortune-body').querySelector('.tf-relpick');
+            _rp.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; e.stopPropagation();
+              try{ localStorage.setItem(REL_KEY,b.dataset.rel); }catch(err){}
+              renderFortune(d); });
+            return;
+          }
+        }
         // 机会并入事业:选中事业时,若机会有独立显象(非平档、且与事业文案不同),在下方追加一条带「机会」小标的子行
         //   —— 机会源自 liuri 的 食/合/冲(与事业读的「官」不同源),故不丢内容;平档无独立显象、不追加(免同义堆叠)
         var extra='';
@@ -3283,7 +3300,7 @@
           .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
         // 无主句无数字(用户拍板):卡=纯状态呈现。提点固定五域顺序写满(与日历页「今日各方面」五tab对齐)。
         var XORD=['career','money','love','study','health'];
-        var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};var ln=f.line; if(k==='love'){ var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){} ln=rel==='single'?(f.lineSingle||f.line):rel==='partner'?(f.linePartner||f.line):f.line; } return {lab:lab,tone:f.tone||'',line:ln||''};}).filter(function(x){return x.line;});
+        var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};var ln=f.line; if(k==='love'){ var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){} ln=rel==='single'?(f.lineSingle||f.line):rel==='partner'?(f.linePartner||f.line):''; } return {lab:lab,tone:f.tone||'',line:ln||''};}).filter(function(x){return x.line;});
         var xtipsHtml=xtips.map(function(t){return '<div class="xp-tip"><span class="xp-k">'+t.lab+'</span><span class="xp-v">'+esc(t.line)+'</span></div>';}).join('');
         var xorb=(typeof energyOrb==='function')?energyOrb(d.e,104,true):ringSVG(d.e);
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
