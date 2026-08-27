@@ -1913,7 +1913,7 @@
             <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg prebirth-note" id="prebirth-note" style="display:none">这天你尚未出生 · 下方只显示当日历法</div>
             <div class="wdg wdg-today collapsible" data-wid="today">
-              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日 · 你的状态</span><a class="demo-badge" id="w-demo-badge" href="onboarding.html" style="display:none" onclick="event.stopPropagation()">示例 · 换成你的</a><span class="today-score-chip" id="w-score-chip"></span><button class="wdg-help" id="intro-open" type="button" onclick="event.stopPropagation()">怎么用?</button><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日状态</span><a class="demo-badge" id="w-demo-badge" href="onboarding.html" style="display:none" onclick="event.stopPropagation()">示例 · 换成你的</a><span class="today-score-chip" id="w-score-chip"></span><button class="wdg-help" id="intro-open" type="button" onclick="event.stopPropagation()">怎么用?</button><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
@@ -2343,7 +2343,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=120"></script>
+  <script src="engine_bundle.js?v=121"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2399,7 +2399,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=120"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=121"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2906,7 +2906,7 @@
           $('w-date').innerHTML = curM+'月'+d.g+'日 · 周'+WEEK[dt.getDay()]
             + ' <span style="color:var(--gold-d);font-weight:500;">'+rel+'</span>';
           // 个人卡标题随选中日:看别的天时不再写死「今日」(防同屏矛盾)
-          var _tt=document.querySelector('.wdg-today .wdg-htitle'); if(_tt) _tt.textContent=(diff===0?'今日':'该日')+' · 你的状态';
+          var _tt=document.querySelector('.wdg-today .wdg-htitle'); if(_tt) _tt.textContent=(diff===0?'今日':'该日')+'状态';
         })();
         // 出生前守卫:选中日早于命主出生 → 个人卡不编造运势,只留历法层
         (function(){
