@@ -12661,6 +12661,7 @@ var RhythmEngine = (() => {
         ZHI_WX,
         ZHI_HIDE,
         tenGodType,
+        tenGodFull,
         dynamicXiYong
       } = require_analyze();
       var ZHI_CHONG = { \u5B50: "\u5348", \u5348: "\u5B50", \u4E11: "\u672A", \u672A: "\u4E11", \u5BC5: "\u7533", \u7533: "\u5BC5", \u536F: "\u9149", \u9149: "\u536F", \u8FB0: "\u620C", \u620C: "\u8FB0", \u5DF3: "\u4EA5", \u4EA5: "\u5DF3" };
@@ -12798,6 +12799,31 @@ var RhythmEngine = (() => {
           s: ["\u60C5\u7F18\u65FA\uFF0C\u5B9C\u7ED3\u8BC6\u3001\u76F8\u89C1\u3002", "\u5B9C\u4E3B\u52A8\u8868\u610F\u3002"],
           p: ["\u611F\u60C5\u5B9C\u8FDB\uFF0C\u5B9C\u540C\u884C\u76F8\u4F34\u3002", "\u5B9C\u8868\u5FC3\u610F\uFF0C\u52A0\u6DF1\u60C5\u5206\u3002"]
         },
+        \u7F18\u6270: {
+          u: ["\u4EBA\u7F18\u867D\u52A8\uFF0C\u662F\u975E\u4EA6\u968F\uFF0C\u5B9C\u81EA\u6301\u3002", "\u5916\u7F18\u7EB7\u6742\uFF0C\u5B9C\u5B88\u5FC3\u81EA\u6301\u3002"],
+          s: ["\u7F18\u6742\u5B9C\u8FA8\uFF0C\u4E0D\u6025\u4EB2\u8FD1\u3002", "\u6240\u9047\u672A\u5FC5\u826F\u7F18\uFF0C\u5B9C\u7F13\u3002"],
+          p: ["\u5916\u7F18\u52FF\u8FD1\uFF0C\u5B88\u5BB6\u4E3A\u5B89\u3002", "\u5FC3\u6709\u6240\u5C5E\uFF0C\u5916\u7F18\u5B9C\u8FDC\u3002"]
+        },
+        \u6B63\u663E: {
+          u: ["\u6B63\u7F18\u6C14\u65FA\uFF0C\u5B9C\u8D70\u52A8\u76F8\u89C1\u3002", "\u60C5\u7F18\u6B63\u65FA\uFF0C\u5B9C\u8868\u5FC3\u610F\u3002"],
+          s: ["\u6B63\u7F18\u6C14\u65FA\uFF0C\u5B9C\u7ED3\u8BC6\u3001\u76F8\u89C1\u3002", "\u5B9C\u8D74\u7EA6\uFF0C\u8BDA\u610F\u76F8\u5F85\u3002"],
+          p: ["\u611F\u60C5\u6B63\u65FA\uFF0C\u5B9C\u76F8\u4F34\u540C\u884C\u3002", "\u5B9C\u8868\u5FC3\u610F\uFF0C\u60C5\u5206\u65E5\u6DF1\u3002"]
+        },
+        \u504F\u663E: {
+          u: ["\u60C5\u7F18\u5916\u52A8\uFF0C\u5B9C\u5E7F\u7ED3\u5584\u7F18\u3002", "\u4EBA\u7F18\u60C5\u7F18\u7686\u52A8\uFF0C\u5B9C\u8D70\u52A8\u3002"],
+          s: ["\u65B0\u7F18\u6613\u9047\uFF0C\u5B9C\u591A\u8D70\u52A8\u3002", "\u5B9C\u7ED3\u8BC6\u65B0\u53CB\u3002"],
+          p: ["\u5916\u7F18\u867D\u52A8\uFF0C\u5FC3\u6709\u6240\u5C5E\u5B9C\u81EA\u6301\u3002", "\u5B9C\u591A\u966A\u4F34\uFF0C\u52FF\u9010\u5916\u7F18\u3002"]
+        },
+        \u5F3A\u7F18: {
+          u: ["\u7F18\u6025\u5219\u7F13\uFF0C\u5B9C\u7A33\u5E94\u5BF9\u3002", "\u7F18\u6765\u5F3A\u52BF\uFF0C\u5B9C\u7EC6\u8FA8\u7F13\u5E94\u3002"],
+          s: ["\u7F18\u6765\u5F3A\u52BF\uFF0C\u5B9C\u8FA8\u771F\u5FC3\u3002", "\u7F18\u6025\u5B9C\u7F13\uFF0C\u7EC6\u770B\u4E3A\u4E0A\u3002"],
+          p: ["\u5916\u538B\u52FF\u6270\uFF0C\u5BB6\u4E8B\u540C\u5FC3\u3002", "\u5B88\u5BB6\u548C\u4E3A\u5148\uFF0C\u5916\u4E8B\u7F13\u8BBA\u3002"]
+        },
+        \u5B88\u663E: {
+          u: ["\u60C5\u7F18\u867D\u52A8\uFF0C\u5B9C\u5B88\u9759\u89C2\u3002", "\u7F18\u52A8\u672A\u5FC5\u5B9C\u8FDB\uFF0C\u7A33\u4E3A\u4E0A\u3002"],
+          s: ["\u7F18\u867D\u52A8\uFF0C\u5B9C\u89C2\u4E0D\u5B9C\u6025\u3002", "\u5B9C\u9759\u89C2\uFF0C\u4E0D\u6025\u4EB2\u8FD1\u3002"],
+          p: ["\u5BB6\u4E8B\u5B9C\u7A33\uFF0C\u52FF\u56E0\u5916\u52A8\u5206\u5FC3\u3002", "\u5B9C\u5B88\u5E38\uFF0C\u52FF\u591A\u4E8B\u3002"]
+        },
         \u7F18: {
           u: ["\u4EBA\u7F18\u6B63\u65FA\uFF0C\u5B9C\u7ED3\u8BC6\u5F80\u6765\u3002", "\u793E\u4EA4\u6C14\u65FA\uFF0C\u5B9C\u591A\u8D70\u52A8\u3002"],
           s: ["\u4EBA\u7F18\u65FA\uFF0C\u5B9C\u8D74\u7EA6\u3001\u7ED3\u8BC6\u3002", "\u5B9C\u591A\u89C1\u4EBA\uFF0C\u5E7F\u7ED3\u826F\u7F18\u3002"],
@@ -12827,7 +12853,6 @@ var RhythmEngine = (() => {
       var pickV = (arr, seed) => arr[(seed % arr.length + arr.length) % arr.length];
       function dailyFortune(favTypes, jiTypes, he, volatile_, hwx, xiYong, jiShen, xiW, energy, seed, loveSig) {
         const sd = seed || 0;
-        const { loveXing, loveHai, loveStarSeized, loveStarShine, loveTaohua } = loveSig || {};
         const has = (arr, t) => arr.indexOf(t) >= 0;
         const hi = energy >= 66;
         const low = energy < 48;
@@ -12855,21 +12880,30 @@ var RhythmEngine = (() => {
           const g = LOVE_POOL[key];
           return { tone, line: pickV(g.u, sd), lineSingle: pickV(g.s, sd), linePartner: pickV(g.p, sd) };
         };
-        if (volatile_)
+        const _sig = loveSig || {};
+        if (_sig.loveTaohua && (volatile_ || _sig.loveXing || _sig.loveHai))
+          love = loveOf("\u7F18\u6270", "\u614E");
+        else if (volatile_)
           love = loveOf("\u614E", "\u614E");
-        else if (loveXing)
+        else if (_sig.loveXing)
           love = loveOf("\u5211", "\u614E");
-        else if (loveHai)
+        else if (_sig.loveHai)
           love = loveOf("\u5BB3", "\u614E");
-        else if (loveStarSeized)
+        else if (_sig.loveSeize)
           love = loveOf("\u593A", "\u614E");
         else if (he && low)
           love = loveOf("\u5408\u7F13", "\u5E73");
         else if (he)
           love = loveOf("\u987A", "\u987A");
-        else if (loveStarShine)
-          love = loveOf("\u663E", "\u987A");
-        else if (loveTaohua)
+        else if (_sig.loveStarJi)
+          love = loveOf("\u5B88\u663E", "\u5E73");
+        else if (_sig.loveZheng)
+          love = loveOf("\u6B63\u663E", "\u987A");
+        else if (_sig.loveQiang)
+          love = loveOf("\u5F3A\u7F18", "\u614E");
+        else if (_sig.lovePian)
+          love = loveOf("\u504F\u663E", "\u987A");
+        else if (_sig.loveTaohua)
           love = loveOf("\u7F18", "\u987A");
         else
           love = loveOf("\u5E73", "\u5E73");
@@ -13115,13 +13149,24 @@ var RhythmEngine = (() => {
             const dayZhi = chart.zhis[2];
             const gender = chart.input && chart.input.gender || "\u5973";
             const dayGanWx = GAN_WX[chart.dayGan];
-            const t = tenGodType(dayGanWx, GAN_WX[gan]);
+            const full = tenGodFull ? tenGodFull(chart.dayGan, gan) : "";
             const TAOHUA = { \u7533: "\u9149", \u5B50: "\u9149", \u8FB0: "\u9149", \u5BC5: "\u536F", \u5348: "\u536F", \u620C: "\u536F", \u5DF3: "\u5348", \u9149: "\u5348", \u4E11: "\u5348", \u4EA5: "\u5B50", \u536F: "\u5B50", \u672A: "\u5B50" };
+            const KE = { \u6728: "\u571F", \u706B: "\u91D1", \u571F: "\u6C34", \u91D1: "\u6728", \u6C34: "\u706B" };
+            const starWx = gender === "\u7537" ? KE[dayGanWx] : Object.keys(KE).find((k) => KE[k] === dayGanWx);
+            const starJi = (jiShen || []).includes(starWx);
+            const zheng = gender === "\u7537" && full === "\u6B63\u8D22" || gender === "\u5973" && full === "\u6B63\u5B98";
+            const pian = gender === "\u7537" && full === "\u504F\u8D22";
+            const qiang = gender === "\u5973" && full === "\u4E03\u6740";
             return {
               loveXing: isXing(zhi, dayZhi),
               loveHai: ZHI_HARM[zhi] === dayZhi,
-              loveStarSeized: gender === "\u7537" && t === "\u6BD4" || gender === "\u5973" && t === "\u98DF",
-              loveStarShine: gender === "\u7537" && t === "\u8D22" || gender === "\u5973" && t === "\u5B98",
+              loveSeize: gender === "\u7537" && full === "\u52AB\u8D22" || gender === "\u5973" && full === "\u4F24\u5B98",
+              // 只报重者:劫财夺财/伤官克官
+              loveStarJi: (zheng || pian || qiang) && starJi,
+              // 星显而星为忌 → 宜守
+              loveZheng: zheng,
+              lovePian: pian,
+              loveQiang: qiang,
               loveTaohua: TAOHUA[chart.zhis[0]] === zhi
             };
           }()),
