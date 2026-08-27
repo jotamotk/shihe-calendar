@@ -1891,7 +1891,7 @@
           <!-- ====== 选中日 · 小部件流 ====== -->
           <div class="widgets" id="widgets">
             <a class="cal-demo-cta" id="cal-demo-cta" href="onboarding.html" style="display:none">
-              <span class="cdc-tx"><b>当前为示例命主</b>录入你的生辰，看你自己的每日状态</span>
+              <span class="cdc-tx"><b>当前为示例命主</b>录入生辰</span>
               <span class="cdc-go">立即录入 →</span>
             </a>
             <div class="wdg-streak" id="wdg-streak" style="display:none"></div>
@@ -1950,7 +1950,7 @@
               </div>
               <!-- 更多细节(折叠):时辰吉凶 + 神煞四法参断,默认收起(养生壳、弱化玄学,时辰仍一键可见) -->
               <div class="hl2-more collapsible collapsed" data-wid="hlmore">
-                <div class="hl2-more-h wdg-toggle">时辰吉凶 · 更多历法细节<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+                <div class="hl2-more-h wdg-toggle">更多历法细节<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
                 <div class="wdg-body"><div class="wdg-body-in">
                   <div class="hl2-shi">
                     <div class="hl2-shi-h">十二时辰 · 宜忌<span class="hl2-shi-sub" id="hl2-shi-now"></span></div>
@@ -1972,13 +1972,13 @@
 
             <!-- W2 未来一周能量(移至末尾，可折叠) -->
             <div class="wdg collapsible" data-wid="week">
-              <div class="wdg-h wdg-toggle">未来一周 · 能量<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle">未来一周<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in"><div class="wk7b" id="w-wk7"></div>
-                <div class="wk7-note">柱高＝这天能量足，适合安排费神的事；柱低＝适合收着点、少排硬仗。金柱是能量最高的日子。</div>
+                
               </div></div>
             </div>
 
-            <button class="share-btn" id="t-share">为这一天做一张卡片 →</button>
+            <button class="share-btn" id="t-share">生成今日卡片</button>
             <div class="cal-fine">传统历法与民俗文化整理，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果</div>
           </div>
         </div>
@@ -2013,10 +2013,10 @@
         <div class="status"><span class="clock">9:41</span><span></span></div>
         <div class="scroll">
           <div class="life-top">
-            <div class="life-h"><b>一生能量</b><span>逐年逐月</span></div>
+            <div class="life-h"><b>一生能量</b></div>
           </div>
           <a class="cal-demo-cta" id="life-demo-cta" href="onboarding.html" style="display:none;margin-top:2px">
-            <span class="cdc-tx"><b>当前为示例命主</b>这是示例的一生能量，录入你的生辰看你自己的</span>
+            <span class="cdc-tx"><b>当前为示例命主</b>录入生辰</span>
             <span class="cdc-go">立即录入 →</span>
           </a>
 
@@ -2130,33 +2130,33 @@
           <div class="tb-group-h">解读</div>
           <button class="tb-feat" data-tool="rhythm" data-title="一生能量">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-rhythm"></use></svg>
-              <div><b>一生能量 · 生命之轮</b><small>你这一生逐年逐月的能量起伏</small></div></div>
+              <div><b>一生能量</b><small>你这一生逐年逐月的能量起伏</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
           <div class="tb-group-h">时令</div>
           <button class="tb-feat" data-tool="jieqi" data-title="二十四节气">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-jieqi"></use></svg>
-              <div><b>二十四节气 · 时令</b><small id="tb-c-jieqi">此刻</small></div></div>
+              <div><b>二十四节气</b><small id="tb-c-jieqi">此刻</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
           <button class="tb-feat" data-tool="fujiu" data-title="三伏三九">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fujiu"></use></svg>
-              <div><b>三伏三九 · 顺时养生</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
+              <div><b>三伏三九</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
           <div class="tb-group-h">民俗</div>
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
-              <div><b>近期吉日 · 挑好日子</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
+              <div><b>近期吉日</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
           <div class="tb-group-h">记录</div>
           <button class="tb-feat" data-tool="mark" data-title="重点日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-mark"></use></svg>
-              <div><b>重点日 · 记一笔</b><small id="tb-c-mark">生日 · 纪念日 · 倒数日，记在本机</small></div></div>
+              <div><b>重点日</b><small id="tb-c-mark">生日 · 纪念日 · 倒数日，记在本机</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2176,7 +2176,7 @@
           <!-- 工具:近期吉日 -->
           <div class="tb-panel" data-panel="luckyday">
             <a class="cal-demo-cta" id="luck-demo-cta" href="onboarding.html" style="display:none;margin-bottom:12px">
-              <span class="cdc-tx"><b>当前按示例命主挑的</b>录入你的生辰，为你重挑高能量吉日</span>
+              <span class="cdc-tx"><b>当前按示例命主挑的</b>录入生辰</span>
               <span class="cdc-go">立即录入 →</span>
             </a>
             <div class="luck-intro" id="luck-intro"></div>
@@ -2343,7 +2343,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=121"></script>
+  <script src="engine_bundle.js?v=122"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2399,7 +2399,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=121"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=122"></scr'+'ipt>');
     })();
   </script>
   <script>
