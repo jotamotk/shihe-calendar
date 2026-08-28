@@ -131,6 +131,7 @@
   /* tabbar */
   .tabbar{display:flex;justify-content:space-around;align-items:center;padding:13px 0 17px;}
   .tab{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:9.5px;color:var(--muted);font-weight:300;transition:color .25s;cursor:pointer;}
+  button.tab{background:none;border:0;padding:0;margin:0;font-family:inherit;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;}
   .tab:hover{color:var(--ink-2);}
   .tab.on{color:var(--sage-d);}
   .tab .ti{width:23px;height:23px;opacity:.62;transition:opacity .25s var(--ease),transform .25s var(--ease);}
@@ -422,6 +423,7 @@
   .mine-ov{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;opacity:0;transition:opacity .3s var(--ease);}
   @media(min-width:561px){ .mine-ov{max-width:430px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);} }
   .mine-ov.on{display:flex;opacity:1;}
+  .mine-bar{flex:none;padding:calc(14px + env(safe-area-inset-top)) 18px 12px;margin:0;background:linear-gradient(180deg,var(--bg-top),var(--bg));}
   .mine-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 16px 40px;}
   .mine-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:18px;}
   .mine-hero-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.04em;}
@@ -1007,7 +1009,12 @@
   .rp-day-e i s{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--f3),var(--f5));}
   .rp-cat-empty{font-size:11px;color:var(--muted);font-weight:300;padding:12px 14px;border:1px dashed var(--line-2);border-radius:13px;text-align:center;}
 
-  .rp-foot{text-align:center;font-size:10px;color:var(--muted);font-weight:300;line-height:1.8;padding:18px 24px 30px;border-top:1px solid var(--line);margin-top:20px;}
+  .rp-foot{text-align:center;font-size:9.5px;color:var(--muted);opacity:.75;font-weight:300;line-height:1.7;padding:14px 24px 6px;margin-top:auto;}
+  #jd-main{min-height:100%;display:flex;flex-direction:column;}
+  #jd-main>*{flex:none;}
+  #jd-main>#rp-body{flex:1;display:flex;flex-direction:column;}
+  #rp-body>*{flex:none;}
+  #rp-body>.rp-foot{margin-top:auto;}
   .rp-foot-em{display:block;font-size:11px;color:var(--ink-2);font-weight:500;letter-spacing:.3px;margin-bottom:5px;}
 
   .mrow{display:flex;margin-top:6px;}
@@ -2016,9 +2023,7 @@
         <div class="notch"></div>
         <div class="status"><span class="clock">9:41</span><span></span></div>
         <div class="scroll">
-          <div class="life-top">
-            <div class="life-h"><b>一生能量</b></div>
-          </div>
+          <div class="ch-bar"><button class="ch-back" id="lf-back" type="button">‹ 返回</button><span class="ch-bar-t">一生能量</span><span style="width:52px"></span></div>
           <a class="cal-demo-cta" id="life-demo-cta" href="onboarding.html" style="display:none;margin-top:2px">
             <span class="cdc-tx"><b>当前为示例命主</b>录入生辰</span>
             <span class="cdc-go">立即录入 →</span>
@@ -2314,17 +2319,14 @@
             <div class="rp-page on" data-p="care" id="rp-p-care"></div>
           </div>
         </div>
-        <div class="rp-foot"><b class="rp-foot-em">传统历法与民俗文化整理，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果。</b>全部本机计算 · 不上传、不外传</div>
+        <div class="rp-foot">传统历法与民俗文化整理，不构成专业建议 · 全部本机计算，不上传</div>
       </div>
     </div>
   </div>
 
   <!-- 「我的」overlay:body 级全屏,任意页面均可打开。生辰作为一项(不再整页),含一生能量/分享/协议 -->
   <div class="mine-ov" id="mine-ov">
-    <div class="rp-head">
-      <button class="rp-back" id="mine-close">×</button>
-      <span class="rp-head-t">我的</span>
-    </div>
+    <div class="ch-bar mine-bar"><button class="ch-back" id="mine-close" type="button">‹ 返回</button><span class="ch-bar-t">我 的</span><span style="width:52px"></span></div>
     <div class="mine-scroll">
       <div class="mine-card" id="mine-hero">
         <div class="mine-hero-name" id="mine-name">—</div>
@@ -2342,12 +2344,12 @@
         <a class="mine-it" href="terms.html"><span class="mine-it-t">用户协议</span><span class="mine-go">›</span></a>
         <a class="mine-it" href="privacy.html"><span class="mine-it-t">隐私政策</span><span class="mine-go">›</span></a>
       </div>
-      <div class="mine-foot"><b>传统历法与民俗文化整理，不承诺任何结果。</b>全部在本机计算，不上传、不外传</div>
+      <div class="mine-foot">传统历法与民俗文化整理，不构成专业建议 · 全部本机计算，不上传</div>
     </div>
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=133"></script>
+  <script src="engine_bundle.js?v=134"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2403,7 +2405,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=133"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=134"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4712,9 +4714,9 @@
         var pN=0; if(R.picker&&R.picker.categories&&R.picker.categories[0]&&R.picker.categories[0].days) pN=R.picker.categories[0].days.length;
         var pTease=pN?('未来两月 · 宜进取 '+pN+' 天'):'为要紧事挑好日子';
         var rows=[
-          {ch:'natal',num:'壹',name:'本命',tag:'',sub:pe.tagline||'你是什么样的人'},
-          {ch:'liunian',num:'貳',name:'流年',tag:'今年',sub:yTease},
-          {ch:'care',num:'叄',name:'调养',tag:jq||'',sub:jq?('眼下'+jq+' · 顺时怎么养'):'顺时养生'}
+          {ch:'natal',num:'壹',name:'本命',tag:'',sub:'你是什么样的人'},
+          {ch:'liunian',num:'貳',name:'流年',tag:'今年',sub:'今年与逐月的运势'},
+          {ch:'care',num:'叄',name:'调养',tag:jq||'',sub:'眼下节气的起居调养'}
         ];
         el.innerHTML=rows.map(function(r){
           return '<button class="toc-row" type="button" data-ch="'+r.ch+'">'
@@ -4775,7 +4777,7 @@
         });
       }
       function showBody(){
-        cover.style.display='none'; body.style.display='block';
+        cover.style.display='none'; body.style.display='flex'; body.style.flexDirection='column';
         if($('rp-head-sub')) $('rp-head-sub').textContent='';
         // 纵深防御:逐段包 try/catch(单段坏不连累其余与工具箱)
         [renderNatal, renderMonths, renderYears, renderCare, renderAhead].forEach(function(fn){
@@ -4851,7 +4853,7 @@
       const panels=document.querySelectorAll('.tb-panel');
       const scroll=$('tb-scroll'), titleEl=$('tb-detail-title'), backEl=$('tb-back');
       function openTool(t, title){
-        if(t==='rhythm'){ if(window.__setScreen) window.__setScreen(1); return; }  // 生命之轮=整屏节律,复用现成跨屏跳转+转盘重排钩子
+        if(t==='rhythm'){ window.__lfFrom=3; if(window.__setScreen) window.__setScreen(1); return; }  // 生命之轮=整屏节律,复用现成跨屏跳转+转盘重排钩子
         panels.forEach((p)=> p.classList.toggle('on', p.dataset.panel===t));
         if(titleEl) titleEl.textContent = title||'工具';
         if(scroll){ scroll.classList.add('on-detail'); scroll.scrollTop=0; }
@@ -5229,7 +5231,8 @@
         function closeMine(){ mov.classList.remove('on'); }
         document.querySelectorAll('.tab-mine').forEach(function(t){ t.addEventListener('click', openMine); });
         var mc=document.getElementById('mine-close'); if(mc) mc.addEventListener('click', closeMine);
-        var ml=document.getElementById('mine-life'); if(ml) ml.addEventListener('click', function(){ closeMine(); setScreen(1); });
+        var ml=document.getElementById('mine-life'); if(ml) ml.addEventListener('click', function(){ window.__lfFrom=+(document.body.dataset.screen||0); closeMine(); setScreen(1); });
+        var lb=document.getElementById('lf-back'); if(lb) lb.addEventListener('click', function(){ var f=window.__lfFrom; setScreen(f!=null&&f!==1?f:3); });
         var ms=document.getElementById('mine-share'); if(ms) ms.addEventListener('click', function(){
           closeMine(); setScreen(0);
           var ts=document.getElementById('t-share'); if(ts) setTimeout(function(){ ts.click(); }, 80);
