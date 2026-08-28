@@ -1934,7 +1934,6 @@
                   <div class="tf-h">今日各方面</div>
                   <div class="tf-tabs" id="w-fortune-tabs"></div>
                   <div class="tf-body" id="w-fortune-body"></div>
-                  <div class="wcare-note" id="w-fortune-note" style="display:none">「健康」为顺时调养参考，非医疗建议</div>
                 </div>
                 <div class="today-xi"><span class="cue-xilab">今日宜色</span><i class="cue-sw" id="w-xisw"></i><span class="today-xiname" id="w-xiname">松绿</span></div>
                 <!-- 导航衔接:通向「解读」完整命书 -->
@@ -2348,7 +2347,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=132"></script>
+  <script src="engine_bundle.js?v=133"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2404,7 +2403,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=132"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=133"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2669,7 +2668,7 @@
       //   数据来自 liuri.js 的 d.fortune(引擎按当日十神喜忌 + 五行调养 + 能量实算，底层打分不变)。
       //   顺=当日助力、平=中性平顺、慎=宜留意收敛。一排 tab 各带色点(一眼看全貌),点谁看谁,省地方。
       var FT_LABEL = { career:'事业', love:'感情', money:'钱财', study:'学习', health:'健康', chance:'机会' };
-      var FT_ORDER = ['career','money','love','study','health'];  // 机会不再单列 tab,合并进事业面板;5个一行放下、免左右滑
+      var FT_ORDER = ['career','money','love','study'];  // 健康栏已删(无信号支撑不乱编);机会合并进事业面板
       var FT_TONECLS = { '顺':'up', '平':'mid', '慎':'warn' };
       var _ftSel = null;   // 当前选中的方面(跨日粘滞:用户挑了就一直看那个)
       function loveLineOf(it){ if(!it) return ''; var rel=''; try{ rel=localStorage.getItem(REL_KEY)||''; }catch(e){} return rel==='single'?(it.lineSingle||it.line) : rel==='partner'?(it.linePartner||it.line) : it.line; }
@@ -2724,7 +2723,6 @@
         $('w-fortune-body').innerHTML=
           '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
           +'<div class="tf-body-line">'+esc(_ftSel==='love'?loveLineOf(it):it.line)+'</div>'+extra;
-        var note=$('w-fortune-note'); if(note) note.style.display=(_ftSel==='health')?'':'none';
       }
 
       // —— 老黄历(选中日 · 传统历法速查)——
@@ -3299,7 +3297,7 @@
           .filter(function(x){return x.line;})
           .sort(function(a,b){var ra=XRANK[a.tone];var rb=XRANK[b.tone];return (ra==null?3:ra)-(rb==null?3:rb);});
         // 无主句无数字(用户拍板):卡=纯状态呈现。提点固定五域顺序写满(与日历页「今日各方面」五tab对齐)。
-        var XORD=['career','money','love','study','health'];
+        var XORD=['career','money','love','study'];
         var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};var ln=f.line; if(k==='love'){ var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){} ln=rel==='single'?(f.lineSingle||f.line):rel==='partner'?(f.linePartner||f.line):''; } return {lab:lab,tone:f.tone||'',line:ln||''};}).filter(function(x){return x.line;});
         var xtipsHtml=xtips.map(function(t){return '<div class="xp-tip"><span class="xp-k">'+t.lab+'</span><span class="xp-v">'+esc(t.line)+'</span></div>';}).join('');
         var xorb=(typeof energyOrb==='function')?energyOrb(d.e,104,true):ringSVG(d.e);

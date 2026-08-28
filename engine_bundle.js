@@ -12677,22 +12677,22 @@ var RhythmEngine = (() => {
       };
       var CUE = {
         \u8D22: {
-          favHi: { tag: "\u653E\u624B\u8C08", kw: "\u987A\u52BF\u800C\u8FDB", line: "\u5B9C\u8C08\u5224\u3001\u63A8\u8FDB\u6401\u7F6E\u5DF2\u4E45\u7684\u4E8B\uFF0C\u4E3B\u52A8\u53BB\u4E89\u53D6\u3002" },
-          favLo: { tag: "\u5148\u94FA\u8DEF", kw: "\u84C4\u52BF\u5F85\u53D1", line: "\u5B9C\u5148\u7406\u4EBA\u8109\u3001\u5907\u597D\u65B9\u6848\uFF0C\u6682\u4E0D\u6025\u7740\u51FA\u624B\u3002" },
-          jiHi: { tag: "\u7F13\u4E00\u624B", kw: "\u7F13\u800C\u540E\u52A8", line: "\u5927\u989D\u652F\u51FA\u5B9C\u7F13\u4E00\u7F13\uFF0C\u522B\u4E00\u65F6\u51B2\u52A8\u4E0B\u5355\u3002" },
-          jiLo: { tag: "\u5B88\u94B1\u5305", kw: "\u5B88\u6210\u4E3A\u5148", line: "\u5927\u989D\u652F\u51FA\u5B9C\u7F13\u4E00\u7F13\uFF0C\u522B\u4E00\u65F6\u4E0A\u5934\u3002" }
+          favHi: { tag: "\u653E\u624B\u8C08", kw: "\u987A\u52BF\u800C\u8FDB", line: "\u8FDB\u8D26\u673A\u4F1A\u591A\uFF0C\u9002\u5408\u4E3B\u52A8\u4E89\u53D6\u3002" },
+          favLo: { tag: "\u5148\u94FA\u8DEF", kw: "\u84C4\u52BF\u5F85\u53D1", line: "\u65F6\u673A\u6CA1\u719F\uFF0C\u5148\u94FA\u8DEF\u3002" },
+          jiHi: { tag: "\u7F13\u4E00\u624B", kw: "\u7F13\u800C\u540E\u52A8", line: "\u5927\u989D\u4E0D\u5408\u9002\uFF0C\u5BB9\u6613\u51B2\u52A8\u3002" },
+          jiLo: { tag: "\u5B88\u94B1\u5305", kw: "\u5B88\u6210\u4E3A\u5148", line: "\u9002\u5408\u5B88\u94B1\uFF0C\u4E0D\u9002\u5408\u51FA\u624B\u3002" }
         },
         \u5B98: {
-          favHi: { tag: "\u5C31\u62CD\u677F", kw: "\u4ECE\u5BB9\u7B03\u5B9A", line: "\u5B9C\u8D81\u5934\u8111\u6E05\u695A\uFF0C\u8C08\u4E8B\u3001\u5B9A\u4E8B\u3001\u62CD\u677F\u3002" },
-          favLo: { tag: "\u7A33\u7740\u6765", kw: "\u6309\u90E8\u5C31\u73ED", line: "\u5B9C\u6309\u89C4\u77E9\u6765\uFF0C\u4E00\u6B65\u4E00\u6B65\u7A33\u7A33\u63A8\u8FDB\u3002" },
-          jiHi: { tag: "\u7ED5\u7740\u8D70", kw: "\u4EE5\u67D4\u5316\u521A", line: "\u5B9C\u628A\u8BDD\u8BF4\u8F6F\u4E9B\uFF0C\u7ED5\u5F00\u7231\u8F83\u771F\u7684\u4EBA\u3002" },
-          jiLo: { tag: "\u7ED5\u5F00\u4E9B", kw: "\u907F\u5176\u950B\u8292", line: "\u5B9C\u907F\u5F00\u51B2\u7A81\uFF0C\u96BE\u529E\u7684\u4E8B\u5F80\u540E\u653E\u3002" }
+          favHi: { tag: "\u5C31\u62CD\u677F", kw: "\u4ECE\u5BB9\u7B03\u5B9A", line: "\u5934\u8111\u6E05\u695A\uFF0C\u9002\u5408\u62CD\u677F\u3002" },
+          favLo: { tag: "\u7A33\u7740\u6765", kw: "\u6309\u90E8\u5C31\u73ED", line: "\u4E00\u6B65\u4E00\u6B65\u6765\uFF0C\u6BD4\u8F83\u7A33\u3002" },
+          jiHi: { tag: "\u7ED5\u7740\u8D70", kw: "\u4EE5\u67D4\u5316\u521A", line: "\u5BB9\u6613\u78B0\u4E0A\u8F83\u771F\u7684\u4EBA\uFF0C\u786C\u78B0\u4E0D\u5408\u9002\u3002" },
+          jiLo: { tag: "\u7ED5\u5F00\u4E9B", kw: "\u907F\u5176\u950B\u8292", line: "\u963B\u529B\u5927\uFF0C\u4E0D\u6613\u529E\u6210\u3002" }
         },
         \u5370: {
-          favHi: { tag: "\u5145\u5145\u7535", kw: "\u5B81\u9759\u81F4\u8FDC", line: "\u5B9C\u8BFB\u4E66\u3001\u8FDB\u4FEE\uFF0C\u591A\u5411\u524D\u8F88\u8BF7\u6559\u3002" },
-          favLo: { tag: "\u6B47\u53E3\u6C14", kw: "\u517B\u7CBE\u84C4\u9510", line: "\u5B9C\u6B47\u4E00\u6B47\u3001\u7761\u591F\uFF0C\u5148\u517B\u8DB3\u7CBE\u795E\u3002" },
-          jiHi: { tag: "\u5148\u52A8\u624B", kw: "\u8D77\u800C\u884C\u4E4B", line: "\u5B9C\u5148\u4ECE\u6700\u5C0F\u7684\u4E00\u4EF6\u505A\u8D77\uFF0C\u522B\u4E00\u76F4\u62D6\u7740\u3002" },
-          jiLo: { tag: "\u52A8\u4E00\u4EF6", kw: "\u514B\u60F0\u81EA\u52B1", line: "\u5B9C\u505A\u70B9\u624B\u8FB9\u5C0F\u4E8B\uFF0C\u51FA\u95E8\u8D70\u52A8\u8D70\u52A8\u3002" }
+          favHi: { tag: "\u5145\u5145\u7535", kw: "\u5B81\u9759\u81F4\u8FDC", line: "\u5438\u6536\u5FEB\uFF0C\u9002\u5408\u8FDB\u4FEE\u3002" },
+          favLo: { tag: "\u6B47\u53E3\u6C14", kw: "\u517B\u7CBE\u84C4\u9510", line: "\u5B66\u5F97\u6162\uFF0C\u9760\u79EF\u7D2F\u3002" },
+          jiHi: { tag: "\u5148\u52A8\u624B", kw: "\u8D77\u800C\u884C\u4E4B", line: "\u5BB9\u6613\u62D6\u5EF6\u3002" },
+          jiLo: { tag: "\u52A8\u4E00\u4EF6", kw: "\u514B\u60F0\u81EA\u52B1", line: "\u5FC3\u9759\u4E0D\u4E0B\u6765\uFF0C\u5B66\u4E60\u5403\u529B\u3002" }
         },
         \u98DF: {
           favHi: { tag: "\u5C3D\u7BA1\u8BF4", kw: "\u7075\u601D\u8212\u5C55", line: "\u5B9C\u591A\u6C9F\u901A\u3001\u591A\u5C55\u793A\uFF0C\u4E5F\u9002\u5408\u52A8\u624B\u521B\u4F5C\u3002" },
@@ -12714,28 +12714,28 @@ var RhythmEngine = (() => {
       var DIM = {
         \u8D22: {
           label: "\u94B1\u8D22",
-          fav: "\u5B9C\u8C08\u94B1\u3001\u63A8\u4E8B\uFF0C\u4E3B\u52A8\u5F00\u53E3\u3002",
-          ji: "\u5927\u989D\u652F\u51FA\u5B9C\u7F13\u4E00\u7F13\u3002"
+          fav: "\u9002\u5408\u8C08\u94B1\u3001\u63A8\u8FDB\u8981\u4E8B\u3002",
+          ji: "\u5927\u989D\u4E0D\u5408\u9002\uFF0C\u5BB9\u6613\u51B2\u52A8\u3002"
         },
         \u5B98: {
           label: "\u4E8B\u4E1A",
-          fav: "\u5B9C\u51B3\u7B56\u3001\u89C1\u4E0A\u7EA7\u3001\u5B9A\u89C4\u77E9\uFF0C\u601D\u8DEF\u6E05\u3001\u6709\u4F9D\u636E\u3002",
-          ji: "\u5B9C\u628A\u8BDD\u8BF4\u8F6F\u4E9B\uFF0C\u7ED5\u5F00\u7231\u8F83\u771F\u7684\u4EBA\u3002"
+          fav: "\u9002\u5408\u51B3\u7B56\u3001\u89C1\u4E0A\u7EA7\u3001\u8C08\u6B63\u4E8B\u3002",
+          ji: "\u5BB9\u6613\u78B0\u4E0A\u8F83\u771F\u7684\u4EBA\uFF0C\u786C\u78B0\u4E0D\u5408\u9002\u3002"
         },
         \u5370: {
           label: "\u5B66\u517B",
-          fav: "\u5B9C\u9759\u5FC3\u5145\u7535\uFF0C\u8BFB\u4E66\u3001\u5411\u884C\u5BB6\u8BF7\u6559\u3002",
-          ji: "\u5B9C\u5148\u4ECE\u6700\u5C0F\u4E00\u4EF6\u505A\u8D77\uFF0C\u522B\u4E00\u76F4\u62D6\u3002"
+          fav: "\u5B66\u5F97\u8FDB\u53BB\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u8BF7\u6559\u3002",
+          ji: "\u5BB9\u6613\u62D6\u5EF6\u3002"
         },
         \u98DF: {
           label: "\u8868\u8FBE",
-          fav: "\u5B9C\u591A\u6C9F\u901A\u3001\u591A\u5C55\u793A\uFF0C\u4E5F\u9002\u5408\u5199\u4F5C\u3002",
-          ji: "\u5B9C\u5C11\u8BF4\u591A\u542C\uFF0C\u522B\u63A5\u95F2\u8BDD\u3001\u522B\u4E89\u8FA9\u3002"
+          fav: "\u9002\u5408\u8868\u8FBE\u3001\u5C55\u793A\uFF0C\u601D\u8DEF\u6E05\u695A\u3002",
+          ji: "\u5BB9\u6613\u8A00\u591A\u6709\u5931\u3002"
         },
         \u6BD4: {
           label: "\u4EBA\u9645",
-          fav: "\u5B9C\u7ED3\u4F34\u3001\u642D\u624B\u5206\u5DE5\u3002",
-          ji: "\u5B9C\u628A\u8D26\u8BF4\u6E05\u3001\u754C\u9650\u8BB2\u660E\u3002"
+          fav: "\u9002\u5408\u627E\u4EBA\u642D\u4F19\u505A\u4E8B\u3002",
+          ji: "\u5408\u4F19\u7684\u8D26\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002"
         }
       };
       var HEALTH = {
@@ -12761,22 +12761,22 @@ var RhythmEngine = (() => {
         }
       };
       var HEALTH_LOW = "\u4F53\u529B\u6709\u70B9\u8DDF\u4E0D\u4E0A\uFF0C\u5403\u6E05\u6DE1\u4E9B\u3001\u591A\u559D\u6E29\u6C34\uFF0C\u65E9\u70B9\u7761\u3002";
-      var DIM_CHONG = { label: "\u51FA\u884C", line: "\u8BA1\u5212\u5BB9\u6613\u53D8\uFF0C\u51FA\u95E8\u591A\u7559\u5FC3\uFF0C\u5927\u51B3\u5B9A\u5B9C\u7F13\u4E00\u4E24\u5929\u3002" };
-      var DIM_HE = { label: "\u673A\u7F18", line: "\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u5B9C\u8C08\u5408\u4F5C\u3001\u6258\u4E8B\uFF0C\u4E3B\u52A8\u5F00\u53E3\u3002" };
+      var DIM_CHONG = { label: "\u51FA\u884C", line: "\u8BA1\u5212\u5BB9\u6613\u53D8\uFF0C\u5927\u4E8B\u4E0D\u9002\u5408\u5B9A\u3002" };
+      var DIM_HE = { label: "\u673A\u7F18", line: "\u8DDF\u4EBA\u5408\u5F97\u6765\uFF0C\u9002\u5408\u8C08\u5408\u4F5C\u3002" };
       var FORTUNE_FLAT = {
-        career: "\u6536\u5C3E\u3001\u63A8\u8FDB\u624B\u5934\u4E8B\uFF0C\u522B\u5F00\u65B0\u5C40\u3002",
+        career: "\u5E73\u5E73\u7A33\u7A33\uFF0C\u7167\u5E38\u5B89\u6392\u3002",
         love: "\u591A\u503E\u542C\uFF0C\u4E3B\u52A8\u966A\u4F34\u3002",
-        money: "\u9002\u5408\u5BF9\u8D26\u7406\u6536\u652F\uFF0C\u5927\u989D\u5148\u7F13\u3002",
-        study: "\u8865\u8FDB\u5EA6\u3001\u590D\u76D8\u65E7\u4E8B\u66F4\u987A\u624B\u3002",
+        money: "\u6536\u652F\u6B63\u5E38\u3002",
+        study: "\u5B66\u4E60\u5E73\u5E73\uFF0C\u9002\u5408\u6E29\u4E60\u3002",
         health: "\u4F5C\u606F\u89C4\u5F8B\u4E9B\u3002",
-        chance: "\u4E13\u6CE8\u624B\u5934\u5373\u53EF\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002"
+        chance: "\u673A\u4F1A\u5E73\u5E73\u3002"
       };
       var FLAT_POOL = {
-        career: ["\u6536\u5C3E\u3001\u63A8\u8FDB\u624B\u5934\u4E8B\uFF0C\u522B\u5F00\u65B0\u5C40\u3002", "\u5148\u529E\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\uFF0C\u5176\u4F59\u987A\u5EF6\u3002", "\u7167\u5E38\u63A8\u8FDB\u5373\u53EF\uFF0C\u4E0D\u5B9C\u5927\u52A8\u3002"],
-        money: ["\u9002\u5408\u5BF9\u8D26\u7406\u6536\u652F\uFF0C\u5927\u989D\u5148\u7F13\u3002", "\u91CF\u5165\u4E3A\u51FA\uFF0C\u8D26\u76EE\u5FC3\u4E2D\u6709\u6570\u3002", "\u4E0D\u5B9C\u5927\u989D\u8FDB\u51FA\uFF0C\u5B88\u7A33\u5373\u53EF\u3002"],
-        study: ["\u8865\u8FDB\u5EA6\u3001\u590D\u76D8\u65E7\u4E8B\u66F4\u987A\u624B\u3002", "\u6574\u7406\u7B14\u8BB0\u3001\u6E29\u6545\u4E3A\u4E3B\u3002", "\u5B9C\u6E29\u4E60\uFF0C\u4E0D\u5B9C\u5F00\u65B0\u7BC7\u3002"],
+        career: ["\u5E73\u5E73\u7A33\u7A33\uFF0C\u7167\u5E38\u5B89\u6392\u3002"],
+        money: ["\u6536\u652F\u6B63\u5E38\u3002"],
+        study: ["\u5B66\u4E60\u5E73\u5E73\uFF0C\u9002\u5408\u6E29\u4E60\u3002"],
         health: ["\u4F5C\u606F\u89C4\u5F8B\u4E9B\u3002", "\u65E9\u7761\u4E3A\u8981\u3002", "\u4E09\u9910\u6309\u65F6\uFF0C\u591A\u559D\u6E29\u6C34\u3002"],
-        chance: ["\u4E13\u6CE8\u624B\u5934\u5373\u53EF\uFF0C\u4E0D\u5FC5\u8FFD\u65B0\u3002", "\u673A\u4F1A\u5148\u8BB0\u4E0B\uFF0C\u8FC7\u4E24\u5929\u518D\u770B\u3002", "\u5B88\u597D\u73B0\u6709\uFF0C\u4E0D\u8FFD\u65B0\u3002"]
+        chance: ["\u673A\u4F1A\u5E73\u5E73\u3002"]
       };
       var LOVE_POOL = {
         \u5211: {
@@ -12858,9 +12858,62 @@ var RhythmEngine = (() => {
             return { tone: "\u614E", line: (hi ? CUE[t].jiHi : CUE[t].jiLo).line };
           return { tone: "\u5E73", line: pickV(FLAT_POOL[flatKey] || [FORTUNE_FLAT[flatKey]], sd) };
         };
-        const career = byGod("\u5B98", "career");
-        const money = byGod("\u8D22", "money");
-        const study = byGod("\u5370", "study");
+        const S = loveSig || {};
+        const career = function() {
+          if (S.chongTiGang)
+            return { tone: "\u614E", line: "\u4E8B\u60C5\u53D8\u52A8\u591A\uFF0C\u4E0D\u9002\u5408\u5B9A\u5927\u4E8B\u3002" };
+          if (S.sgTou)
+            return { tone: "\u614E", line: "\u5BB9\u6613\u6709\u53E3\u89D2\u3001\u662F\u975E\u3002" };
+          if (S.gsTou && S.guanJi)
+            return { tone: "\u614E", line: "\u538B\u529B\u6BD4\u8F83\u5927\uFF0C\u4E0D\u9002\u5408\u5F80\u524D\u51B2\u3002" };
+          if ((S.biJianTou || S.jieCaiTou) && S.biJi)
+            return { tone: "\u614E", line: "\u7ADE\u4E89\u591A\uFF0C\u5408\u4F5C\u5BB9\u6613\u5403\u4E8F\u3002" };
+          if (S.tianYi)
+            return { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u6C42\u4EBA\u529E\u4E8B\u6BD4\u8F83\u987A\u3002" };
+          if (S.hitZG && S.guanXi)
+            return { tone: "\u987A", line: "\u9002\u5408\u89C1\u9886\u5BFC\u3001\u8C08\u6B63\u4E8B\u3002" };
+          if (S.hitQS && S.guanXi && hi)
+            return { tone: "\u987A", line: "\u96BE\u529E\u7684\u4E8B\uFF0C\u8FD9\u5929\u529E\u5F97\u52A8\u3002" };
+          if (S.hitZY && S.yinXi)
+            return { tone: "\u987A", line: "\u9002\u5408\u7B7E\u5408\u540C\u3001\u529E\u624B\u7EED\u3002" };
+          if (S.hitSS && S.shiXi)
+            return { tone: "\u987A", line: "\u9002\u5408\u8868\u8FBE\u3001\u5C55\u793A\uFF0C\u601D\u8DEF\u6E05\u695A\u3002" };
+          if (S.yiMa)
+            return { tone: "\u987A", line: "\u9002\u5408\u51FA\u95E8\u529E\u4E8B\u3002" };
+          return byGod("\u5B98", "career");
+        }();
+        const money = function() {
+          if (S.jieCaiTou)
+            return { tone: "\u614E", line: "\u5BB9\u6613\u7834\u8D22\uFF0C\u501F\u94B1\u3001\u62C5\u4FDD\u90FD\u4E0D\u5408\u9002\u3002" };
+          if (S.biJianTou && S.biJi)
+            return { tone: "\u614E", line: "\u5408\u4F19\u7684\u94B1\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002" };
+          if (S.yangRen)
+            return { tone: "\u614E", line: "\u5BB9\u6613\u51B2\u52A8\u82B1\u94B1\uFF0C\u5927\u989D\u4E0D\u5408\u9002\u3002" };
+          if (S.caiTou && S.caiJi)
+            return { tone: "\u614E", line: "\u94B1\u96BE\u5B88\uFF0C\u5927\u989D\u8FDB\u51FA\u4E0D\u5408\u9002\u3002" };
+          if (S.hitZC && S.caiXi)
+            return { tone: "\u987A", line: "\u8FDB\u8D26\u7A33\uFF0C\u9002\u5408\u8C08\u94B1\u3001\u6536\u6B3E\u3002" };
+          if (S.hitPC && S.caiXi)
+            return { tone: "\u987A", line: "\u6709\u673A\u4F1A\u8FDB\u70B9\u6D3B\u94B1\uFF0C\u89C1\u597D\u5C31\u6536\u3002" };
+          if (S.yiMa)
+            return { tone: "\u5E73", line: "\u94B1\u6709\u8FDB\u6709\u51FA\uFF0C\u8BB0\u597D\u8D26\u3002" };
+          return byGod("\u8D22", "money");
+        }();
+        const study = function() {
+          if (S.wenChang)
+            return { tone: "\u987A", line: "\u6587\u660C\u65E5\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u52A8\u7B14\u3001\u8003\u8BD5\u3002" };
+          if (S.yinTou && S.yinJi)
+            return { tone: "\u614E", line: "\u51C6\u5907\u5F97\u591A\uFF0C\u52A8\u624B\u5F97\u5C11\u3002" };
+          if (S.hitZY && S.yinXi)
+            return { tone: "\u987A", line: "\u5B66\u5F97\u8FDB\u53BB\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u8BF7\u6559\u3002" };
+          if (S.pyTou || S.huaGai)
+            return { tone: "\u987A", line: "\u9002\u5408\u4E00\u4E2A\u4EBA\u94BB\u7814\u3002" };
+          if (S.sgTou && S.shiXi)
+            return { tone: "\u987A", line: "\u9002\u5408\u52A8\u7B14\u3001\u8F93\u51FA\uFF0C\u4E0D\u9002\u5408\u6B7B\u8BB0\u786C\u80CC\u3002" };
+          if (S.caiTou)
+            return { tone: "\u614E", line: "\u5BB9\u6613\u5206\u5FC3\uFF0C\u8D2A\u591A\u5B66\u4E0D\u8FDB\u3002" };
+          return byGod("\u5370", "study");
+        }();
         let health;
         if (jiShen.includes(hwx))
           health = { tone: "\u614E", line: HEALTH[hwx].ji };
@@ -12904,14 +12957,27 @@ var RhythmEngine = (() => {
           love = loveOf("\u5E73", "\u5E73");
         let chance;
         const shi = has(favTypes, "\u98DF");
-        if ((shi || he) && low)
-          chance = { tone: "\u5E73", line: "\u5148\u6309\u4F4F\u4E0D\u52A8\uFF0C\u770B\u4E00\u4E24\u5929\u518D\u8BF4\u3002" };
+        const chancePos = S.yiMa || S.tianYi || S.hitSS && S.shiXi || S.sgTou && S.shiXi || shi || he;
+        if (low && chancePos)
+          chance = { tone: "\u5E73", line: "\u7CBE\u529B\u4E0D\u591F\uFF0C\u4E0D\u9002\u5408\u63A5\u65B0\u4E8B\u3002" };
+        else if (low)
+          chance = { tone: "\u5E73", line: pickV(FLAT_POOL.chance, sd) };
+        else if (volatile_)
+          chance = { tone: "\u614E", line: "\u673A\u4F1A\u8FD8\u4E0D\u7A33\uFF0C\u4E0D\u9002\u5408\u6025\u7740\u63A5\u3002" };
+        else if ((S.sgTou || S.ssTou) && S.shiJi)
+          chance = { tone: "\u614E", line: "\u5BB9\u6613\u8A00\u591A\u6709\u5931\u3002" };
+        else if (S.yiMa)
+          chance = { tone: "\u987A", line: "\u673A\u4F1A\u5728\u5916\u9762\uFF0C\u9002\u5408\u51FA\u95E8\u3002" };
+        else if (S.tianYi)
+          chance = { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u9002\u5408\u6C42\u4EBA\u3001\u62DC\u8BBF\u3002" };
+        else if (S.hitSS && S.shiXi)
+          chance = { tone: "\u987A", line: "\u9002\u5408\u5C55\u793A\u3001\u5206\u4EAB\u3002" };
+        else if (S.sgTou && S.shiXi)
+          chance = { tone: "\u987A", line: "\u9002\u5408\u8868\u73B0\uFF0C\u4F46\u5BB9\u6613\u8BF4\u8FC7\u5934\u3002" };
         else if (shi)
-          chance = { tone: "\u987A", line: "\u5B9C\u591A\u8868\u8FBE\u3001\u591A\u5C55\u793A\uFF0C\u4E5F\u9002\u5408\u7ED3\u8BC6\u65B0\u4EBA\u3002" };
+          chance = { tone: "\u987A", line: "\u9002\u5408\u5C55\u793A\u3001\u5206\u4EAB\u3002" };
         else if (he)
           chance = { tone: "\u987A", line: DIM_HE.line };
-        else if (volatile_)
-          chance = { tone: "\u614E", line: "\u65B0\u673A\u4F1A\u5B9C\u5148\u7F13\u4E00\u7F13\uFF0C\u770B\u4E24\u5929\u518D\u5B9A\u3002" };
         else
           chance = { tone: "\u5E73", line: pickV(FLAT_POOL.chance, sd) };
         return { career, love, money, study, health, chance };
@@ -13157,7 +13223,63 @@ var RhythmEngine = (() => {
             const qiang = gender === "\u5973" && hit("\u4E03\u6740");
             const banHe = zhi !== dayZhi && SAN_HE.some((g) => g.trio.includes(zhi) && g.trio.includes(dayZhi));
             const fuYin = gan === chart.gans[2] && zhi === dayZhi;
+            const SHENG = { \u6728: "\u706B", \u706B: "\u571F", \u571F: "\u91D1", \u91D1: "\u6C34", \u6C34: "\u6728" };
+            const guanWx = Object.keys(KE).find((k) => KE[k] === dayGanWx);
+            const caiWx = KE[dayGanWx];
+            const yinWx = Object.keys(SHENG).find((k) => SHENG[k] === dayGanWx);
+            const shiWx = SHENG[dayGanWx];
+            const TIANYI = { \u7532: ["\u4E11", "\u672A"], \u620A: ["\u4E11", "\u672A"], \u5E9A: ["\u4E11", "\u672A"], \u4E59: ["\u5B50", "\u7533"], \u5DF1: ["\u5B50", "\u7533"], \u4E19: ["\u4EA5", "\u9149"], \u4E01: ["\u4EA5", "\u9149"], \u58EC: ["\u536F", "\u5DF3"], \u7678: ["\u536F", "\u5DF3"], \u8F9B: ["\u5348", "\u5BC5"] };
+            const WENCHANG = { \u7532: "\u5DF3", \u4E59: "\u5348", \u4E19: "\u7533", \u4E01: "\u9149", \u620A: "\u7533", \u5DF1: "\u9149", \u5E9A: "\u4EA5", \u8F9B: "\u5B50", \u58EC: "\u5BC5", \u7678: "\u536F" };
+            const YIMA = { \u7533: "\u5BC5", \u5B50: "\u5BC5", \u8FB0: "\u5BC5", \u5BC5: "\u7533", \u5348: "\u7533", \u620C: "\u7533", \u5DF3: "\u4EA5", \u9149: "\u4EA5", \u4E11: "\u4EA5", \u4EA5: "\u5DF3", \u536F: "\u5DF3", \u672A: "\u5DF3" };
+            const YANGREN = { \u7532: "\u536F", \u4E19: "\u5348", \u620A: "\u5348", \u5E9A: "\u9149", \u58EC: "\u5B50" };
+            const HUAGAI = { \u7533: "\u8FB0", \u5B50: "\u8FB0", \u8FB0: "\u8FB0", \u5BC5: "\u620C", \u5348: "\u620C", \u620C: "\u620C", \u5DF3: "\u4E11", \u9149: "\u4E11", \u4E11: "\u4E11", \u4EA5: "\u672A", \u536F: "\u672A", \u672A: "\u672A" };
             return {
+              // 事业/钱财/学习/机会 信号
+              chongTiGang: ZHI_CHONG[zhi] === chart.zhis[1],
+              // 流日支冲月柱提纲
+              tianYi: (TIANYI[chart.dayGan] || []).includes(zhi),
+              // 天乙贵人(日干起)
+              wenChang: WENCHANG[chart.dayGan] === zhi,
+              // 文昌(日干起)
+              yiMa: YIMA[chart.zhis[0]] === zhi,
+              // 驿马(年支三合起)
+              yangRen: YANGREN[chart.dayGan] === zhi,
+              // 羊刃(阳干起)
+              huaGai: HUAGAI[chart.zhis[0]] === zhi,
+              // 华盖(年支三合墓库)
+              sgTou: full === "\u4F24\u5B98",
+              // 伤官透干(口舌重者)
+              gsTou: full === "\u6B63\u5B98" || full === "\u4E03\u6740",
+              // 官杀透干
+              yinTou: full === "\u6B63\u5370" || full === "\u504F\u5370",
+              // 印透干
+              pyTou: full === "\u504F\u5370",
+              ssTou: full === "\u98DF\u795E",
+              jieCaiTou: full === "\u52AB\u8D22",
+              biJianTou: full === "\u6BD4\u80A9",
+              caiTou: full === "\u6B63\u8D22" || full === "\u504F\u8D22",
+              hitZG: hit("\u6B63\u5B98"),
+              hitQS: hit("\u4E03\u6740"),
+              hitZY: hit("\u6B63\u5370"),
+              hitPY: hit("\u504F\u5370"),
+              hitSS: hit("\u98DF\u795E"),
+              hitGuan: hit("\u6B63\u5B98") || hit("\u4E03\u6740"),
+              hitYin: hit("\u6B63\u5370") || hit("\u504F\u5370"),
+              hitCai: hit("\u6B63\u8D22") || hit("\u504F\u8D22"),
+              hitZC: hit("\u6B63\u8D22"),
+              hitPC: hit("\u504F\u8D22"),
+              hitBiJie: hit("\u6BD4\u80A9") || hit("\u52AB\u8D22"),
+              hitShiShang: hit("\u98DF\u795E") || hit("\u4F24\u5B98"),
+              guanXi: xiYong.includes(guanWx),
+              guanJi: (jiShen || []).includes(guanWx),
+              caiXi: xiYong.includes(caiWx),
+              caiJi: (jiShen || []).includes(caiWx),
+              yinXi: xiYong.includes(yinWx),
+              yinJi: (jiShen || []).includes(yinWx),
+              shiXi: xiYong.includes(shiWx),
+              shiJi: (jiShen || []).includes(shiWx),
+              biJi: (jiShen || []).includes(dayGanWx),
+              // 感情信号
               loveBanHe: banHe,
               loveXing: isXing(zhi, dayZhi) || fuYin,
               loveHai: ZHI_HARM[zhi] === dayZhi,
