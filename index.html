@@ -2346,10 +2346,16 @@
       </div>
       <div class="mine-foot">传统历法与民俗文化整理，不构成专业建议 · 全部本机计算，不上传</div>
     </div>
+    <div class="tabbar">
+      <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
+      <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
+      <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
+      <div class="tab on"><svg class="ti"><use href="#i-mine"></use></svg>我的</div>
+    </div>
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=137"></script>
+  <script src="engine_bundle.js?v=138"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2405,7 +2411,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=137"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=138"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5229,6 +5235,11 @@
           window.shihe&&window.shihe.track&&window.shihe.track('mine_open',{});
         }
         function closeMine(){ mov.classList.remove('on'); }
+        var mtb = mov.querySelector('.tabbar');
+        if (mtb) mtb.addEventListener('click', function(e){
+          var t = e.target.closest('.tab');
+          if (t && !t.classList.contains('on')) closeMine();
+        });
         document.querySelectorAll('.tab-mine').forEach(function(t){ t.addEventListener('click', openMine); });
         var mc=document.getElementById('mine-close'); if(mc) mc.addEventListener('click', closeMine);
         var ml=document.getElementById('mine-life'); if(ml) ml.addEventListener('click', function(){ window.__lfFrom=+(document.body.dataset.screen||0); closeMine(); setScreen(1); });
