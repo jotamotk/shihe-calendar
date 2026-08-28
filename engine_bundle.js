@@ -12102,9 +12102,12 @@ var RhythmEngine = (() => {
         WX_ALL.forEach((wx) => {
           fav[wx] += clim.vec[wx];
         });
-        if (clim.thWx && !(isYinHeavyWeak && (clim.thWx === SHENG_ME[dayWx] || clim.thWx === ME_KE[dayWx]))) {
+        if (clim.thWx && !(isYinHeavyWeak && (clim.thWx === SHENG_ME[dayWx] || clim.thWx === ME_KE[dayWx])) && !(clim.thWx === KE_ME[dayWx] && (opts.keMePower || 0) >= 2)) {
           const floor = clim.aligned && (season === "\u51AC" || season === "\u590F") ? 0.22 : 0.13;
           fav[clim.thWx] = Math.max(fav[clim.thWx], floor);
+        }
+        if (t < 0 && (opts.keMePower || 0) >= 2) {
+          fav[KE_ME[dayWx]] -= 0.5 * Math.min(1, (opts.keMePower - 1.5) / 1.5);
         }
         const flow = 0.3 * (1 - Math.abs(t));
         fav[ME_SHENG[dayWx]] += flow;
@@ -12152,10 +12155,15 @@ var RhythmEngine = (() => {
         const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2 && yinPower < guanShaPower * 1.5;
         let score = 0;
         const detail = { \u5F97\u4EE4: 0, \u5F97\u5730: 0, \u5F97\u52BF: 0 };
+        const wetE = zhis.includes("\u8FB0") || zhis.includes("\u4E11");
+        const ventRaw = !wetE && dayWx === "\u91D1" && (seasonOf(monthZhi) === "\u590F" || weightsRaw["\u706B"] >= 2);
+        const VENT_LING = 0.2, VENT_ROOT = 0.4, STEM_FLOAT = 0.4;
         const monthBenWx = ZHI_WX[monthZhi];
         const monthRel = tenGodType(dayWx, monthBenWx);
         const lingMap = { \u6BD4: 3, \u5370: 2.5, \u98DF: -2, \u8D22: -1.5, \u5B98: -2.5 };
         detail.\u5F97\u4EE4 = lingMap[monthRel] ?? 0;
+        if (detail.\u5F97\u4EE4 > 0 && monthRel === "\u5370" && ventRaw && ZHI_WX[monthZhi] === "\u571F")
+          detail.\u5F97\u4EE4 *= VENT_LING;
         score += detail.\u5F97\u4EE4;
         let rootSupport = 0;
         zhis.forEach((zhi, idx) => {
@@ -12167,6 +12175,8 @@ var RhythmEngine = (() => {
               v = hi === 0 ? 2 : hi === 1 ? 1 : 0.5;
             else if (t === "\u5370")
               v = hi === 0 ? 1.2 : hi === 1 ? 0.6 : 0.3;
+            if (t === "\u5370" && ventRaw && GAN_WX[g] === "\u571F")
+              v *= VENT_ROOT;
             else if (t === "\u98DF")
               v = hi === 0 ? -0.6 : hi === 1 ? -0.3 : -0.15;
             else if (t === "\u8D22")
@@ -12192,12 +12202,16 @@ var RhythmEngine = (() => {
             rootSupport += b * juMap[t];
         });
         score += detail.\u5F97\u5730;
+        const stemRooted = (wx) => zhis.some((z) => ZHI_HIDE[z].some((hg) => GAN_WX[hg] === wx));
         gans.forEach((g, idx) => {
           if (idx === 2)
             return;
           const t = tenGodType(dayWx, GAN_WX[g]);
           const seMap = { \u6BD4: 1.5, \u5370: 1.5, \u98DF: -1, \u8D22: -1, \u5B98: -1.5 };
-          detail.\u5F97\u52BF += (seMap[t] ?? 0) * adj.stemMul[idx];
+          let sv = (seMap[t] ?? 0) * adj.stemMul[idx];
+          if (sv > 0 && !stemRooted(GAN_WX[g]))
+            sv *= STEM_FLOAT;
+          detail.\u5F97\u52BF += sv;
         });
         score += detail.\u5F97\u52BF;
         const rooted = rootSupport;
@@ -12260,6 +12274,7 @@ var RhythmEngine = (() => {
           isYinHeavyWeak,
           isZhuanWang,
           isDry,
+          keMePower: weightsRaw[KE_ME[dayWx]],
           // 两气成象豁免燥土打折:火土成象局土即秀气主用(dtq#15 书取戌土),不作"燥土晦火"论
           isVentDamp: isVentDamp && !isTwoQi
         });
@@ -12269,7 +12284,7 @@ var RhythmEngine = (() => {
         let tiaohouNote = "";
         if (tiaohouGod && tiaohouWx) {
           if (season === "\u51AC" || season === "\u590F") {
-            tiaohouNote = `${season === "\u51AC" ? "\u51AC\u4EE4\u504F\u5BD2" : "\u590F\u4EE4\u504F\u71E5"}\uFF0C\u8C03\u5019\u53D6\u300C${tiaohouWx}\u300D\uFF08${tiaohouGod}\uFF09\u8C03\u548C`;
+            tiaohouNote = tiaohouWx === KE_ME[dayWx] && weightsRaw[KE_ME[dayWx]] >= 2 ? `${season === "\u51AC" ? "\u51AC\u4EE4\u504F\u5BD2" : "\u590F\u4EE4\u504F\u71E5"}\uFF0C\u552F\u300C${tiaohouWx}\u300D\u5DF2\u65FA\uFF0C\u8C03\u5019\u4E0D\u518D\u53E6\u53D6` : `${season === "\u51AC" ? "\u51AC\u4EE4\u504F\u5BD2" : "\u590F\u4EE4\u504F\u71E5"}\uFF0C\u8C03\u5019\u53D6\u300C${tiaohouWx}\u300D\uFF08${tiaohouGod}\uFF09\u8C03\u548C`;
           } else {
             tiaohouNote = `\u751F\u4E8E${monthZhi}\u6708\uFF0C\u8C03\u5019\u5B9C\u300C${tiaohouWx}\u300D\uFF08${tiaohouGod}\uFF09`;
           }
@@ -12295,6 +12310,8 @@ var RhythmEngine = (() => {
           isZhuanWang,
           isTwoQi,
           isVentDamp,
+          dayRootless: !zhis.some((z) => ZHI_HIDE[z].some((g) => GAN_WX[g] === dayWx)),
+          // 日主地支全无同五行藏干(气质外显不出的硬信号)
           yinBuryRatio: Math.round(yinBuryRatio * 100) / 100,
           dryNote,
           favVec,
@@ -12415,7 +12432,9 @@ var RhythmEngine = (() => {
           isYinHeavyWeak: mj.isYinHeavyWeak,
           isZhuanWang: false,
           isDry: !!mj.dryNote,
-          isVentDamp: !!mj.isVentDamp
+          isVentDamp: !!mj.isVentDamp,
+          keMePower: (mj.weights || {})[KE_ME[dayWx]] || 0
+          // 官杀绝对量随动态喜用同源(漏传曾致流年层读不到「官杀过旺压弱身」项)
         });
         const { xiYong, jiShen, xiYongWeight, primaryXi } = deriveFromFav(fav);
         const dynStrength = bucketStrength(dynEff);
@@ -14338,14 +14357,23 @@ var RhythmEngine = (() => {
       function buildPersona(mj, chart) {
         const dayGan = chart.dayGan;
         const dayWx = GAN_WX[dayGan];
-        const imp = IMPRESSION[dayGan] || { short: "", surface: "\u6C89\u7A33\u5185\u655B" };
+        let imp = IMPRESSION[dayGan] || { short: "", surface: "\u6C89\u7A33\u5185\u655B" };
+        const daySuppressed = mj.isYinHeavyWeak || mj.dayRootless && polarityOf(mj.strength) === "\u5F31";
+        if (daySuppressed)
+          imp = {
+            short: "\u4E0D\u663E\u950B\u8292\u3001\u6709\u4E3B\u610F",
+            surface: "\u5916\u8868\u968F\u548C\u3001\u4E0D\u592A\u663E\u950B\u8292\uFF0C\u4F46\u5FC3\u91CC\u6709\u81EA\u5DF1\u7684\u786C\u4E3B\u610F\uFF1B\u719F\u4E86\u7684\u4EBA\u624D\u77E5\u9053\uFF0C\u4F60\u5176\u5B9E\u6709\u68F1\u89D2\u3001\u4E5F\u729F"
+          };
         const pol = polarityOf(mj.strength);
         const season = mj.season;
         const w = mj.weights || {};
         const total = WX5.reduce((s, x) => s + Math.max(0, w[x] || 0), 0) || 1;
         const godSum = { \u6BD4: 0, \u5370: 0, \u98DF: 0, \u8D22: 0, \u5B98: 0 };
         WX5.forEach((x) => {
-          godSum[tenGodType(dayWx, x)] += Math.max(0, w[x] || 0);
+          let wv = Math.max(0, w[x] || 0);
+          if (mj.isYinHeavyWeak && tenGodType(dayWx, x) === "\u5370" || mj.isVentDamp && x === "\u571F" && dayWx === "\u91D1")
+            wv *= 0.4;
+          godSum[tenGodType(dayWx, x)] += wv;
         });
         const godPct = {};
         ["\u6BD4", "\u5370", "\u98DF", "\u8D22", "\u5B98"].forEach((k) => {
@@ -14361,18 +14389,29 @@ var RhythmEngine = (() => {
         const shiTouGan = (chart.gans || []).some((g, i) => i !== 2 && tenGodType(dayWx, GAN_WX[g]) === "\u98DF");
         const innerType = !!EXPRESS_INNER[dayGan] && !shiTouGan && godPct.\u5370 >= 20 && godPct.\u98DF < 20;
         const noun = balanced ? "\u591A\u9762\u624B" : GOD_NOUN[topGod] || "\u884C\u52A8\u6D3E";
-        const modifier = balanced ? `${POL_TITLE[pol]}\u3001${SEASON_TITLE[emoKey] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : TONE_PREFIX[dayGan] || "";
+        const modifier = balanced ? `${POL_TITLE[pol]}\u3001${SEASON_TITLE[emoKey] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : daySuppressed ? "\u4E0D\u663E\u950B\u8292" : TONE_PREFIX[dayGan] || "";
         const identity = (modifier ? modifier + "\u7684" : "") + noun;
         const essence = balanced ? "\uFF0C\u5404\u9762\u5747\u8861\u3001\u9002\u5E94\u529B\u5F3A" : GOD_ESSENCE[topGod] || "";
         const tagline = (innerType ? "\u6E29\u548C\u3001\u6709\u5185\u79C0" : imp.short) + essence + "\u3002";
         const yinyang = YANG_GAN.has(dayGan) ? "\u9633" : "\u9634";
-        const expressLine = innerType ? EXPRESS_INNER[dayGan] : EXPRESS[dayGan] || YINYANG_TURN[yinyang];
+        const expressLine = daySuppressed && !mj.isYinHeavyWeak ? "\u5FC3\u91CC\u7684\u4E8B\u591A\u662F\u81EA\u5DF1\u6D88\u5316\uFF0C\u4E0D\u592A\u5F80\u5916\u644A\uFF0C" : innerType ? EXPRESS_INNER[dayGan] : EXPRESS[dayGan] || YINYANG_TURN[yinyang];
         const surfaceLine = innerType && dayGan === "\u5DF1" ? "\u9762\u5584\u3001\u813E\u6C14\u597D\uFF0C\u5F85\u4EBA\u5B9E\u5728\u3001\u4E0D\u5F20\u626C" : imp.surface;
         const p1 = `\u4F60${surfaceLine}\u3002${expressLine}${POL_INNER[pol]}${balanced ? BAL_DRIVE_HINT : DRIVE_HINT[topGod] || ""}`;
-        const p2 = balanced ? balancedDrive(topGod, secondGod) : `${CORE_DRIVE[topGod] || ""}${TENSION[topGod] && TENSION[topGod][secondGod] || ""}`;
+        const domWx = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"].find((x) => tenGodType(dayWx, x) === dominant);
+        const domJi = !balanced && domWx && ((mj.favVec || {})[domWx] ?? 0) < -0.12;
+        const CORE_DRIVE_JI = {
+          \u5B98: "\u4F60\u8D23\u4EFB\u611F\u91CD\uFF0C\u522B\u4EBA\u7684\u671F\u5F85\u538B\u5728\u8EAB\u4E0A\u5C31\u653E\u4E0D\u4E0B\uFF0C\u6015\u8F9C\u8D1F\u3001\u6015\u51FA\u9519\uFF1B\u4E8B\u60C5\u6CA1\u843D\u5B9A\u65F6\uFF0C\u5FC3\u603B\u60AC\u7740\u3002"
+        };
+        const p2 = balanced ? balancedDrive(topGod, secondGod) : domJi && CORE_DRIVE_JI[topGod] ? CORE_DRIVE_JI[topGod] : `${CORE_DRIVE[topGod] || ""}${TENSION[topGod] && TENSION[topGod][secondGod] || ""}`;
         const p3 = `${SEASON_EMO[emoKey] || ""}${balanced ? BAL_BLINDSPOT : BLINDSPOT_SOFT[topGod] || ""}`;
-        const love = balanced ? GOD_LOVE["\u5747\u8861"] : GOD_LOVE[topGod] || GOD_LOVE["\u5747\u8861"];
-        const workBase = balanced ? GOD_WORK["\u5747\u8861"] : GOD_WORK[topGod] || GOD_WORK["\u5747\u8861"];
+        const GOD_LOVE_JI = {
+          \u5B98: "\u611F\u60C5\u91CC\u4F60\u5BB9\u6613\u9047\u5230\u5F3A\u52BF\u7684\u3001\u8981\u6C42\u591A\u7684\u5BF9\u8C61\uFF0C\u76F8\u5904\u504F\u7D2F\uFF1B\u4F60\u4E60\u60EF\u8FC1\u5C31\uFF0C\u628A\u81EA\u5DF1\u7EF7\u5F97\u7D27\u3002"
+        };
+        const love = balanced ? GOD_LOVE["\u5747\u8861"] : domJi && GOD_LOVE_JI[topGod] || GOD_LOVE[topGod] || GOD_LOVE["\u5747\u8861"];
+        const GOD_WORK_JI = {
+          \u5B98: "\u89C4\u77E9\u591A\u3001\u76EF\u5F97\u7D27\u7684\u73AF\u5883\u6700\u8017\u4F60\uFF1B\u9002\u5408\u8D23\u4EFB\u8FB9\u754C\u6E05\u695A\u3001\u80FD\u6309\u81EA\u5DF1\u8282\u594F\u505A\u4E8B\u7684\u4F4D\u7F6E\u3002"
+        };
+        const workBase = balanced ? GOD_WORK["\u5747\u8861"] : domJi && GOD_WORK_JI[topGod] || GOD_WORK[topGod] || GOD_WORK["\u5747\u8861"];
         const work = `${workBase}${POL_WORK[pol] || ""}`;
         let closing;
         if (balanced) {
@@ -14384,7 +14423,7 @@ var RhythmEngine = (() => {
         let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_SEASON[emoKey]]);
         keywords = keywords.filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
         const _social = Math.max(0, Math.min(100, 50 + (godPct.\u98DF * 0.85 + godPct.\u6BD4 * 0.5 - godPct.\u5370 * 0.55 - godPct.\u5B98 * 0.25)));
-        return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, taohua: taohuaDesc(chart.zhis), _dominant: dominant, _pol: pol, _social };
+        return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, taohua: taohuaDesc(chart.zhis), _dominant: dominant, _domJi: domJi, _pol: pol, _social };
       }
       var POS_ORDER = { \u5E74: 0, \u6708: 1, \u65E5: 2, \u65F6: 3 };
       var pairKey = (a, b) => POS_ORDER[a] <= POS_ORDER[b] ? a + b : b + a;
@@ -14669,6 +14708,7 @@ var RhythmEngine = (() => {
             \u98DF: ["\u9009\u6709\u521B\u4F5C\u548C\u8868\u8FBE\u7A7A\u95F4\u7684\u5DE5\u4F5C\uFF1A\u5185\u5BB9\u3001\u8BBE\u8BA1\u3001\u7B56\u5212\u3001\u81EA\u7531\u804C\u4E1A\uFF0C\u7ED9\u4F60\u81EA\u7531\u4F60\u624D\u51FA\u5F69\u3002", "\u6B7B\u677F\u9AD8\u538B\u7684\u73AF\u5883\u6700\u6D88\u78E8\u4F60\uFF0C\u5B81\u53EF\u6536\u5165\u5C11\u4E00\u70B9\uFF0C\u4E5F\u522B\u628A\u624D\u6C14\u8017\u5728\u6CA1\u5174\u8DA3\u7684\u4E8B\u4E0A\u3002"],
             \u8D22: ["\u6311\u76EE\u6807\u660E\u786E\u3001\u56DE\u62A5\u770B\u5F97\u89C1\u7684\u4E8B\u505A\uFF0C\u4F60\u5BF9\u7ED3\u679C\u7684\u5224\u65AD\u548C\u6267\u884C\u529B\u662F\u957F\u9879\u3002", "\u522B\u8D2A\u591A\u3001\u522B\u94FA\u5F97\u592A\u5F00\uFF0C\u4E00\u6B21\u4E13\u6CE8\u4E00\u4E2A\u80FD\u51FA\u7ED3\u679C\u7684\u65B9\u5411\uFF0C\u505A\u900F\u4E86\u518D\u5F00\u59CB\u4E0B\u4E00\u4E2A\u3002"],
             \u5B98: ["\u8D23\u6743\u5206\u660E\u7684\u4F53\u7CFB\u6700\u9002\u5408\u4F60\uFF0C\u5728\u6210\u719F\u5E73\u53F0\u91CC\u7A33\u6B65\u4E0A\u5347\uFF0C\u4F60\u80FD\u8D8A\u8D70\u8D8A\u9AD8\u3002", "\u8D23\u4EFB\u522B\u90FD\u81EA\u5DF1\u63FD\uFF0C\u4E5F\u522B\u51E1\u4E8B\u8F83\u771F\u5230\u5E95\uFF1B\u5B66\u4F1A\u6388\u6743\u548C\u300C\u5DEE\u4E0D\u591A\u5C31\u597D\u300D\uFF0C\u4F60\u4F1A\u8D70\u5F97\u66F4\u8FDC\u3002"],
+            \u5B98\u5FCC: ["\u6311\u8D23\u4EFB\u8FB9\u754C\u6E05\u695A\u3001\u4E0D\u7528\u65F6\u65F6\u88AB\u76EF\u7740\u7684\u73AF\u5883\uFF1B\u538B\u529B\u5927\u7684\u4F4D\u7F6E\u7ED9\u518D\u591A\u4E5F\u6382\u91CF\u6382\u91CF\u518D\u63A5\u3002", "\u5B9A\u671F\u628A\u80A9\u4E0A\u7684\u4E8B\u6E05\u4E00\u6E05\uFF1A\u54EA\u4E9B\u662F\u4F60\u7684\u3001\u54EA\u4E9B\u662F\u522B\u4EBA\u63A8\u8FC7\u6765\u7684\uFF0C\u53EA\u625B\u5C5E\u4E8E\u4F60\u7684\u90A3\u4EFD\u3002"],
             \u5747\u8861: ["\u4F60\u5404\u79CD\u89D2\u8272\u90FD\u80FD\u80DC\u4EFB\uFF0C\u96BE\u70B9\u5728\u9009\u5B9A\u4E00\u4E2A\u65B9\u5411\uFF1A\u8BA4\u51C6\u4E00\u4E2A\u80FD\u957F\u671F\u6DF1\u8015\u7684\u65B9\u5411\u6C89\u4E0B\u53BB\u3002", "\u522B\u8BA9\u300C\u4EC0\u4E48\u90FD\u4F1A\u300D\u53D8\u6210\u300C\u4EC0\u4E48\u90FD\u4E0D\u7CBE\u300D\uFF0C\u7ED9\u81EA\u5DF1\u5B9A\u4E00\u6761\u4E3B\u7EBF\uFF0C\u5176\u4F59\u4F5C\u4E3A\u8F85\u52A9\u3002"]
           },
           mood: {
@@ -14685,7 +14725,7 @@ var RhythmEngine = (() => {
         const yinPct = Math.round(Math.max(0, (mj.weights || {})[yinWx] || 0) / wSum * 100);
         const yinStrongJi = tone(yinWx) === "\u614E" && (yinPct >= 28 || tenGodType(dayWx, ZHI_WX[mj.monthZhi]) === "\u5370");
         const tStudy = yinStrongJi ? "\u5E73" : tone(yinWx);
-        const studyText = yinStrongJi ? "\u4F60\u5B66\u5F97\u8FDB\u3001\u5750\u5F97\u4F4F\uFF0C\u5438\u6536\u4E0E\u94BB\u7814\u662F\u5F3A\u9879\uFF1B\u5C3D\u65E9\u4E0A\u624B\uFF0C\u4E0D\u5FC5\u7B49\u5168\u5B66\u900F\u3002" : CORE.study[tStudy][sb];
+        const studyText = mj.isYinHeavyWeak ? "\u4F60\u5438\u6536\u5FEB\uFF0C\u4F46\u5BB9\u6613\u5B66\u4E86\u4E0D\u7528\u3001\u8D8A\u6512\u8D8A\u591A\uFF1B\u8FB9\u5B66\u8FB9\u505A\u3001\u5B66\u4E00\u70B9\u7528\u4E00\u70B9\uFF0C\u624D\u8D70\u5F97\u52A8\u3002" : yinStrongJi ? "\u4F60\u5B66\u5F97\u8FDB\u3001\u5750\u5F97\u4F4F\uFF0C\u5438\u6536\u4E0E\u94BB\u7814\u662F\u5F3A\u9879\uFF1B\u5C3D\u65E9\u4E0A\u624B\uFF0C\u4E0D\u5FC5\u7B49\u5168\u5B66\u900F\u3002" : CORE.study[tStudy][sb];
         list.push({
           key: "study",
           title: "\u5B66\u4E60\u6210\u957F",
@@ -14701,15 +14741,16 @@ var RhythmEngine = (() => {
           tone: tCareer,
           ...act(guanWx, tCareer),
           text: pe.work || "\u505A\u4E8B\u4E0A\u4F60\u9002\u5E94\u529B\u5F3A\uFF0C\u627E\u5230\u4E00\u4E2A\u80FD\u957F\u671F\u6DF1\u8015\u7684\u65B9\u5411\uFF0C\u5C31\u4F1A\u8D8A\u8D70\u8D8A\u7A33\u3002",
-          advice: (ADVICE.career[dominant] || ADVICE.career["\u5747\u8861"]).slice()
+          advice: (persona._domJi && dominant === "\u5B98" && ADVICE.career["\u5B98\u5FCC"] || ADVICE.career[dominant] || ADVICE.career["\u5747\u8861"]).slice()
         });
         const tMoney = tone(caiWx);
+        const caiHeavyWeak = tMoney === "\u614E" && sb === "W" && ((mj.weights || {})[caiWx] || 0) >= 2;
         list.push({
           key: "money",
           title: "\u94B1\u8D22\u82B1\u9500",
           tone: tMoney,
           ...act(caiWx, tMoney),
-          text: CORE.money[tMoney][sb],
+          text: caiHeavyWeak ? "\u4F60\u8FDB\u5F97\u6765\u94B1\uFF0C\u5374\u96BE\u7559\u4F4F\uFF1B\u644A\u5B50\u8D8A\u5927\u8D8A\u5403\u529B\uFF0C\u5B88\u597D\u672C\u91D1\u6700\u5B9E\u5728\uFF0C\u5927\u989D\u4E0D\u78B0\u3002" : CORE.money[tMoney][sb],
           advice: ADVICE.money[sb].slice()
         });
         const emoTone = has(xi, shiWx) ? "\u987A" : has(ji, shiWx) ? "\u614E" : "\u5E73";
@@ -14752,8 +14793,8 @@ var RhythmEngine = (() => {
           care.push(dayWx);
         if (heavyW(overWx) && isJiW(overWx) && suppressed && suppressed !== dayWx && !care.includes(suppressed))
           care.push(suppressed);
-        if (isWeak && pressure && pressure !== dayWx && (heavyW(pressure) || isJiW(pressure)) && !care.includes(pressure))
-          care.push(pressure);
+        if (isWeak && pressure && pressure !== dayWx && (heavyW(pressure) || isJiW(pressure)) && !care.includes(dayWx))
+          care.push(dayWx);
         const careList = care.slice(0, 2);
         let hText;
         const hDos = [];
@@ -14906,7 +14947,8 @@ var RhythmEngine = (() => {
             return {
               headline: `\u80FD\u91CF\u8DB3 \xB7 \u5B9C\u4E13\u6CE8${field}`,
               trait: `${u}\u80FD\u91CF\u4E0D\u4F4E\uFF0C\u4F46\u5BB9\u6613\u5728\u300C${a}\u300D\u4E0A\u5206\u5FC3\u3002\u628A\u7CBE\u529B\u96C6\u4E2D\u5230${field}\u7684\u6B63\u4E8B\u4E0A\uFF0C\u6BD4\u56DB\u5904\u51FA\u51FB\u66F4\u6709\u6548\u3002`,
-              yi: uniq(pickRot(doMid.concat(doHi), s, 3), 3),
+              yi: uniq(pickRot(doMid, s, 3), 3),
+              // 忌态不取 doHi 高攻清单
               ji: uniq(pickRot(avoid, s, 2), 2)
             };
           }
@@ -15222,12 +15264,13 @@ var RhythmEngine = (() => {
               yi: uniq(pickRot(doMid.concat(doHi), sd, 3), 3),
               ji: pv([["\u5750\u7B49\u673A\u4F1A\u4E0A\u95E8", "\u7528\u529B\u8FC7\u731B"], ["\u4F9D\u8D56\u7B49\u9760\u3001\u4E0D\u4E3B\u52A8\u5F00\u53E3", "\u5B64\u6CE8\u4E00\u63B7\u3001\u5168\u529B\u538B\u4E0A"]], 1)
             } : {
-              headline: `${pv(["\u534A\u529B", "\u7275\u7ECA"], 0)}${PER} \xB7 \u6709\u52A9\u529B\u4E5F\u6709\u7275\u7ECA`,
+              headline: `${pv(["\u7275\u7D2F", "\u7F20\u8EAB"], 0)}${PER} \xB7 \u770B\u7740\u70ED\u95F9\uFF0C\u5B9E\u5219\u6D88\u8017`,
               trait: tv([
-                `${u}\u6709\u4EBA\u80FD\u5E2E\u5FD9\uFF0C\u4F46\u4E5F\u5BB9\u6613\u88AB\u4EBA\u548C\u4E8B\u7275\u4F4F\u3002\u80FD\u501F\u7684\u529B\u5C3D\u91CF\u501F\uFF0C\u7ED5\u4E0D\u5F00\u7684\u9EBB\u70E6\u5C3D\u65E9\u7406\u6E05\u3002`,
-                `${u}\u52A9\u529B\u548C\u7275\u7ECA\u5E76\u5B58\uFF0C${dom}\u4E0A\u5C24\u5176\u660E\u663E\u3002\u8BE5\u501F\u7684\u529B\u501F\u7740\uFF0C\u8EB2\u4E0D\u5F00\u7684\u9EBB\u70E6\u8D81\u65E9\u5904\u7406\u3002`
+                `${u}\u770B\u7740\u6709\u4EBA\u642D\u624B\uFF0C\u5B9E\u5219\u4EBA\u60C5\u548C\u4E8B\u52A1\u7F20\u7740\u4F60\u8D70\uFF0C\u6D88\u8017\u5927\u4E8E\u52A9\u529B\u3002\u80FD\u63A8\u7684\u63A8\u6389\uFF0C\u5B88\u4F4F\u81EA\u5DF1\u7684\u8282\u594F\u3002`,
+                `${u}\u4EBA\u548C\u4E8B\u51D1\u5F97\u70ED\u95F9\uFF0C\u771F\u6B63\u843D\u5230\u4F60\u8EAB\u4E0A\u7684\u591A\u662F\u6D88\u8017\u3002\u5C11\u5E94\u627F\u3001\u5C11\u63BA\u548C\uFF0C\u628A\u529B\u6C14\u7559\u7ED9\u81EA\u5DF1\u7684\u4E8B\u3002`
               ]),
-              yi: uniq(pickRot(doMid.concat(doHi), sd, 3), 3),
+              yi: uniq(pickRot(doMid.concat(rest), sd, 3), 3),
+              // 忌态不取 doHi(曾在官忌年给「做出重要决定」)
               ji: uniq(pickRot(avoid, sd, 2), 2)
             };
           }
