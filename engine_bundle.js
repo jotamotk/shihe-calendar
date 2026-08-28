@@ -12144,8 +12144,9 @@ var RhythmEngine = (() => {
         const noPeerStem = !gans.some((g, i) => i !== 2 && GAN_WX[g] === dayWx);
         const hasStrongRoot = zhis.some((z) => ZHI_WX[z] === dayWx);
         const yinDominant = yinBuryRatio >= 4.5 && yinPower >= 3 && selfPower < 1.8 && noPeerStem && !hasStrongRoot;
-        const isYinHeavyWeak = yinDominant && weightsRaw[KE_ME[dayWx]] < 1.5;
-        const isShaYinRescue = yinDominant && weightsRaw[KE_ME[dayWx]] >= 1.5;
+        const earthBuryMetal = dayWx === "\u91D1" && yinPower >= weightsRaw[KE_ME[dayWx]] * 1.5;
+        const isYinHeavyWeak = yinDominant && (weightsRaw[KE_ME[dayWx]] < 1.5 || earthBuryMetal);
+        const isShaYinRescue = yinDominant && !isYinHeavyWeak;
         const monthIsGuanSha = tenGodType(dayWx, ZHI_WX[monthZhi]) === "\u5B98";
         const guanShaPower = weightsRaw[KE_ME[dayWx]];
         const isGuanShaWeak = monthIsGuanSha && guanShaPower > selfPower && selfPower < 2 && yinPower < guanShaPower * 1.5;
