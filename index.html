@@ -800,6 +800,16 @@
   .rp-sug-lead{font-size:12.5px;line-height:1.8;color:var(--gold-d);font-weight:300;padding:12px 0 4px;border-bottom:1px solid var(--line);}
   .rp-sug-para{font-size:13.5px;line-height:1.95;color:var(--ink-2);font-weight:300;padding:6px 2px 8px;margin:0;}
   /* months/years · 特点 + 宜忌 */
+  .dy-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+  .dy-top{display:flex;align-items:baseline;justify-content:space-between;}
+  .dy-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--gold-d);letter-spacing:1px;}
+  .dy-span{font-size:11px;color:var(--muted);font-weight:300;}
+  .dy-bar{height:3px;background:var(--line);border-radius:2px;margin:10px 0 7px;overflow:hidden;}
+  .dy-bar i{display:block;height:100%;background:var(--gold-d);border-radius:2px;}
+  .dy-sub{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-2);font-weight:300;}
+  .yc-verify{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line-2);display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted);}
+  .yc-verify button{background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;color:var(--ink-2);font-family:inherit;font-size:12px;padding:5px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .yc-verify button.on{border-color:var(--gold-d);color:var(--gold-d);}
   .yr-hl{font-family:var(--serif);font-size:13.5px;font-weight:600;color:var(--gold-d);letter-spacing:.5px;margin-bottom:5px;}
   .yr-sig{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.75;margin-top:7px;}
   .yr-sig b{color:var(--ink);font-weight:500;}
@@ -2313,6 +2323,7 @@
           </div>
           <div class="ch-grp" data-ch="liunian" style="display:none">
             <div class="ch-open"><b>貳</b><span>流年</span></div><div class="ch-open-rule"></div>
+            <div id="jd-dayun"></div>
             <div id="jd-year"></div>
             <div class="rp-page on" data-p="months" id="rp-p-months"></div>
             <div class="rp-page on" data-p="years" id="rp-p-years"></div>
@@ -2359,7 +2370,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=140"></script>
+  <script src="engine_bundle.js?v=141"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2415,7 +2426,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=140"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=141"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4684,6 +4695,19 @@
         try{ var c=window.RhythmEngine&&window.RhythmEngine.buildYearCardFor&&window.RhythmEngine.buildYearCardFor(window.APP_PERSON, Y); if(c){ _jdYearCache[Y]=c; return c; } }catch(e){}
         return null;
       }
+      function renderDaYun(){
+        var el=$('jd-dayun'); if(!el) return;
+        var d=window.APP&&APP.daYunNow;
+        if(!d){ el.innerHTML=''; return; }
+        el.innerHTML='<div class="dy-card">'
+          +'<div class="dy-top"><span class="dy-name">'+esc(d.gan+d.zhi)+'大运</span><span class="dy-span">'+d.startYear+'–'+d.endYear+'</span></div>'
+          +'<div class="dy-bar"><i style="width:'+Math.round(d.idx/10*100)+'%"></i></div>'
+          +'<div class="dy-sub"><span>'+esc(d.theme||'')+'</span><span>第 '+d.idx+' 年 / 10</span></div>'
+          +'</div>';
+      }
+      var VERIFY_KEY='shihe_ln_verify';
+      function lnVerifyGet(){ try{ return JSON.parse(localStorage.getItem(VERIFY_KEY)||'{}'); }catch(e){ return {}; } }
+      function lnVerifySet(y,v){ try{ var m=lnVerifyGet(); m[y]=v; localStorage.setItem(VERIFY_KEY, JSON.stringify(m)); }catch(e){} }
       function renderYearCard(){
         var el=$('jd-year'); if(!el) return;
         // 写进固定内层 #jd-year-body(而非 #jd-year 本体):翻年重渲染只换内层,外层折叠头(wrapContainerAsFold 加的)不被抹掉
@@ -4712,11 +4736,18 @@
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
           +'</div>'
+          +((_jdYearY<curY && !window.__IS_DEMO)?(function(){ var v=lnVerifyGet()[_jdYearY];
+            return '<div class="yc-verify"><span>这年的说法对上了吗</span>'
+              +'<button type="button" data-v="y"'+(v==='y'?' class="on"':'')+'>对</button>'
+              +'<button type="button" data-v="n"'+(v==='n'?' class="on"':'')+'>不对</button></div>'; })():'')
           +'</div>';
         var go=function(d){ _jdYearY+=d; renderYearCard(); };
         var p=$('jd-yr-prev'), nx=$('jd-yr-next');
         if(p) p.onclick=function(){ go(-1); };
         if(nx) nx.onclick=function(){ go(1); };
+        var vf=host.querySelector('.yc-verify');
+        if(vf) vf.addEventListener('click', function(e){ var b=e.target.closest('button'); if(!b) return;
+          lnVerifySet(_jdYearY, b.dataset.v); renderYearCard(); });
         var card=host.querySelector('.yc'), x0=null;
         if(card){
           card.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
@@ -4759,7 +4790,7 @@
         chap.style.display='none'; toc.style.display='block';
         var sc=toc.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
       }
-      function buildJiedu(){ try{ renderYearCard(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
+      function buildJiedu(){ try{ renderDaYun(); renderYearCard(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
 
       // —— 通用章内折叠(整齐·可跳读·一眼知道每块讲什么);与本命章 foldNatalSections 同款 ——
       var FOLD_BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
