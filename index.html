@@ -800,6 +800,10 @@
   .rp-sug-lead{font-size:12.5px;line-height:1.8;color:var(--gold-d);font-weight:300;padding:12px 0 4px;border-bottom:1px solid var(--line);}
   .rp-sug-para{font-size:13.5px;line-height:1.95;color:var(--ink-2);font-weight:300;padding:6px 2px 8px;margin:0;}
   /* months/years · 特点 + 宜忌 */
+  .yr-hl{font-family:var(--serif);font-size:13.5px;font-weight:600;color:var(--gold-d);letter-spacing:.5px;margin-bottom:5px;}
+  .yr-sig{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.75;margin-top:7px;}
+  .yr-sig b{color:var(--ink);font-weight:500;}
+  .yr-sig-b{display:block;font-size:10px;color:var(--muted);font-style:normal;opacity:.8;margin-top:1px;letter-spacing:.3px;}
   .rp-mo-trait{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.8;padding:11px 0 3px;border-top:1px solid var(--line);}
   .rp-yj-wrap{display:flex;flex-direction:column;gap:6px;margin-top:9px;}
   .rp-yj-line{font-size:11.5px;line-height:1.7;color:var(--ink-2);font-weight:300;}
@@ -2355,7 +2359,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=138"></script>
+  <script src="engine_bundle.js?v=139"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2411,7 +2415,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=138"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=139"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4510,11 +4514,15 @@
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
+            +   (y.headline?'<div class="yr-hl">'+esc(y.headline)+'</div>':'')
             +   (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
+            +   yrSigs(y.signals)
             +   yijiHtml(y.yi,y.ji)
             + '</div>'
             + '</div>';
         };
+        function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
+          return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
         const hi=Y.highYears.join('、'), lo=Y.lowYears.join('、');
         const ledeY = (hi||lo)
           ? ((hi?'这十年里 <b>'+hi+' 年</b>的能量相对高，你自己的状态更在线。重要的事是否安排在这几年，由你自己决定；能量反映的是你的节律，不代表外部环境。':'')
@@ -4692,8 +4700,9 @@
           +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
           +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
-          +(sub?'<div class="yc-sub">'+esc(sub)+'</div>':'')
+          +(sub?'<div class="yc-sub">'+esc(sub)+(y.headline?' · '+esc(y.headline):'')+'</div>':'')
           +(y.trait?'<div class="yc-trait">'+esc(y.trait)+'</div>':'')
+          +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>';}).join(''):'')
           +'<div class="yc-yj">'
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
