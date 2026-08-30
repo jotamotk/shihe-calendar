@@ -13575,7 +13575,13 @@ var RhythmEngine = (() => {
       function studentize(signals, age) {
         if (age >= 19)
           return signals;
-        return signals.map((g) => ({ ...g, text: g.text.replace("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011", "\u3010\u5B66\u4E1A\u73AF\u5883\u3011").replace(/工作或环境大变动。换岗、换地方、换节奏/, "\u5B66\u4E1A\u73AF\u5883\u5927\u53D8\u52A8\u3002\u8F6C\u5B66\u3001\u5347\u5B66\u3001\u6362\u73AF\u5883").replace(/工作里/g, "\u5B66\u6821\u91CC").replace(/工作上/g, "\u5B66\u4E1A\u4E0A").replace(/工作的事/g, "\u5B66\u4E1A\u7684\u4E8B").replace(/想换想升，这年开口合适/, "\u5347\u5B66\u62E9\u6821\u8FD9\u7C7B\u4E8B\uFF0C\u8FD9\u5E74\u987A") }));
+        return signals.map((g) => {
+          let t = g.text;
+          if (t.startsWith("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011")) {
+            t = t.replace("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011", "\u3010\u5B66\u4E1A\u73AF\u5883\u3011").replace(/工作或环境大变动。换岗、换地方、换节奏/, "\u5B66\u4E1A\u73AF\u5883\u5927\u53D8\u52A8\u3002\u8F6C\u5B66\u3001\u5347\u5B66\u3001\u6362\u73AF\u5883").replace(/工作里/g, "\u5B66\u6821\u91CC").replace(/想换想升，这年开口合适/, "\u5347\u5B66\u62E9\u6821\u8FD9\u7C7B\u4E8B\uFF0C\u8FD9\u5E74\u987A").replace(/换岗、换地方，大胆换/, "\u8F6C\u5B66\u5347\u5B66\u6362\u73AF\u5883\uFF0C\u8DDF\u7740\u8D70\u5C31\u597D").replace(/工作/g, "\u5B66\u4E1A");
+          }
+          return { ...g, text: t };
+        });
       }
       function liuNian2(mj, chart, year, yGan, yZhi, dyn) {
         const dayGan = chart.dayGan, dayWx = GAN_WX[dayGan];
