@@ -800,6 +800,15 @@
   .rp-sug-lead{font-size:12.5px;line-height:1.8;color:var(--gold-d);font-weight:300;padding:12px 0 4px;border-bottom:1px solid var(--line);}
   .rp-sug-para{font-size:13.5px;line-height:1.95;color:var(--ink-2);font-weight:300;padding:6px 2px 8px;margin:0;}
   /* months/years · 特点 + 宜忌 */
+  .rp-mo-hl{font-size:11px;color:var(--gold-d);font-weight:500;letter-spacing:.5px;margin-left:7px;white-space:nowrap;}
+  .rp-mo-big{font-size:9px;color:var(--gold);border:1px solid var(--gold-line);border-radius:8px;padding:1px 6px;margin-left:6px;}
+  .yc.cur-year{border:1px solid var(--gold-line);border-radius:14px;padding:14px 14px 12px;}
+  .yc-prog{height:3px;background:var(--line);border-radius:2px;margin:10px 0 4px;overflow:hidden;}
+  .yc-prog i{display:block;height:100%;background:var(--gold-d);border-radius:2px;}
+  .yc-prog-t{font-size:10px;color:var(--muted);text-align:right;margin-bottom:4px;}
+  .tl-past-note{font-size:11.5px;color:var(--muted);font-weight:300;margin:2px 2px 12px;line-height:1.7;}
+  .rp-mo-vf{font-size:10.5px;margin-left:6px;}
+  .rp-mo-vf.y{color:#7da77d;} .rp-mo-vf.n{color:#b07a6a;}
   .dy-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
   .dy-top{display:flex;align-items:baseline;justify-content:space-between;}
   .dy-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--gold-d);letter-spacing:1px;}
@@ -2370,7 +2379,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=141"></script>
+  <script src="engine_bundle.js?v=142"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2426,7 +2435,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=141"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=142"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2690,8 +2699,6 @@
       // —— 今日各方面(tab 版:事业/财运/感情/学习/健康;机会并入事业,免左右滑)——
       //   数据来自 liuri.js 的 d.fortune(引擎按当日十神喜忌 + 五行调养 + 能量实算，底层打分不变)。
       //   顺=当日助力、平=中性平顺、慎=宜留意收敛。一排 tab 各带色点(一眼看全貌),点谁看谁,省地方。
-      function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
-        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
       var FT_LABEL = { career:'事业', love:'感情', money:'钱财', study:'学习', health:'健康', chance:'机会' };
       var FT_ORDER = ['career','money','love','study'];  // 健康栏已删(无信号支撑不乱编);机会合并进事业面板
       var FT_TONECLS = { '顺':'up', '平':'mid', '慎':'warn' };
@@ -4428,6 +4435,8 @@
       // 气场分 + 相对自身轨:数字为主，按内部档位(高/平/低)只上色、不写字。
       // 圆点位置 = 该值落在「你自己这一组的区间」里的位置(相对你自己，不与他人比);
       // 自身起伏不足 12 分时按 12 分窗映射，免得把小波动拉满。无区间时退回绝对窗兜底。
+      function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
+        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
       function moEnergy(v, level, lo, hi){
         const band = level==='高'?'hi':level==='低'?'lo':'';
         let pos;
@@ -4447,7 +4456,7 @@
           const isCur=m.month===Y.curMonth;
           return '<div class="rp-mo'+(isCur?' cur':'')+'" data-mo="'+m.month+'">'
             + '<div class="rp-mo-top">'
-            + '<div class="rp-mo-m"><b>'+m.month+'</b><span>月'+(isCur?' · 本月':'')+'</span></div>'
+            + '<div class="rp-mo-m"><b>'+m.month+'</b><span>月'+(isCur?' · 本月':'')+'</span>'+(m.headline?'<span class="rp-mo-hl">'+esc(m.headline)+'</span>':'')+'</div>'
             + moEnergy(m.avg, m.level, mLo, mHi)
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
@@ -4518,6 +4527,50 @@
         bindChartJump(el, (k)=> el.querySelector('.rp-mo[data-k="'+k+'"]'));
       }
 
+      function renderPastYears(curY, yLo, yHi){
+        var box=$('tl-past'); if(!box) return;
+        var vmap=lnVerifyGet();
+        var pastCard=function(y){
+          var v=vmap[y.year];
+          var vf=v==='y'?'<span class="rp-mo-vf y">✓ 对上了</span>':v==='n'?'<span class="rp-mo-vf n">✗ 没对上</span>':'';
+          return '<div class="rp-mo" data-pyr="'+y.year+'">'
+            + '<div class="rp-mo-top">'
+            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+'</span>'+(y.headline?'<span class="rp-mo-hl">'+esc(y.headline)+'</span>':'')+vf+'</div>'
+            + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
+            + '</div>'
+            + '<div class="rp-mo-body">'
+            +   (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
+            +   yrSigs(y.signals)
+            +   '<div class="yc-verify"><span>这年的说法对上了吗</span>'
+            +     '<button type="button" data-v="y"'+(v==='y'?' class="on"':'')+'>对</button>'
+            +     '<button type="button" data-v="n"'+(v==='n'?' class="on"':'')+'>不对</button></div>'
+            + '</div>'
+            + '</div>';
+        };
+        var years=[]; for(var i=1;i<=8;i++) years.push(curY-i);
+        var render=function(idx){
+          if(idx>=years.length) return;
+          var Yr=years[idx];
+          var y=jdYearData(Yr);
+          if(y){
+            var div=document.createElement('div'); div.innerHTML=pastCard(y);
+            var el=div.firstChild; box.appendChild(el);
+            el.querySelector('.rp-mo-top').addEventListener('click', function(){ el.classList.toggle('open'); });
+            el.querySelector('.yc-verify').addEventListener('click', function(e){
+              var b=e.target.closest('button'); if(!b) return;
+              lnVerifySet(Yr, b.dataset.v);
+              el.querySelectorAll('.yc-verify button').forEach(function(x){ x.classList.toggle('on', x===b); });
+              var old=el.querySelector('.rp-mo-vf'); if(old) old.remove();
+              var sp=document.createElement('span'); sp.className='rp-mo-vf '+b.dataset.v;
+              sp.textContent=b.dataset.v==='y'?'✓ 对上了':'✗ 没对上';
+              el.querySelector('.rp-mo-m').appendChild(sp);
+            });
+          }
+          setTimeout(function(){ render(idx+1); }, 30);
+        };
+        render(0);
+      }
+
       // —— 报告2b:未来 10 年 · 高能量年(item 8)——
       function renderYears(){
         const Y=R.years; if(!Y){ $('rp-p-years').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">数据生成中…</div></div>'; return; }
@@ -4526,7 +4579,7 @@
           const isCur=y.year===Y.curYear;
           return '<div class="rp-mo'+(isCur?' cur':'')+'" data-yr="'+y.year+'">'
             + '<div class="rp-mo-top">'
-            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span></div>'
+            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span>'+(y.headline?'<span class="rp-mo-hl">'+esc(y.headline)+'</span>':'')+(y.big?'<span class="rp-mo-big">大年</span>':'')+'</div>'
             + moEnergy(y.energy, y.level, yLo, yHi)
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
@@ -4555,7 +4608,11 @@
           + '<div class="rp-mlegend"><span><i style="background:var(--gold)"></i>相对高点</span><span><i style="background:#7A7066"></i>其余年份</span></div>'
           + Y.years.map(card).join('')
           + '</div>'
+          + (window.__IS_DEMO?'':('<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>过去回看 · 对一对</b></div>'
+            + '<div class="tl-past-note">过去八年按同一套方法倒推。翻开对照实际经历，点「对上了」或「没对上」记下来。</div>'
+            + '<div id="tl-past"></div></div>'))
           + rpFlourish();
+        if(!window.__IS_DEMO) renderPastYears(Y.curYear, yLo, yHi);
         $('rp-p-years').querySelectorAll('.rp-mo').forEach((el)=>{
           if(el.classList.contains('cur')) el.classList.add('open');   // 只当前年默认展开;其余收起(留年+能量条),配合外层折叠
           el.querySelector('.rp-mo-top').addEventListener('click', ()=> el.classList.toggle('open'));
@@ -4722,14 +4779,22 @@
         var sub=[(y.age!=null?y.age+'岁':''), y.ganZhi, (_jdYearY===curY?'今年':'')].filter(Boolean).join(' · ');
         var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
         var doL=li(y.yi), watchL=li(y.ji);
+        var _prog='';
+        if(_jdYearY===curY){
+          var _n=new Date(); var _ly=_n>=new Date(_n.getFullYear(),1,4)?_n.getFullYear():_n.getFullYear()-1;
+          var _s=new Date(_ly,1,4), _e=new Date(_ly+1,1,4);
+          var _pct=Math.max(0,Math.min(100,Math.round((_n-_s)/(_e-_s)*100)));
+          _prog='<div class="yc-prog"><i style="width:'+_pct+'%"></i></div><div class="yc-prog-t">已过 '+_pct+'%</div>';
+        }
         host.innerHTML=
-          '<div class="yc">'
+          '<div class="yc'+(_jdYearY===curY?' cur-year':'')+'">'
           +'<div class="yc-nav">'
           +'<button class="yc-arw" id="jd-yr-prev" type="button" aria-label="上一年">‹</button>'
           +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
           +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
           +(sub?'<div class="yc-sub">'+esc(sub)+(y.headline?' · '+esc(y.headline):'')+'</div>':'')
+          +_prog
           +(y.trait?'<div class="yc-trait">'+esc(y.trait)+'</div>':'')
           +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>';}).join(''):'')
           +'<div class="yc-yj">'
@@ -4832,7 +4897,7 @@
         if($('rp-head-sub')) $('rp-head-sub').textContent='';
         // 纵深防御:逐段包 try/catch(单段坏不连累其余与工具箱)
         [renderNatal, renderMonths, renderYears, renderCare, renderAhead].forEach(function(fn){
-          try{ fn(); }catch(e){}
+          try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e && e.message); }catch(_){} }
         });
         buildJiedu();
         // 贰流年:四大块各折一块(当年运势默认展开);叁调养:各节折叠(食养默认展开)
