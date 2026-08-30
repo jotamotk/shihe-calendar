@@ -14173,6 +14173,71 @@ var RhythmEngine = (() => {
         const v = (favVec || {})[wx] ?? 0;
         return v >= 0.12 ? "\u559C" : v <= -0.12 ? "\u5FCC" : v >= 0 ? "\u559C" : "\u5FCC";
       }
+      function gongShenSignals(chart, subjectZhi, age, favVec, dayWx, dayGan, label) {
+        const zhis = chart.zhis;
+        const cands = [];
+        const push = (w, text, basis) => cands.push({ w, text, basis });
+        const GONGS = [["\u4E8B\u4E1A\u73AF\u5883", 1], ["\u5A5A\u59FB\u611F\u60C5", 2], ["\u957F\u8F88\u5BB6\u5B85", 0], ["\u5B50\u5973\u4F5C\u54C1", 3]];
+        for (const [name, idx] of GONGS) {
+          const zhi = zhis[idx], P = GONG_TEXT[name];
+          const gongLabel = ["\u5E74\u652F", "\u6708\u652F", "\u65E5\u652F", "\u65F6\u652F"][idx];
+          if (CHONG[subjectZhi] === zhi) {
+            const pos = favOfWx(dayWx, favVec, ZHI_WX[subjectZhi], subjectZhi) === "\u559C";
+            push(80, `\u3010${name}\u3011${pos ? P.\u51B2\u559C : P.\u51B2\u5FCC}`, `${label}${subjectZhi}\u51B2${gongLabel}${zhi}`);
+          } else if (subjectZhi === zhi && ZIXING.includes(subjectZhi)) {
+            push(75, `\u3010${name}\u3011${P.\u81EA}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u81EA\u5211`);
+          } else if (subjectZhi === zhi && idx === 2) {
+            push(72, `\u3010\u5A5A\u59FB\u611F\u60C5\u3011${age >= 22 ? P.\u4F0F\u6210 : P.\u4F0F\u5C11}`, `${label}${subjectZhi}\u5165\u65E5\u652F\uFF08\u5A5A\u59FB\u5BAB\u5F15\u52A8\uFF09`);
+          } else if (isXingPair(subjectZhi, zhi) && subjectZhi !== zhi) {
+            push(70, `\u3010${name}\u3011${P.\u5211}`, `${label}${subjectZhi}\u5211${gongLabel}${zhi}`);
+          } else if (LIUHE[subjectZhi] === zhi) {
+            const hwx = LIUHE_WX[subjectZhi + zhi] || ZHI_WX[zhi];
+            const hz = hwx === "\u571F" ? ["\u4E11", "\u8FB0"].includes(subjectZhi) || ["\u4E11", "\u8FB0"].includes(zhi) ? "\u4E11" : "\u620C" : null;
+            const pos = favOfWx(dayWx, favVec, hwx, hz) === "\u559C";
+            const txt = idx === 2 && age < 22 ? P.\u5408\u5C11 : pos ? P.\u5408\u559C : P.\u5408\u5FCC;
+            push(60, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u5408${gongLabel}${zhi}`);
+          } else {
+            const ban = SANHE.find((g) => g.trio.includes(subjectZhi) && g.trio.includes(zhi) && subjectZhi !== zhi && (g.wang === subjectZhi || g.wang === zhi));
+            if (ban) {
+              const pos = favOfWx(dayWx, favVec, ban.wx, null) === "\u559C";
+              const txt = idx === 2 && age < 22 ? P.\u5408\u5C11 : pos ? P.\u5408\u559C : P.\u5408\u5FCC;
+              push(58, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u534A\u5408${ban.wx}\u5C40`);
+            } else if (HARM[subjectZhi] === zhi) {
+              push(50, `\u3010${name}\u3011${P.\u5BB3}`, `${label}${subjectZhi}\u5BB3${gongLabel}${zhi}`);
+            } else if (subjectZhi === zhi) {
+              push(40, `\u3010${name}\u3011${P.\u4F0F}`, `${label}${subjectZhi}\u4E0E${gongLabel}\u4F0F\u541F`);
+            }
+          }
+        }
+        const nzhi = zhis[0];
+        const isLu = LU[dayGan] === subjectZhi, isMa = YIMA[nzhi] === subjectZhi;
+        if (isLu && isMa)
+          push(66, SHEN_TEXT.\u7984\u9A6C, `${subjectZhi}\u4E3A\u65E5\u4E3B\u7984\u795E\u53C8\u9022\u9A7F\u9A6C`);
+        else {
+          if (isLu)
+            push(32, SHEN_TEXT.\u7984\u795E, `${subjectZhi}\u4E3A\u65E5\u4E3B${dayGan}\u4E4B\u7984`);
+          if (isMa)
+            push(30, SHEN_TEXT.\u9A7F\u9A6C, `\u5E74\u652F${nzhi}\u8D77\u9A7F\u9A6C\u5728${subjectZhi}`);
+        }
+        if ((TIANYI[dayGan] || []).includes(subjectZhi))
+          push(33, SHEN_TEXT.\u5929\u4E59, `\u65E5\u5E72${dayGan}\u5929\u4E59\u8D35\u4EBA\u5728${subjectZhi}`);
+        if (HONGLUAN[nzhi] === subjectZhi)
+          push(35, age >= 22 ? SHEN_TEXT.\u7EA2\u9E3E\u6210 : SHEN_TEXT.\u7EA2\u9E3E\u5C11, `\u5E74\u652F${nzhi}\u8D77\u7EA2\u9E3E\u5728${subjectZhi}`);
+        if (CHONG[HONGLUAN[nzhi]] === subjectZhi)
+          push(34, SHEN_TEXT.\u5929\u559C, `\u5E74\u652F${nzhi}\u8D77\u5929\u559C\u5728${subjectZhi}`);
+        if (WENCHANG[dayGan] === subjectZhi)
+          push(28, SHEN_TEXT.\u6587\u660C, `\u65E5\u5E72${dayGan}\u6587\u660C\u5728${subjectZhi}`);
+        if (TAOHUA[nzhi] === subjectZhi)
+          push(26, SHEN_TEXT.\u6843\u82B1, `\u5E74\u652F${nzhi}\u8D77\u6843\u82B1\u5728${subjectZhi}`);
+        if (HUAGAI[nzhi] === subjectZhi)
+          push(24, SHEN_TEXT.\u534E\u76D6, `\u5E74\u652F${nzhi}\u8D77\u534E\u76D6\u5728${subjectZhi}`);
+        return cands;
+      }
+      function studentize(signals, age) {
+        if (age >= 19)
+          return signals;
+        return signals.map((g) => ({ ...g, text: g.text.replace("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011", "\u3010\u5B66\u4E1A\u73AF\u5883\u3011").replace(/工作或环境大变动。换岗、换地方、换节奏/, "\u5B66\u4E1A\u73AF\u5883\u5927\u53D8\u52A8\u3002\u8F6C\u5B66\u3001\u5347\u5B66\u3001\u6362\u73AF\u5883").replace(/工作里/g, "\u5B66\u6821\u91CC").replace(/工作上/g, "\u5B66\u4E1A\u4E0A").replace(/工作的事/g, "\u5B66\u4E1A\u7684\u4E8B").replace(/想换想升，这年开口合适/, "\u5347\u5B66\u62E9\u6821\u8FD9\u7C7B\u4E8B\uFF0C\u8FD9\u5E74\u987A") }));
+      }
       function liuNian2(mj, chart, year, yGan, yZhi, dyn) {
         const dayGan = chart.dayGan, dayWx = GAN_WX[dayGan];
         const age = chart.birthYear ? year - chart.birthYear : 30;
@@ -14182,7 +14247,7 @@ var RhythmEngine = (() => {
         const tzhi = GAN_WX[yGan] === ZHI_WX[yZhi] || GAN_WX[yGan] === "\u571F" ? yZhi : null;
         const xj = favOfWx(dayWx, favVec, GAN_WX[yGan], tzhi);
         const yt = (YEAR_TYPE[full] || YEAR_TYPE.\u6BD4\u80A9)[xj];
-        const cands = [];
+        const cands = gongShenSignals(chart, yZhi, age, favVec, dayWx, dayGan, "\u6D41\u5E74");
         const push = (w, text, basis) => cands.push({ w, text, basis });
         const dy = activeDaYun(chart, year);
         if (dy && dy.startYear === year)
@@ -14245,10 +14310,7 @@ var RhythmEngine = (() => {
           push(26, SHEN_TEXT.\u6843\u82B1, `\u5E74\u652F${nzhi}\u8D77\u6843\u82B1\u5728${yZhi}`);
         if (HUAGAI[nzhi] === yZhi)
           push(24, SHEN_TEXT.\u534E\u76D6, `\u5E74\u652F${nzhi}\u8D77\u534E\u76D6\u5728${yZhi}`);
-        let signals = cands.sort((a, b) => b.w - a.w).slice(0, 3);
-        if (age < 19) {
-          signals = signals.map((s) => ({ ...s, text: s.text.replace("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011", "\u3010\u5B66\u4E1A\u73AF\u5883\u3011").replace(/工作或环境大变动。换岗、换地方、换节奏/, "\u5B66\u4E1A\u73AF\u5883\u5927\u53D8\u52A8\u3002\u8F6C\u5B66\u3001\u5347\u5B66\u3001\u6362\u73AF\u5883").replace(/工作里/g, "\u5B66\u6821\u91CC").replace(/工作上/g, "\u5B66\u4E1A\u4E0A").replace(/工作的事/g, "\u5B66\u4E1A\u7684\u4E8B").replace(/想换想升，这年开口合适/, "\u5347\u5B66\u62E9\u6821\u8FD9\u7C7B\u4E8B\uFF0C\u8FD9\u5E74\u987A") }));
-        }
+        const signals = studentize(cands.sort((a, b) => b.w - a.w).slice(0, 3), age);
         const yj = YEAR_YIJI[YIJI_KEY[full] + xj] || { yi: [], ji: [] };
         const big = signals.some((s) => s.w >= 72);
         return {
@@ -14260,7 +14322,35 @@ var RhythmEngine = (() => {
           big
         };
       }
-      module.exports = { liuNian2 };
+      var MONTH_TYPE = {
+        \u6B63\u5B98: { \u559C: ["\u540D\u5206\u6708", "\u8C08\u5B9A\u3001\u8003\u6838\u3001\u89C1\u4E0A\u7EA7\u7684\u4E8B\u987A\u3002"], \u5FCC: ["\u53D7\u5236\u6708", "\u89C4\u77E9\u591A\u3001\u88AB\u7BA1\u7740\uFF0C\u6309\u6D41\u7A0B\u8D70\u3002"] },
+        \u4E03\u6740: { \u559C: ["\u653B\u575A\u6708", "\u786C\u4E8B\u8FD9\u6708\u5543\u5F97\u52A8\u3002"], \u5FCC: ["\u5403\u52B2\u6708", "\u538B\u529B\u96C6\u4E2D\uFF0C\u5148\u7A33\u4F4F\u624B\u91CC\u7684\u3002"] },
+        \u6B63\u5370: { \u559C: ["\u6587\u4E66\u6708", "\u8BC1\u4EF6\u3001\u5408\u540C\u3001\u5B66\u7684\u4E8B\u987A\u3002"], \u5FCC: ["\u8D39\u5FC3\u6708", "\u624B\u7EED\u62D6\u6C93\uFF0C\u6587\u4EF6\u591A\u6838\u5BF9\u3002"] },
+        \u504F\u5370: { \u559C: ["\u94BB\u7814\u6708", "\u9002\u5408\u6C89\u4E0B\u6765\u5B66\u4E1C\u897F\u3002"], \u5FCC: ["\u95F7\u6708", "\u88AB\u5B89\u6392\u7684\u4E8B\u591A\uFF0C\u5FC3\u91CC\u5835\u3002"] },
+        \u6B63\u8D22: { \u559C: ["\u8FDB\u8D26\u6708", "\u8C08\u94B1\u3001\u6536\u6B3E\u987A\u3002"], \u5FCC: ["\u7834\u8D39\u6708", "\u5F00\u9500\u96C6\u4E2D\uFF0C\u5927\u989D\u7F13\u4E00\u7F13\u3002"] },
+        \u504F\u8D22: { \u559C: ["\u6D3B\u94B1\u6708", "\u5916\u5FEB\u673A\u4F1A\u6709\uFF0C\u89C1\u597D\u5C31\u6536\u3002"], \u5FCC: ["\u6563\u8D22\u6708", "\u94B1\u8FC7\u624B\u7559\u4E0D\u4F4F\u3002"] },
+        \u98DF\u795E: { \u559C: ["\u8212\u5C55\u6708", "\u8868\u8FBE\u51FA\u6D3B\u987A\uFF0C\u5FC3\u60C5\u677E\u3002"], \u5FCC: ["\u677E\u52B2\u6708", "\u5BB9\u6613\u6563\uFF0C\u8BBE\u4E2A\u622A\u6B62\u65E5\u3002"] },
+        \u4F24\u5B98: { \u559C: ["\u9732\u8138\u6708", "\u4F5C\u54C1\u60F3\u6CD5\u62FF\u51FA\u6765\u89C1\u4EBA\u3002"], \u5FCC: ["\u53E3\u820C\u6708", "\u8BDD\u8FC7\u8111\u518D\u8BF4\uFF0C\u5173\u952E\u4E8B\u7559\u75D5\u3002"] },
+        \u6BD4\u80A9: { \u559C: ["\u642D\u4F19\u6708", "\u627E\u4EBA\u540C\u505A\u4E8B\uFF0C\u987A\u3002"], \u5FCC: ["\u5206\u8D26\u6708", "\u8D26\u8BF4\u6E05\uFF0C\u60C5\u9762\u653E\u540E\u3002"] },
+        \u52AB\u8D22: { \u559C: ["\u4E92\u52A9\u6708", "\u6709\u4EBA\u642D\u628A\u624B\u3002"], \u5FCC: ["\u6F0F\u8D22\u6708", "\u501F\u51FA\u3001\u62C5\u4FDD\u90FD\u8981\u9632\u3002"] }
+      };
+      function liuYue2(mj, chart, year, mGan, mZhi, yZhi, dyn) {
+        const dayGan = chart.dayGan, dayWx = GAN_WX[dayGan];
+        const age = chart.birthYear ? year - chart.birthYear : 30;
+        const favVec = dyn && dyn.favVec || mj.favVec;
+        const full = tenGodFull(dayGan, mGan);
+        const tzhi = GAN_WX[mGan] === ZHI_WX[mZhi] || GAN_WX[mGan] === "\u571F" ? mZhi : null;
+        const xj = favOfWx(dayWx, favVec, GAN_WX[mGan], tzhi);
+        const mt = (MONTH_TYPE[full] || MONTH_TYPE.\u6BD4\u80A9)[xj];
+        const cands = gongShenSignals(chart, mZhi, age, favVec, dayWx, dayGan, "\u6D41\u6708");
+        if (mZhi === yZhi)
+          cands.push({ w: 68, text: "\u6D41\u5E74\u4E3B\u9898\u5F53\u6708\u6B63\u663E\uFF1A\u5168\u5E74\u7684\u5927\u4E8B\u8FD9\u6708\u96C6\u4E2D\u5E94\u3002", basis: `\u6708\u652F${mZhi}\u4E0E\u6D41\u5E74\u652F\u76F8\u540C` });
+        else if (CHONG[mZhi] === yZhi)
+          cands.push({ w: 68, text: "\u51B2\u52A8\u6D41\u5E74\uFF1A\u5168\u5E74\u4E3B\u7EBF\u8FD9\u6708\u6709\u53D8\u6570\u3001\u6709\u8F6C\u6298\u3002", basis: `\u6708\u652F${mZhi}\u51B2\u6D41\u5E74\u652F${yZhi}` });
+        const signals = studentize(cands.sort((a, b) => b.w - a.w).slice(0, 2), age).map((g) => ({ text: g.text, basis: g.basis }));
+        return { headline: mt[0], trait: mt[1], signals };
+      }
+      module.exports = { liuNian2, liuYue2 };
     }
   });
 
@@ -14293,7 +14383,7 @@ var RhythmEngine = (() => {
         GAN_CHONG
       } = require_relations();
       var { liuri } = require_liuri();
-      var { liuNian2 } = require_liunian2();
+      var { liuNian2, liuYue2 } = require_liunian2();
       var WX_INFO = {
         \u6728: {
           keyword: "\u751F\u957F \xB7 \u8212\u5C55",
@@ -15116,6 +15206,7 @@ var RhythmEngine = (() => {
             month: m,
             avg,
             mZhi,
+            mGan,
             mWx,
             relation,
             godType: t,
@@ -15129,12 +15220,16 @@ var RhythmEngine = (() => {
         }
         gradeLevels(months, "avg");
         const dynM = { ...dyn };
+        const yLun = Solar.fromYmd(year, 6, 15).getLunar();
+        const yZhiForLink = yLun.getYearZhi();
         months.forEach((mo) => {
           dynM._relation = mo.relation;
+          const g2 = liuYue2(mj, chart, year, mo.mGan, mo.mZhi, yZhiForLink, dyn);
+          mo.headline = g2.headline;
+          mo.trait = g2.trait;
+          mo.signals = g2.signals;
           const dom = dominantTag(mo._tags);
           const g = deriveDialectic(dom, dynM, mo, mo.level, "\u8FD9\u4E2A\u6708", mo.month);
-          mo.headline = g.headline;
-          mo.trait = g.trait;
           mo.yi = g.yi;
           mo.ji = g.ji;
           mo.verdict = monthVerdict(mo.level, mo.relation);

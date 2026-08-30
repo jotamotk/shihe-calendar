@@ -2359,7 +2359,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=139"></script>
+  <script src="engine_bundle.js?v=140"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2415,7 +2415,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=139"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=140"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2679,6 +2679,8 @@
       // —— 今日各方面(tab 版:事业/财运/感情/学习/健康;机会并入事业,免左右滑)——
       //   数据来自 liuri.js 的 d.fortune(引擎按当日十神喜忌 + 五行调养 + 能量实算，底层打分不变)。
       //   顺=当日助力、平=中性平顺、慎=宜留意收敛。一排 tab 各带色点(一眼看全貌),点谁看谁,省地方。
+      function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
+        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
       var FT_LABEL = { career:'事业', love:'感情', money:'钱财', study:'学习', health:'健康', chance:'机会' };
       var FT_ORDER = ['career','money','love','study'];  // 健康栏已删(无信号支撑不乱编);机会合并进事业面板
       var FT_TONECLS = { '顺':'up', '平':'mid', '慎':'warn' };
@@ -4439,7 +4441,9 @@
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
+            +   (m.headline?'<div class="yr-hl">'+esc(m.headline)+'</div>':'')
             +   (m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
+            +   yrSigs(m.signals)
             +   yijiHtml(m.yi,m.ji)
             + '</div>'
             + '</div>';
@@ -4481,7 +4485,9 @@
           + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
           + '</div>'
           + '<div class="rp-mo-body">'
+          +   (m.headline?'<div class="yr-hl">'+esc(m.headline)+'</div>':'')
           +   (m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
+          +   yrSigs(m.signals)
           +   yijiHtml(m.yi,m.ji)
           + '</div></div>';
         let html='<div class="rp-lede" style="margin:2px 2px 16px">未来三年逐月，金点是相对最足的月份。</div>';
@@ -4521,8 +4527,7 @@
             + '</div>'
             + '</div>';
         };
-        function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
-          return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
+
         const hi=Y.highYears.join('、'), lo=Y.lowYears.join('、');
         const ledeY = (hi||lo)
           ? ((hi?'这十年里 <b>'+hi+' 年</b>的能量相对高，你自己的状态更在线。重要的事是否安排在这几年，由你自己决定；能量反映的是你的节律，不代表外部环境。':'')
