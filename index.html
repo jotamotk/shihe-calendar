@@ -809,6 +809,20 @@
   .tl-past-note{font-size:11.5px;color:var(--muted);font-weight:300;margin:2px 2px 12px;line-height:1.7;}
   .rp-mo-vf{font-size:10.5px;margin-left:6px;}
   .rp-mo-vf.y{color:#7da77d;} .rp-mo-vf.n{color:#b07a6a;}
+  .tl-tabs{display:flex;gap:8px;margin:2px 0 14px;}
+  .tl-tabs button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-family:var(--serif);font-size:14px;letter-spacing:6px;text-indent:6px;padding:9px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .tl-tabs button.on{border-color:var(--gold-line);color:var(--gold-d);background:linear-gradient(180deg,var(--bg-top),var(--card));}
+  .tl-pills{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;margin-bottom:8px;scrollbar-width:none;}
+  .tl-pills::-webkit-scrollbar{display:none;}
+  .tl-pill{flex:none;position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--ink-2);font-size:12.5px;padding:7px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit;}
+  .tl-pill.on{border-color:var(--gold-d);color:var(--gold-d);font-weight:600;}
+  .tl-pill.now{color:var(--ink);}
+  .tl-pill .bd{position:absolute;top:4px;right:5px;width:4px;height:4px;border-radius:50%;background:var(--gold);}
+  .tl-ynav{display:flex;align-items:center;justify-content:center;gap:16px;margin:0 0 10px;}
+  .tl-ynav button{background:var(--card);border:1px solid var(--line);border-radius:50%;width:28px;height:28px;color:var(--ink-2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .tl-ynav b{font-family:var(--serif);font-size:15px;color:var(--ink);letter-spacing:1px;font-weight:600;min-width:120px;text-align:center;}
+  .tl-ynav .tl-today{width:auto;border-radius:9px;padding:0 10px;font-size:11.5px;color:var(--gold-d);}
+  .tl-day-gz{text-align:center;font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:1px;}
   .dy-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
   .dy-top{display:flex;align-items:baseline;justify-content:space-between;}
   .dy-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--gold-d);letter-spacing:1px;}
@@ -2332,11 +2346,25 @@
           </div>
           <div class="ch-grp" data-ch="liunian" style="display:none">
             <div class="ch-open"><b>貳</b><span>流年</span></div><div class="ch-open-rule"></div>
-            <div id="jd-dayun"></div>
-            <div id="jd-year"></div>
-            <div class="rp-page on" data-p="months" id="rp-p-months"></div>
-            <div class="rp-page on" data-p="years" id="rp-p-years"></div>
-            <div class="rp-page on" data-p="ahead" id="rp-p-ahead"></div>
+            <div class="tl-tabs" id="tl-tabs">
+              <button type="button" data-t="year" class="on">年</button>
+              <button type="button" data-t="month">月</button>
+              <button type="button" data-t="day">日</button>
+            </div>
+            <div id="tl-year-pane">
+              <div id="jd-dayun"></div>
+              <div class="tl-pills" id="tl-year-pills"></div>
+              <div id="jd-year"></div>
+            </div>
+            <div id="tl-month-pane" style="display:none">
+              <div class="tl-ynav" id="tl-month-ynav"></div>
+              <div class="tl-pills" id="tl-month-pills"></div>
+              <div id="tl-month-card"></div>
+            </div>
+            <div id="tl-day-pane" style="display:none">
+              <div class="tl-ynav" id="tl-day-nav"></div>
+              <div id="tl-day-card"></div>
+            </div>
           </div>
           <div class="ch-grp" data-ch="care" style="display:none">
             <div class="ch-open"><b>叄</b><span>调养</span></div><div class="ch-open-rule"></div>
@@ -2379,7 +2407,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=144"></script>
+  <script src="engine_bundle.js?v=145"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2435,7 +2463,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=144"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=145"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4571,6 +4599,92 @@
         render(0);
       }
 
+      // ================= 岁运时间线:年/月/日 三档(2026-08-31 用户拍板) =================
+      var _tlTab='year', _tlMYi=0, _tlM=null, _tlDay=null, _tlMonthCache={};
+      function tlInit(){
+        var tabs=$('tl-tabs'); if(!tabs||tabs._b) return; tabs._b=1;
+        tabs.addEventListener('click', function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          _tlTab=b.dataset.t;
+          tabs.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+          ['year','month','day'].forEach(function(t){ var p=$('tl-'+t+'-pane'); if(p) p.style.display=(t===_tlTab)?'':'none'; });
+          if(_tlTab==='month') renderTLMonth();
+          if(_tlTab==='day') renderTLDay();
+        });
+      }
+      function renderTLYearPills(){
+        var box=$('tl-year-pills'); if(!box) return;
+        var curY=(R.years&&R.years.curYear)||new Date().getFullYear();
+        var bigSet={}; ((R.years&&R.years.years)||[]).forEach(function(y){ if(y.big) bigSet[y.year]=1; });
+        var html='';
+        for(var Y=curY-8;Y<=curY+9;Y++){
+          html+='<button type="button" class="tl-pill'+(Y===_jdYearY?' on':'')+(Y===curY?' now':'')+'" data-y="'+Y+'">'+Y+(Y===curY?' · 今':'')+(bigSet[Y]?'<i class="bd"></i>':'')+'</button>';
+        }
+        box.innerHTML=html;
+        if(!box._b){ box._b=1; box.addEventListener('click', function(e){ var b=e.target.closest('.tl-pill'); if(!b) return;
+          _jdYearY=+b.dataset.y; renderYearCard(); renderTLYearPills(); }); }
+        var on=box.querySelector('.tl-pill.on'); if(on&&on.scrollIntoView) try{ on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+      }
+      function renderTLMonth(){
+        var A=R.monthsAhead; var box=$('tl-month-card'); if(!A||!A.length||!box) return;
+        if(_tlMYi>=A.length) _tlMYi=0;
+        var yObj=A[_tlMYi];
+        if(_tlM==null) _tlM=(yObj.curMonth>0?yObj.curMonth:1);
+        var nav=$('tl-month-ynav');
+        nav.innerHTML='<button type="button" id="tl-my-prev" '+(_tlMYi<=0?'disabled style="opacity:.3"':'')+'>‹</button><b>'+yObj.year+' 年</b><button type="button" id="tl-my-next" '+(_tlMYi>=A.length-1?'disabled style="opacity:.3"':'')+'>›</button>';
+        var pv=$('tl-my-prev'), nx=$('tl-my-next');
+        if(pv) pv.onclick=function(){ if(_tlMYi>0){ _tlMYi--; renderTLMonth(); } };
+        if(nx) nx.onclick=function(){ if(_tlMYi<A.length-1){ _tlMYi++; renderTLMonth(); } };
+        var isCurYearTab=(_tlMYi===0);
+        var pills=$('tl-month-pills'); var ph='';
+        yObj.months.forEach(function(m){
+          ph+='<button type="button" class="tl-pill'+(m.month===_tlM?' on':'')+((isCurYearTab&&m.month===yObj.curMonth)?' now':'')+'" data-m="'+m.month+'">'+m.month+'月'+((isCurYearTab&&m.month===yObj.curMonth)?' · 本':'')+(m.level==='高'?'<i class="bd"></i>':'')+'</button>';
+        });
+        pills.innerHTML=ph;
+        pills.onclick=function(e){ var b=e.target.closest('.tl-pill'); if(!b) return; _tlM=+b.dataset.m; renderTLMonth(); };
+        var m=yObj.months.filter(function(x){return x.month===_tlM;})[0]||yObj.months[0];
+        var _av=yObj.months.map(function(x){return x.avg;}), lo=Math.min.apply(null,_av), hi=Math.max.apply(null,_av);
+        box.innerHTML='<div class="rp-mo open"><div class="rp-mo-top">'
+          +'<div class="rp-mo-m"><b>'+m.month+'</b><span>月</span>'+(m.headline?'<span class="rp-mo-hl">'+esc(m.headline)+'</span>':'')+'</div>'
+          + moEnergy(m.avg, m.level, lo, hi)
+          +'</div><div class="rp-mo-body">'
+          +(m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
+          + yrSigs(m.signals)
+          + yijiHtml(m.yi,m.ji)
+          +'</div></div>';
+      }
+      function renderTLDay(){
+        var box=$('tl-day-card'); if(!box) return;
+        if(!_tlDay){ var n=new Date(); _tlDay={y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate()}; }
+        var key=_tlDay.y+'-'+_tlDay.m;
+        var mo=_tlMonthCache[key];
+        if(!mo){ try{ mo=window.RhythmEngine.buildMonth(window.APP_PERSON,{year:_tlDay.y,month:_tlDay.m}); _tlMonthCache[key]=mo; }catch(e){ box.innerHTML=''; return; } }
+        var d=mo.days[_tlDay.d-1]; if(!d){ box.innerHTML=''; return; }
+        var n2=new Date(); var isToday=(_tlDay.y===n2.getFullYear()&&_tlDay.m===n2.getMonth()+1&&_tlDay.d===n2.getDate());
+        var wk='周'+['日','一','二','三','四','五','六'][new Date(_tlDay.y,_tlDay.m-1,_tlDay.d).getDay()];
+        var nav=$('tl-day-nav');
+        nav.innerHTML='<button type="button" id="tl-d-prev">‹</button><b>'+_tlDay.m+'月'+_tlDay.d+'日 '+wk+(isToday?' · 今天':'')+'</b><button type="button" id="tl-d-next">›</button>'
+          +(!isToday?'<button type="button" class="tl-today" id="tl-d-today">回今天</button>':'');
+        var shift=function(dd){ var dt=new Date(_tlDay.y,_tlDay.m-1,_tlDay.d+dd); _tlDay={y:dt.getFullYear(),m:dt.getMonth()+1,d:dt.getDate()}; renderTLDay(); };
+        $('tl-d-prev').onclick=function(){ shift(-1); };
+        $('tl-d-next').onclick=function(){ shift(1); };
+        var tb=$('tl-d-today'); if(tb) tb.onclick=function(){ _tlDay=null; renderTLDay(); };
+        var f=d.fortune||{};
+        var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){}
+        var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
+        var rows='';
+        [['事业',f.career],['钱财',f.money],['感情',{line:loveLn,tone:f.love&&f.love.tone}],['学习',f.study]].forEach(function(p){
+          if(p[1]&&p[1].line) rows+='<div class="yr-sig"><b>'+p[0]+' · </b>'+esc(p[1].line)+'</div>';
+        });
+        var _gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');box.innerHTML='<div class="tl-day-gz">'+esc(_gz)+(_gz?' 日 · ':'')+'能量 '+d.e+'</div>'
+          +'<div class="rp-mo open"><div class="rp-mo-body" style="padding-top:4px">'
+          +(d.heroLine?'<div class="rp-mo-trait">'+esc(d.heroLine)+'</div>':'')
+          +rows
+          +yijiHtml(d.yi,d.huan)
+          +'</div></div>';
+      }
+      function renderTimeline(){ tlInit(); renderTLYearPills(); if(_tlTab==='month') renderTLMonth(); if(_tlTab==='day') renderTLDay(); }
+
       // —— 报告2b:未来 10 年 · 高能量年(item 8)——
       function renderYears(){
         const Y=R.years; if(!Y){ $('rp-p-years').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">数据生成中…</div></div>'; return; }
@@ -4806,7 +4920,7 @@
               +'<button type="button" data-v="y"'+(v==='y'?' class="on"':'')+'>对</button>'
               +'<button type="button" data-v="n"'+(v==='n'?' class="on"':'')+'>不对</button></div>'; })():'')
           +'</div>';
-        var go=function(d){ _jdYearY+=d; renderYearCard(); };
+        var go=function(d){ _jdYearY+=d; renderYearCard(); try{ renderTLYearPills(); }catch(e){} };
         var p=$('jd-yr-prev'), nx=$('jd-yr-next');
         if(p) p.onclick=function(){ go(-1); };
         if(nx) nx.onclick=function(){ go(1); };
@@ -4855,7 +4969,7 @@
         chap.style.display='none'; toc.style.display='block';
         var sc=toc.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
       }
-      function buildJiedu(){ try{ renderDaYun(); renderYearCard(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
+      function buildJiedu(){ try{ renderDaYun(); renderYearCard(); renderTimeline(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
 
       // —— 通用章内折叠(整齐·可跳读·一眼知道每块讲什么);与本命章 foldNatalSections 同款 ——
       var FOLD_BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
@@ -4896,16 +5010,13 @@
         cover.style.display='none'; body.style.display='flex'; body.style.flexDirection='column';
         if($('rp-head-sub')) $('rp-head-sub').textContent='';
         // 纵深防御:逐段包 try/catch(单段坏不连累其余与工具箱)
-        [renderNatal, renderMonths, renderYears, renderCare, renderAhead].forEach(function(fn){
+        [renderNatal, renderCare].forEach(function(fn){
           try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e && e.message); }catch(_){} }
         });
         buildJiedu();
         // 贰流年:四大块各折一块(当年运势默认展开);叁调养:各节折叠(食养默认展开)
         try{
-          wrapContainerAsFold($('jd-year'),     '当年状态', '今年宜做什么 · 要注意什么', true);
-          wrapContainerAsFold($('rp-p-months'), '逐月能量', '今年哪几个月状态最足',   false);
-          wrapContainerAsFold($('rp-p-years'),  '十年起伏', '未来十年的高低走势',     false);
-          wrapContainerAsFold($('rp-p-ahead'),  '未来三年', '逐月看更远的节奏',       false);
+          // 贰卷改「年/月/日」三档(tl-tabs),不再用折叠包装
           foldRpSecsIn($('rp-p-care'), true);
         }catch(e){}
       }
