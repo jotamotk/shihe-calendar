@@ -13474,9 +13474,11 @@ var RhythmEngine = (() => {
           \u4F0F: "\u5BB6\u91CC\u7684\u4E8B\u91CD\u590D\u3001\u62D6\u7740\u3002\u8001\u95EE\u9898\u8FD8\u662F\u90A3\u4E9B\u3002",
           \u81EA: "\u5BB6\u4E8B\u4E0A\u81EA\u6211\u6D88\u8017\uFF0C\u64CD\u5FC3\u8FC7\u4E86\u5934\u3002"
         },
-        \u5B50\u5973\u4F5C\u54C1: {
+        // 时支宫传统主「子女·作品·成果」;标签取「作品项目」——无子女用户看「子女」会懵(用户2026-09反馈),
+        // 断语一律写作品/项目/计划,不预设有孩子
+        \u4F5C\u54C1\u9879\u76EE: {
           \u51B2\u559C: "\u624B\u4E0A\u7684\u4E8B\u5927\u6539\uFF0C\u6539\u540E\u66F4\u987A\u3002",
-          \u51B2\u5FCC: "\u8BA1\u5212\u53D8\u52A8\u3002\u624B\u4E0A\u7684\u9879\u76EE\u3001\u4F5C\u54C1\u5BB9\u6613\u53D8\uFF1B\u6709\u5B50\u5973\u8005\uFF0C\u5B69\u5B50\u7684\u4E8B\u53D8\u52A8\u64CD\u5FC3\u591A\u3002",
+          \u51B2\u5FCC: "\u8BA1\u5212\u53D8\u52A8\u3002\u624B\u4E0A\u7684\u9879\u76EE\u3001\u4F5C\u54C1\u5BB9\u6613\u53D8\uFF1B\u4E3B\u52A8\u8C03\u6574\u6BD4\u88AB\u52A8\u7B49\u597D\u3002",
           \u5211: "\u9879\u76EE\u78E8\u4EBA\u3002\u624B\u4E0A\u7684\u4E8B\u662F\u975E\u591A\u3001\u53CD\u590D\u591A\u3002",
           \u5408\u559C: "\u6709\u6210\u679C\u3002\u4F5C\u54C1\u3001\u9879\u76EE\u5BB9\u6613\u843D\u5730\u3002",
           \u5408\u5FCC: "\u9879\u76EE\u7F20\u8EAB\u3001\u6536\u5C3E\u62D6\u62C9\u3002",
@@ -13516,7 +13518,7 @@ var RhythmEngine = (() => {
         const zhis = chart.zhis;
         const cands = [];
         const push = (w, text, basis) => cands.push({ w, text, basis });
-        const GONGS = [["\u4E8B\u4E1A\u73AF\u5883", 1], ["\u5A5A\u59FB\u611F\u60C5", 2], ["\u957F\u8F88\u5BB6\u5B85", 0], ["\u5B50\u5973\u4F5C\u54C1", 3]];
+        const GONGS = [["\u4E8B\u4E1A\u73AF\u5883", 1], ["\u5A5A\u59FB\u611F\u60C5", 2], ["\u957F\u8F88\u5BB6\u5B85", 0], ["\u4F5C\u54C1\u9879\u76EE", 3]];
         for (const [name, idx] of GONGS) {
           const zhi = zhis[idx], P = GONG_TEXT[name];
           const gongLabel = ["\u5E74\u652F", "\u6708\u652F", "\u65E5\u652F", "\u65F6\u652F"][idx];
@@ -15379,7 +15381,8 @@ var RhythmEngine = (() => {
         \u5E74\u652F: { key: "family", label: "\u957F\u8F88\u5BB6\u65CF" },
         \u6708\u4EE4: { key: "career", label: "\u4E8B\u4E1A" },
         \u65E5\u652F: { key: "love", label: "\u611F\u60C5" },
-        \u65F6\u652F: { key: "future", label: "\u5B50\u5973\u4E0E\u957F\u8FDC" }
+        \u65F6\u652F: { key: "future", label: "\u4F5C\u54C1\u4E0E\u957F\u8FDC" }
+        // 时支宫传统含子女;无子女用户看「子女」会懵,标签走作品/长远(2026-09用户反馈)
       };
       var GOD_DOMAIN = {
         \u6BD4: { key: "social", label: "\u4EBA\u9645" },

@@ -834,9 +834,15 @@
   .yc-verify button{background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;color:var(--ink-2);font-family:inherit;font-size:12px;padding:5px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .yc-verify button.on{border-color:var(--gold-d);color:var(--gold-d);}
   .yr-hl{font-family:var(--serif);font-size:13.5px;font-weight:600;color:var(--gold-d);letter-spacing:.5px;margin-bottom:5px;}
-  .yr-sig{font-size:12px;color:var(--ink-2);font-weight:300;line-height:1.75;margin-top:7px;}
+  .yr-sig{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.8;margin-top:9px;}
+  .yr-sig + .yr-sig{border-top:1px solid var(--line);padding-top:9px;}
   .yr-sig b{color:var(--ink);font-weight:500;}
-  .yr-sig-b{display:block;font-size:10px;color:var(--muted);font-style:normal;opacity:.8;margin-top:1px;letter-spacing:.3px;}
+  .yr-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);border-radius:6px;padding:1px 8px;margin-right:7px;vertical-align:1px;}
+  .yr-sig-b{display:block;font-size:10px;color:var(--muted);font-style:normal;opacity:.8;margin-top:2px;letter-spacing:.3px;}
+  /* 年份条图例:金点=变动大的年份 */
+  .tl-lgd{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);letter-spacing:.5px;margin:-4px 2px 8px;}
+  .tl-lgd i{width:4px;height:4px;border-radius:50%;background:var(--gold);}
+  .tl-lgd:empty{display:none;}
   .rp-mo-trait{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.8;padding:11px 0 3px;border-top:1px solid var(--line);}
   .rp-yj-wrap{display:flex;flex-direction:column;gap:6px;margin-top:9px;}
   .rp-yj-line{font-size:11.5px;line-height:1.7;color:var(--ink-2);font-weight:300;}
@@ -958,22 +964,23 @@
   .rel-seg{display:inline-flex;gap:2px;background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:3px;margin-bottom:13px;}
   .rel-seg button{border:0;background:transparent;color:var(--muted);font-size:11.5px;font-family:inherit;font-weight:400;letter-spacing:.5px;padding:4px 12px;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .18s,background .18s;}
   .rel-seg button.on{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);font-weight:500;}
-  /* 章内子块折叠 · 书页「展开全文」式(C):内容末一条细金线夹金字,收起=展开全文/展开=收起,同一条、读完顺手收 */
-  .sec-fold > .rp-sec-h{display:flex;align-items:center;gap:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  /* 章内子块折叠 · 卡片手风琴:每块一张边框卡,头=标题+一句概括+右侧箭头,点头开合、开一块收其余。
+     (旧「展开全文/收起」细金线夹字已废:收起线与下一块的展开线连排,归属分不清、易看串) */
+  #jd-chapter .rp-sec.sec-fold{margin-top:10px;}
+  .sec-fold{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 15px;}
+  .sec-fold.open{border-color:var(--gold-line);}
+  #jd-chapter .sec-fold > .rp-sec-h{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;margin:0;padding:15px 0;}
   .sec-fold > .rp-sec-h > b{flex:none;}
-  .sec-fold-bar{display:flex;align-items:center;gap:13px;padding:15px 2px 3px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;}
-  .sec-fold-bar::before,.sec-fold-bar::after{content:'';height:1px;flex:1;background:var(--gold-line);}
-  .sec-fold-bar .sfb-in{display:inline-flex;align-items:center;gap:6px;color:var(--gold-d);font-size:11px;letter-spacing:2px;font-weight:500;white-space:nowrap;font-style:normal;}
-  .sec-fold-bar .sfb-in::before{content:'展开全文';}
-  .sec-fold.open > .sec-fold-bar .sfb-in{color:var(--muted);}
-  .sec-fold.open > .sec-fold-bar .sfb-in::before{content:'收起';}
-  .sec-fold.open > .sec-fold-bar::before,.sec-fold.open > .sec-fold-bar::after{opacity:.4;}
-  .sec-fold-bar .sfb-in svg{width:11px;height:11px;transition:transform .26s var(--ease);}
-  .sec-fold.open > .sec-fold-bar .sfb-in svg{transform:rotate(180deg);}
-  .sec-fold-bar:active{opacity:.55;}
+  .sec-fold-sum{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px;color:var(--muted);font-weight:300;letter-spacing:.3px;text-align:right;transition:opacity .2s;}
+  .sec-fold.open .sec-fold-sum{opacity:0;}
+  .sec-fold-chev{flex:none;display:inline-flex;color:var(--muted);transition:transform .26s var(--ease),color .2s;}
+  .sec-fold-chev svg{width:12px;height:12px;}
+  .sec-fold.open > .rp-sec-h .sec-fold-chev{transform:rotate(180deg);color:var(--gold-d);}
   .sec-fold-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease);}
   .sec-fold.open > .sec-fold-body{grid-template-rows:1fr;}
   .sec-fold-inner{overflow:hidden;min-height:0;}
+  .sec-fold.open > .sec-fold-body .sec-fold-inner{padding-bottom:16px;}
+  .sec-fold .sec-fold-inner > .rp-sec:first-child,.sec-fold .sec-fold-inner > :first-child{margin-top:0;}
   .mood-taohua{margin-top:11px;display:flex;gap:9px;align-items:baseline;font-size:12.5px;line-height:1.85;color:var(--ink-2);font-weight:300;}
   .mood-taohua em{flex:none;font-style:normal;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);border-radius:6px;padding:2px 9px;box-shadow:inset 0 0 0 1px var(--gold-line);}
   .np-panel-tags{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
@@ -2407,7 +2414,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=146"></script>
+  <script src="engine_bundle.js?v=147"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2463,7 +2470,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=146"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=147"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4252,7 +4259,6 @@
             '需要注意': (n.jiShen&&n.jiShen.length)? n.jiShen.map((j)=>j.caution).slice(0,2).join(' · ') : '你要留心的几点',
             '你的幸运色': (n.xiColor&&n.xiColor.name||'') + ' · 随身带一点',
           };
-          const BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
           let idx=0;
           wrap.querySelectorAll(':scope > .rp-sec').forEach((sec)=>{
             let h=sec.querySelector(':scope > .rp-sec-h'); let title='';
@@ -4263,14 +4269,8 @@
               sec.insertBefore(h, sec.firstChild); title='关于你'; SUMM[title]='几句一针见血的洞察';
             } else { return; }   // 收束金句等无头块不折叠
             const ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex) ex.remove(); // 幸运色原有色名span,去重复
-            const body=document.createElement('div'); body.className='sec-fold-body';
-            const inner=document.createElement('div'); inner.className='sec-fold-inner';
-            while(h.nextSibling) inner.appendChild(h.nextSibling);
-            body.appendChild(inner); sec.appendChild(body);
-            const bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=BAR_IN; sec.appendChild(bar);
-            sec.classList.add('sec-fold'); if(idx===0 || title==='关于你') sec.classList.add('open'); idx++;   // 「关于你」(深层辩证=最戳人的内容)默认展开,不再埋折叠里
-            const toggle=()=> sec.classList.toggle('open');
-            h.addEventListener('click', toggle); bar.addEventListener('click', toggle);
+            makeFoldCard(sec, h, SUMM[title]||'', idx===0 || title==='关于你');   // 「关于你」(深层辩证=最戳人的内容)默认展开
+            idx++;
           });
         })();
       }
@@ -4471,7 +4471,7 @@
       // 圆点位置 = 该值落在「你自己这一组的区间」里的位置(相对你自己，不与他人比);
       // 自身起伏不足 12 分时按 12 分窗映射，免得把小波动拉满。无区间时退回绝对窗兜底。
       function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
-        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
+        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
       function moEnergy(v, level, lo, hi){
         const band = level==='高'?'hi':level==='低'?'lo':'';
         let pos;
@@ -4623,14 +4623,28 @@
         var box=$('tl-year-pills'); if(!box) return;
         var curY=(R.years&&R.years.curYear)||new Date().getFullYear();
         var bigSet={}; ((R.years&&R.years.years)||[]).forEach(function(y){ if(y.big) bigSet[y.year]=1; });
-        var html='';
+        for(var k in _jdYearCache){ if(_jdYearCache[k]&&_jdYearCache[k].big) bigSet[k]=1; }   // 过去年预热后金点也能亮
+        var html='', anyBig=false;
         for(var Y=curY-8;Y<=curY+9;Y++){
+          if(bigSet[Y]) anyBig=true;
           html+='<button type="button" class="tl-pill'+(Y===_jdYearY?' on':'')+(Y===curY?' now':'')+'" data-y="'+Y+'">'+Y+(Y===curY?' · 今':'')+(bigSet[Y]?'<i class="bd"></i>':'')+'</button>';
         }
-        box.innerHTML=html;
+        var keep=(box.dataset.last===String(_jdYearY));   // 选中年没变(预热补点等重渲染):保滚动位、不再跳中
+        var sl=box.scrollLeft;
+        box.innerHTML=html; box.dataset.last=String(_jdYearY);
+        var lg=$('tl-year-lgd');
+        if(!lg){ lg=document.createElement('div'); lg.id='tl-year-lgd'; lg.className='tl-lgd'; box.parentNode.insertBefore(lg, box.nextSibling); }
+        lg.innerHTML=anyBig?'<i></i>变动大的年份':'';
         if(!box._b){ box._b=1; box.addEventListener('click', function(e){ var b=e.target.closest('.tl-pill'); if(!b) return;
           _jdYearY=+b.dataset.y; renderYearCard(); renderTLYearPills(); }); }
-        var on=box.querySelector('.tl-pill.on'); if(on&&on.scrollIntoView) try{ on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+        if(keep){ box.scrollLeft=sl; }
+        else { var on=box.querySelector('.tl-pill.on'); if(on&&on.scrollIntoView) try{ on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){} }
+        // 过去八年年卡后台预热:点开即有(曾有引擎未就绪时点开只见空白),预热完补金点
+        if(!box._warm){ box._warm=1;
+          var past=[]; for(var Y2=curY-1;Y2>=curY-8;Y2--) past.push(Y2);
+          var warm=function(){ if(!past.length){ renderTLYearPills(); return; } try{ jdYearData(past.shift()); }catch(e){} setTimeout(warm,250); };
+          setTimeout(warm,1200);
+        }
       }
       function renderTLMonth(){
         var A=R.monthsAhead; var box=$('tl-month-card'); if(!A||!A.length||!box) return;
@@ -4665,7 +4679,14 @@
         if(!_tlDay){ var n=new Date(); _tlDay={y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate()}; }
         var key=_tlDay.y+'-'+_tlDay.m;
         var mo=_tlMonthCache[key];
-        if(!mo){ try{ mo=window.RhythmEngine.buildMonth(window.APP_PERSON,{year:_tlDay.y,month:_tlDay.m}); _tlMonthCache[key]=mo; }catch(e){ box.innerHTML=''; return; } }
+        if(!mo){ try{ mo=window.RhythmEngine.buildMonth(window.APP_PERSON,{year:_tlDay.y,month:_tlDay.m}); _tlMonthCache[key]=mo; }
+          catch(e){ try{ console.error('[render] renderTLDay', e&&e.message); }catch(_){}
+            // 引擎未就绪(慢网首开/旧缓存):不留空白,稍后自动重试
+            box.innerHTML='<div class="tl-day-gz">载入中…</div>';
+            window.__tlDayRetry=(window.__tlDayRetry||0)+1;
+            if(window.__tlDayRetry<=10) setTimeout(renderTLDay,600);
+            return; } }
+        window.__tlDayRetry=0;
         var d=mo.days[_tlDay.d-1]; if(!d){ box.innerHTML=''; return; }
         var n2=new Date(); var isToday=(_tlDay.y===n2.getFullYear()&&_tlDay.m===n2.getMonth()+1&&_tlDay.d===n2.getDate());
         var wk='周'+['日','一','二','三','四','五','六'][new Date(_tlDay.y,_tlDay.m-1,_tlDay.d).getDay()];
@@ -4870,7 +4891,8 @@
         if(_jdYearCache[Y]) return _jdYearCache[Y];
         var hit=((R.years&&R.years.years)||[]).filter(function(y){return y.year===Y;})[0];
         if(hit){ _jdYearCache[Y]=hit; return hit; }
-        try{ var c=window.RhythmEngine&&window.RhythmEngine.buildYearCardFor&&window.RhythmEngine.buildYearCardFor(window.APP_PERSON, Y); if(c){ _jdYearCache[Y]=c; return c; } }catch(e){}
+        try{ var c=window.RhythmEngine&&window.RhythmEngine.buildYearCardFor&&window.RhythmEngine.buildYearCardFor(window.APP_PERSON, Y); if(c){ _jdYearCache[Y]=c; return c; } }
+        catch(e){ try{ console.error('[render] jdYearData', Y, e&&e.message); }catch(_){} }
         return null;
       }
       function renderDaYun(){
@@ -4895,7 +4917,13 @@
         var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
         if(_jdYearY==null) _jdYearY=curY;
         _jdYearY=Math.max(birthY, Math.min(birthY+99, _jdYearY));
-        var y=jdYearData(_jdYearY); if(!y){ host.innerHTML=''; return; }
+        var y=jdYearData(_jdYearY); if(!y){
+          // 引擎未就绪时不留空白(过去年曾点开只见空),稍后自动重试
+          host.innerHTML='<div class="yc"><div class="yc-sub">载入中…</div></div>';
+          window.__ycRetry=(window.__ycRetry||0)+1;
+          if(window.__ycRetry<=10) setTimeout(renderYearCard,600);
+          return; }
+        window.__ycRetry=0;
         var lvl=y.level==='高'?'hi':(y.level==='低'?'lo':'mid');
         var sub=[(y.age!=null?y.age+'岁':''), y.ganZhi, (_jdYearY===curY?'今年':'')].filter(Boolean).join(' · ');
         var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
@@ -4917,7 +4945,7 @@
           +(sub?'<div class="yc-sub">'+esc(sub)+(y.headline?' · '+esc(y.headline):'')+'</div>':'')
           +_prog
           +(y.trait?'<div class="yc-trait">'+esc(y.trait)+'</div>':'')
-          +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<b>$1 · </b>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>';}).join(''):'')
+          +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>';}).join(''):'')
           +'<div class="yc-yj">'
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
@@ -4976,24 +5004,24 @@
         chap.style.display='none'; toc.style.display='block';
         var sc=toc.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
       }
-      function buildJiedu(){ try{ renderDaYun(); renderYearCard(); renderTimeline(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){} }
+      function buildJiedu(){ try{ renderDaYun(); renderYearCard(); renderTimeline(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){ try{ console.error('[render] buildJiedu', e && e.message); }catch(_){} } }
 
-      // —— 通用章内折叠(整齐·可跳读·一眼知道每块讲什么);与本命章 foldNatalSections 同款 ——
-      var FOLD_BAR_IN='<em class="sfb-in" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></em>';
-      // 把整个容器内容包成一个折叠块(用于流年的四大块:当年/逐月/十年/三年)
-      function wrapContainerAsFold(container, title, summary, open){
-        if(!container || container.dataset.folded==='1' || !container.innerHTML.trim()) return;
-        container.dataset.folded='1';
-        var h=document.createElement('div'); h.className='rp-sec-h';
-        h.innerHTML='<i class="rp-bar"></i><b>'+title+'</b>';
+      // —— 章内子块折叠 · 卡片手风琴:头=标题+一句概括+箭头;点头开合,开一块自动收同层其余(防串行) ——
+      function makeFoldCard(sec, h, summary, open){
         var body=document.createElement('div'); body.className='sec-fold-body';
         var inner=document.createElement('div'); inner.className='sec-fold-inner';
-        while(container.firstChild) inner.appendChild(container.firstChild);
-        body.appendChild(inner); container.appendChild(h); container.appendChild(body);
-        var bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=FOLD_BAR_IN; container.appendChild(bar);
-        container.classList.add('sec-fold'); if(open) container.classList.add('open');
-        var tg=function(){ container.classList.toggle('open'); };
-        h.addEventListener('click', tg); bar.addEventListener('click', tg);
+        while(h.nextSibling) inner.appendChild(h.nextSibling);
+        body.appendChild(inner); sec.appendChild(body);
+        if(summary){ var s=document.createElement('span'); s.className='sec-fold-sum'; s.textContent=summary; h.appendChild(s); }
+        var c=document.createElement('i'); c.className='sec-fold-chev';
+        c.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+        h.appendChild(c);
+        sec.classList.add('sec-fold'); if(open) sec.classList.add('open');
+        h.addEventListener('click', function(){
+          var willOpen=!sec.classList.contains('open');
+          if(willOpen && sec.parentNode) sec.parentNode.querySelectorAll(':scope > .sec-fold.open').forEach(function(x){ if(x!==sec) x.classList.remove('open'); });
+          sec.classList.toggle('open', willOpen);
+        });
       }
       // 把容器内每个带标题 .rp-sec 各折一块(用于调养章;标题自带说明,不另加概括)
       function foldRpSecsIn(container, firstOpen){
@@ -5003,14 +5031,7 @@
           var h=sec.querySelector(':scope > .rp-sec-h'); if(!h){ return; }
           sec.dataset.folded='1';
           var ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex) ex.remove();
-          var body=document.createElement('div'); body.className='sec-fold-body';
-          var inner=document.createElement('div'); inner.className='sec-fold-inner';
-          while(h.nextSibling) inner.appendChild(h.nextSibling);
-          body.appendChild(inner); sec.appendChild(body);
-          var bar=document.createElement('div'); bar.className='sec-fold-bar'; bar.innerHTML=FOLD_BAR_IN; sec.appendChild(bar);
-          sec.classList.add('sec-fold'); if(idx===0 && firstOpen) sec.classList.add('open'); idx++;
-          var tg=function(){ sec.classList.toggle('open'); };
-          h.addEventListener('click', tg); bar.addEventListener('click', tg);
+          makeFoldCard(sec, h, '', idx===0 && firstOpen); idx++;
         });
       }
       function showBody(){
