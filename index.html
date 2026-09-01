@@ -2407,7 +2407,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=145"></script>
+  <script src="engine_bundle.js?v=146"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2463,7 +2463,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=145"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=146"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4183,13 +4183,19 @@
           + '<div class="np-panel-tx">'+esc(moodTx(a,rel))+'</div>'
           + (a.taohua?'<div class="mood-taohua"><em>亲和力</em><span>'+esc(a.taohua)+'</span></div>':'')
           + advBlock(moodAdv(a,rel));
+        // 未选状态=一次性二选(与首页「今日各方面」同存储同做法,不给通用含糊话);已选=两段切换
+        const moodWrapHtml=(a)=>{
+          const rel=getRelStatus();
+          if(rel!=='single'&&rel!=='partner')
+            return '<div class="tf-relpick"><button type="button" data-rel="single">单身</button><button type="button" data-rel="partner">有伴侣</button></div>';
+          return '<div class="rel-seg">'+[['single','单身'],['partner','有伴侣']].map((o)=>'<button type="button" data-rel="'+o[0]+'"'+(rel===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>'
+            +'<div class="mood-body">'+moodBodyHtml(a,rel)+'</div>';
+        };
         const panels=asps.map((a,i)=>{
           const head='<div class="np-panel'+(i===0?' on':'')+'" data-i="'+i+'">';
           const tags='<div class="np-panel-tags">'+aspAct('适合',a.dos,'do')+aspAct('避免',a.avoid,'no')+'</div>'+(a.note?'<div class="np-panel-note">'+esc(a.note)+'</div>':'');
           if(a.key==='mood'){
-            const rel=getRelStatus();
-            const seg='<div class="rel-seg">'+[['','通用'],['single','单身'],['partner','有伴侣']].map((o)=>'<button type="button" data-rel="'+o[0]+'"'+(rel===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>';
-            return head+seg+'<div class="mood-body">'+moodBodyHtml(a,rel)+'</div>'+tags+'</div>';
+            return head+'<div class="mood-wrap">'+moodWrapHtml(a)+'</div>'+tags+'</div>';
           }
           return head
             + ('')
@@ -4226,15 +4232,16 @@
             wrap.querySelectorAll('.np-panel').forEach((x)=>x.classList.toggle('on', x.dataset.i===i));
           });
         });
-        // 感情:单身/有伴侣切换 → 存本机 + 就地换正文/建议(不重算命盘)
-        wrap.querySelectorAll('.rel-seg button').forEach((b)=>{
-          b.addEventListener('click', ()=>{
-            const rel=b.dataset.rel; setRelStatus(rel);
-            const seg=b.closest('.rel-seg'); seg.querySelectorAll('button').forEach((x)=>x.classList.toggle('on', x.dataset.rel===rel));
-            const moodA=asps.find((a)=>a.key==='mood'); const body=b.closest('.np-panel').querySelector('.mood-body');
-            if(moodA&&body) body.innerHTML=moodBodyHtml(moodA,rel);
+        // 感情:未选=一次性二选,已选=单身/有伴侣切换 → 存本机 + 就地重绘(委托绑定,重绘后仍生效)
+        (function(){
+          const mw=wrap.querySelector('.mood-wrap'); if(!mw) return;
+          mw.addEventListener('click',(e)=>{
+            const b=e.target.closest('button[data-rel]'); if(!b) return;
+            setRelStatus(b.dataset.rel);
+            const moodA=asps.find((a)=>a.key==='mood');
+            if(moodA) mw.innerHTML=moodWrapHtml(moodA);
           });
-        });
+        })();
         // —— 章内子块折叠(整齐·可跳读·一眼知道每块讲什么):第一块默认展开,其余收起+一句概括 ——
         (function foldNatalSections(){
           const SUMM={
@@ -4676,9 +4683,9 @@
         [['事业',f.career],['钱财',f.money],['感情',{line:loveLn,tone:f.love&&f.love.tone}],['学习',f.study]].forEach(function(p){
           if(p[1]&&p[1].line) rows+='<div class="yr-sig"><b>'+p[0]+' · </b>'+esc(p[1].line)+'</div>';
         });
+        // heroLine 不进日卡:它由五域断语拼成、与下方各域行逐字重复,且翻到任何日期都硬说「今天」
         var _gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');box.innerHTML='<div class="tl-day-gz">'+esc(_gz)+(_gz?' 日 · ':'')+'能量 '+d.e+'</div>'
           +'<div class="rp-mo open"><div class="rp-mo-body" style="padding-top:4px">'
-          +(d.heroLine?'<div class="rp-mo-trait">'+esc(d.heroLine)+'</div>':'')
           +rows
           +yijiHtml(d.yi,d.huan)
           +'</div></div>';
