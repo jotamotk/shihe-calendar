@@ -817,7 +817,6 @@
   .tl-pill{flex:none;position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--ink-2);font-size:12.5px;padding:7px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit;}
   .tl-pill.on{border-color:var(--gold-d);color:var(--gold-d);font-weight:600;}
   .tl-pill.now{color:var(--ink);}
-  .tl-pill .bd{position:absolute;top:4px;right:5px;width:4px;height:4px;border-radius:50%;background:var(--gold);}
   .tl-ynav{display:flex;align-items:center;justify-content:center;gap:16px;margin:0 0 10px;}
   .tl-ynav button{background:var(--card);border:1px solid var(--line);border-radius:50%;width:28px;height:28px;color:var(--ink-2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .tl-ynav b{font-family:var(--serif);font-size:15px;color:var(--ink);letter-spacing:1px;font-weight:600;min-width:120px;text-align:center;}
@@ -839,10 +838,6 @@
   .yr-sig b{color:var(--ink);font-weight:500;}
   .yr-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);border-radius:6px;padding:1px 8px;margin-right:7px;vertical-align:1px;}
   .yr-sig-b{display:block;font-size:10px;color:var(--muted);font-style:normal;opacity:.8;margin-top:2px;letter-spacing:.3px;}
-  /* 年份条图例:金点=变动大的年份 */
-  .tl-lgd{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);letter-spacing:.5px;margin:-4px 2px 8px;}
-  .tl-lgd i{width:4px;height:4px;border-radius:50%;background:var(--gold);}
-  .tl-lgd:empty{display:none;}
   .rp-mo-trait{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.8;padding:11px 0 3px;border-top:1px solid var(--line);}
   .rp-yj-wrap{display:flex;flex-direction:column;gap:6px;margin-top:9px;}
   .rp-yj-line{font-size:11.5px;line-height:1.7;color:var(--ink-2);font-weight:300;}
@@ -2414,7 +2409,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=147"></script>
+  <script src="engine_bundle.js?v=148"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2470,7 +2465,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=147"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=148"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4622,27 +4617,23 @@
       function renderTLYearPills(){
         var box=$('tl-year-pills'); if(!box) return;
         var curY=(R.years&&R.years.curYear)||new Date().getFullYear();
-        var bigSet={}; ((R.years&&R.years.years)||[]).forEach(function(y){ if(y.big) bigSet[y.year]=1; });
-        for(var k in _jdYearCache){ if(_jdYearCache[k]&&_jdYearCache[k].big) bigSet[k]=1; }   // 过去年预热后金点也能亮
-        var html='', anyBig=false;
+        // 大年金点+图例已删(用户拍板「去掉小点点」);变动大小点开年卡自见
+        var html='';
         for(var Y=curY-8;Y<=curY+9;Y++){
-          if(bigSet[Y]) anyBig=true;
-          html+='<button type="button" class="tl-pill'+(Y===_jdYearY?' on':'')+(Y===curY?' now':'')+'" data-y="'+Y+'">'+Y+(Y===curY?' · 今':'')+(bigSet[Y]?'<i class="bd"></i>':'')+'</button>';
+          html+='<button type="button" class="tl-pill'+(Y===_jdYearY?' on':'')+(Y===curY?' now':'')+'" data-y="'+Y+'">'+Y+(Y===curY?' · 今':'')+'</button>';
         }
-        var keep=(box.dataset.last===String(_jdYearY));   // 选中年没变(预热补点等重渲染):保滚动位、不再跳中
+        var keep=(box.dataset.last===String(_jdYearY));   // 选中年没变的重渲染:保滚动位、不再跳中
         var sl=box.scrollLeft;
         box.innerHTML=html; box.dataset.last=String(_jdYearY);
-        var lg=$('tl-year-lgd');
-        if(!lg){ lg=document.createElement('div'); lg.id='tl-year-lgd'; lg.className='tl-lgd'; box.parentNode.insertBefore(lg, box.nextSibling); }
-        lg.innerHTML=anyBig?'<i></i>变动大的年份':'';
+        var lg=$('tl-year-lgd'); if(lg) lg.innerHTML='';
         if(!box._b){ box._b=1; box.addEventListener('click', function(e){ var b=e.target.closest('.tl-pill'); if(!b) return;
           _jdYearY=+b.dataset.y; renderYearCard(); renderTLYearPills(); }); }
         if(keep){ box.scrollLeft=sl; }
         else { var on=box.querySelector('.tl-pill.on'); if(on&&on.scrollIntoView) try{ on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){} }
-        // 过去八年年卡后台预热:点开即有(曾有引擎未就绪时点开只见空白),预热完补金点
+        // 过去八年年卡后台预热:点开即有(曾有引擎未就绪时点开只见空白)
         if(!box._warm){ box._warm=1;
           var past=[]; for(var Y2=curY-1;Y2>=curY-8;Y2--) past.push(Y2);
-          var warm=function(){ if(!past.length){ renderTLYearPills(); return; } try{ jdYearData(past.shift()); }catch(e){} setTimeout(warm,250); };
+          var warm=function(){ if(!past.length) return; try{ jdYearData(past.shift()); }catch(e){} setTimeout(warm,250); };
           setTimeout(warm,1200);
         }
       }
@@ -4659,7 +4650,7 @@
         var isCurYearTab=(_tlMYi===0);
         var pills=$('tl-month-pills'); var ph='';
         yObj.months.forEach(function(m){
-          ph+='<button type="button" class="tl-pill'+(m.month===_tlM?' on':'')+((isCurYearTab&&m.month===yObj.curMonth)?' now':'')+'" data-m="'+m.month+'">'+m.month+'月'+((isCurYearTab&&m.month===yObj.curMonth)?' · 本':'')+(m.level==='高'?'<i class="bd"></i>':'')+'</button>';
+          ph+='<button type="button" class="tl-pill'+(m.month===_tlM?' on':'')+((isCurYearTab&&m.month===yObj.curMonth)?' now':'')+'" data-m="'+m.month+'">'+m.month+'月'+((isCurYearTab&&m.month===yObj.curMonth)?' · 本':'')+'</button>';
         });
         pills.innerHTML=ph;
         pills.onclick=function(e){ var b=e.target.closest('.tl-pill'); if(!b) return; _tlM=+b.dataset.m; renderTLMonth(); };
