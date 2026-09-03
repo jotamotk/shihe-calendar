@@ -2409,7 +2409,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=152"></script>
+  <script src="engine_bundle.js?v=153"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2465,7 +2465,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=152"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=153"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3159,8 +3159,11 @@
           if (hol && CN_TZ) cls.push(hol.type==='off' ? 'h-off' : 'h-work');
           else if (!d.today && (dow===0 || dow===6)) cls.push('we-day');   // 普通周末(非放假/调休/今日)数字暖色弱标;放假走h-off自有色,调休班日按工作日不标
           // 休/班 角标(仅国务院法定节假日调休):放假日标「休」、调休补班标「班」;普通周末不标(只由列头/字色区分),这是中华/系统日历统一惯例
-          // 班/休角标已全域取消(2026-09用户拍板:海外上线,调休标记不标;节日名保留=文化标注)
+          // 海外弱化:设备时区非中国大陆时不标班/休(中国调休对海外无意义);中国时区照常显示。
+          // 选中日卡片的「调休上班」说明行已删(用户拍板),角标保留。
           let restBadge='';
+          if (CN_TZ && hol && hol.type==='work') restBadge='<span class="hbadge b-work">班</span>';
+          else if (CN_TZ && hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
           // 日期下方文字优先级:节气 > 节假日名 > 民俗节日 > 农历(让重点信息突出，不显杂乱)
           let sub, subCls='ln';
           // 日期下方文字:节气 > 节假日 > 传统节日(festOf) > 农历。不在月历上把吉日/神诞挑出来标注(那属"择日",归点开的今日卡/老黄历/近期吉日,别泼满日历)。
