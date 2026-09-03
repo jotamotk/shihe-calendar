@@ -2391,6 +2391,8 @@
       </div>
       <div class="mine-list">
         <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-go">›</span></a>
+        <!-- 感情状态:单身/有伴侣在此改(用户拍板:日历/命书面板只按首次选的出,修改入口只在这) -->
+        <div class="mine-it" id="mine-rel"><svg class="mine-ic"><use href="#i-mark"></use></svg><span class="mine-it-t">感情状态</span><span class="rel-seg rel-seg-sm" id="mine-rel-seg"></span></div>
         <button class="mine-it" type="button" id="mine-life"><svg class="mine-ic"><use href="#i-rhythm"></use></svg><span class="mine-it-t">一生能量</span><span class="mine-go">›</span></button>
         <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日分享</span><span class="mine-go">›</span></button>
         <!-- 每日提醒:仅原生壳+已录生辰显示(Web/示例态隐藏;本地通知,零上传) -->
@@ -2412,7 +2414,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=150"></script>
+  <script src="engine_bundle.js?v=151"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2468,7 +2470,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=150"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=151"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2785,19 +2787,10 @@
         if(_ftSel==='career' && f.chance && f.chance.tone!=='平' && f.chance.line && f.chance.line!==it.line){
           extra='<div class="tf-body-sub"><span class="tf-body-sublab">机会</span>'+esc(f.chance.line)+'</div>';
         }
-        // 感情:标出当前状态并可切换(选完曾不可见不可改,看着像没分单身/有伴侣)
-        var relSeg='';
-        if(_ftSel==='love'){
-          var _r2=''; try{ _r2=localStorage.getItem(REL_KEY)||''; }catch(e){}
-          relSeg='<span class="rel-seg rel-seg-sm">'+[['single','单身'],['partner','有伴侣']].map(function(o){return '<button type="button" data-rel="'+o[0]+'"'+(_r2===o[0]?' class="on"':'')+'>'+o[1]+'</button>';}).join('')+'</span>';
-        }
+        // 感情按首次选的状态出断语(用户拍板:面板不放开关,改状态去「我的·感情状态」)
         $('w-fortune-body').innerHTML=
-          '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span>'+relSeg+'</div>'
+          '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
           +'<div class="tf-body-line">'+esc(_ftSel==='love'?loveLineOf(it):it.line)+'</div>'+extra;
-        var _rs=$('w-fortune-body').querySelector('.rel-seg');
-        if(_rs) _rs.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; e.stopPropagation();
-          try{ localStorage.setItem(REL_KEY,b.dataset.rel); }catch(err){}
-          renderFortune(d); });
       }
 
       // —— 老黄历(选中日 · 传统历法速查)——
@@ -4198,13 +4191,12 @@
           + '<div class="np-panel-tx">'+esc(moodTx(a,rel))+'</div>'
           + (a.taohua?'<div class="mood-taohua"><em>亲和力</em><span>'+esc(a.taohua)+'</span></div>':'')
           + advBlock(moodAdv(a,rel));
-        // 未选状态=一次性二选(与首页「今日各方面」同存储同做法,不给通用含糊话);已选=两段切换
+        // 未选状态=一次性二选(与首页同存储,不给通用含糊话);已选=直接出对应正文,改状态去「我的·感情状态」(用户拍板:面板里不放开关)
         const moodWrapHtml=(a)=>{
           const rel=getRelStatus();
           if(rel!=='single'&&rel!=='partner')
             return '<div class="tf-relpick"><button type="button" data-rel="single">单身</button><button type="button" data-rel="partner">有伴侣</button></div>';
-          return '<div class="rel-seg">'+[['single','单身'],['partner','有伴侣']].map((o)=>'<button type="button" data-rel="'+o[0]+'"'+(rel===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>'
-            +'<div class="mood-body">'+moodBodyHtml(a,rel)+'</div>';
+          return '<div class="mood-body">'+moodBodyHtml(a,rel)+'</div>';
         };
         const panels=asps.map((a,i)=>{
           const head='<div class="np-panel'+(i===0?' on':'')+'" data-i="'+i+'">';
@@ -4479,7 +4471,8 @@
       // 圆点位置 = 该值落在「你自己这一组的区间」里的位置(相对你自己，不与他人比);
       // 自身起伏不足 12 分时按 12 分窗映射，免得把小波动拉满。无区间时退回绝对窗兜底。
       function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
-        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>'; }).join(''); }
+        // 灰色干支依据(basis)不再渲染:用户2026-09判「废话」删除(引擎仍产出,勿恢复UI)
+        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+'</div>'; }).join(''); }
       function moEnergy(v, level, lo, hi){
         const band = level==='高'?'hi':level==='低'?'lo':'';
         let pos;
@@ -4928,8 +4921,9 @@
           if(window.__ycRetry<=10) setTimeout(renderYearCard,600);
           return; }
         window.__ycRetry=0;
-        var lvl=y.level==='高'?'hi':(y.level==='低'?'lo':'mid');
-        var sub=[(y.age!=null?y.age+'岁':''), y.ganZhi, (_jdYearY===curY?'今年':'')].filter(Boolean).join(' · ');
+        // 用户2026-09拍板砍掉的层(勿恢复):岁数/干支/年型名行(yc-sub)、年型定调段(yc-trait)、
+        // 灰色干支依据(yr-sig-b)、过去年「说法对上了吗」对账钩子(对不上没有任何后续=死胡同)。
+        // 年卡=信号+今年要做/要注意。
         var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
         var doL=li(y.yi), watchL=li(y.ji);
         var _prog='';
@@ -4946,30 +4940,25 @@
           +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
           +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
-          +(sub?'<div class="yc-sub">'+esc(sub)+(y.headline?' · '+esc(y.headline):'')+'</div>':'')
           +_prog
-          +(y.trait?'<div class="yc-trait">'+esc(y.trait)+'</div>':'')
-          +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+(g.basis?'<i class="yr-sig-b">'+esc(g.basis)+'</i>':'')+'</div>';}).join(''):'')
+          +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+'</div>';}).join(''):'')
           +'<div class="yc-yj">'
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
           +'</div>'
-          +((_jdYearY<curY && !window.__IS_DEMO)?(function(){ var v=lnVerifyGet()[_jdYearY];
-            return '<div class="yc-verify"><span>这年的说法对上了吗</span>'
-              +'<button type="button" data-v="y"'+(v==='y'?' class="on"':'')+'>对</button>'
-              +'<button type="button" data-v="n"'+(v==='n'?' class="on"':'')+'>不对</button></div>'; })():'')
           +'</div>';
         var go=function(d){ _jdYearY+=d; renderYearCard(); try{ renderTLYearPills(); }catch(e){} };
         var p=$('jd-yr-prev'), nx=$('jd-yr-next');
         if(p) p.onclick=function(){ go(-1); };
         if(nx) nx.onclick=function(){ go(1); };
-        var vf=host.querySelector('.yc-verify');
-        if(vf) vf.addEventListener('click', function(e){ var b=e.target.closest('button'); if(!b) return;
-          lnVerifySet(_jdYearY, b.dataset.v); renderYearCard(); });
-        var card=host.querySelector('.yc'), x0=null;
+        var card=host.querySelector('.yc'), x0=null, y0=null;
         if(card){
-          card.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
-          card.addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)<45)return; go(dx<0?1:-1); },{passive:true});
+          card.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; y0=e.touches[0].clientY; },{passive:true});
+          card.addEventListener('touchend',function(e){ if(x0==null)return;
+            var dx=e.changedTouches[0].clientX-x0, dy=Math.abs(e.changedTouches[0].clientY-y0); x0=null;
+            // 上下滚动曾误触翻年:横向位移必须明显大于纵向才算翻页手势
+            if(Math.abs(dx)<45 || Math.abs(dx)<dy*1.5) return;
+            go(dx<0?1:-1); },{passive:true});
         }
       }
       function jdToc(){
@@ -5483,6 +5472,17 @@
           } else {
             if(nm) nm.textContent='未设置生辰';
             if(bs) bs.textContent='填写后即可查看';
+          }
+          // 感情状态行:未选也可在这首选;选了显示当前态,点即切换(日历/命书面板不放开关)
+          var rs=document.getElementById('mine-rel-seg');
+          if(rs){
+            var _rel=''; try{ _rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){}
+            rs.innerHTML=[['single','单身'],['partner','有伴侣']].map(function(o){return '<button type="button" data-rel="'+o[0]+'"'+(_rel===o[0]?' class="on"':'')+'>'+o[1]+'</button>';}).join('');
+            if(!rs._b){ rs._b=1; rs.addEventListener('click', function(e){ var b=e.target.closest('button'); if(!b) return;
+              try{ localStorage.setItem('shihe_relstatus', b.dataset.rel); }catch(err){}
+              rs.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+              try{ if(typeof SHARE_DAY!=='undefined'&&SHARE_DAY&&typeof renderFortune==='function') renderFortune(SHARE_DAY); }catch(err){}
+            }); }
           }
           mov.classList.add('on');
           window.shihe&&window.shihe.track&&window.shihe.track('mine_open',{});
