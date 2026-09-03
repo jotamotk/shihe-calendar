@@ -268,7 +268,7 @@
   .share-btn{display:block;width:100%;margin:14px 0 4px;padding:13px;border:1px solid var(--gold-line);background:var(--gold-soft);border-radius:14px;font-family:inherit;font-size:12.5px;color:var(--gold-d);font-weight:500;letter-spacing:1px;cursor:pointer;transition:all .25s var(--ease);}
   .share-btn:hover{background:var(--sage-soft);border-color:var(--sage);}
   .cal-fine{text-align:center;font-size:10px;color:var(--muted);font-weight:300;letter-spacing:.5px;padding:16px 0 6px;}
-  .share-ov{position:absolute;inset:0;z-index:30;background:rgba(6,6,7,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s var(--ease);}
+  .share-ov{position:fixed;inset:0;max-width:430px;margin:0 auto;z-index:130;background:rgba(6,6,7,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s var(--ease);}
   .share-ov.on{display:flex;opacity:1;}
   /* 主题切换胶囊 */
   .share-themes{display:flex;gap:7px;margin-bottom:15px;}
@@ -304,6 +304,14 @@
   .xp-tip .xp-k{flex:none;font-size:12.5px;color:#9A6F2E;letter-spacing:3px;white-space:nowrap;}
   .xp-tip .xp-v{font-size:14px;color:#7C6E52;line-height:1.5;}
   .xp-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
+  /* 流年/流月分享卡:大年份/月份 + 信号行,沿用宣纸卡色系 */
+  .xp-year{display:flex;align-items:baseline;justify-content:center;gap:7px;margin:16px 0 2px;font-family:inherit;}
+  .xp-year b{font-size:54px;line-height:1;color:#9A6F2E;font-weight:600;letter-spacing:2px;}
+  .xp-year span{font-size:14px;color:#7C6E52;letter-spacing:4px;}
+  .xp-lead{text-align:center;font-size:13.5px;color:#5C503A;line-height:1.9;margin:8px 6px 0;}
+  /* 贰卷卡底「做一张卡片」入口(与首页 t-share 同语式) */
+  .tl-sharerow{display:block;width:100%;background:none;border:none;color:var(--gold-d);opacity:.75;font-family:inherit;font-size:12px;letter-spacing:1px;text-align:center;padding:12px 0 4px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .tl-sharerow:active{opacity:.5;}
   .xp-xi{font-size:12px;color:#7C6E52;letter-spacing:1px;display:flex;align-items:center;gap:7px;}
   .xp-dot{width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 1px rgba(154,111,46,.4);}
   .sc-tA .sc-hd{display:flex;align-items:center;justify-content:space-between;}
@@ -2409,7 +2417,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=153"></script>
+  <script src="engine_bundle.js?v=154"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2465,7 +2473,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=153"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=154"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3371,7 +3379,46 @@
           +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</span></div>'
           +'</div></div>';
       }
+      // 流年/流月卡(贰卷入口):沿用今日笺宣纸质感,内容=大年份/月份+信号行(chip+断语)
+      let MODE='day', PAYLOAD=null;
+      function sigTips(sigs, n, defLab){
+        return (sigs||[]).slice(0,n).map(function(g){
+          var m=(g.text||'').match(/^【(.+?)】([\s\S]*)$/);
+          var lab=m?m[1]:(defLab||'流年'), tx=(m?m[2]:g.text||'').split('；')[0].split('。')[0]+'。';
+          return '<div class="xp-tip"><span class="xp-k">'+esc(lab)+'</span><span class="xp-v">'+esc(tx)+'</span></div>';
+        }).join('');
+      }
+      function buildYearShare(o){
+        var tips=sigTips(o.sigs,3);
+        var doLine=(o.yi&&o.yi.length)?esc(o.yi[0]):'';
+        return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+esc(o.gz||'')+(o.gz?'年':'')+'</div></div>'
+          +'<div class="xp-hair"></div>'
+          +'<div class="xp-year"><b>'+o.year+'</b><span>年</span></div>'
+          +(tips?'<div class="xp-tips">'+tips+'</div>':'')
+          +'<div class="xp-foot"><span class="xp-xi">'+(doLine?'今年要做 · '+doLine:'顺天而养 · 应时而行')+'</span></div>'
+          +'</div></div>';
+      }
+      function buildMonthShare(o){
+        var tips=sigTips(o.sigs,2,'流月');
+        return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+o.year+'年</div></div>'
+          +'<div class="xp-hair"></div>'
+          +'<div class="xp-year"><b>'+o.m+'</b><span>月'+(o.headline?' · '+esc(o.headline):'')+'</span></div>'
+          +(o.trait?'<div class="xp-lead">'+esc(o.trait)+'</div>':'')
+          +(tips?'<div class="xp-tips">'+tips+'</div>':'')
+          +'<div class="xp-foot"><span class="xp-xi">顺天而养 · 应时而行</span></div>'
+          +'</div></div>';
+      }
       function render(){
+        var th=$('share-themes');
+        if(MODE==='year'||MODE==='month'){
+          card.className='share-card sc-tA';
+          card.innerHTML=MODE==='year'?buildYearShare(PAYLOAD):buildMonthShare(PAYLOAD);
+          if(th) th.style.display='none';
+          return;
+        }
+        if(th) th.style.display='';
         card.className='share-card sc-t'+THEME;
         card.innerHTML=build(SHARE_DAY);
         document.querySelectorAll('#share-themes button').forEach((b)=>b.classList.toggle('on', b.dataset.th===THEME));
@@ -3379,7 +3426,13 @@
       document.querySelectorAll('#share-themes button').forEach((b)=>{
         b.addEventListener('click', ()=>{ THEME=b.dataset.th; try{ localStorage.setItem('shihe_share_theme',THEME); }catch(e){} render(); });
       });
-      $('t-share').addEventListener('click', ()=>{ render(); ov.classList.add('on'); window.shihe&&window.shihe.track&&window.shihe.track('share_open',{}); });
+      // 分享浮层提升到 body:贰卷(其他屏)也能打开;原挂在首页屏内,切屏后 display:none 连坐
+      try{ document.body.appendChild(ov); }catch(e){}
+      window.__shiheShareTL=function(mode,payload){
+        MODE=mode; PAYLOAD=payload; render(); ov.classList.add('on');
+        window.shihe&&window.shihe.track&&window.shihe.track('share_open',{mode:mode});
+      };
+      $('t-share').addEventListener('click', ()=>{ MODE='day'; PAYLOAD=null; render(); ov.classList.add('on'); window.shihe&&window.shihe.track&&window.shihe.track('share_open',{}); });
       $('share-close').addEventListener('click', ()=> ov.classList.remove('on'));
       ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('on'); });
       (function(){
@@ -4601,7 +4654,7 @@
       }
 
       // ================= 岁运时间线:年/月/日 三档(2026-08-31 用户拍板) =================
-      var _tlTab='year', _tlMYi=0, _tlM=null, _tlDay=null, _tlMonthCache={};
+      var _tlTab='year', _tlMY=null, _tlDay=null, _tlMonthCache={};
       function tlInit(){
         var tabs=$('tl-tabs'); if(!tabs||tabs._b) return; tabs._b=1;
         tabs.addEventListener('click', function(e){
@@ -4621,30 +4674,41 @@
         var warm=function(){ if(!past.length) return; try{ jdYearData(past.shift()); }catch(e){} setTimeout(warm,250); };
         setTimeout(warm,1200);
       }
-      // 月档:与日档同款单一导航 ‹ YYYY年M月 ›(用户拍板:月份pill串删除),范围=本月起至 monthsAhead 末月
+      // 月档:与日档同款单一导航 ‹ YYYY年M月 ›;可翻过去月(过去年整年经 buildMonthsFor 本机现算并缓存)
+      var _tlMonthsFor={};   // year -> {months, curMonth}(过去/未来越界年)
+      function tlMonthsOf(Y){
+        var A=R.monthsAhead||[];
+        for(var i=0;i<A.length;i++) if(A[i].year===Y) return A[i];
+        if(_tlMonthsFor[Y]) return _tlMonthsFor[Y];
+        try{ var ym=window.RhythmEngine.buildMonthsFor(window.APP_PERSON, Y); _tlMonthsFor[Y]={year:Y, months:ym.months, curMonth:0}; return _tlMonthsFor[Y]; }
+        catch(e){ try{ console.error('[render] tlMonthsOf', Y, e&&e.message); }catch(_){} return null; }
+      }
       function renderTLMonth(){
         var A=R.monthsAhead; var box=$('tl-month-card'); if(!A||!A.length||!box) return;
-        if(_tlMYi>=A.length) _tlMYi=0;
-        var yObj=A[_tlMYi];
-        if(_tlM==null) _tlM=(yObj.curMonth>0?yObj.curMonth:1);
-        // 可视月须在该年数据范围内(首年从 curMonth 起)
-        var loM=(_tlMYi===0&&yObj.curMonth>0)?yObj.curMonth:1;
-        if(_tlM<loM) _tlM=loM; if(_tlM>12) _tlM=12;
-        var atStart=(_tlMYi<=0&&_tlM<=loM), atEnd=(_tlMYi>=A.length-1&&_tlM>=12);
-        var isCurMonth=(_tlMYi===0&&_tlM===yObj.curMonth);
+        var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
+        if(!_tlMY) _tlMY={y:curY,m:curM};
+        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
+        var maxY=A[A.length-1].year;
+        if(_tlMY.y<birthY) _tlMY={y:birthY,m:1};
+        if(_tlMY.y>maxY) _tlMY={y:maxY,m:12};
+        var isCurMonth=(_tlMY.y===curY&&_tlMY.m===curM);
+        var atStart=(_tlMY.y<=birthY&&_tlMY.m<=1), atEnd=(_tlMY.y>=maxY&&_tlMY.m>=12);
         var nav=$('tl-month-ynav');
-        nav.innerHTML='<button type="button" id="tl-mo-prev" '+(atStart?'disabled style="opacity:.3"':'')+'>‹</button><b>'+yObj.year+'年'+_tlM+'月'+(isCurMonth?' · 本月':'')+'</b><button type="button" id="tl-mo-next" '+(atEnd?'disabled style="opacity:.3"':'')+'>›</button>';
+        nav.innerHTML='<button type="button" id="tl-mo-prev" '+(atStart?'disabled style="opacity:.3"':'')+'>‹</button><b>'+_tlMY.y+'年'+_tlMY.m+'月'+(isCurMonth?' · 本月':'')+'</b><button type="button" id="tl-mo-next" '+(atEnd?'disabled style="opacity:.3"':'')+'>›</button>'
+          +(!isCurMonth?'<button type="button" class="tl-today" id="tl-mo-today">回本月</button>':'');
         var shiftM=function(dd){
-          var m2=_tlM+dd, yi=_tlMYi;
-          if(m2<1){ if(yi<=0) return; yi--; m2=12; }
-          if(m2>12){ if(yi>=A.length-1) return; yi++; m2=1; }
-          if(yi===0){ var lo2=(A[0].curMonth>0?A[0].curMonth:1); if(m2<lo2) return; }
-          _tlMYi=yi; _tlM=m2; renderTLMonth();
+          var y2=_tlMY.y, m2=_tlMY.m+dd;
+          if(m2<1){ y2--; m2=12; } if(m2>12){ y2++; m2=1; }
+          if(y2<birthY||y2>maxY) return;
+          _tlMY={y:y2,m:m2}; renderTLMonth();
         };
         var pv=$('tl-mo-prev'), nx=$('tl-mo-next');
         if(pv) pv.onclick=function(){ shiftM(-1); };
         if(nx) nx.onclick=function(){ shiftM(1); };
-        var m=yObj.months.filter(function(x){return x.month===_tlM;})[0]||yObj.months[0];
+        var tb=$('tl-mo-today'); if(tb) tb.onclick=function(){ _tlMY={y:curY,m:curM}; renderTLMonth(); };
+        var yObj=tlMonthsOf(_tlMY.y);
+        if(!yObj||!yObj.months||!yObj.months.length){ box.innerHTML='<div class="tl-day-gz">载入中…</div>'; return; }
+        var m=yObj.months.filter(function(x){return x.month===_tlMY.m;})[0]||yObj.months[0];
         var _av=yObj.months.map(function(x){return x.avg;}), lo=Math.min.apply(null,_av), hi=Math.max.apply(null,_av);
         box.innerHTML='<div class="rp-mo open"><div class="rp-mo-top">'
           +'<div class="rp-mo-m"><b>'+m.month+'</b><span>月</span>'+(m.headline?'<span class="rp-mo-hl">'+esc(m.headline)+'</span>':'')+'</div>'
@@ -4653,7 +4717,11 @@
           +(m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
           + yrSigs(m.signals)
           + yijiHtml(m.yi,m.ji)
-          +'</div></div>';
+          +'</div></div>'
+          +'<button type="button" class="tl-sharerow" id="tl-mo-share">为这个月做一张卡片 →</button>';
+        var sb=$('tl-mo-share'); if(sb) sb.onclick=function(){
+          if(window.__shiheShareTL) window.__shiheShareTL('month', { year:_tlMY.y, m:m.month, headline:m.headline, trait:m.trait, sigs:m.signals||[] });
+        };
       }
       function renderTLDay(){
         var box=$('tl-day-card'); if(!box) return;
@@ -4913,7 +4981,11 @@
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
           +'</div>'
-          +'</div>';
+          +'</div>'
+          +'<button type="button" class="tl-sharerow" id="yc-share">为这一年做一张卡片 →</button>';
+        var ysb=$('yc-share'); if(ysb) ysb.onclick=function(){
+          if(window.__shiheShareTL) window.__shiheShareTL('year', { year:_jdYearY, gz:y.ganZhi||'', sigs:y.signals||[], yi:y.yi||[] });
+        };
         var go=function(d){ _jdYearY+=d; renderYearCard(); };
         var p=$('jd-yr-prev'), nx=$('jd-yr-next');
         if(p) p.onclick=function(){ go(-1); };

@@ -16063,7 +16063,7 @@ var RhythmEngine = (() => {
       var { daYunCard } = require_liunian2();
       var { folkOf, upcomingDeities } = require_folk();
       var { seasonView } = require_content();
-      var { buildReport, heroPersonaOf, heroLine, buildYearCard } = require_report();
+      var { buildReport, heroPersonaOf, heroLine, buildYearCard, buildYearMonths } = require_report();
       var { Solar } = require_lunar();
       var WEEK = ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"];
       function fill(e) {
@@ -16360,14 +16360,21 @@ var RhythmEngine = (() => {
         const y = Math.max(person.year, Math.min(person.year + 99, Y));
         return buildYearCard(mj, chart, y);
       }
-      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor };
+      function buildMonthsFor(person, Y) {
+        const chart = paipan(person);
+        const mj = analyze(chart);
+        const y = Math.max(person.year, Math.min(person.year + 99, Y));
+        const yr = liunian(mj, chart, y);
+        return buildYearMonths(mj, chart, y, 1, yr.months.map((m) => m.avg));
+      }
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor };
     }
   });
 
   // engine/browser.js
   var require_browser = __commonJS({
     "engine/browser.js"(exports, module) {
-      var { buildApp, buildMonth, buildYear, buildYearCardFor } = require_buildApp();
+      var { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor } = require_buildApp();
       var { folkOf } = require_folk();
       var { paipan, trueSolarCorrection } = require_paipan();
       function gongJiOf(y, m, d) {
@@ -16421,7 +16428,7 @@ var RhythmEngine = (() => {
           return 30;
         }
       }
-      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
     }
   });
   return require_browser();
