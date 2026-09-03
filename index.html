@@ -201,8 +201,6 @@
   .px.d-mk::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold-d);box-shadow:0 0 6px -1px var(--gold-d);z-index:1;}
   /* 已过去的日子:保持清晰、不变暗(与未来日一致),只靠「今日」高亮区分 */
   /* 今天:柔金底，数字描金(替代生硬金边，更简约高级) */
-  .px.en-hi::before{content:"";position:absolute;inset:1px;border-radius:12px;z-index:0;pointer-events:none;background:radial-gradient(62% 50% at 50% 42%,rgba(214,186,128,.28),transparent 72%);}
-  .px.en-hi b{color:var(--gold-d);}   /* 高能量日数字点亮金色,和光晕一起"一眼可感" */
   .px.today{background:var(--gold-soft);}
   .px.today b{color:var(--gold-d);font-weight:500;}
   .px.sel{background:var(--card-2);box-shadow:inset 0 0 0 1px var(--gold-line);z-index:2;}
@@ -2357,13 +2355,10 @@
               <button type="button" data-t="day">日</button>
             </div>
             <div id="tl-year-pane">
-              <div id="jd-dayun"></div>
-              <div class="tl-pills" id="tl-year-pills"></div>
               <div id="jd-year"></div>
             </div>
             <div id="tl-month-pane" style="display:none">
               <div class="tl-ynav" id="tl-month-ynav"></div>
-              <div class="tl-pills" id="tl-month-pills"></div>
               <div id="tl-month-card"></div>
             </div>
             <div id="tl-day-pane" style="display:none">
@@ -2414,7 +2409,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=151"></script>
+  <script src="engine_bundle.js?v=152"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2470,7 +2465,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=151"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=152"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3019,7 +3014,6 @@
         if (hol && hol.name){ fest.textContent=hol.name; fest.style.display=''; fest.className='w-festival fest-folk'; }
         else if (mem){ fest.textContent=mem.full+(mem.anniv>0?(' · '+mem.anniv+'周年'):''); fest.style.display=''; fest.className='w-festival fest-folk'; }
         else if (fstToday){ fest.textContent=fstToday; fest.style.display=''; fest.className='w-festival fest-folk'; }
-        else if (hol && hol.type==='work'){ fest.textContent='调休上班'; fest.style.display=''; fest.className='w-festival fest-work'; }
         else { fest.style.display='none'; }
         // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)。整体能量值存 dataset,供「按住浮出 0-100」读取
         if($('w-orb')){ $('w-orb').innerHTML = energyOrb(d.e); $('w-orb').dataset.e = d.e; bindOrbPeek(); }
@@ -3155,7 +3149,6 @@
         const jqMap = jieqiDays(m.year, m.month);   // {日: 节气名}
         // 月历能量层:标本月能量前~20%的日子(你这个月状态最好的几天)。能量是人×月相对值,故用本月分位不用绝对阈值
         const _es = m.days.map((x)=>x.e).filter((v)=>typeof v==='number').sort((a,b)=>a-b);
-        const _enHiBar = _es.length ? Math.max(_es[_es.length-1]-5, _es[Math.floor(_es.length/2)]+6) : 999;  // 距本月峰值5分内 且 高于中位+6
         for (let i=0;i<m.firstDow;i++) html += '<div class="pad"></div>';
         m.days.forEach((d)=>{
           const hol = holiday(m.year, m.month, d.g);
@@ -3166,10 +3159,8 @@
           if (hol && CN_TZ) cls.push(hol.type==='off' ? 'h-off' : 'h-work');
           else if (!d.today && (dow===0 || dow===6)) cls.push('we-day');   // 普通周末(非放假/调休/今日)数字暖色弱标;放假走h-off自有色,调休班日按工作日不标
           // 休/班 角标(仅国务院法定节假日调休):放假日标「休」、调休补班标「班」;普通周末不标(只由列头/字色区分),这是中华/系统日历统一惯例
-          // 海外弱化:设备时区非中国大陆时不标班/休(中国调休对海外生活无意义);节日名保留(文化标注)
+          // 班/休角标已全域取消(2026-09用户拍板:海外上线,调休标记不标;节日名保留=文化标注)
           let restBadge='';
-          if (CN_TZ && hol && hol.type==='work') restBadge='<span class="hbadge b-work">班</span>';
-          else if (CN_TZ && hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
           // 日期下方文字优先级:节气 > 节假日名 > 民俗节日 > 农历(让重点信息突出，不显杂乱)
           let sub, subCls='ln';
           // 日期下方文字:节气 > 节假日 > 传统节日(festOf) > 农历。不在月历上把吉日/神诞挑出来标注(那属"择日",归点开的今日卡/老黄历/近期吉日,别泼满日历)。
@@ -3181,7 +3172,6 @@
           const mks = MARKS.forDate(m.year, m.month, d.g);
           // 民俗吉日不在月历标金(按用户意愿不把吉日泼满日历;金点只留给「重点日」d-mk);原 d-fk 有类无样式,已去
           if (mks.length) cls.push('d-mk');
-          if (typeof d.e==='number' && d.e>=_enHiBar) cls.push('en-hi');   // 月历能量层:本月前~20%的高能量日一层极淡金晕(不泼满;核心卖点在主界面露一眼)
           const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
           html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
                   restBadge+
@@ -4269,7 +4259,7 @@
               sec.insertBefore(h, sec.firstChild); title='关于你'; SUMM[title]='几句一针见血的洞察';
             } else { return; }   // 收束金句等无头块不折叠
             const ex=h.querySelector(':scope > span:not(.sec-fold-sum):not(.sec-fold-chev)'); if(ex) ex.remove(); // 幸运色原有色名span,去重复
-            makeFoldCard(sec, h, SUMM[title]||'', idx===0 || title==='关于你');   // 「关于你」(深层辩证=最戳人的内容)默认展开
+            makeFoldCard(sec, h, SUMM[title]||'', false);   // 默认全收起(用户拍板:打开时不预展开任何块)
             idx++;
           });
         })();
@@ -4620,46 +4610,37 @@
           if(_tlTab==='day') renderTLDay();
         });
       }
-      function renderTLYearPills(){
-        var box=$('tl-year-pills'); if(!box) return;
+      // 年份pill条已删(用户拍板:那一串年份不需要,左右翻就够);过去年卡后台预热保留,翻到即有
+      function warmPastYears(){
+        if(window.__tlWarmed) return; window.__tlWarmed=1;
         var curY=(R.years&&R.years.curYear)||new Date().getFullYear();
-        // 大年金点+图例已删(用户拍板「去掉小点点」);变动大小点开年卡自见
-        var html='';
-        for(var Y=curY-8;Y<=curY+9;Y++){
-          html+='<button type="button" class="tl-pill'+(Y===_jdYearY?' on':'')+(Y===curY?' now':'')+'" data-y="'+Y+'">'+Y+(Y===curY?' · 今':'')+'</button>';
-        }
-        var keep=(box.dataset.last===String(_jdYearY));   // 选中年没变的重渲染:保滚动位、不再跳中
-        var sl=box.scrollLeft;
-        box.innerHTML=html; box.dataset.last=String(_jdYearY);
-        var lg=$('tl-year-lgd'); if(lg) lg.innerHTML='';
-        if(!box._b){ box._b=1; box.addEventListener('click', function(e){ var b=e.target.closest('.tl-pill'); if(!b) return;
-          _jdYearY=+b.dataset.y; renderYearCard(); renderTLYearPills(); }); }
-        if(keep){ box.scrollLeft=sl; }
-        else { var on=box.querySelector('.tl-pill.on'); if(on&&on.scrollIntoView) try{ on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){} }
-        // 过去八年年卡后台预热:点开即有(曾有引擎未就绪时点开只见空白)
-        if(!box._warm){ box._warm=1;
-          var past=[]; for(var Y2=curY-1;Y2>=curY-8;Y2--) past.push(Y2);
-          var warm=function(){ if(!past.length) return; try{ jdYearData(past.shift()); }catch(e){} setTimeout(warm,250); };
-          setTimeout(warm,1200);
-        }
+        var past=[]; for(var Y2=curY-1;Y2>=curY-8;Y2--) past.push(Y2);
+        var warm=function(){ if(!past.length) return; try{ jdYearData(past.shift()); }catch(e){} setTimeout(warm,250); };
+        setTimeout(warm,1200);
       }
+      // 月档:与日档同款单一导航 ‹ YYYY年M月 ›(用户拍板:月份pill串删除),范围=本月起至 monthsAhead 末月
       function renderTLMonth(){
         var A=R.monthsAhead; var box=$('tl-month-card'); if(!A||!A.length||!box) return;
         if(_tlMYi>=A.length) _tlMYi=0;
         var yObj=A[_tlMYi];
         if(_tlM==null) _tlM=(yObj.curMonth>0?yObj.curMonth:1);
+        // 可视月须在该年数据范围内(首年从 curMonth 起)
+        var loM=(_tlMYi===0&&yObj.curMonth>0)?yObj.curMonth:1;
+        if(_tlM<loM) _tlM=loM; if(_tlM>12) _tlM=12;
+        var atStart=(_tlMYi<=0&&_tlM<=loM), atEnd=(_tlMYi>=A.length-1&&_tlM>=12);
+        var isCurMonth=(_tlMYi===0&&_tlM===yObj.curMonth);
         var nav=$('tl-month-ynav');
-        nav.innerHTML='<button type="button" id="tl-my-prev" '+(_tlMYi<=0?'disabled style="opacity:.3"':'')+'>‹</button><b>'+yObj.year+' 年</b><button type="button" id="tl-my-next" '+(_tlMYi>=A.length-1?'disabled style="opacity:.3"':'')+'>›</button>';
-        var pv=$('tl-my-prev'), nx=$('tl-my-next');
-        if(pv) pv.onclick=function(){ if(_tlMYi>0){ _tlMYi--; renderTLMonth(); } };
-        if(nx) nx.onclick=function(){ if(_tlMYi<A.length-1){ _tlMYi++; renderTLMonth(); } };
-        var isCurYearTab=(_tlMYi===0);
-        var pills=$('tl-month-pills'); var ph='';
-        yObj.months.forEach(function(m){
-          ph+='<button type="button" class="tl-pill'+(m.month===_tlM?' on':'')+((isCurYearTab&&m.month===yObj.curMonth)?' now':'')+'" data-m="'+m.month+'">'+m.month+'月'+((isCurYearTab&&m.month===yObj.curMonth)?' · 本':'')+'</button>';
-        });
-        pills.innerHTML=ph;
-        pills.onclick=function(e){ var b=e.target.closest('.tl-pill'); if(!b) return; _tlM=+b.dataset.m; renderTLMonth(); };
+        nav.innerHTML='<button type="button" id="tl-mo-prev" '+(atStart?'disabled style="opacity:.3"':'')+'>‹</button><b>'+yObj.year+'年'+_tlM+'月'+(isCurMonth?' · 本月':'')+'</b><button type="button" id="tl-mo-next" '+(atEnd?'disabled style="opacity:.3"':'')+'>›</button>';
+        var shiftM=function(dd){
+          var m2=_tlM+dd, yi=_tlMYi;
+          if(m2<1){ if(yi<=0) return; yi--; m2=12; }
+          if(m2>12){ if(yi>=A.length-1) return; yi++; m2=1; }
+          if(yi===0){ var lo2=(A[0].curMonth>0?A[0].curMonth:1); if(m2<lo2) return; }
+          _tlMYi=yi; _tlM=m2; renderTLMonth();
+        };
+        var pv=$('tl-mo-prev'), nx=$('tl-mo-next');
+        if(pv) pv.onclick=function(){ shiftM(-1); };
+        if(nx) nx.onclick=function(){ shiftM(1); };
         var m=yObj.months.filter(function(x){return x.month===_tlM;})[0]||yObj.months[0];
         var _av=yObj.months.map(function(x){return x.avg;}), lo=Math.min.apply(null,_av), hi=Math.max.apply(null,_av);
         box.innerHTML='<div class="rp-mo open"><div class="rp-mo-top">'
@@ -4708,7 +4689,7 @@
           +yijiHtml(d.yi,d.huan)
           +'</div></div>';
       }
-      function renderTimeline(){ tlInit(); renderTLYearPills(); if(_tlTab==='month') renderTLMonth(); if(_tlTab==='day') renderTLDay(); }
+      function renderTimeline(){ tlInit(); warmPastYears(); if(_tlTab==='month') renderTLMonth(); if(_tlTab==='day') renderTLDay(); }
 
       // —— 报告2b:未来 10 年 · 高能量年(item 8)——
       function renderYears(){
@@ -4892,16 +4873,7 @@
         catch(e){ try{ console.error('[render] jdYearData', Y, e&&e.message); }catch(_){} }
         return null;
       }
-      function renderDaYun(){
-        var el=$('jd-dayun'); if(!el) return;
-        var d=window.APP&&APP.daYunNow;
-        if(!d){ el.innerHTML=''; return; }
-        el.innerHTML='<div class="dy-card">'
-          +'<div class="dy-top"><span class="dy-name">'+esc(d.gan+d.zhi)+'大运</span><span class="dy-span">'+d.startYear+'–'+d.endYear+'</span></div>'
-          +'<div class="dy-bar"><i style="width:'+Math.round(d.idx/10*100)+'%"></i></div>'
-          +'<div class="dy-sub"><span>'+esc(d.theme||'')+'</span><span>第 '+d.idx+' 年 / 10</span></div>'
-          +'</div>';
-      }
+      // 大运卡已删(用户拍板:「那个什么运,什么为主线,也删了」;engine daYunCard 仍产出,UI 不显示,勿恢复)
       var VERIFY_KEY='shihe_ln_verify';
       function lnVerifyGet(){ try{ return JSON.parse(localStorage.getItem(VERIFY_KEY)||'{}'); }catch(e){ return {}; } }
       function lnVerifySet(y,v){ try{ var m=lnVerifyGet(); m[y]=v; localStorage.setItem(VERIFY_KEY, JSON.stringify(m)); }catch(e){} }
@@ -4926,13 +4898,6 @@
         // 年卡=信号+今年要做/要注意。
         var li=function(arr){ return (arr&&arr.length)? arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') : ''; };
         var doL=li(y.yi), watchL=li(y.ji);
-        var _prog='';
-        if(_jdYearY===curY){
-          var _n=new Date(); var _ly=_n>=new Date(_n.getFullYear(),1,4)?_n.getFullYear():_n.getFullYear()-1;
-          var _s=new Date(_ly,1,4), _e=new Date(_ly+1,1,4);
-          var _pct=Math.max(0,Math.min(100,Math.round((_n-_s)/(_e-_s)*100)));
-          _prog='<div class="yc-prog"><i style="width:'+_pct+'%"></i></div><div class="yc-prog-t">已过 '+_pct+'%</div>';
-        }
         host.innerHTML=
           '<div class="yc'+(_jdYearY===curY?' cur-year':'')+'">'
           +'<div class="yc-nav">'
@@ -4940,14 +4905,13 @@
           +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
           +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
-          +_prog
           +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+'</div>';}).join(''):'')
           +'<div class="yc-yj">'
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
           +'</div>'
           +'</div>';
-        var go=function(d){ _jdYearY+=d; renderYearCard(); try{ renderTLYearPills(); }catch(e){} };
+        var go=function(d){ _jdYearY+=d; renderYearCard(); };
         var p=$('jd-yr-prev'), nx=$('jd-yr-next');
         if(p) p.onclick=function(){ go(-1); };
         if(nx) nx.onclick=function(){ go(1); };
@@ -4997,7 +4961,7 @@
         chap.style.display='none'; toc.style.display='block';
         var sc=toc.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
       }
-      function buildJiedu(){ try{ renderDaYun(); renderYearCard(); renderTimeline(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){ try{ console.error('[render] buildJiedu', e && e.message); }catch(_){} } }
+      function buildJiedu(){ try{ renderYearCard(); renderTimeline(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){ try{ console.error('[render] buildJiedu', e && e.message); }catch(_){} } }
 
       // —— 章内子块折叠 · 卡片手风琴:头=标题+一句概括+箭头;点头开合,开一块自动收同层其余(防串行) ——
       function makeFoldCard(sec, h, summary, open){
