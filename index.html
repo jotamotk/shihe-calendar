@@ -1365,6 +1365,9 @@
   .tf-body{background:var(--card-2);border:1px solid var(--line);border-radius:13px;padding:14px 15px;}
   .tf-body-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
   .tf-body-lab{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:1px;}
+  /* 感情面板:当前状态小开关(单身/有伴侣),与命书 rel-seg 同存储 */
+  .rel-seg-sm{margin-left:auto;margin-bottom:0;padding:2px;}
+  .rel-seg-sm button{padding:2px 8px;font-size:10.5px;}
   .tf-body-tone{font-size:10px;font-weight:600;letter-spacing:.5px;padding:1.5px 8px;border-radius:999px;flex:none;}
   .tf-body-tone.up{color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);}
   .tf-body-tone.mid{color:var(--muted);background:var(--card);box-shadow:inset 0 0 0 1px var(--line);}
@@ -2409,7 +2412,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=149"></script>
+  <script src="engine_bundle.js?v=150"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2465,7 +2468,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=149"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=150"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2782,9 +2785,19 @@
         if(_ftSel==='career' && f.chance && f.chance.tone!=='平' && f.chance.line && f.chance.line!==it.line){
           extra='<div class="tf-body-sub"><span class="tf-body-sublab">机会</span>'+esc(f.chance.line)+'</div>';
         }
+        // 感情:标出当前状态并可切换(选完曾不可见不可改,看着像没分单身/有伴侣)
+        var relSeg='';
+        if(_ftSel==='love'){
+          var _r2=''; try{ _r2=localStorage.getItem(REL_KEY)||''; }catch(e){}
+          relSeg='<span class="rel-seg rel-seg-sm">'+[['single','单身'],['partner','有伴侣']].map(function(o){return '<button type="button" data-rel="'+o[0]+'"'+(_r2===o[0]?' class="on"':'')+'>'+o[1]+'</button>';}).join('')+'</span>';
+        }
         $('w-fortune-body').innerHTML=
-          '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
+          '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span>'+relSeg+'</div>'
           +'<div class="tf-body-line">'+esc(_ftSel==='love'?loveLineOf(it):it.line)+'</div>'+extra;
+        var _rs=$('w-fortune-body').querySelector('.rel-seg');
+        if(_rs) _rs.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; e.stopPropagation();
+          try{ localStorage.setItem(REL_KEY,b.dataset.rel); }catch(err){}
+          renderFortune(d); });
       }
 
       // —— 老黄历(选中日 · 传统历法速查)——
