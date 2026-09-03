@@ -2424,7 +2424,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=156"></script>
+  <script src="engine_bundle.js?v=157"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2480,7 +2480,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=156"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=157"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3411,8 +3411,7 @@
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
           +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+o.year+'年</div></div>'
           +'<div class="xp-hair"></div>'
-          +'<div class="xp-year"><b>'+o.m+'</b><span>月'+(o.headline?' · '+esc(o.headline):'')+'</span></div>'
-          +(o.trait?'<div class="xp-lead">'+esc(o.trait)+'</div>':'')
+          +'<div class="xp-year"><b>'+o.m+'</b><span>月</span></div>'
           +(tips?'<div class="xp-tips">'+tips+'</div>':'')
           +'<div class="xp-foot"><span class="xp-xi">顺天而养 · 应时而行</span></div>'
           +'</div></div>';
@@ -4724,8 +4723,8 @@
         var m=yObj.months.filter(function(x){return x.month===_tlMY.m;})[0]||yObj.months[0];
         var _av=yObj.months.map(function(x){return x.avg;}), lo=Math.min.apply(null,_av), hi=Math.max.apply(null,_av);
         // 顶条(月号+月型名+能量滑条)已删(用户指图拍板);v156重排:tl-card容器+定调句提级居中
+        // 月型定调主句已删(用户:怕不准,不要了;与年型定调同层,勿恢复)
         box.innerHTML='<div class="tl-card">'
-          +(m.trait?'<div class="tl-lead">'+esc(m.trait)+'</div>':'')
           + yrSigs(m.signals)
           + yijiHtml(m.yi,m.ji)
           +'</div>'
