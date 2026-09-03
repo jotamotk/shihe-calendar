@@ -562,7 +562,7 @@
   .jd-gl-eye{position:relative;font-size:10px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;font-weight:500;opacity:.82;}
   .jd-gl-line{position:relative;font-family:var(--serif);font-size:20px;line-height:1.55;color:var(--gold-d);font-weight:400;margin:12px 0 2px;text-wrap:balance;letter-spacing:.5px;}
   /* 开篇「当年运势」· 章回卷首(重设计:大字纪年 + 转向标题 + 宜做/要注意) */
-  .yc{margin:2px 0 22px;padding:2px 2px 22px;border-bottom:1px solid var(--line);}
+  .yc{margin:2px 0 6px;padding:16px 16px 18px;background:var(--card);border:1px solid var(--line);border-radius:16px;}
   .yc-nav{display:flex;align-items:center;justify-content:center;gap:18px;}
   .yc-arw{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);background:transparent;color:var(--gold-d);font-size:19px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:all .16s var(--ease);-webkit-tap-highlight-color:transparent;}
   .yc-arw:active{background:var(--gold-soft);transform:scale(.94);}
@@ -823,9 +823,9 @@
   .tl-pill{flex:none;position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--ink-2);font-size:12.5px;padding:7px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit;}
   .tl-pill.on{border-color:var(--gold-d);color:var(--gold-d);font-weight:600;}
   .tl-pill.now{color:var(--ink);}
-  .tl-ynav{display:flex;align-items:center;justify-content:center;gap:16px;margin:0 0 10px;}
-  .tl-ynav button{background:var(--card);border:1px solid var(--line);border-radius:50%;width:28px;height:28px;color:var(--ink-2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-  .tl-ynav b{font-family:var(--serif);font-size:15px;color:var(--ink);letter-spacing:1px;font-weight:600;min-width:120px;text-align:center;}
+  .tl-ynav{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 14px;}
+  .tl-ynav button{background:var(--card);border:1px solid var(--line);border-radius:50%;width:30px;height:30px;color:var(--ink-2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .tl-ynav b{font-family:var(--serif);font-size:17px;color:var(--ink);letter-spacing:1.5px;font-weight:600;min-width:128px;text-align:center;}
   .tl-ynav .tl-today{width:auto;border-radius:9px;padding:0 10px;font-size:11.5px;color:var(--gold-d);}
   .tl-day-gz{text-align:center;font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:1px;}
   .dy-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--gold-line);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
@@ -839,9 +839,16 @@
   .yc-verify button{background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;color:var(--ink-2);font-family:inherit;font-size:12px;padding:5px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .yc-verify button.on{border-color:var(--gold-d);color:var(--gold-d);}
   .yr-hl{font-family:var(--serif);font-size:13.5px;font-weight:600;color:var(--gold-d);letter-spacing:.5px;margin-bottom:5px;}
-  .yr-sig{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.8;margin-top:9px;}
-  .yr-sig + .yr-sig{border-top:1px solid var(--line);padding-top:9px;}
+  .yr-sig{padding:13px 2px 12px;font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.95;letter-spacing:.2px;}
+  .yr-sig + .yr-sig{border-top:1px solid var(--line);}
+  .yr-sig .yr-tag{margin:0 0 7px;}
+  .yr-sig .tx{display:block;}
   .yr-sig b{color:var(--ink);font-weight:500;}
+  /* 贰卷时间线卡(年/月/日同款容器)+主句+小注+宜缓签行 */
+  .tl-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 16px;}
+  .tl-lead{font-family:var(--serif);font-size:15.5px;line-height:2;color:var(--ink);text-align:center;margin:2px 6px 10px;text-wrap:pretty;}
+  .tl-cap{text-align:center;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;}
+  .tl-yj{display:flex;flex-direction:column;gap:9px;margin-top:14px;padding-top:15px;border-top:1px solid var(--line);}
   .yr-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:1px;color:var(--gold-d);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-line);border-radius:6px;padding:1px 8px;margin-right:7px;vertical-align:1px;}
   .yr-sig-b{display:block;font-size:10px;color:var(--muted);font-style:normal;opacity:.8;margin-top:2px;letter-spacing:.3px;}
   .rp-mo-trait{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.8;padding:11px 0 3px;border-top:1px solid var(--line);}
@@ -2417,7 +2424,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=155"></script>
+  <script src="engine_bundle.js?v=156"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2473,7 +2480,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=155"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=156"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4139,10 +4146,10 @@
       // 宜/忌:不做标签堆，改成一行白话(宜…；缓…)
       function yijiHtml(yi,ji){
         const line=(t,arr,cls)=> (arr&&arr.length)
-          ? '<div class="rp-yj-line '+cls+'"><b>'+t+'</b>'+arr.map(esc).join('、')+'</div>'
+          ? '<div class="rp-yj '+cls+'"><span class="rp-yj-k">'+t+'</span><div class="rp-yj-tags">'+arr.map((x)=>'<span>'+esc(x)+'</span>').join('')+'</div></div>'
           : '';
         return ((yi&&yi.length)||(ji&&ji.length))
-          ? '<div class="rp-yj-wrap">'+line('宜',yi,'yi')+line('缓',ji,'ji')+'</div>'
+          ? '<div class="tl-yj">'+line('宜',yi,'yi')+line('缓',ji,'ji')+'</div>'
           : '';
       }
 
@@ -4516,9 +4523,15 @@
       // 气场分 + 相对自身轨:数字为主，按内部档位(高/平/低)只上色、不写字。
       // 圆点位置 = 该值落在「你自己这一组的区间」里的位置(相对你自己，不与他人比);
       // 自身起伏不足 12 分时按 12 分窗映射，免得把小波动拉满。无区间时退回绝对窗兜底。
+      // 信号排版:金签独占一行+断语一行(v156重排,用户嫌拥挤);无宫位括号的信号取首句当签
+      // 灰色干支依据(basis)不渲染:用户判「废话」删除(引擎仍产出,勿恢复UI)
       function yrSigs(sigs){ if(!sigs||!sigs.length) return '';
-        // 灰色干支依据(basis)不再渲染:用户2026-09判「废话」删除(引擎仍产出,勿恢复UI)
-        return sigs.map(function(g){ return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+'</div>'; }).join(''); }
+        return sigs.map(function(g){
+          var t=g.text||'', m=t.match(/^【(.+?)】([\s\S]*)$/), lab='', tx=t;
+          if(m){ lab=m[1]; tx=m[2]; }
+          else { var i=t.indexOf('。'); if(i>0&&i<=7){ lab=t.slice(0,i); tx=t.slice(i+1); } }
+          return '<div class="yr-sig">'+(lab?'<span class="yr-tag">'+esc(lab)+'</span>':'')+'<span class="tx">'+esc(tx)+'</span></div>';
+        }).join(''); }
       function moEnergy(v, level, lo, hi){
         const band = level==='高'?'hi':level==='低'?'lo':'';
         let pos;
@@ -4710,12 +4723,12 @@
         if(!yObj||!yObj.months||!yObj.months.length){ box.innerHTML='<div class="tl-day-gz">载入中…</div>'; return; }
         var m=yObj.months.filter(function(x){return x.month===_tlMY.m;})[0]||yObj.months[0];
         var _av=yObj.months.map(function(x){return x.avg;}), lo=Math.min.apply(null,_av), hi=Math.max.apply(null,_av);
-        // 顶条(月号+月型名+能量滑条)已删(用户指图拍板);导航行已有年月,正文直接开始
-        box.innerHTML='<div class="rp-mo open"><div class="rp-mo-body" style="padding-top:4px">'
-          +(m.trait?'<div class="rp-mo-trait">'+esc(m.trait)+'</div>':'')
+        // 顶条(月号+月型名+能量滑条)已删(用户指图拍板);v156重排:tl-card容器+定调句提级居中
+        box.innerHTML='<div class="tl-card">'
+          +(m.trait?'<div class="tl-lead">'+esc(m.trait)+'</div>':'')
           + yrSigs(m.signals)
           + yijiHtml(m.yi,m.ji)
-          +'</div></div>'
+          +'</div>'
           +'<button type="button" class="tl-sharerow" id="tl-mo-share">为这个月做一张卡片 →</button>';
         var sb=$('tl-mo-share'); if(sb) sb.onclick=function(){
           if(window.__shiheShareTL) window.__shiheShareTL('month', { year:_tlMY.y, m:m.month, headline:m.headline, trait:m.trait, sigs:m.signals||[] });
@@ -4749,14 +4762,15 @@
         var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
         var rows='';
         [['事业',f.career],['钱财',f.money],['感情',{line:loveLn,tone:f.love&&f.love.tone}],['学习',f.study]].forEach(function(p){
-          if(p[1]&&p[1].line) rows+='<div class="yr-sig"><b>'+p[0]+' · </b>'+esc(p[1].line)+'</div>';
+          if(p[1]&&p[1].line) rows+='<div class="yr-sig"><span class="yr-tag">'+p[0]+'</span><span class="tx">'+esc(p[1].line)+'</span></div>';
         });
-        // heroLine 不进日卡:它由五域断语拼成、与下方各域行逐字重复,且翻到任何日期都硬说「今天」
-        var _gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');box.innerHTML='<div class="tl-day-gz">'+esc(_gz)+(_gz?' 日 · ':'')+'能量 '+d.e+'</div>'
-          +'<div class="rp-mo open"><div class="rp-mo-body" style="padding-top:4px">'
+        // heroLine 不进日卡(与五域行逐字重复);v156重排:tl-card容器,干支/能量作卡内小注
+        var _gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');
+        box.innerHTML='<div class="tl-card">'
+          +'<div class="tl-cap">'+esc(_gz)+(_gz?'日':'')+' · 能量 '+d.e+'</div>'
           +rows
           +yijiHtml(d.yi,d.huan)
-          +'</div></div>';
+          +'</div>';
       }
       function renderTimeline(){ tlInit(); warmPastYears(); if(_tlTab==='month') renderTLMonth(); if(_tlTab==='day') renderTLDay(); }
 
@@ -4974,7 +4988,7 @@
           +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
           +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
-          +((y.signals&&y.signals.length)?y.signals.map(function(g){return '<div class="yr-sig">'+esc(g.text).replace(/【(.+?)】/,'<span class="yr-tag">$1</span>')+'</div>';}).join(''):'')
+          +yrSigs(y.signals)
           +'<div class="yc-yj">'
           +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
