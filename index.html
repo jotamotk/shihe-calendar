@@ -749,6 +749,9 @@
   /* natal · 配色/首饰建议(变现钩子)*/
   .rp-color{display:flex;align-items:center;gap:14px;}
   .rp-color-sw{width:52px;height:52px;border-radius:14px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 8px 18px -8px rgba(0,0,0,.6);}
+  .rp-color-sws{display:flex;align-items:flex-end;gap:6px;flex:none}
+  .rp-color-sw-s{width:30px!important;height:30px!important;border-radius:7px!important}
+  .rp-color-tx b small{font-size:11px;font-weight:400;color:var(--muted);margin-left:1px}
   .rp-color-tx b{font-size:14px;color:var(--ink);font-weight:500;letter-spacing:2px;}
   .rp-color-tx p{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.7;margin-top:5px;}
   .rp-ji{display:flex;flex-direction:column;gap:0;margin-top:2px;}
@@ -2424,7 +2427,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=157"></script>
+  <script src="engine_bundle.js?v=158"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2480,7 +2483,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=157"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=158"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4271,9 +4274,13 @@
           ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>需要注意</b></div>'
             + '<div class="rp-card"><div class="rp-ji">'+n.jiShen.map(jiCard).join('')+'</div></div></div>' : '';
         // 幸运色(变现钩子)
-        const color='<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>你的幸运色</b><span>'+esc(n.xiColor.name)+'</span></div>'
-          + '<div class="rp-card"><div class="rp-color"><div class="rp-color-sw" style="background:'+n.xiColor.hex+'"></div>'
-          + '<div class="rp-color-tx"><b>'+esc(n.xiColor.name)+'</b><p>'+esc(n.colorAdvice)+'</p></div></div></div></div>';
+        // 幸运色:所有喜用色都画,首选大、其余小并标「常用/点缀」(不再只写首选)
+        const xcs=(n.xiColors&&n.xiColors.length)?n.xiColors:[{name:n.xiColor.name,hex:n.xiColor.hex,badge:'首选'}];
+        const sws=xcs.map((c,i)=>'<div class="rp-color-sw'+(i?' rp-color-sw-s':'')+'" style="background:'+c.hex+'" title="'+esc(c.name)+'"></div>').join('');
+        const names=xcs.map((c,i)=>i?esc(c.name)+'<small>·'+esc(c.badge)+'</small>':esc(c.name)).join(' · ');
+        const color='<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>你的幸运色</b><span>'+xcs.map(c=>esc(c.name)).join(' · ')+'</span></div>'
+          + '<div class="rp-card"><div class="rp-color"><div class="rp-color-sws">'+sws+'</div>'
+          + '<div class="rp-color-tx"><b>'+names+'</b><p>'+esc(n.colorAdvice)+'</p></div></div></div></div>';
         // 收束金句(温暖尾声)
         const closing=pe.closing?'<div class="rp-sec"><div class="rp-closing">'+esc(pe.closing)+'</div></div>':'';
         // 纹理轮换:读懂你 → 四种状态禀赋 → 分段Tab → 调养窗口 → 清单 → 色卡 → 收束金句
@@ -4309,7 +4316,7 @@
             '生活方面': '学习 · 事业 · 钱财 · 情感 · 健康',
             '近期调养窗口': '接下来适合养一养的时段',
             '需要注意': (n.jiShen&&n.jiShen.length)? n.jiShen.map((j)=>j.caution).slice(0,2).join(' · ') : '你要留心的几点',
-            '你的幸运色': (n.xiColor&&n.xiColor.name||'') + ' · 随身带一点',
+            '你的幸运色': ((n.xiColors&&n.xiColors.length)?n.xiColors.map(c=>c.name).join('·'):(n.xiColor&&n.xiColor.name||'')) + ' · 随身带一点',
           };
           let idx=0;
           wrap.querySelectorAll(':scope > .rp-sec').forEach((sec)=>{

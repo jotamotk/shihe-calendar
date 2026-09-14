@@ -12670,12 +12670,145 @@ var RhythmEngine = (() => {
     }
   });
 
+  // engine/profile.js
+  var require_profile = __commonJS({
+    "engine/profile.js"(exports, module) {
+      "use strict";
+      var A = require_analyze();
+      var GAN_WX = { \u7532: "\u6728", \u4E59: "\u6728", \u4E19: "\u706B", \u4E01: "\u706B", \u620A: "\u571F", \u5DF1: "\u571F", \u5E9A: "\u91D1", \u8F9B: "\u91D1", \u58EC: "\u6C34", \u7678: "\u6C34" };
+      var ZHI_WX = { \u5B50: "\u6C34", \u4E11: "\u571F", \u5BC5: "\u6728", \u536F: "\u6728", \u8FB0: "\u571F", \u5DF3: "\u706B", \u5348: "\u706B", \u672A: "\u571F", \u7533: "\u91D1", \u9149: "\u91D1", \u620C: "\u571F", \u4EA5: "\u6C34" };
+      var SHENG_ME = { \u6728: "\u6C34", \u706B: "\u6728", \u571F: "\u706B", \u91D1: "\u571F", \u6C34: "\u91D1" };
+      var WX5 = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"];
+      var TAOHUA_STAR = { \u7533: "\u9149", \u5B50: "\u9149", \u8FB0: "\u9149", \u5BC5: "\u536F", \u5348: "\u536F", \u620C: "\u536F", \u5DF3: "\u5348", \u9149: "\u5348", \u4E11: "\u5348", \u4EA5: "\u5B50", \u536F: "\u5B50", \u672A: "\u5B50" };
+      var tenGodType = A.tenGodType || function(dayWx, wx) {
+        const ME_SHENG = { \u6728: "\u706B", \u706B: "\u571F", \u571F: "\u91D1", \u91D1: "\u6C34", \u6C34: "\u6728" }, ME_KE = { \u6728: "\u571F", \u706B: "\u91D1", \u571F: "\u6C34", \u91D1: "\u6728", \u6C34: "\u706B" }, KE_ME = { \u6728: "\u91D1", \u706B: "\u6C34", \u571F: "\u6728", \u91D1: "\u706B", \u6C34: "\u571F" };
+        if (wx === dayWx)
+          return "\u6BD4";
+        if (SHENG_ME[dayWx] === wx)
+          return "\u5370";
+        if (ME_SHENG[dayWx] === wx)
+          return "\u98DF";
+        if (ME_KE[dayWx] === wx)
+          return "\u8D22";
+        if (KE_ME[dayWx] === wx)
+          return "\u5B98";
+        return "?";
+      };
+      function polarityOf(strength) {
+        if (strength === "\u8EAB\u5F3A" || strength === "\u504F\u5F3A")
+          return "\u5F3A";
+        if (strength === "\u4E2D\u548C")
+          return "\u4E2D";
+        return "\u5F31";
+      }
+      function balThreshold() {
+        const o = typeof globalThis !== "undefined" && globalThis.__SHIHE_BAL || {};
+        return { diff: o.diff ?? 5, top: o.top ?? 30 };
+      }
+      function expressiveOf(chart, dayWx, social, dominant, domJi) {
+        const shiTouGan = (chart.gans || []).some((g, i) => i !== 2 && tenGodType(dayWx, GAN_WX[g]) === "\u98DF");
+        const star = TAOHUA_STAR[(chart.zhis || [])[0]];
+        const xianChi = (chart.zhis || []).filter((z) => z === star).length;
+        const guanYa = dominant === "\u5B98" && !!domJi;
+        return { expressive: (shiTouGan || social >= 52 || xianChi >= 1) && !guanYa, guanYa, xianChi, shiTouGan };
+      }
+      function personaSignals(mj, chart) {
+        const dayGan = chart.dayGan;
+        const dayWx = GAN_WX[dayGan];
+        const pol = polarityOf(mj.strength);
+        const season = mj.season;
+        const daySuppressed = !!(mj.isYinHeavyWeak || mj.dayRootless && pol === "\u5F31");
+        const w = mj.weights || {};
+        const total = WX5.reduce((s, x) => s + Math.max(0, w[x] || 0), 0) || 1;
+        const godSum = { \u6BD4: 0, \u5370: 0, \u98DF: 0, \u8D22: 0, \u5B98: 0 };
+        WX5.forEach((x) => {
+          let wv = Math.max(0, w[x] || 0);
+          if (mj.isYinHeavyWeak && tenGodType(dayWx, x) === "\u5370" || mj.isVentDamp && x === "\u571F" && dayWx === "\u91D1")
+            wv *= 0.4;
+          godSum[tenGodType(dayWx, x)] += wv;
+        });
+        const godPct = {};
+        ["\u6BD4", "\u5370", "\u98DF", "\u8D22", "\u5B98"].forEach((k) => {
+          godPct[k] = Math.round(godSum[k] / total * 100);
+        });
+        const nonBi = ["\u5370", "\u98DF", "\u8D22", "\u5B98"].map((k) => ({ k, v: godPct[k] })).sort((a, b) => b.v - a.v);
+        const topGod = nonBi[0].k, secondGod = nonBi[1].k;
+        const th = balThreshold();
+        const diff0 = nonBi[0].v - nonBi[1].v;
+        const topWx0 = WX5.find((x) => tenGodType(dayWx, x) === topGod);
+        const topIsJi = !!topWx0 && ((mj.favVec || {})[topWx0] ?? 0) < -0.12;
+        const balanced = nonBi[0].v < th.top && (diff0 < th.diff || topIsJi && diff0 < 7);
+        const dominant = balanced ? "\u5747\u8861" : topGod;
+        const riZhiGod = tenGodType(dayWx, ZHI_WX[chart.zhis[2]]);
+        const emoKey = riZhiGod === "\u5B98" || godPct.\u5B98 >= 24 ? "\u79CB" : godPct.\u98DF >= 24 ? "\u590F" : godPct.\u5370 >= 28 ? "\u51AC" : godPct.\u6BD4 >= 35 ? "\u6625" : season;
+        const emoPol = emoKey === "\u6625" || emoKey === "\u590F" ? "\u5916" : "\u5185";
+        const domWx = WX5.find((x) => tenGodType(dayWx, x) === dominant);
+        const domJi = !balanced && !!domWx && ((mj.favVec || {})[domWx] ?? 0) < -0.12;
+        const social = Math.max(0, Math.min(100, 50 + (godPct.\u98DF * 0.85 + godPct.\u6BD4 * 0.5 - godPct.\u5370 * 0.55 - godPct.\u5B98 * 0.25)));
+        const ex = expressiveOf(chart, dayWx, social, dominant, domJi);
+        const yinWx = SHENG_ME[dayWx];
+        const yinPctRaw = Math.round(Math.max(0, w[yinWx] || 0) / total * 100);
+        const toneYin = (mj.xiYong || []).includes(yinWx) ? "\u987A" : (mj.jiShen || []).includes(yinWx) ? "\u614E" : "\u5E73";
+        const yinStrongJi = toneYin === "\u614E" && (yinPctRaw >= 28 || tenGodType(dayWx, ZHI_WX[mj.monthZhi]) === "\u5370");
+        const tStudy = yinStrongJi ? "\u5E73" : toneYin;
+        const sb = mj.strength === "\u8EAB\u5F3A" || mj.strength === "\u504F\u5F3A" ? "S" : mj.strength === "\u8EAB\u5F31" || mj.strength === "\u504F\u5F31" || mj.strength === "\u4ECE\u5F31" ? "W" : "M";
+        const sitStill = !mj.isYinHeavyWeak && (yinStrongJi || tStudy === "\u987A" && sb === "S" || tStudy === "\u5E73" && sb !== "W");
+        const gender = chart.input && chart.input.gender || "";
+        const KE_ME = { \u6728: "\u91D1", \u706B: "\u6C34", \u571F: "\u6728", \u91D1: "\u706B", \u6C34: "\u571F" }, ME_KE = { \u6728: "\u571F", \u706B: "\u91D1", \u571F: "\u6C34", \u91D1: "\u6728", \u6C34: "\u706B" };
+        const ZHI_HIDE = { \u5B50: ["\u7678"], \u4E11: ["\u5DF1", "\u7678", "\u8F9B"], \u5BC5: ["\u7532", "\u4E19", "\u620A"], \u536F: ["\u4E59"], \u8FB0: ["\u620A", "\u4E59", "\u7678"], \u5DF3: ["\u4E19", "\u5E9A", "\u620A"], \u5348: ["\u4E01", "\u5DF1"], \u672A: ["\u5DF1", "\u4E01", "\u4E59"], \u7533: ["\u5E9A", "\u58EC", "\u620A"], \u9149: ["\u8F9B"], \u620C: ["\u620A", "\u8F9B", "\u4E01"], \u4EA5: ["\u58EC", "\u7532"] };
+        let spouse = null;
+        if (gender === "\u5973" || gender === "\u7537") {
+          const starWx = gender === "\u5973" ? KE_ME[dayWx] : ME_KE[dayWx];
+          const gans = chart.gans || [], zhis = chart.zhis || [];
+          const touGan = gans.some((g, i) => i !== 2 && GAN_WX[g] === starWx);
+          const zuoGong = GAN_WX[(ZHI_HIDE[zhis[2]] || [])[0]] === starWx;
+          const cang = zhis.some((z) => (ZHI_HIDE[z] || []).some((g) => GAN_WX[g] === starWx));
+          const state = touGan || zuoGong ? "\u663E" : cang ? "\u85CF" : "\u65E0";
+          const v = (mj.favVec || {})[starWx] ?? 0;
+          const fav = v >= 0.12 ? "\u559C" : v <= -0.12 ? "\u5FCC" : "\u5E73";
+          spouse = { gender, starWx, state, fav };
+        }
+        return {
+          dayGan,
+          dayWx,
+          pol,
+          season,
+          daySuppressed,
+          spouse,
+          w,
+          total,
+          godPct,
+          topGod,
+          secondGod,
+          balanced,
+          dominant,
+          domJi,
+          riZhiGod,
+          emoKey,
+          emoPol,
+          social,
+          expressive: ex.expressive,
+          guanYa: ex.guanYa,
+          xianChi: ex.xianChi,
+          shiTouGan: ex.shiTouGan,
+          yinPctRaw,
+          yinStrongJi,
+          tStudy,
+          sb,
+          sitStill
+        };
+      }
+      module.exports = { personaSignals, expressiveOf, polarityOf, balThreshold, TAOHUA_STAR };
+    }
+  });
+
   // engine/liuri.js
   var require_liuri = __commonJS({
     "engine/liuri.js"(exports, module) {
       "use strict";
       var { Solar } = require_lunar();
       var { isXing, ZHI_HARM, SAN_HE } = require_relations();
+      var { personaSignals } = require_profile();
       var {
         GAN_WX,
         ZHI_WX,
@@ -12690,10 +12823,10 @@ var RhythmEngine = (() => {
       var POLE_SIDE = { \u6BD4: "\u84C4", \u5370: "\u84C4", \u98DF: "\u51B3", \u8D22: "\u51B3", \u5B98: "\u51B3" };
       var THEME = {
         \u6BD4: { yi: ["\u534F\u4F5C\u7ED3\u4F34", "\u8FD0\u52A8\u5065\u8EAB", "\u51FA\u884C\u8D70\u52A8"], huan: ["\u5408\u4F19\u8D26\u76EE", "\u51B2\u52A8\u6D88\u8D39"] },
-        \u5370: { yi: ["\u5B66\u4E60\u8FDB\u4FEE", "\u9759\u517B\u84C4\u529B", "\u7B7E\u7EA6\u76D6\u7AE0", "\u6C42\u52A9\u8D35\u4EBA"], huan: ["\u4E45\u62D6\u4E0D\u51B3", "\u8FC7\u5EA6\u5185\u8017"] },
+        \u5370: { yi: ["\u5B66\u4E60\u8FDB\u4FEE", "\u9759\u517B\u84C4\u529B", "\u529E\u6587\u4E66", "\u6C42\u52A9\u8D35\u4EBA"], huan: ["\u4E45\u62D6\u4E0D\u51B3", "\u8FC7\u5EA6\u5185\u8017"] },
         \u98DF: { yi: ["\u8868\u8FBE\u521B\u4F5C", "\u793E\u4EA4\u5206\u4EAB", "\u8C0B\u5212\u5E03\u5C40"], huan: ["\u8A00\u591A\u53E3\u89D2", "\u5206\u5FC3\u6563\u6F2B"] },
         \u8D22: { yi: ["\u63A8\u8FDB\u8981\u4E8B", "\u62D3\u5C55\u4EBA\u8109", "\u6D88\u8D39\u51B3\u7B56"], huan: ["\u51B2\u52A8\u6295\u8D44", "\u501F\u8D37\u62C5\u4FDD"] },
-        \u5B98: { yi: ["\u505A\u51B3\u5B9A", "\u89C1\u4E0A\u7EA7", "\u5B9A\u89C4\u77E9", "\u9762\u8BD5\u8003\u6838"], huan: ["\u6B63\u9762\u5BF9\u6297", "\u786C\u78B0\u786C"] }
+        \u5B98: { yi: ["\u505A\u51B3\u5B9A", "\u62C5\u8D23\u4EFB", "\u5B9A\u89C4\u77E9", "\u4E89\u53D6\u673A\u4F1A"], huan: ["\u6B63\u9762\u5BF9\u6297", "\u786C\u78B0\u786C"] }
       };
       var CUE = {
         \u8D22: {
@@ -12735,27 +12868,32 @@ var RhythmEngine = (() => {
         \u8D22: {
           label: "\u94B1\u8D22",
           fav: "\u9002\u5408\u8C08\u94B1\u3001\u63A8\u8FDB\u8981\u4E8B\u3002",
-          ji: "\u5927\u989D\u4E0D\u5408\u9002\uFF0C\u5BB9\u6613\u51B2\u52A8\u3002"
+          ji: "\u5927\u989D\u4E0D\u5408\u9002\uFF0C\u5BB9\u6613\u51B2\u52A8\u3002",
+          flat: "\u94B1\u8D22\u5E73\u5E73\u3002"
         },
         \u5B98: {
           label: "\u4E8B\u4E1A",
-          fav: "\u9002\u5408\u51B3\u7B56\u3001\u89C1\u4E0A\u7EA7\u3001\u8C08\u6B63\u4E8B\u3002",
-          ji: "\u5BB9\u6613\u78B0\u4E0A\u8F83\u771F\u7684\u4EBA\uFF0C\u786C\u78B0\u4E0D\u5408\u9002\u3002"
+          fav: "\u9002\u5408\u51B3\u7B56\u3001\u8C08\u6B63\u4E8B\u3001\u62CD\u677F\u3002",
+          ji: "\u5BB9\u6613\u78B0\u4E0A\u8F83\u771F\u7684\u4EBA\uFF0C\u786C\u78B0\u4E0D\u5408\u9002\u3002",
+          flat: "\u6B63\u4E8B\u5E73\u5E73\u3002"
         },
         \u5370: {
           label: "\u5B66\u517B",
           fav: "\u5B66\u5F97\u8FDB\u53BB\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u8BF7\u6559\u3002",
-          ji: "\u5BB9\u6613\u62D6\u5EF6\u3002"
+          ji: "\u5BB9\u6613\u62D6\u5EF6\u3002",
+          flat: "\u5B66\u517B\u5E73\u5E73\uFF0C\u9002\u5408\u6E29\u4E60\u3002"
         },
         \u98DF: {
           label: "\u8868\u8FBE",
           fav: "\u9002\u5408\u8868\u8FBE\u3001\u5C55\u793A\uFF0C\u601D\u8DEF\u6E05\u695A\u3002",
-          ji: "\u5BB9\u6613\u8A00\u591A\u6709\u5931\u3002"
+          ji: "\u5BB9\u6613\u8A00\u591A\u6709\u5931\u3002",
+          flat: "\u8868\u8FBE\u5E73\u5E73\u3002"
         },
         \u6BD4: {
           label: "\u4EBA\u9645",
           fav: "\u9002\u5408\u627E\u4EBA\u642D\u4F19\u505A\u4E8B\u3002",
-          ji: "\u5408\u4F19\u7684\u8D26\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002"
+          ji: "\u5408\u4F19\u7684\u8D26\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002",
+          flat: "\u4EBA\u9645\u5E73\u5E73\u3002"
         }
       };
       var HEALTH = {
@@ -12882,56 +13020,94 @@ var RhythmEngine = (() => {
         const career = function() {
           if (S.chongTiGang)
             return { tone: "\u614E", line: "\u4E8B\u60C5\u53D8\u52A8\u591A\uFF0C\u4E0D\u9002\u5408\u5B9A\u5927\u4E8B\u3002" };
+          if (S.tianKeDiChong)
+            return { tone: "\u614E", line: "\u53D8\u52A8\u5927\uFF0C\u4E0D\u9002\u5408\u5B9A\u5927\u4E8B\u3002" };
+          if (S.xingYue)
+            return { tone: "\u614E", line: "\u5BB9\u6613\u53D7\u963B\uFF0C\u4E8B\u60C5\u63A8\u4E0D\u52A8\u3002" };
           if (S.sgTou)
             return { tone: "\u614E", line: "\u5BB9\u6613\u6709\u53E3\u89D2\u3001\u662F\u975E\u3002" };
+          if (S.haiYue)
+            return { tone: "\u614E", line: "\u5BB9\u6613\u53D7\u4EBA\u7275\u7D2F\uFF0C\u6B63\u4E8B\u53D7\u6270\u3002" };
           if (S.gsTou && S.guanJi)
             return { tone: "\u614E", line: "\u538B\u529B\u6BD4\u8F83\u5927\uFF0C\u4E0D\u9002\u5408\u5F80\u524D\u51B2\u3002" };
           if ((S.biJianTou || S.jieCaiTou) && S.biJi)
             return { tone: "\u614E", line: "\u7ADE\u4E89\u591A\uFF0C\u5408\u4F5C\u5BB9\u6613\u5403\u4E8F\u3002" };
-          if (S.tianYi)
-            return { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u6C42\u4EBA\u529E\u4E8B\u987A\u3002" };
-          if (S.hitZG && S.guanXi)
-            return { tone: "\u987A", line: "\u9002\u5408\u89C1\u9886\u5BFC\u3001\u8C08\u6B63\u4E8B\u3002" };
-          if (S.hitQS && S.guanXi && hi)
-            return { tone: "\u987A", line: "\u96BE\u529E\u7684\u4E8B\uFF0C\u8FD9\u5929\u529E\u5F97\u52A8\u3002" };
-          if (S.hitZY && S.yinXi)
-            return { tone: "\u987A", line: "\u9002\u5408\u7B7E\u5408\u540C\u3001\u529E\u624B\u7EED\u3002" };
-          if (S.hitSS && S.shiXi)
-            return { tone: "\u987A", line: "\u9002\u5408\u8868\u8FBE\u3001\u5C55\u793A\uFF0C\u601D\u8DEF\u6E05\u695A\u3002" };
-          if (S.yiMa)
-            return { tone: "\u987A", line: "\u9002\u5408\u51FA\u95E8\u529E\u4E8B\u3002" };
+          if (S.kongWang)
+            return { tone: "\u614E", line: "\u529E\u4E8B\u5BB9\u6613\u843D\u7A7A\uFF0C\u4E0D\u9002\u5408\u5B9A\u4E8B\u3002" };
+          if (S.fuYinDay)
+            return { tone: "\u614E", line: "\u65E7\u4E8B\u91CD\u63D0\uFF0C\u4E0D\u9002\u5408\u5F00\u65B0\u5C40\u3002" };
+          const guanJiToday = S.cueJi === "\u5B98";
+          if (!guanJiToday) {
+            if (S.tianYi)
+              return { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u6C42\u4EBA\u529E\u4E8B\u987A\u3002" };
+            if (S.jiangXing)
+              return { tone: "\u987A", line: "\u5C06\u661F\u65E5\uFF0C\u9002\u5408\u51FA\u5934\u3001\u505A\u4E3B\u3002" };
+            if (S.luShen)
+              return { tone: "\u987A", line: "\u5F97\u7984\u65E5\uFF0C\u6B63\u4E8B\u63A8\u5F97\u52A8\u3002" };
+            if (S.hitZG && S.guanXi)
+              return { tone: "\u987A", line: "\u9002\u5408\u529E\u6B63\u4E8B\u3001\u5F80\u4E0A\u4E89\u53D6\u3002" };
+            if (S.hitQS && S.guanXi && hi)
+              return { tone: "\u987A", line: "\u96BE\u529E\u7684\u4E8B\uFF0C\u8FD9\u5929\u529E\u5F97\u52A8\u3002" };
+            if (S.hitZY && S.yinXi)
+              return { tone: "\u987A", line: "\u9002\u5408\u529E\u6587\u4E66\u3001\u5B9A\u5408\u4F5C\u3002" };
+            if (S.hitSS && S.shiXi)
+              return { tone: "\u987A", line: "\u9002\u5408\u8868\u8FBE\u3001\u5C55\u793A\uFF0C\u601D\u8DEF\u6E05\u695A\u3002" };
+            if (S.heYueZhi)
+              return { tone: "\u987A", line: "\u6709\u4EBA\u5E2E\u886C\uFF0C\u4E8B\u60C5\u597D\u63A8\u3002" };
+            if (S.yiMa)
+              return { tone: "\u987A", line: "\u9002\u5408\u51FA\u95E8\u529E\u4E8B\u3002" };
+          }
           return byGod("\u5B98", "career");
         }();
         const money = function() {
           if (S.jieCaiTou)
             return { tone: "\u614E", line: "\u5BB9\u6613\u7834\u8D22\uFF0C\u501F\u94B1\u3001\u62C5\u4FDD\u90FD\u4E0D\u5408\u9002\u3002" };
+          if (S.tianKeDiChong)
+            return { tone: "\u614E", line: "\u4E0D\u9002\u5408\u52A8\u94B1\u3002" };
           if (S.biJianTou && S.biJi)
             return { tone: "\u614E", line: "\u5408\u4F19\u7684\u94B1\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002" };
           if (S.yangRen)
             return { tone: "\u614E", line: "\u5BB9\u6613\u51B2\u52A8\u82B1\u94B1\uFF0C\u5927\u989D\u4E0D\u5408\u9002\u3002" };
           if (S.caiTou && S.caiJi)
             return { tone: "\u614E", line: "\u94B1\u96BE\u5B88\uFF0C\u5927\u989D\u8FDB\u51FA\u4E0D\u5408\u9002\u3002" };
-          if (S.hitZC && S.caiXi)
-            return { tone: "\u987A", line: "\u8FDB\u8D26\u7A33\uFF0C\u9002\u5408\u8C08\u94B1\u3001\u6536\u6B3E\u3002" };
-          if (S.hitPC && S.caiXi)
-            return { tone: "\u987A", line: "\u80FD\u8FDB\u70B9\u6D3B\u94B1\uFF0C\u89C1\u597D\u5C31\u6536\u3002" };
+          if (S.kongWang)
+            return { tone: "\u614E", line: "\u94B1\u4E0D\u5BB9\u6613\u843D\u5B9E\u3002" };
+          if (S.cueJi !== "\u8D22") {
+            if (S.hitZC && S.caiXi)
+              return { tone: "\u987A", line: "\u8FDB\u8D26\u7A33\uFF0C\u9002\u5408\u8C08\u94B1\u3001\u6536\u6B3E\u3002" };
+            if (S.hitPC && S.caiXi)
+              return { tone: "\u987A", line: "\u80FD\u8FDB\u70B9\u6D3B\u94B1\uFF0C\u89C1\u597D\u5C31\u6536\u3002" };
+            if (S.luShen)
+              return { tone: "\u987A", line: "\u6709\u8FDB\u8D26\uFF0C\u9002\u5408\u6536\u6B3E\u3002" };
+          }
           if (S.yiMa)
             return { tone: "\u5E73", line: "\u94B1\u6709\u8FDB\u6709\u51FA\uFF0C\u8BB0\u597D\u8D26\u3002" };
           return byGod("\u8D22", "money");
         }();
         const study = function() {
+          const yinJiToday = S.cueJi === "\u5370";
           if (S.wenChang)
-            return { tone: "\u987A", line: "\u6587\u660C\u65E5\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u52A8\u7B14\u3001\u8003\u8BD5\u3002" };
+            return { tone: "\u987A", line: "\u9002\u5408\u8BFB\u4E66\u3001\u7528\u529F\u3001\u957F\u672C\u4E8B\u3002" };
           if (S.yinTou && S.yinJi)
-            return { tone: "\u614E", line: "\u51C6\u5907\u5F97\u591A\uFF0C\u52A8\u624B\u5F97\u5C11\u3002" };
-          if (S.hitZY && S.yinXi)
-            return { tone: "\u987A", line: "\u5B66\u5F97\u8FDB\u53BB\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u8BF7\u6559\u3002" };
-          if (S.pyTou || S.huaGai)
-            return { tone: "\u987A", line: "\u9002\u5408\u4E00\u4E2A\u4EBA\u94BB\u7814\u3002" };
-          if (S.sgTou && S.shiXi)
-            return { tone: "\u987A", line: "\u9002\u5408\u52A8\u7B14\u3001\u8F93\u51FA\uFF0C\u4E0D\u9002\u5408\u6B7B\u8BB0\u786C\u80CC\u3002" };
+            return { tone: "\u614E", line: "\u51C6\u5907\u5F97\u591A\uFF0C\u52A8\u624B\u5F97\u5C11\uFF0C\u9002\u5408\u76F4\u63A5\u4E0A\u624B\u7EC3\u3002" };
+          if (S.kongWang)
+            return { tone: "\u614E", line: "\u5B66\u5F97\u8FDB\u53BB\u8BB0\u4E0D\u7262\uFF0C\u9002\u5408\u590D\u4E60\u5DE9\u56FA\u3002" };
+          if (!yinJiToday) {
+            if (S.xueTang)
+              return { tone: "\u987A", line: "\u5438\u6536\u5FEB\uFF0C\u9002\u5408\u4E0A\u8BFE\u3001\u8BFB\u4E66\u3002" };
+            if (S.tianYi)
+              return { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u9002\u5408\u8BF7\u6559\u3001\u95EE\u4EBA\u3002" };
+            if (S.hitZY && S.yinXi)
+              return { tone: "\u987A", line: "\u5B66\u5F97\u8FDB\u53BB\uFF0C\u9002\u5408\u8BFB\u4E66\u3001\u8BF7\u6559\u3002" };
+            if (S.pyTou || S.huaGai)
+              return { tone: "\u987A", line: "\u9002\u5408\u4E00\u4E2A\u4EBA\u94BB\u7814\u3002" };
+            if (S.sgTou && S.shiXi)
+              return { tone: "\u987A", line: "\u9002\u5408\u52A8\u7B14\u3001\u8F93\u51FA\uFF0C\u4E0D\u9002\u5408\u6B7B\u8BB0\u786C\u80CC\u3002" };
+          }
           if (S.caiTou)
-            return { tone: "\u614E", line: "\u5BB9\u6613\u5206\u5FC3\uFF0C\u8D2A\u591A\u5B66\u4E0D\u8FDB\u3002" };
+            return { tone: "\u614E", line: "\u5BB9\u6613\u5206\u5FC3\uFF0C\u9002\u5408\u5B66\u4E00\u5C0F\u6BB5\u3001\u5B9A\u65F6\u5B8C\u6210\u3002" };
+          if (has(jiTypes, "\u5370"))
+            return { tone: "\u614E", line: hi ? "\u5BB9\u6613\u62D6\u5EF6\uFF0C\u9002\u5408\u5148\u5B66\u534A\u5C0F\u65F6\u5F00\u4E2A\u5934\u3002" : "\u5FC3\u9759\u4E0D\u4E0B\u6765\uFF0C\u9002\u5408\u77ED\u65F6\u95F4\u3001\u5C0F\u76EE\u6807\u5730\u5B66\u3002" };
           return byGod("\u5370", "study");
         }();
         let health;
@@ -12944,9 +13120,18 @@ var RhythmEngine = (() => {
           health = fw >= 0.5 ? { tone: "\u987A", line: HEALTH[hwx].fav } : { tone: "\u5E73", line: pickV(FLAT_POOL.health, sd) };
         }
         let love;
+        const ACTIVE = /主动|开口|表心意|说出口|表白/;
+        const pickSoft = (arr, seed2) => {
+          const v = pickV(arr, seed2);
+          if (!ACTIVE.test(v))
+            return v;
+          const soft = arr.filter((x) => !ACTIVE.test(x));
+          return soft.length ? pickV(soft, seed2) : v;
+        };
+        const pk = loveSig && loveSig.inward ? pickSoft : pickV;
         const loveOf = (key, tone) => {
           const g = LOVE_POOL[key];
-          return { tone, line: pickV(g.u, sd), lineSingle: pickV(g.s, sd), linePartner: pickV(g.p, sd) };
+          return { tone, line: pk(g.u, sd), lineSingle: pk(g.s, sd), linePartner: pk(g.p, sd) };
         };
         const _sig = loveSig || {};
         if (_sig.loveTaohua && (volatile_ || _sig.loveXing || _sig.loveHai))
@@ -12965,7 +13150,7 @@ var RhythmEngine = (() => {
           love = loveOf("\u987A", "\u987A");
         else if (_sig.loveStarJi)
           love = loveOf("\u5B88\u663E", "\u5E73");
-        else if (_sig.loveZheng)
+        else if (_sig.loveZheng || _sig.luanXi)
           love = loveOf("\u6B63\u663E", "\u987A");
         else if (_sig.loveQiang)
           love = loveOf("\u5F3A\u7F18", "\u614E");
@@ -12983,13 +13168,23 @@ var RhythmEngine = (() => {
         else if (low)
           chance = { tone: "\u5E73", line: pickV(FLAT_POOL.chance, sd) };
         else if (volatile_)
-          chance = { tone: "\u614E", line: "\u673A\u4F1A\u8FD8\u4E0D\u7A33\uFF0C\u4E0D\u9002\u5408\u6025\u7740\u63A5\u3002" };
+          chance = { tone: "\u614E", line: S.tianKeDiChong ? "\u53D8\u52A8\u5927\uFF0C\u4E0D\u9002\u5408\u63A5\u65B0\u4E8B\u3002" : "\u673A\u4F1A\u8FD8\u4E0D\u7A33\uFF0C\u4E0D\u9002\u5408\u6025\u7740\u63A5\u3002" };
         else if ((S.sgTou || S.ssTou) && S.shiJi)
           chance = { tone: "\u614E", line: "\u5BB9\u6613\u8A00\u591A\u6709\u5931\u3002" };
+        else if (S.kongWang)
+          chance = { tone: "\u614E", line: "\u770B\u7740\u6709\u673A\u4F1A\uFF0C\u4E0D\u5BB9\u6613\u843D\u5B9E\u3002" };
+        else if (S.cueJi === "\u98DF")
+          chance = { tone: "\u5E73", line: pickV(FLAT_POOL.chance, sd) };
         else if (S.yiMa)
           chance = { tone: "\u987A", line: "\u673A\u4F1A\u5728\u5916\u9762\uFF0C\u9002\u5408\u51FA\u95E8\u3002" };
         else if (S.tianYi)
-          chance = { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u9002\u5408\u6C42\u4EBA\u3001\u62DC\u8BBF\u3002" };
+          chance = { tone: "\u987A", line: "\u8D35\u4EBA\u65E5\uFF0C\u9002\u5408\u6C42\u4EBA\u3001\u627E\u4EBA\u5E2E\u5FD9\u3002" };
+        else if (S.jiangXing)
+          chance = { tone: "\u987A", line: "\u9002\u5408\u51FA\u5934\u3001\u4E89\u53D6\u3002" };
+        else if (S.sanHeJu)
+          chance = { tone: "\u987A", line: "\u5408\u529B\u8DB3\uFF0C\u9002\u5408\u8054\u624B\u63A8\u8FDB\u3002" };
+        else if (S.loveBanHe)
+          chance = { tone: "\u987A", line: "\u4EBA\u8109\u6D3B\u7EDC\uFF0C\u9002\u5408\u7ED3\u8BC6\u3001\u8D70\u52A8\u3002" };
         else if (S.hitSS && S.shiXi)
           chance = { tone: "\u987A", line: "\u9002\u5408\u5C55\u793A\u3001\u5206\u4EAB\u3002" };
         else if (S.sgTou && S.shiXi)
@@ -13003,21 +13198,16 @@ var RhythmEngine = (() => {
         return { career, love, money, study, health, chance };
       }
       function stateLine(energy, axis) {
-        if (energy < 48)
-          return "\u4F53\u529B\u504F\u4E4F\uFF0C\u5B9C\u6536\u5C3E\u65E9\u7761\u3002";
         const side = axis < 40 ? "\u84C4" : axis > 60 ? "\u51B3" : "\u5E73";
-        if (energy >= 66) {
-          if (side === "\u51B3")
-            return "\u8FD9\u7C7B\u65E5\u5B50\u5934\u8111\u76F8\u5BF9\u6E05\u9192\uFF0C\u8981\u62CD\u677F\u7684\u4E8B\u522B\u518D\u5F80\u540E\u62D6\u3002";
-          if (side === "\u84C4")
-            return "\u72B6\u6001\u4E0D\u9519\uFF0C\u5B9C\u7A33\u6B65\u63A8\u8FDB\uFF0C\u5FCC\u56FE\u5FEB\u3002";
-          return "\u6E05\u723D\u6709\u52B2\uFF0C\u8BE5\u505A\u7684\u4E8B\u987A\u624B\u63A8\u8FDB\u3002";
-        }
-        if (side === "\u51B3")
-          return "\u6BD4\u8F83\u5916\u5411\uFF0C\u80FD\u8BF4\u4E5F\u80FD\u52A8\uFF0C\u5148\u529E\u59A5\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\u3002";
-        if (side === "\u84C4")
-          return "\u653E\u6162\u8282\u594F\u3001\u7406\u6E05\u5934\u7EEA\uFF0C\u522B\u52C9\u5F3A\u3002";
-        return "\u5E73\u7A33\uFF0C\u5148\u529E\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\uFF0C\u6742\u4E8B\u4E0D\u5FC5\u8D76\u3002";
+        const band = energy < 48 ? "\u4E4F" : energy < 56 ? "\u7F13" : energy < 66 ? "\u5E73" : energy < 78 ? "\u8DB3" : "\u76DB";
+        const T = {
+          \u4E4F: { \u51B3: "\u4F53\u529B\u504F\u4E4F\uFF0C\u8981\u7D27\u7684\u4E00\u4EF6\u529E\u5B8C\u5C31\u6536\u3002", \u84C4: "\u4F53\u529B\u504F\u4E4F\uFF0C\u5B9C\u6536\u5C3E\u65E9\u7761\u3002", \u5E73: "\u4F53\u529B\u504F\u4E4F\uFF0C\u6742\u4E8B\u5F80\u540E\u653E\uFF0C\u65E9\u70B9\u4F11\u606F\u3002" },
+          \u7F13: { \u51B3: "\u52B2\u5934\u4E00\u822C\uFF0C\u5148\u529E\u5B9A\u4E0B\u6765\u7684\uFF0C\u522B\u5F00\u65B0\u5934\u3002", \u84C4: "\u52B2\u5934\u4E00\u822C\uFF0C\u6162\u6162\u6765\uFF0C\u4E0D\u5FC5\u8D76\u3002", \u5E73: "\u52B2\u5934\u4E00\u822C\uFF0C\u7167\u5E38\u5B89\u6392\uFF0C\u7559\u4E9B\u4F59\u91CF\u3002" },
+          \u5E73: { \u51B3: "\u72B6\u6001\u5E73\u7A33\uFF0C\u80FD\u5B9A\u7684\u4E8B\u4ECA\u5929\u5B9A\u3002", \u84C4: "\u72B6\u6001\u5E73\u7A33\uFF0C\u7406\u6E05\u5934\u7EEA\u518D\u52A8\u624B\u3002", \u5E73: "\u5E73\u7A33\uFF0C\u5148\u529E\u8981\u7D27\u7684\u4E00\u4E24\u4EF6\uFF0C\u6742\u4E8B\u4E0D\u5FC5\u8D76\u3002" },
+          \u8DB3: { \u51B3: "\u5934\u8111\u6E05\u9192\uFF0C\u8981\u62CD\u677F\u7684\u4E8B\u522B\u518D\u5F80\u540E\u62D6\u3002", \u84C4: "\u72B6\u6001\u4E0D\u9519\uFF0C\u7A33\u6B65\u63A8\u8FDB\uFF0C\u5FCC\u56FE\u5FEB\u3002", \u5E73: "\u6E05\u723D\u6709\u52B2\uFF0C\u8BE5\u505A\u7684\u4E8B\u987A\u624B\u63A8\u8FDB\u3002" },
+          \u76DB: { \u51B3: "\u7CBE\u795E\u8DB3\u3001\u5224\u65AD\u51C6\uFF0C\u5927\u4E8B\u4ECA\u5929\u62CD\u677F\u3002", \u84C4: "\u7CBE\u795E\u5F88\u8DB3\uFF0C\u6536\u7740\u7528\uFF0C\u4E00\u5929\u522B\u6392\u592A\u6EE1\u3002", \u5E73: "\u7CBE\u795E\u5F88\u8DB3\uFF0C\u8D81\u52BF\u628A\u62D6\u7740\u7684\u4E8B\u6E05\u6389\u3002" }
+        };
+        return T[band][side];
       }
       function activeDaYun(chart, targetYear) {
         const list = chart.daYun && chart.daYun.list;
@@ -13167,21 +13357,38 @@ var RhythmEngine = (() => {
         }
         const huan = uniq(huanSet).slice(0, 2);
         const topJi = jiGods[0], topFav = favGods[0];
+        const WENCHANG_C = { \u7532: "\u5DF3", \u4E59: "\u5348", \u4E19: "\u7533", \u4E01: "\u9149", \u620A: "\u7533", \u5DF1: "\u9149", \u5E9A: "\u4EA5", \u8F9B: "\u5B50", \u58EC: "\u5BC5", \u7678: "\u536F" };
+        const wenChangDay = WENCHANG_C[chart.dayGan] === zhi;
+        const cueJiCand = wenChangDay && topJi && topJi.t === "\u5370" ? jiGods[1] || null : topJi;
+        const _favStrC = topFav ? topFav.weight * (topFav.favW || 1) : 0, _jiStrC = cueJiCand ? cueJiCand.weight : 0;
+        const cueJi = !volatile_ && cueJiCand && !(topFav && _favStrC >= _jiStrC) ? cueJiCand.t : null;
         const band = energy >= 66 ? "Hi" : "Lo";
         let cue = null;
         if (volatile_)
           cue = CUE_VOLATILE;
         else {
           const favStr = topFav ? topFav.weight * (topFav.favW || 1) : 0;
-          const jiStr = topJi ? topJi.weight : 0;
+          const jiStr = cueJiCand ? cueJiCand.weight : 0;
           if (topFav && favStr >= jiStr && CUE[topFav.t])
             cue = CUE[topFav.t]["fav" + band];
-          else if (topJi && CUE[topJi.t])
-            cue = CUE[topJi.t]["ji" + band];
+          else if (cueJiCand && CUE[cueJiCand.t])
+            cue = CUE[cueJiCand.t]["ji" + band];
         }
         if (!cue)
           cue = he_ ? CUE_HE : energy < 48 ? CUE_REST : CUE_FLOW;
-        const state = stateLine(energy, axis);
+        let state = stateLine(energy, axis);
+        {
+          const mGan = Solar.fromYmdHms(year, month, day, 12, 0, 0).getLunar().getMonthGan();
+          const mv = (mingju.favVec || {})[GAN_WX[mGan]] ?? 0;
+          const monthTone = mv >= 0.12 ? "\u559C" : mv <= -0.12 ? "\u5FCC" : "\u5E73";
+          const favStr0 = topFav ? topFav.weight * (topFav.favW || 1) : 0, jiStr0 = topJi ? topJi.weight : 0;
+          const dayStrongFav = !volatile_ && topFav && favStr0 >= jiStr0 && (topFav.favW || 1) >= 0.5 && energy >= 72;
+          const dayStrongJi = volatile_ && energy < 56 || topJi && jiStr0 > favStr0 && energy < 48;
+          if (dayStrongFav && monthTone === "\u5FCC")
+            state += "\u672C\u6708\u6574\u4F53\u504F\u7D27\uFF0C\u4ECA\u5929\u504F\u987A\u3002";
+          else if (dayStrongJi && monthTone === "\u559C")
+            state += "\u672C\u6708\u6574\u4F53\u987A\uFF0C\u4ECA\u5929\u504F\u7D27\u3002";
+        }
         const cand = [];
         const dFavStr = topFav ? topFav.weight * (topFav.favW || 1) : 0;
         const dJiStr = topJi ? topJi.weight : 0;
@@ -13209,7 +13416,7 @@ var RhythmEngine = (() => {
         if (!cand.some((c) => c.key === "dom")) {
           const topAny = seenGods.slice().sort((a, b) => b.weight - a.weight)[0];
           if (topAny && DIM[topAny.t])
-            cand.push({ key: "dom", label: DIM[topAny.t].label, line: DIM[topAny.t].fav, score: 1.45 });
+            cand.push({ key: "dom", label: DIM[topAny.t].label, line: DIM[topAny.t].flat, score: 1.45 });
         }
         const detail = uniqBy(cand.sort((a, b) => b.score - a.score), "label").slice(0, 3).map((c) => ({ label: c.label, line: c.line }));
         return {
@@ -13253,7 +13460,47 @@ var RhythmEngine = (() => {
             const YIMA = { \u7533: "\u5BC5", \u5B50: "\u5BC5", \u8FB0: "\u5BC5", \u5BC5: "\u7533", \u5348: "\u7533", \u620C: "\u7533", \u5DF3: "\u4EA5", \u9149: "\u4EA5", \u4E11: "\u4EA5", \u4EA5: "\u5DF3", \u536F: "\u5DF3", \u672A: "\u5DF3" };
             const YANGREN = { \u7532: "\u536F", \u4E19: "\u5348", \u620A: "\u5348", \u5E9A: "\u9149", \u58EC: "\u5B50" };
             const HUAGAI = { \u7533: "\u8FB0", \u5B50: "\u8FB0", \u8FB0: "\u8FB0", \u5BC5: "\u620C", \u5348: "\u620C", \u620C: "\u620C", \u5DF3: "\u4E11", \u9149: "\u4E11", \u4E11: "\u4E11", \u4EA5: "\u672A", \u536F: "\u672A", \u672A: "\u672A" };
+            const GANS10 = "\u7532\u4E59\u4E19\u4E01\u620A\u5DF1\u5E9A\u8F9B\u58EC\u7678", ZHIS12 = "\u5B50\u4E11\u5BC5\u536F\u8FB0\u5DF3\u5348\u672A\u7533\u9149\u620C\u4EA5";
+            const gi = GANS10.indexOf(chart.gans[2]), zi = ZHIS12.indexOf(dayZhi);
+            let jz = -1;
+            for (let k = 0; k < 6; k++) {
+              const n = gi + 10 * k;
+              if (n % 12 === zi) {
+                jz = n;
+                break;
+              }
+            }
+            const xunShou = jz >= 0 ? jz - jz % 10 : -1;
+            const kongZhis = xunShou >= 0 ? [ZHIS12[(xunShou + 10) % 12], ZHIS12[(xunShou + 11) % 12]] : [];
+            const kongWang = kongZhis.includes(zhi);
+            const LU = { \u7532: "\u5BC5", \u4E59: "\u536F", \u4E19: "\u5DF3", \u4E01: "\u5348", \u620A: "\u5DF3", \u5DF1: "\u5348", \u5E9A: "\u7533", \u8F9B: "\u9149", \u58EC: "\u4EA5", \u7678: "\u5B50" };
+            const JIANG = { \u7533: "\u5B50", \u5B50: "\u5B50", \u8FB0: "\u5B50", \u5BC5: "\u5348", \u5348: "\u5348", \u620C: "\u5348", \u5DF3: "\u9149", \u9149: "\u9149", \u4E11: "\u9149", \u4EA5: "\u536F", \u536F: "\u536F", \u672A: "\u536F" };
+            const HONGLUAN = { \u5B50: "\u536F", \u4E11: "\u5BC5", \u5BC5: "\u4E11", \u536F: "\u5B50", \u8FB0: "\u4EA5", \u5DF3: "\u620C", \u5348: "\u9149", \u672A: "\u7533", \u7533: "\u672A", \u9149: "\u5348", \u620C: "\u5DF3", \u4EA5: "\u8FB0" };
+            const luShen = LU[chart.dayGan] === zhi;
+            const jiangXing = JIANG[chart.zhis[0]] === zhi;
+            const hl = HONGLUAN[chart.zhis[0]];
+            const luanXi = zhi === hl || ZHI_CHONG[zhi] === hl;
+            const monthZhi = chart.zhis[1];
+            const heYueZhi = ZHI_HE[zhi] === monthZhi || zhi !== monthZhi && SAN_HE.some((g) => g.trio.includes(zhi) && g.trio.includes(monthZhi));
+            const xingYue = zhi !== monthZhi && isXing(zhi, monthZhi);
+            const haiYue = ZHI_HARM[zhi] === monthZhi;
+            const CHANGSHENG = { \u7532: "\u4EA5", \u4E59: "\u5348", \u4E19: "\u5BC5", \u4E01: "\u9149", \u620A: "\u5BC5", \u5DF1: "\u9149", \u5E9A: "\u5DF3", \u8F9B: "\u5B50", \u58EC: "\u7533", \u7678: "\u536F" };
+            const xueTang = CHANGSHENG[chart.dayGan] === zhi;
+            const tianKeDiChong = KE[GAN_WX[gan]] === dayGanWx && ZHI_CHONG[zhi] === dayZhi;
+            const natalZ = chart.zhis || [];
+            const sanHeJu = SAN_HE.some((g) => g.trio.includes(zhi) && g.trio.filter((t) => t !== zhi).every((t) => natalZ.includes(t)));
             return {
+              kongWang,
+              luShen,
+              jiangXing,
+              luanXi,
+              heYueZhi,
+              tianKeDiChong,
+              sanHeJu,
+              fuYinDay: fuYin,
+              xingYue,
+              haiYue,
+              xueTang,
               // 事业/钱财/学习/机会 信号
               chongTiGang: ZHI_CHONG[zhi] === chart.zhis[1],
               // 流日支冲月柱提纲
@@ -13303,6 +13550,10 @@ var RhythmEngine = (() => {
               loveBanHe: banHe,
               loveXing: isXing(zhi, dayZhi) || fuYin,
               loveHai: ZHI_HARM[zhi] === dayZhi,
+              // 人格边界:无外放证据(内敛/慢热/官压身)者,顺日不选「主动开口/表心意」类变体,改取同档里的温和变体
+              inward: !personaSignals(mingju, chart).expressive,
+              cueJi,
+              // 提示语主导忌神(官/印/财/食/比 或 null)
               loveSeize: gender === "\u7537" && full === "\u52AB\u8D22" || gender === "\u5973" && full === "\u4F24\u5B98",
               // 只报重者:劫财夺财/伤官克官
               loveStarJi: (zheng || pian || qiang) && starJi,
@@ -13386,50 +13637,60 @@ var RhythmEngine = (() => {
       var KE = { \u6728: "\u571F", \u706B: "\u91D1", \u571F: "\u6C34", \u91D1: "\u6728", \u6C34: "\u706B" };
       var YEAR_TYPE = {
         \u6B63\u5B98: {
-          \u559C: ["\u540D\u5206\u4E4B\u5E74", "\u5347\u804C\u3001\u5B9A\u540D\u5206\u3001\u8003\u7F16\u3001\u6210\u5BB6\uFF0C\u8FD9\u7C7B\u4E8B\u8FD9\u5E74\u80FD\u6210\u3002\u8BE5\u4E89\u53D6\u7684\u540D\u5206\u4E3B\u52A8\u53BB\u4E89\uFF0C\u8D70\u6B63\u8DEF\u3001\u6309\u7A0B\u5E8F\u6765\uFF0C\u53CD\u800C\u5FEB\u3002"],
-          \u5FCC: ["\u540D\u5206\u53D7\u5236\u4E4B\u5E74", "\u8003\u6838\u3001\u89C4\u77E9\u3001\u4E0A\u7EA7\u7684\u4E8B\u591A\uFF0C\u505A\u4E8B\u88AB\u6761\u6846\u7ED1\u7740\u653E\u4E0D\u5F00\u3002\u6309\u89C4\u77E9\u8D70\u5B8C\u6D41\u7A0B\uFF0C\u522B\u6B63\u9762\u9876\u3002"]
+          \u559C: ["\u540D\u5206\u4E4B\u5E74", "\u540D\u5206\u3001\u5730\u4F4D\u4E0A\u80FD\u5F80\u524D\u8D70\u7684\u4E00\u5E74\uFF0C\u8BE5\u4E89\u53D6\u7684\u4E3B\u52A8\u53BB\u4E89\uFF1B\u8D70\u6B63\u8DEF\u3001\u6309\u7A0B\u5E8F\u6765\uFF0C\u53CD\u800C\u5FEB\u3002"],
+          \u5FCC: ["\u540D\u5206\u53D7\u5236\u4E4B\u5E74", "\u8003\u6838\u3001\u89C4\u77E9\u3001\u4E0A\u7EA7\u7684\u4E8B\u591A\uFF0C\u505A\u4E8B\u88AB\u6761\u6846\u7ED1\u7740\u653E\u4E0D\u5F00\u3002\u6309\u89C4\u77E9\u8D70\u5B8C\u6D41\u7A0B\uFF0C\u522B\u6B63\u9762\u9876\u3002"],
+          \u5E73: ["\u672C\u5206\u4E4B\u5E74", "\u540D\u5206\u3001\u89C4\u77E9\u4E0A\u7684\u4E8B\u4E0D\u591A\u4E0D\u5C11\uFF0C\u7167\u7AE0\u529E\u4E8B\u5373\u53EF\u3002\u624B\u5934\u7684\u804C\u8D23\u505A\u624E\u5B9E\uFF0C\u673A\u4F1A\u6765\u4E86\u81EA\u7136\u8F6E\u5230\u3002"]
         },
         \u4E03\u6740: {
           \u559C: ["\u653B\u575A\u4E4B\u5E74", "\u6562\u6253\u786C\u4ED7\u5C31\u6709\u4F4D\u7F6E\uFF0C\u538B\u529B\u6362\u5F97\u6765\u4E1C\u897F\u3002\u6311\u4E00\u5757\u786C\u9AA8\u5934\u5543\u4E0B\u6765\uFF0C\u8FD9\u5E74\u7684\u8F9B\u82E6\u4E0D\u767D\u8D39\u3002"],
-          \u5FCC: ["\u538B\u529B\u4E4B\u5E74", "\u62C5\u5B50\u91CD\u3001\u7ADE\u4E89\u72E0\uFF0C\u5BB9\u6613\u88AB\u4E8B\u60C5\u63A8\u7740\u8D70\u3002\u53D8\u52A8\u591A\u534A\u4E0D\u7531\u4F60\u9009\uFF0C\u5148\u7A33\u4F4F\u624B\u91CC\u7684\uFF0C\u518D\u770B\u65B0\u7684\u3002"]
+          \u5FCC: ["\u538B\u529B\u4E4B\u5E74", "\u62C5\u5B50\u91CD\u3001\u7ADE\u4E89\u72E0\uFF0C\u5BB9\u6613\u88AB\u4E8B\u60C5\u63A8\u7740\u8D70\u3002\u53D8\u52A8\u591A\u534A\u4E0D\u7531\u4F60\u9009\uFF0C\u5148\u7A33\u4F4F\u624B\u91CC\u7684\uFF0C\u518D\u770B\u65B0\u7684\u3002"],
+          \u5E73: ["\u625B\u4E8B\u4E4B\u5E74", "\u62C5\u5B50\u6709\uFF0C\u4F46\u538B\u5F97\u4F4F\u3002\u6311\u4E00\u4E24\u4EF6\u8981\u7D27\u7684\u625B\u4E0B\u6765\uFF0C\u5176\u4F59\u4E0D\u5FC5\u786C\u63A5\u3002"]
         },
         \u6B63\u5370: {
-          \u559C: ["\u8D35\u4EBA\u6587\u4E66\u4E4B\u5E74", "\u5B66\u4E1A\u3001\u8BC1\u4E66\u3001\u5408\u540C\u3001\u957F\u8F88\u76F8\u52A9\uFF0C\u8FD9\u7C7B\u4E8B\u8FD9\u5E74\u5F88\u987A\uFF0C\u5F88\u6709\u5229\u4E8E\u8003\u8BC1\u3001\u5347\u5B66\u3002\u8BE5\u8003\u7684\u8003\u3001\u8BE5\u7B7E\u7684\u7B7E\uFF0C\u591A\u8D70\u52A8\u957F\u8F88\u8D35\u4EBA\u3002"],
-          \u5FCC: ["\u6587\u4E66\u8D39\u5FC3\u4E4B\u5E74", "\u5B66\u4E1A\u3001\u8BC1\u4E66\u3001\u624B\u7EED\u7684\u4E8B\u4E0D\u5C11\uFF0C\u8FC7\u7A0B\u62D6\u3001\u8D39\u5FC3\u3002\u6587\u4EF6\u5408\u540C\u591A\u770B\u4E24\u904D\uFF0C\u522B\u5ACC\u9EBB\u70E6\u3002"]
+          \u559C: ["\u8D35\u4EBA\u6587\u4E66\u4E4B\u5E74", "\u6587\u4E66\u3001\u5B66\u4E1A\u3001\u957F\u8F88\u76F8\u52A9\uFF0C\u8FD9\u7C7B\u4E8B\u8FD9\u5E74\u5F88\u987A\uFF0C\u5229\u4E8E\u8FDB\u4FEE\u957F\u672C\u4E8B\u3002\u8BE5\u5B66\u7684\u5B66\u3001\u8BE5\u529E\u7684\u529E\uFF0C\u591A\u8D70\u52A8\u957F\u8F88\u8D35\u4EBA\u3002"],
+          \u5FCC: ["\u6587\u4E66\u8D39\u5FC3\u4E4B\u5E74", "\u6587\u4E66\u3001\u624B\u7EED\u4E0A\u7684\u4E8B\u4E0D\u5C11\uFF0C\u8FC7\u7A0B\u62D6\u3001\u8D39\u5FC3\u3002\u6587\u4EF6\u591A\u770B\u4E24\u904D\uFF0C\u522B\u5ACC\u9EBB\u70E6\u3002"],
+          \u5E73: ["\u79EF\u7D2F\u4E4B\u5E74", "\u6587\u4E66\u3001\u5B66\u4E1A\u3001\u957F\u8F88\u7684\u4E8B\u5E73\u987A\uFF0C\u6CA1\u6709\u5927\u8D77\u843D\u3002\u8BE5\u5B66\u7684\u5B66\u3001\u8BE5\u529E\u7684\u529E\uFF0C\u8FDB\u5EA6\u6162\u4E5F\u7B97\u6570\u3002"]
         },
         \u504F\u5370: {
           \u559C: ["\u6DF1\u8015\u4E4B\u5E74", "\u5F88\u9002\u5408\u4E00\u4E2A\u4EBA\u94BB\u7814\u3001\u4FEE\u5B66\u95EE\u6280\u80FD\u3002\u6C89\u4E0B\u53BB\u5B66\u7684\u4E1C\u897F\uFF0C\u5F80\u540E\u90FD\u7528\u5F97\u4E0A\u3002"],
-          \u5FCC: ["\u95F7\u5B66\u4E4B\u5E74", "\u5B66\u7684\u548C\u7528\u7684\u5BF9\u4E0D\u4E0A\uFF0C\u88AB\u5B89\u6392\u7684\u4E8B\u591A\uFF0C\u5FC3\u91CC\u95F7\u3002\u95F7\u7684\u65F6\u5019\u627E\u4EBA\u8BF4\u8BF4\uFF0C\u522B\u4E00\u4E2A\u4EBA\u625B\u3002"]
+          \u5FCC: ["\u95F7\u5B66\u4E4B\u5E74", "\u5B66\u7684\u548C\u7528\u7684\u5BF9\u4E0D\u4E0A\uFF0C\u88AB\u5B89\u6392\u7684\u4E8B\u591A\uFF0C\u5FC3\u91CC\u95F7\u3002\u95F7\u7684\u65F6\u5019\u627E\u4EBA\u8BF4\u8BF4\uFF0C\u522B\u4E00\u4E2A\u4EBA\u625B\u3002"],
+          \u5E73: ["\u9759\u4FEE\u4E4B\u5E74", "\u4E00\u4E2A\u4EBA\u94BB\u7814\u7684\u65F6\u95F4\u591A\uFF0C\u5916\u5934\u52A8\u9759\u5C11\u3002\u6C89\u4F4F\u6C14\u628A\u624B\u4E0A\u7684\u6280\u827A\u78E8\u7EC6\uFF0C\u4E0D\u6025\u7740\u62FF\u51FA\u53BB\u3002"]
         },
         \u6B63\u8D22: {
           \u559C: ["\u8FDB\u8D26\u4E4B\u5E74", "\u9760\u672C\u4E8B\u6323\u7684\u94B1\u987A\uFF0C\u6512\u5F97\u4E0B\u3002\u8BE5\u8C08\u7684\u94B1\u5927\u65B9\u8C08\uFF0C\u8BE5\u6536\u7684\u8D26\u53CA\u65F6\u6536\u3002"],
-          \u5FCC: ["\u4E3A\u94B1\u64CD\u5FC3\u4E4B\u5E74", "\u8FDB\u5F97\u6765\u5B88\u4E0D\u4F4F\uFF0C\u5F00\u9500\u7684\u4E8B\u591A\u3002\u5927\u989D\u652F\u51FA\u5F80\u540E\u653E\uFF0C\u5B88\u4F4F\u672C\u91D1\u3002"]
+          \u5FCC: ["\u4E3A\u94B1\u64CD\u5FC3\u4E4B\u5E74", "\u8FDB\u5F97\u6765\u5B88\u4E0D\u4F4F\uFF0C\u5F00\u9500\u7684\u4E8B\u591A\u3002\u5927\u989D\u652F\u51FA\u5F80\u540E\u653E\uFF0C\u5B88\u4F4F\u672C\u91D1\u3002"],
+          \u5E73: ["\u5E73\u8FDB\u4E4B\u5E74", "\u6536\u5165\u6309\u90E8\u5C31\u73ED\uFF0C\u4E0D\u7F3A\u4E5F\u4E0D\u6DA8\u3002\u8BB0\u597D\u8D26\u3001\u7559\u4F4F\u7ED3\u4F59\uFF0C\u9760\u6512\u4E0D\u9760\u8D4C\u3002"]
         },
         \u504F\u8D22: {
           \u559C: ["\u673A\u4F1A\u8D22\u4E4B\u5E74", "\u5916\u5FEB\u3001\u6D3B\u94B1\u7684\u673A\u4F1A\u591A\uFF0C\u89C1\u597D\u5C31\u6536\u3002\u673A\u4F1A\u6765\u4E86\u5C31\u63A5\uFF0C\u522B\u604B\u6218\u3002"],
-          \u5FCC: ["\u8D22\u6765\u8D22\u53BB\u4E4B\u5E74", "\u94B1\u8FC7\u624B\u7559\u4E0D\u4F4F\uFF0C\u522B\u8D2A\u5927\u3002\u6765\u8DEF\u4E0D\u6E05\u695A\u7684\u94B1\u4E0D\u78B0\u3002"]
+          \u5FCC: ["\u8D22\u6765\u8D22\u53BB\u4E4B\u5E74", "\u94B1\u8FC7\u624B\u7559\u4E0D\u4F4F\uFF0C\u522B\u8D2A\u5927\u3002\u6765\u8DEF\u4E0D\u6E05\u695A\u7684\u94B1\u4E0D\u78B0\u3002"],
+          \u5E73: ["\u5C0F\u673A\u4E4B\u5E74", "\u96F6\u661F\u673A\u4F1A\u6709\uFF0C\u4E0D\u6210\u6C14\u5019\u3002\u987A\u624B\u7684\u63A5\uFF0C\u522B\u4E3A\u5B83\u6539\u4E3B\u7EBF\u3002"]
         },
         \u98DF\u795E: {
           \u559C: ["\u8212\u5C55\u4E4B\u5E74", "\u8868\u8FBE\u3001\u521B\u4F5C\u3001\u751F\u6D3B\u4EAB\u53D7\u90FD\u987A\uFF0C\u5FC3\u60C5\u677E\u3002\u60F3\u505A\u7684\u4E1C\u897F\u653E\u624B\u505A\uFF0C\u8FD9\u5E74\u51FA\u6D3B\u3002"],
-          \u5FCC: ["\u53D1\u6325\u4E4B\u5E74", "\u8003\u8BD5\u3001\u8868\u8FBE\u3001\u51FA\u6D3B\u8FD9\u7C7B\u53D1\u6325\u7684\u4E8B\u591A\u3002\u8FC7\u7A0B\u5BB9\u6613\u677E\u52B2\uFF0C\u9760\u81EA\u5F8B\u6491\u4F4F\u8282\u594F\u3002"]
+          \u5FCC: ["\u53D1\u6325\u4E4B\u5E74", "\u8868\u8FBE\u3001\u51FA\u6D3B\u8FD9\u7C7B\u53D1\u6325\u7684\u4E8B\u591A\u3002\u8FC7\u7A0B\u5BB9\u6613\u677E\u52B2\uFF0C\u9760\u81EA\u5F8B\u6491\u4F4F\u8282\u594F\u3002"],
+          \u5E73: ["\u81EA\u5728\u4E4B\u5E74", "\u5FC3\u60C5\u677E\uFF0C\u505A\u4E8B\u968F\u6027\u3002\u5B89\u6392\u4E00\u4EF6\u771F\u6B63\u60F3\u505A\u7684\u4E8B\uFF0C\u6B63\u6709\u4F59\u88D5\u3002"]
         },
         \u4F24\u5B98: {
           \u559C: ["\u51FA\u5934\u4E4B\u5E74", "\u624D\u534E\u9732\u8138\u3001\u6562\u60F3\u6562\u5E72\u6709\u56DE\u62A5\u3002\u4F5C\u54C1\u548C\u60F3\u6CD5\u62FF\u51FA\u6765\u89C1\u4EBA\uFF0C\u522B\u538B\u7740\u3002"],
-          \u5FCC: ["\u662F\u975E\u4E4B\u5E74", "\u5BB9\u6613\u8BF4\u9519\u8BDD\u3001\u5F97\u7F6A\u4EBA\u3001\u8DDF\u89C4\u77E9\u51B2\u7A81\u3002\u91CD\u8981\u573A\u5408\uFF0C\u8BDD\u8FC7\u4E00\u904D\u8111\u518D\u51FA\u53E3\u3002"]
+          \u5FCC: ["\u662F\u975E\u4E4B\u5E74", "\u5BB9\u6613\u8BF4\u9519\u8BDD\u3001\u5F97\u7F6A\u4EBA\u3001\u8DDF\u89C4\u77E9\u51B2\u7A81\u3002\u91CD\u8981\u573A\u5408\uFF0C\u8BDD\u8FC7\u4E00\u904D\u8111\u518D\u51FA\u53E3\u3002"],
+          \u5E73: ["\u8868\u8FBE\u4E4B\u5E74", "\u60F3\u6CD5\u591A\u3001\u8BDD\u4E5F\u591A\uFF0C\u51FA\u5F69\u548C\u51FA\u9519\u90FD\u5728\u4E00\u7EBF\u95F4\u3002\u4F5C\u54C1\u62FF\u51FA\u6765\u53EF\u4EE5\uFF0C\u91CD\u8981\u573A\u5408\u8BDD\u5148\u8FC7\u8111\u3002"]
         },
         \u6BD4\u80A9: {
           \u559C: ["\u5E2E\u624B\u4E4B\u5E74", "\u540C\u8F88\u670B\u53CB\u7ED9\u529B\uFF0C\u642D\u4F19\u505A\u4E8B\u987A\u3002\u6709\u4E8B\u5F00\u53E3\u627E\u4EBA\u642D\u624B\uFF0C\u4E0D\u5403\u4E8F\u3002"],
-          \u5FCC: ["\u5206\u5229\u4E4B\u5E74", "\u5408\u4F19\u7684\u94B1\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002\u8D26\u5148\u8BF4\u6E05\u3001\u767D\u7EB8\u9ED1\u5B57\uFF0C\u60C5\u9762\u653E\u540E\u5934\u3002"]
+          \u5FCC: ["\u5206\u5229\u4E4B\u5E74", "\u5408\u4F19\u7684\u94B1\u5BB9\u6613\u6709\u7EA0\u7EB7\u3002\u8D26\u5148\u8BF4\u6E05\u3001\u767D\u7EB8\u9ED1\u5B57\uFF0C\u60C5\u9762\u653E\u540E\u5934\u3002"],
+          \u5E73: ["\u81EA\u7ACB\u4E4B\u5E74", "\u540C\u8F88\u6765\u5F80\u5E73\u5E38\uFF0C\u4E8B\u60C5\u591A\u9760\u81EA\u5DF1\u3002\u642D\u4F19\u53EF\u4EE5\uFF0C\u8D26\u76EE\u5148\u6E05\u3002"]
         },
         \u52AB\u8D22: {
           \u559C: ["\u62B1\u56E2\u4E4B\u5E74", "\u6709\u4EBA\u66FF\u4F60\u625B\u4E8B\uFF0C\u60A3\u96BE\u89C1\u771F\u60C5\u3002\u8DDF\u9760\u5F97\u4F4F\u7684\u4EBA\u7ED1\u7D27\u4E00\u70B9\u3002"],
-          \u5FCC: ["\u7834\u8017\u4E4B\u5E74", "\u94B1\u5BB9\u6613\u56E0\u4EBA\u800C\u7834\u3002\u501F\u51FA\u3001\u62C5\u4FDD\u3001\u5408\u4F19\u90FD\u8981\u9632\uFF0C\u522B\u4EBA\u7684\u6025\u4E0D\u5FC5\u7528\u4F60\u7684\u94B1\u53BB\u63A5\u3002"]
+          \u5FCC: ["\u7834\u8017\u4E4B\u5E74", "\u94B1\u5BB9\u6613\u56E0\u4EBA\u800C\u7834\u3002\u501F\u51FA\u3001\u62C5\u4FDD\u3001\u5408\u4F19\u90FD\u8981\u9632\uFF0C\u522B\u4EBA\u7684\u6025\u4E0D\u5FC5\u7528\u4F60\u7684\u94B1\u53BB\u63A5\u3002"],
+          \u5E73: ["\u5B88\u5DF1\u4E4B\u5E74", "\u4EBA\u60C5\u5F80\u6765\u4E0D\u5C11\uFF0C\u94B1\u4E0A\u65E0\u5927\u788D\u3002\u501F\u51FA\u4E0E\u62C5\u4FDD\u7167\u65E7\u8C28\u614E\u3002"]
         }
       };
       var YEAR_YIJI = {
-        \u5B98\u559C: { yi: ["\u4E89\u53D6\u540D\u5206\u3001\u89C1\u4E0A\u7EA7", "\u6309\u7A0B\u5E8F\u529E\u5927\u4E8B"], ji: ["\u8D8A\u7EA7\u9876\u649E"] },
+        \u5B98\u559C: { yi: ["\u4E89\u53D6\u540D\u5206\u3001\u5F80\u4E0A\u8D70", "\u6309\u7A0B\u5E8F\u529E\u5927\u4E8B"], ji: ["\u8D8A\u7EA7\u9876\u649E"] },
         \u5B98\u5FCC: { yi: ["\u7406\u6E05\u8D23\u4EFB\u8303\u56F4", "\u6309\u89C4\u77E9\u8D70\u3001\u5C11\u63FD\u4E8B"], ji: ["\u786C\u78B0\u786C", "\u81EA\u6211\u65BD\u538B\u8FC7\u91CD"] },
-        \u5370\u559C: { yi: ["\u8003\u8BC1\u8FDB\u4FEE\u3001\u7B7E\u7EA6\u76D6\u7AE0", "\u591A\u8D70\u52A8\u8D35\u4EBA\u957F\u8F88"], ji: ["\u4E00\u4E8B\u4E45\u62D6\u4E0D\u51B3"] },
+        \u5370\u559C: { yi: ["\u8FDB\u4FEE\u3001\u529E\u6587\u4E66", "\u591A\u8D70\u52A8\u8D35\u4EBA\u957F\u8F88"], ji: ["\u4E00\u4E8B\u4E45\u62D6\u4E0D\u51B3"] },
         \u5370\u5FCC: { yi: ["\u6587\u4EF6\u624B\u7EED\u591A\u6838\u5BF9", "\u522B\u7B49\u9760\u3001\u4E3B\u52A8\u8DD1"], ji: ["\u8F7B\u4FE1\u53E3\u5934\u627F\u8BFA"] },
         \u8D22\u559C: { yi: ["\u8C08\u94B1\u6536\u6B3E\u3001\u63A8\u8FDB\u8981\u4E8B", "\u76D8\u70B9\u8FDB\u9879"], ji: ["\u8D2A\u591A\u94FA\u5F20"] },
         \u8D22\u5FCC: { yi: ["\u5B88\u4F4F\u672C\u91D1\u3001\u8BB0\u8D26", "\u6682\u7F13\u5927\u989D\u652F\u51FA"], ji: ["\u501F\u8D37\u62C5\u4FDD", "\u51B2\u52A8\u6D88\u8D39"] },
@@ -13441,38 +13702,97 @@ var RhythmEngine = (() => {
         \u6BD4\u5FCC: { yi: ["\u8D26\u76EE\u767D\u7EB8\u9ED1\u5B57", "\u754C\u9650\u8BF4\u6E05"], ji: ["\u66FF\u4EBA\u62C5\u4FDD\u625B\u4E8B"] }
       };
       var YIJI_KEY = { \u6B63\u5B98: "\u5B98", \u4E03\u6740: "\u5B98", \u6B63\u5370: "\u5370", \u504F\u5370: "\u5370", \u6B63\u8D22: "\u8D22", \u504F\u8D22: "\u8D22", \u98DF\u795E: "\u98DF", \u4F24\u5B98: "\u4F24", \u6BD4\u80A9: "\u6BD4", \u52AB\u8D22: "\u6BD4" };
+      var YJ_SIGNAL = {
+        // 讲方向,不给固定场景(创始人定 2026-09-10:同一时点给方向,用户自己往自己身上套;一个具体动作不对号的人看不懂)
+        "\u51B2\xB7\u4E8B\u4E1A": { yi: ["\u5148\u7A33\u4F4F\u672C\u804C"], ji: ["\u8D38\u7136\u5927\u52A8"] },
+        "\u5408\xB7\u4E8B\u4E1A": { yi: ["\u501F\u529B\u8C0B\u4E8B"], ji: [] },
+        "\u5211\xB7\u4E8B\u4E1A": { yi: ["\u7406\u987A\u5173\u7CFB"], ji: ["\u786C\u625B\u8F83\u52B2"] },
+        "\u5BB3\xB7\u4E8B\u4E1A": { yi: ["\u5C11\u63FD\u95F2\u4E8B"], ji: ["\u5377\u5165\u662F\u975E"] },
+        "\u4F0F\xB7\u4E8B\u4E1A": { yi: ["\u5B88\u6210\u3001\u6E05\u65E7\u52A1"], ji: ["\u539F\u6837\u8D70\u8001\u8DEF"] },
+        "\u51B2\xB7\u5A5A\u59FB": { yi: ["\u591A\u4F53\u8C05\u3001\u591A\u6C9F\u901A"], ji: ["\u611F\u60C5\u4E0A\u8D4C\u6C14\u52A8\u5FF5"] },
+        "\u5408\xB7\u5A5A\u59FB": { yi: ["\u7528\u5FC3\u7ECF\u8425\u611F\u60C5"], ji: [] },
+        "\u5A5A\u5F15\xB7\u5A5A\u59FB": { yi: ["\u6B63\u89C6\u611F\u60C5\u3001\u591A\u4E0A\u5FC3"], ji: [] },
+        "\u5211\xB7\u5A5A\u59FB": { yi: ["\u591A\u4F53\u8C05"], ji: ["\u7FFB\u65E7\u8D26\u3001\u8F83\u771F"] },
+        "\u5BB3\xB7\u5A5A\u59FB": { yi: [], ji: ["\u542C\u4FE1\u95F2\u8BDD"] },
+        "\u4F0F\xB7\u5A5A\u59FB": { yi: ["\u628A\u65E7\u5173\u7CFB\u7406\u987A"], ji: ["\u65E7\u4E8B\u7EA0\u7F20"] },
+        "\u51B2\xB7\u5BB6\u5B85": { yi: ["\u591A\u987E\u5BB6"], ji: ["\u4E0E\u957F\u8F88\u786C\u9876"] },
+        "\u5408\xB7\u5BB6\u5B85": { yi: ["\u591A\u987E\u5BB6\u3001\u5E38\u805A"], ji: [] },
+        "\u5211\xB7\u5BB6\u5B85": { yi: ["\u591A\u62C5\u5F85\u5BB6\u91CC"], ji: ["\u4E3A\u5BB6\u4E8B\u52A8\u6C14"] },
+        "\u5BB3\xB7\u5BB6\u5B85": { yi: [], ji: ["\u63BA\u548C\u5BB6\u91CC\u95F2\u8BDD"] },
+        "\u4F0F\xB7\u5BB6\u5B85": { yi: ["\u7167\u5E94\u65E7\u4EBA\u65E7\u4E8B"], ji: [] },
+        "\u51B2\xB7\u9879\u76EE": { yi: ["\u6536\u5C3E\u6E05\u65E7"], ji: ["\u8FD4\u5DE5\u8F83\u52B2"] },
+        "\u5408\xB7\u9879\u76EE": { yi: ["\u987A\u52BF\u51FA\u6210\u679C"], ji: [] },
+        "\u5211\xB7\u9879\u76EE": { yi: ["\u7A33\u624E\u7A33\u6253"], ji: ["\u8D2A\u591A\u3001\u53CD\u590D\u8FD4\u5DE5"] },
+        "\u5BB3\xB7\u9879\u76EE": { yi: [], ji: ["\u5206\u5FC3\u591A\u5934"] },
+        "\u4F0F\xB7\u9879\u76EE": { yi: ["\u65E7\u4F5C\u91CD\u6574"], ji: [] },
+        "\u795E\xB7\u5929\u4E59": { yi: ["\u9047\u4E8B\u591A\u627E\u4EBA\u3001\u501F\u5916\u529B"], ji: [] },
+        "\u795E\xB7\u7984\u795E": { yi: ["\u9760\u672C\u4E8B\u53D1\u529B"], ji: [] },
+        "\u795E\xB7\u9A7F\u9A6C": { yi: ["\u52A8\u4E2D\u6C42\u8FDB"], ji: ["\u539F\u5730\u6B7B\u5B88"] },
+        "\u795E\xB7\u7984\u9A6C": { yi: ["\u5F80\u5916\u8D70\u3001\u52A8\u4E2D\u6C42\u8FDB"], ji: [] },
+        "\u795E\xB7\u6587\u660C": { yi: ["\u8FDB\u4FEE\u3001\u957F\u672C\u4E8B"], ji: [] },
+        "\u795E\xB7\u6843\u82B1": { yi: ["\u591A\u793E\u4EA4\u3001\u62D3\u4EBA\u8109"], ji: [] },
+        "\u795E\xB7\u534E\u76D6": { yi: ["\u6C89\u4E0B\u5FC3\u3001\u4FEE\u5B66\u95EE"], ji: [] },
+        "\u795E\xB7\u7EA2\u9E3E\u6210": { yi: ["\u611F\u60C5\u3001\u5BB6\u4E8B\u987A\u559C\u6C14"], ji: [] },
+        "\u795E\xB7\u7EA2\u9E3E\u5C11": { yi: ["\u591A\u7559\u610F\u4EBA\u4E0E\u4EBA\u7684\u7F18\u5206"], ji: [] },
+        "\u795E\xB7\u5929\u559C": { yi: ["\u611F\u60C5\u3001\u5BB6\u4E8B\u987A\u559C\u6C14"], ji: [] }
+      };
+      var SUIYUN_YJ = {
+        \u6362\u6321: { yi: ["\u5148\u9002\u5E94\u65B0\u8282\u594F"], ji: ["\u7167\u642C\u65E7\u6CD5"] },
+        \u5E76\u4E34: { yi: ["\u7A33\u5B88\u672C\u76D8"], ji: ["\u4E0B\u91CD\u6CE8\u3001\u5B64\u6CE8\u4E00\u63B7"] },
+        \u7FFB\u8986: { yi: ["\u5B88\u4F4F\u672C\u76D8"], ji: ["\u5927\u52A8\u3001\u52A0\u6760\u6746"] }
+      };
+      function composeYiji(baseYj, sigList) {
+        const yi = [], ji = [];
+        const add = (arr, cap, items) => {
+          for (const x of items || [])
+            if (x && !arr.includes(x) && arr.length < cap)
+              arr.push(x);
+        };
+        add(yi, 3, (baseYj.yi || []).slice(0, 1));
+        add(ji, 2, (baseYj.ji || []).slice(0, 1));
+        for (const sig of sigList) {
+          const m = sig.k && (YJ_SIGNAL[sig.k] || sig.suiyun && SUIYUN_YJ[sig.suiyun]);
+          if (!m)
+            continue;
+          add(yi, 3, m.yi);
+          add(ji, 2, m.ji);
+        }
+        const key = (t) => t.replace(/[、，。]/g, "");
+        const yiKeys = yi.map(key);
+        return { yi, ji: ji.filter((t) => !yiKeys.some((y) => y.includes(key(t)) || key(t).includes(y))) };
+      }
       var GONG_TEXT = {
         \u4E8B\u4E1A\u73AF\u5883: {
           \u51B2\u559C: "\u73AF\u5883\u5FC5\u53D8\uFF0C\u4E14\u662F\u5F80\u4E0A\u8D70\u7684\u53D8\u52A8\uFF1A\u6362\u5C97\u3001\u6362\u5730\u65B9\uFF0C\u5927\u80C6\u6362\u3002",
           \u51B2\u5FCC: "\u5DE5\u4F5C\u6216\u73AF\u5883\u5927\u53D8\u52A8\u3002\u6362\u5C97\u3001\u6362\u5730\u65B9\u3001\u6362\u8282\u594F\uFF0C\u591A\u534A\u8EB2\u4E0D\u5F00\uFF1B\u4E0E\u5176\u88AB\u52A8\u7B49\uFF0C\u4E0D\u5982\u4E3B\u52A8\u6311\u4E2A\u65B9\u5411\u3002",
-          \u5211: "\u804C\u573A\u78E8\u4EBA\u3002\u5DE5\u4F5C\u91CC\u662F\u975E\u78E8\u64E6\u591A\uFF0C\u4E8B\u60C5\u4E0D\u987A\u624B\uFF1B\u628A\u81EA\u5DF1\u7684\u4E8B\u505A\u624E\u5B9E\uFF0C\u5C11\u63BA\u548C\u522B\u4EBA\u7684\u5C40\u3002",
-          \u5408\u559C: "\u4E8B\u4E1A\u6709\u9760\u3002\u73AF\u5883\u5408\u610F\u3001\u6709\u4EBA\u63A5\u5E94\uFF0C\u8C08\u4E8B\u987A\uFF1B\u60F3\u6362\u60F3\u5347\uFF0C\u8FD9\u5E74\u5F00\u53E3\u80FD\u6210\u4E8B\u3002",
-          \u5408\u5FCC: "\u73AF\u5883\u7F20\u4EBA\u3002\u5DE5\u4F5C\u91CC\u4EBA\u60C5\u4E8B\u52A1\u7ED1\u624B\u811A\uFF0C\u6548\u7387\u4F4E\uFF1B\u80FD\u63A8\u7684\u4E8B\u52A1\u63A8\u6389\uFF0C\u5B88\u4F4F\u81EA\u5DF1\u7684\u6B63\u4E8B\u3002",
-          \u5BB3: "\u5DE5\u4F5C\u91CC\u9632\u80CC\u540E\u4F7F\u7ECA\u3002\u53F0\u9762\u4E0B\u7684\u52A8\u4F5C\u591A\uFF1B\u91CD\u8981\u7684\u4E8B\u7559\u75D5\uFF0C\u53E3\u5934\u627F\u8BFA\u522B\u5F53\u771F\u3002",
+          \u5211: "\u804C\u573A\u4E0D\u987A\u3002\u662F\u975E\u3001\u6469\u64E6\u591A\uFF0C\u4E8B\u60C5\u63A8\u4E0D\u987A\uFF1B\u628A\u81EA\u5DF1\u7684\u4E8B\u505A\u624E\u5B9E\uFF0C\u4E0D\u8981\u5377\u8FDB\u522B\u4EBA\u7684\u4E8B\u3002",
+          \u5408\u559C: "\u4E8B\u4E1A\u6709\u9760\u3002\u73AF\u5883\u5408\u610F\u3001\u6709\u4EBA\u63A5\u5E94\uFF0C\u8C08\u4E8B\u987A\uFF1B\u60F3\u4E89\u53D6\u7684\u8FD9\u5E74\u5F00\u53E3\u5BB9\u6613\u6210\u3002",
+          \u5408\u5FCC: "\u73AF\u5883\u7F20\u4EBA\u3002\u4EBA\u60C5\u4E8B\u52A1\u591A\u3001\u6548\u7387\u4F4E\uFF1B\u80FD\u63A8\u7684\u6742\u4E8B\u63A8\u6389\uFF0C\u5B88\u4F4F\u81EA\u5DF1\u7684\u6B63\u4E8B\u3002",
+          \u5BB3: "\u5F53\u5FC3\u80CC\u540E\u6709\u4EBA\u4F7F\u7ECA\u3002\u53F0\u9762\u4E0B\u7684\u52A8\u4F5C\u591A\uFF1B\u91CD\u8981\u7684\u4E8B\u7559\u75D5\uFF0C\u53E3\u5934\u627F\u8BFA\u522B\u5F53\u771F\u3002",
           \u4F0F: "\u5DE5\u4F5C\u539F\u5730\u6253\u8F6C\u3002\u4E8B\u60C5\u91CD\u590D\u3001\u8FDB\u5C55\u6162\uFF1B\u8FD9\u5E74\u9002\u5408\u6253\u5E95\u5B50\uFF0C\u522B\u6307\u671B\u5927\u8DE8\u6B65\u3002",
-          \u81EA: "\u5DE5\u4F5C\u4E0A\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u81EA\u5DF1\u8DDF\u81EA\u5DF1\u8F83\u52B2\uFF0C\u5065\u5EB7\u3001\u72B6\u6001\u5BB9\u6613\u900F\u652F\u3002"
+          \u81EA: "\u5DE5\u4F5C\u4E0A\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u94BB\u725B\u89D2\u5C16\uFF0C\u5065\u5EB7\u3001\u72B6\u6001\u5BB9\u6613\u900F\u652F\u3002"
         },
         \u5A5A\u59FB\u611F\u60C5: {
           \u51B2\u559C: "\u611F\u60C5\u8D77\u5927\u53D8\u5316\uFF0C\u662F\u5F80\u597D\u5904\u53D8\uFF1B\u53D8\u540E\u89C1\u5206\u6653\u3002",
           \u51B2\u5FCC: "\u611F\u60C5\u805A\u6563\u3002\u5173\u7CFB\u5BB9\u6613\u8D77\u5927\u53D8\u5316\uFF0C\u5206\u5408\u90FD\u5FEB\uFF1B\u5927\u51B3\u5B9A\u522B\u5728\u60C5\u7EEA\u5934\u4E0A\u505A\u3002",
           \u5211: "\u611F\u60C5\u78E8\u64E6\u3002\u76F8\u5904\u8D39\u52B2\u3001\u53E3\u89D2\u591A\uFF1B\u4E8B\u5F52\u4E8B\u3001\u4EBA\u5F52\u4EBA\uFF0C\u522B\u7FFB\u65E7\u8D26\u3002",
-          \u5408\u559C: "\u611F\u60C5\u8D70\u8FD1\u3002\u5355\u8EAB\u80FD\u7ED3\u7F18\uFF0C\u6709\u4F34\u5A5A\u4E8B\u63D0\u5F97\u4E0A\u65E5\u7A0B\u3002",
+          \u5408\u559C: "\u611F\u60C5\u8D70\u8FD1\uFF0C\u5173\u7CFB\u4E0A\u6709\u4E00\u80A1\u5F80\u524D\u7684\u529B\u3002",
           \u5408\u5FCC: "\u611F\u60C5\u6709\u8FDB\u5C55\u4F46\u4F34\u7740\u538B\u529B\u3002\u5173\u7CFB\u5F80\u524D\u8D70\uFF0C\u4F46\u5916\u9762\u7684\u4E8B\u62D6\u7D2F\u4E24\u4E2A\u4EBA\u3002",
-          \u5BB3: "\u611F\u60C5\u6697\u7ED3\u3002\u8BEF\u4F1A\u3001\u731C\u7591\u3001\u95F2\u8BDD\u5BB9\u6613\u8D77\uFF1B\u6709\u8BDD\u5F53\u9762\u8BF4\uFF0C\u522B\u8BA9\u7B2C\u4E09\u4E2A\u4EBA\u4F20\u3002",
-          \u4F0F\u6210: "\u5A5A\u59FB\u5BAB\u5F15\u52A8\u3002\u611F\u60C5\u843D\u5B9A\u3001\u529E\u5927\u4E8B\u7684\u5E74\u4EFD\uFF1B\u5355\u8EAB\u80FD\u5B9A\u5173\u7CFB\uFF0C\u6709\u4F34\u80FD\u6210\u5A5A\u3002",
+          \u5BB3: "\u611F\u60C5\u751F\u5ACC\u9699\u3002\u8BEF\u4F1A\u3001\u731C\u7591\u3001\u95F2\u8BDD\u5BB9\u6613\u8D77\uFF1B\u6709\u8BDD\u5F53\u9762\u8BF4\uFF0C\u522B\u8BA9\u7B2C\u4E09\u4E2A\u4EBA\u4F20\u3002",
+          \u4F0F\u6210: "\u5A5A\u59FB\u5BAB\u5F15\u52A8\u3002\u611F\u60C5\u662F\u8FD9\u5E74\u7684\u4E3B\u7EBF\uFF0C\u5B9C\u591A\u4E0A\u5FC3\u3002",
           \u4F0F\u5C11: "\u611F\u60C5\u5FC3\u4E8B\u4E4B\u5E74\u3002\u8FD9\u65B9\u9762\u7684\u4E8B\u88AB\u7275\u52A8\uFF0C\u5BB9\u6613\u6709\u5FC3\u4E8B\u3002",
           \u5408\u5C11: "\u611F\u60C5\u5FC3\u4E8B\u4E4B\u5E74\u3002\u8FD9\u65B9\u9762\u7684\u5FC3\u601D\u88AB\u7275\u52A8\uFF0C\u5BB9\u6613\u6709\u5728\u610F\u7684\u4EBA\u3002",
-          \u81EA: "\u611F\u60C5\u91CC\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u81EA\u5DF1\u8DDF\u81EA\u5DF1\u8F83\u52B2\u3001\u591A\u60F3\u3002"
+          \u81EA: "\u611F\u60C5\u91CC\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u94BB\u725B\u89D2\u5C16\u3001\u60F3\u592A\u591A\u3002"
         },
         \u957F\u8F88\u5BB6\u5B85: {
           \u51B2\u559C: "\u5BB6\u5B85\u6709\u53D8\u52A8\uFF0C\u53D8\u540E\u66F4\u5B89\u3002",
           \u51B2\u5FCC: "\u5BB6\u91CC\u4E8B\u591A\u3002\u957F\u8F88\u5065\u5EB7\u3001\u5BB6\u5B85\u7684\u4E8B\u64CD\u5FC3\u3002",
           \u5211: "\u5BB6\u91CC\u4E8B\u591A\u3002\u957F\u8F88\u5065\u5EB7\u3001\u5BB6\u5B85\u7684\u4E8B\u64CD\u5FC3\u3002",
           \u5408\u559C: "\u5BB6\u5B85\u548C\u987A\u3002\u5BB6\u91CC\u7701\u5FC3\uFF0C\u957F\u8F88\u8FD9\u8FB9\u6709\u52A9\u529B\u3002",
-          \u5408\u5FCC: "\u5BB6\u91CC\u7684\u4E8B\u7ED1\u624B\u811A\u3002\u64CD\u5FC3\u591A\u3001\u8DD1\u52A8\u591A\u3002",
+          \u5408\u5FCC: "\u5BB6\u4E8B\u7275\u626F\u591A\u3002\u64CD\u5FC3\u591A\u3001\u8DD1\u52A8\u591A\u3002",
           \u5BB3: "\u5BB6\u91CC\u4E8B\u591A\u3002\u957F\u8F88\u5065\u5EB7\u3001\u5BB6\u5B85\u7684\u4E8B\u64CD\u5FC3\u3002",
           \u4F0F: "\u5BB6\u91CC\u7684\u4E8B\u91CD\u590D\u3001\u62D6\u7740\u3002\u8001\u95EE\u9898\u8FD8\u662F\u90A3\u4E9B\u3002",
-          \u81EA: "\u5BB6\u4E8B\u4E0A\u81EA\u6211\u6D88\u8017\uFF0C\u64CD\u5FC3\u8FC7\u4E86\u5934\u3002"
+          \u81EA: "\u5BB6\u4E8B\u4E0A\u64CD\u5FC3\u8FC7\u5934\uFF0C\u81EA\u6211\u6D88\u8017\u3002"
         },
         // 时支宫传统主「子女·作品·成果」;标签取「作品项目」——无子女用户看「子女」会懵(用户2026-09反馈),
         // 断语一律写作品/项目/计划,不预设有孩子
@@ -13482,17 +13802,17 @@ var RhythmEngine = (() => {
           \u5211: "\u9879\u76EE\u78E8\u4EBA\u3002\u624B\u4E0A\u7684\u4E8B\u662F\u975E\u591A\u3001\u53CD\u590D\u591A\u3002",
           \u5408\u559C: "\u6709\u6210\u679C\u3002\u4F5C\u54C1\u3001\u9879\u76EE\u80FD\u843D\u5730\u3002",
           \u5408\u5FCC: "\u9879\u76EE\u7F20\u8EAB\u3001\u6536\u5C3E\u62D6\u62C9\u3002",
-          \u5BB3: "\u9879\u76EE\u9632\u6697\u635F\u3002\u5907\u4EFD\u3001\u7559\u5E95\u3002",
-          \u4F0F: "\u8BA1\u5212\u539F\u5730\u3001\u63A8\u8FDB\u6162\u3002\u6253\u78E8\u6BD4\u6269\u5F20\u5408\u9002\u3002",
-          \u81EA: "\u9879\u76EE\u4E0A\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u8F83\u52B2\u8FD4\u5DE5\uFF0C\u5065\u5EB7\u3001\u72B6\u6001\u5BB9\u6613\u900F\u652F\u3002"
+          \u5BB3: "\u9879\u76EE\u5F53\u5FC3\u6697\u635F\u3002\u8BB0\u5F97\u5907\u4EFD\u3001\u7559\u5E95\u3002",
+          \u4F0F: "\u8BA1\u5212\u505C\u5728\u539F\u5730\u3001\u63A8\u8FDB\u6162\u3002\u6253\u78E8\u6BD4\u6269\u5F20\u5408\u9002\u3002",
+          \u81EA: "\u9879\u76EE\u4E0A\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u53CD\u590D\u8FD4\u5DE5\uFF0C\u5065\u5EB7\u3001\u72B6\u6001\u5BB9\u6613\u900F\u652F\u3002"
         }
       };
       var SHEN_TEXT = {
-        \u7EA2\u9E3E\u6210: "\u7EA2\u9E3E\u5165\u547D\u3002\u5A5A\u604B\u4FE1\u53F7\u5E74\uFF0C\u5355\u8EAB\u6613\u9047\u6B63\u7F18\uFF0C\u6709\u4F34\u6613\u529E\u559C\u4E8B\u3002",
-        \u7EA2\u9E3E\u5C11: "\u7EA2\u9E3E\u5165\u547D\u3002\u60C5\u7AA6\u4E4B\u5E74\uFF0C\u611F\u60C5\u7684\u5FC3\u601D\u591A\u3002",
-        \u5929\u559C: "\u5929\u559C\u5165\u547D\u3002\u559C\u4E8B\u4E34\u95E8\uFF0C\u5BB6\u91CC\u5BB9\u6613\u6709\u559C\u5E86\u3002",
-        \u9A7F\u9A6C: "\u9A7F\u9A6C\u4E4B\u5E74\u3002\u642C\u5BB6\u3001\u6362\u57CE\u5E02\u3001\u51FA\u5DEE\u591A\uFF0C\u8FD9\u5E74\u52A8\u6BD4\u5B88\u597D\u3002",
-        \u6587\u660C: "\u6587\u660C\u4E4B\u5E74\u3002\u8003\u8BD5\u3001\u8FDB\u4FEE\u3001\u529E\u8BC1\u7167\u987A\uFF0C\u8981\u8003\u7684\u8BD5\u653E\u8FD9\u5E74\u8003\u3002",
+        \u7EA2\u9E3E\u6210: "\u7EA2\u9E3E\u5165\u547D\u3002\u611F\u60C5\u3001\u5BB6\u4E8B\u4E0A\u6709\u559C\u6C14\u7684\u4E00\u5E74\u3002",
+        \u7EA2\u9E3E\u5C11: "\u7EA2\u9E3E\u5165\u547D\u3002\u611F\u60C5\u4E0A\u7684\u5FC3\u601D\u591A\u3001\u7F18\u5206\u52A8\u3002",
+        \u5929\u559C: "\u5929\u559C\u5165\u547D\u3002\u5BB6\u91CC\u5BB9\u6613\u6709\u987A\u5FC3\u7684\u559C\u6C14\u3002",
+        \u9A7F\u9A6C: "\u9A7F\u9A6C\u4E4B\u5E74\u3002\u8D70\u52A8\u3001\u53D8\u52A8\u591A\uFF0C\u8FD9\u5E74\u52A8\u6BD4\u5B88\u5F3A\u3002",
+        \u6587\u660C: "\u6587\u660C\u4E4B\u5E74\u3002\u8FDB\u4FEE\u3001\u957F\u672C\u4E8B\u987A\uFF0C\u8981\u7528\u529F\u7684\u4E8B\u653E\u8FD9\u5E74\u3002",
         \u6843\u82B1: "\u6843\u82B1\u4E4B\u5E74\u3002\u5F02\u6027\u7F18\u3001\u793E\u4EA4\u660E\u663E\u53D8\u65FA\u3002",
         \u534E\u76D6: "\u534E\u76D6\u4E4B\u5E74\u3002\u9002\u5408\u6C89\u6DC0\u4FEE\u5B66\uFF0C\u793E\u4EA4\u6DE1\u3002",
         \u5929\u4E59: "\u5929\u4E59\u8D35\u4EBA\u5165\u547D\u3002\u8D35\u4EBA\u660E\u663E\uFF0C\u6C42\u4EBA\u529E\u4E8B\u987A\uFF0C\u96BE\u4E8B\u6709\u4EBA\u63A5\u3002",
@@ -13504,6 +13824,15 @@ var RhythmEngine = (() => {
         \u5E76\u4E34: "\u91CD\u53E0\u4E4B\u5E74\u3002\u597D\u574F\u90FD\u653E\u5927\uFF0C\u5927\u4E8B\u591A\uFF1B\u8FD9\u5E74\u7684\u51B3\u5B9A\u5206\u91CF\u91CD\uFF0C\u6162\u70B9\u4E0B\u3002",
         \u7FFB\u8986: "\u7FFB\u8986\u4E4B\u5E74\u3002\u53D8\u52A8\u5267\u70C8\uFF0C\u7A33\u5B57\u5F53\u5934\uFF1B\u5B88\u4F4F\u57FA\u672C\u76D8\uFF0C\u522B\u52A0\u6760\u6746\u3002"
       };
+      function favSign(dayWx, favVec, wx, zhi) {
+        if ((dayWx === "\u91D1" || dayWx === "\u706B") && wx === "\u571F" && zhi) {
+          if (zhi === "\u4E11" || zhi === "\u8FB0")
+            return "\u559C";
+          if (zhi === "\u672A" || zhi === "\u620C")
+            return "\u5FCC";
+        }
+        return ((favVec || {})[wx] ?? 0) >= 0 ? "\u559C" : "\u5FCC";
+      }
       function favOfWx(dayWx, favVec, wx, zhi) {
         if ((dayWx === "\u91D1" || dayWx === "\u706B") && wx === "\u571F" && zhi) {
           if (zhi === "\u4E11" || zhi === "\u8FB0")
@@ -13512,66 +13841,66 @@ var RhythmEngine = (() => {
             return "\u5FCC";
         }
         const v = (favVec || {})[wx] ?? 0;
-        return v >= 0.12 ? "\u559C" : v <= -0.12 ? "\u5FCC" : v >= 0 ? "\u559C" : "\u5FCC";
+        return v >= 0.12 ? "\u559C" : v <= -0.12 ? "\u5FCC" : "\u5E73";
       }
       function gongShenSignals(chart, subjectZhi, age, favVec, dayWx, dayGan, label) {
         const zhis = chart.zhis;
         const cands = [];
-        const push = (w, text, basis) => cands.push({ w, text, basis });
-        const GONGS = [["\u4E8B\u4E1A\u73AF\u5883", 1], ["\u5A5A\u59FB\u611F\u60C5", 2], ["\u957F\u8F88\u5BB6\u5B85", 0], ["\u4F5C\u54C1\u9879\u76EE", 3]];
-        for (const [name, idx] of GONGS) {
+        const push = (w, text, basis, k) => cands.push({ w, text, basis, k });
+        const GONGS = [["\u4E8B\u4E1A\u73AF\u5883", 1, "\u4E8B\u4E1A"], ["\u5A5A\u59FB\u611F\u60C5", 2, "\u5A5A\u59FB"], ["\u957F\u8F88\u5BB6\u5B85", 0, "\u5BB6\u5B85"], ["\u4F5C\u54C1\u9879\u76EE", 3, "\u9879\u76EE"]];
+        for (const [name, idx, sh] of GONGS) {
           const zhi = zhis[idx], P = GONG_TEXT[name];
           const gongLabel = ["\u5E74\u652F", "\u6708\u652F", "\u65E5\u652F", "\u65F6\u652F"][idx];
           if (CHONG[subjectZhi] === zhi) {
-            const pos = favOfWx(dayWx, favVec, ZHI_WX[subjectZhi], subjectZhi) === "\u559C";
-            push(80, `\u3010${name}\u3011${pos ? P.\u51B2\u559C : P.\u51B2\u5FCC}`, `${label}${subjectZhi}\u51B2${gongLabel}${zhi}`);
+            const pos = favSign(dayWx, favVec, ZHI_WX[subjectZhi], subjectZhi) === "\u559C";
+            push(80, `\u3010${name}\u3011${pos ? P.\u51B2\u559C : P.\u51B2\u5FCC}`, `${label}${subjectZhi}\u51B2${gongLabel}${zhi}`, "\u51B2\xB7" + sh);
           } else if (subjectZhi === zhi && ZIXING.includes(subjectZhi)) {
-            push(75, `\u3010${name}\u3011${P.\u81EA}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u81EA\u5211`);
+            push(75, `\u3010${name}\u3011${P.\u81EA}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u81EA\u5211`, "\u5211\xB7" + sh);
           } else if (subjectZhi === zhi && idx === 2) {
-            push(72, `\u3010\u5A5A\u59FB\u611F\u60C5\u3011${age >= 22 ? P.\u4F0F\u6210 : P.\u4F0F\u5C11}`, `${label}${subjectZhi}\u5165\u65E5\u652F\uFF08\u5A5A\u59FB\u5BAB\u5F15\u52A8\uFF09`);
+            push(72, `\u3010\u5A5A\u59FB\u611F\u60C5\u3011${age >= 22 ? P.\u4F0F\u6210 : P.\u4F0F\u5C11}`, `${label}${subjectZhi}\u5165\u65E5\u652F\uFF08\u5A5A\u59FB\u5BAB\u5F15\u52A8\uFF09`, "\u5A5A\u5F15\xB7\u5A5A\u59FB");
           } else if (isXingPair(subjectZhi, zhi) && subjectZhi !== zhi) {
-            push(70, `\u3010${name}\u3011${P.\u5211}`, `${label}${subjectZhi}\u5211${gongLabel}${zhi}`);
+            push(70, `\u3010${name}\u3011${P.\u5211}`, `${label}${subjectZhi}\u5211${gongLabel}${zhi}`, "\u5211\xB7" + sh);
           } else if (LIUHE[subjectZhi] === zhi) {
             const hwx = LIUHE_WX[subjectZhi + zhi] || ZHI_WX[zhi];
             const hz = hwx === "\u571F" ? ["\u4E11", "\u8FB0"].includes(subjectZhi) || ["\u4E11", "\u8FB0"].includes(zhi) ? "\u4E11" : "\u620C" : null;
-            const pos = favOfWx(dayWx, favVec, hwx, hz) === "\u559C";
+            const pos = favSign(dayWx, favVec, hwx, hz) === "\u559C";
             const txt = idx === 2 && age < 22 ? P.\u5408\u5C11 : pos ? P.\u5408\u559C : P.\u5408\u5FCC;
-            push(60, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u5408${gongLabel}${zhi}`);
+            push(60, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u5408${gongLabel}${zhi}`, "\u5408\xB7" + sh);
           } else {
             const ban = SANHE.find((g) => g.trio.includes(subjectZhi) && g.trio.includes(zhi) && subjectZhi !== zhi && (g.wang === subjectZhi || g.wang === zhi));
             if (ban) {
-              const pos = favOfWx(dayWx, favVec, ban.wx, null) === "\u559C";
+              const pos = favSign(dayWx, favVec, ban.wx, null) === "\u559C";
               const txt = idx === 2 && age < 22 ? P.\u5408\u5C11 : pos ? P.\u5408\u559C : P.\u5408\u5FCC;
-              push(58, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u534A\u5408${ban.wx}\u5C40`);
+              push(58, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u534A\u5408${ban.wx}\u5C40`, "\u5408\xB7" + sh);
             } else if (HARM[subjectZhi] === zhi) {
-              push(50, `\u3010${name}\u3011${P.\u5BB3}`, `${label}${subjectZhi}\u5BB3${gongLabel}${zhi}`);
+              push(50, `\u3010${name}\u3011${P.\u5BB3}`, `${label}${subjectZhi}\u5BB3${gongLabel}${zhi}`, "\u5BB3\xB7" + sh);
             } else if (subjectZhi === zhi) {
-              push(40, `\u3010${name}\u3011${P.\u4F0F}`, `${label}${subjectZhi}\u4E0E${gongLabel}\u4F0F\u541F`);
+              push(40, `\u3010${name}\u3011${P.\u4F0F}`, `${label}${subjectZhi}\u4E0E${gongLabel}\u4F0F\u541F`, "\u4F0F\xB7" + sh);
             }
           }
         }
         const nzhi = zhis[0];
         const isLu = LU[dayGan] === subjectZhi, isMa = YIMA[nzhi] === subjectZhi;
         if (isLu && isMa)
-          push(66, SHEN_TEXT.\u7984\u9A6C, `${subjectZhi}\u4E3A\u65E5\u4E3B\u7984\u795E\u53C8\u9022\u9A7F\u9A6C`);
+          push(66, SHEN_TEXT.\u7984\u9A6C, `${subjectZhi}\u4E3A\u65E5\u4E3B\u7984\u795E\u53C8\u9022\u9A7F\u9A6C`, "\u795E\xB7\u7984\u9A6C");
         else {
           if (isLu)
-            push(32, SHEN_TEXT.\u7984\u795E, `${subjectZhi}\u4E3A\u65E5\u4E3B${dayGan}\u4E4B\u7984`);
+            push(32, SHEN_TEXT.\u7984\u795E, `${subjectZhi}\u4E3A\u65E5\u4E3B${dayGan}\u4E4B\u7984`, "\u795E\xB7\u7984\u795E");
           if (isMa)
-            push(30, SHEN_TEXT.\u9A7F\u9A6C, `\u5E74\u652F${nzhi}\u8D77\u9A7F\u9A6C\u5728${subjectZhi}`);
+            push(30, SHEN_TEXT.\u9A7F\u9A6C, `\u5E74\u652F${nzhi}\u8D77\u9A7F\u9A6C\u5728${subjectZhi}`, "\u795E\xB7\u9A7F\u9A6C");
         }
         if ((TIANYI[dayGan] || []).includes(subjectZhi))
-          push(33, SHEN_TEXT.\u5929\u4E59, `\u65E5\u5E72${dayGan}\u5929\u4E59\u8D35\u4EBA\u5728${subjectZhi}`);
+          push(33, SHEN_TEXT.\u5929\u4E59, `\u65E5\u5E72${dayGan}\u5929\u4E59\u8D35\u4EBA\u5728${subjectZhi}`, "\u795E\xB7\u5929\u4E59");
         if (HONGLUAN[nzhi] === subjectZhi)
-          push(35, age >= 22 ? SHEN_TEXT.\u7EA2\u9E3E\u6210 : SHEN_TEXT.\u7EA2\u9E3E\u5C11, `\u5E74\u652F${nzhi}\u8D77\u7EA2\u9E3E\u5728${subjectZhi}`);
+          push(35, age >= 22 ? SHEN_TEXT.\u7EA2\u9E3E\u6210 : SHEN_TEXT.\u7EA2\u9E3E\u5C11, `\u5E74\u652F${nzhi}\u8D77\u7EA2\u9E3E\u5728${subjectZhi}`, age >= 22 ? "\u795E\xB7\u7EA2\u9E3E\u6210" : "\u795E\xB7\u7EA2\u9E3E\u5C11");
         if (CHONG[HONGLUAN[nzhi]] === subjectZhi)
-          push(34, SHEN_TEXT.\u5929\u559C, `\u5E74\u652F${nzhi}\u8D77\u5929\u559C\u5728${subjectZhi}`);
+          push(34, SHEN_TEXT.\u5929\u559C, `\u5E74\u652F${nzhi}\u8D77\u5929\u559C\u5728${subjectZhi}`, "\u795E\xB7\u5929\u559C");
         if (WENCHANG[dayGan] === subjectZhi)
-          push(28, SHEN_TEXT.\u6587\u660C, `\u65E5\u5E72${dayGan}\u6587\u660C\u5728${subjectZhi}`);
+          push(28, SHEN_TEXT.\u6587\u660C, `\u65E5\u5E72${dayGan}\u6587\u660C\u5728${subjectZhi}`, "\u795E\xB7\u6587\u660C");
         if (TAOHUA[nzhi] === subjectZhi)
-          push(26, SHEN_TEXT.\u6843\u82B1, `\u5E74\u652F${nzhi}\u8D77\u6843\u82B1\u5728${subjectZhi}`);
+          push(26, SHEN_TEXT.\u6843\u82B1, `\u5E74\u652F${nzhi}\u8D77\u6843\u82B1\u5728${subjectZhi}`, "\u795E\xB7\u6843\u82B1");
         if (HUAGAI[nzhi] === subjectZhi)
-          push(24, SHEN_TEXT.\u534E\u76D6, `\u5E74\u652F${nzhi}\u8D77\u534E\u76D6\u5728${subjectZhi}`);
+          push(24, SHEN_TEXT.\u534E\u76D6, `\u5E74\u652F${nzhi}\u8D77\u534E\u76D6\u5728${subjectZhi}`, "\u795E\xB7\u534E\u76D6");
         return cands;
       }
       function studentize(signals, age) {
@@ -13595,16 +13924,19 @@ var RhythmEngine = (() => {
         const xj = favOfWx(dayWx, favVec, GAN_WX[yGan], tzhi);
         const yt = (YEAR_TYPE[full] || YEAR_TYPE.\u6BD4\u80A9)[xj];
         const cands = gongShenSignals(chart, yZhi, age, favVec, dayWx, dayGan, "\u6D41\u5E74");
-        const push = (w, text, basis) => cands.push({ w, text, basis });
+        const push = (w, text, basis, suiyun) => cands.push({ w, text, basis, suiyun });
         const dy = activeDaYun(chart, year);
         if (dy && dy.startYear === year)
-          push(95, SUIYUN_TEXT.\u6362\u6321, `${year}\u5E74\u8D77\u8D70${dy.gan}${dy.zhi}\u5927\u8FD0`);
+          push(95, SUIYUN_TEXT.\u6362\u6321, `${year}\u5E74\u8D77\u8D70${dy.gan}${dy.zhi}\u5927\u8FD0`, "\u6362\u6321");
         if (dy && dy.gan + dy.zhi === yGan + yZhi)
-          push(99, SUIYUN_TEXT.\u5E76\u4E34, "\u6D41\u5E74\u4E0E\u5927\u8FD0\u5E72\u652F\u76F8\u540C\uFF08\u5C81\u8FD0\u5E76\u4E34\uFF09");
+          push(99, SUIYUN_TEXT.\u5E76\u4E34, "\u6D41\u5E74\u4E0E\u5927\u8FD0\u5E72\u652F\u76F8\u540C\uFF08\u5C81\u8FD0\u5E76\u4E34\uFF09", "\u5E76\u4E34");
         if (KE[GAN_WX[yGan]] === dayWx && CHONG[yZhi] === zhis[2])
-          push(98, SUIYUN_TEXT.\u7FFB\u8986, `\u6D41\u5E74${yGan}\u514B\u65E5\u4E3B\u3001${yZhi}\u51B2\u65E5\u652F\uFF08\u5929\u514B\u5730\u51B2\uFF09`);
-        const signals = studentize(cands.sort((a, b) => b.w - a.w).slice(0, 3), age);
-        const yj = YEAR_YIJI[YIJI_KEY[full] + xj] || { yi: [], ji: [] };
+          push(98, SUIYUN_TEXT.\u7FFB\u8986, `\u6D41\u5E74${yGan}\u514B\u65E5\u4E3B\u3001${yZhi}\u51B2\u65E5\u652F\uFF08\u5929\u514B\u5730\u51B2\uFF09`, "\u7FFB\u8986");
+        const sorted = cands.sort((a, b) => b.w - a.w);
+        const signals = studentize(sorted.slice(0, 3), age);
+        const yk = YIJI_KEY[full];
+        const baseYj = YEAR_YIJI[yk + xj] || (xj === "\u5E73" && YEAR_YIJI[yk + "\u559C"] && YEAR_YIJI[yk + "\u5FCC"] ? { yi: [YEAR_YIJI[yk + "\u559C"].yi[0]], ji: [YEAR_YIJI[yk + "\u5FCC"].ji[0]] } : { yi: [], ji: [] });
+        const yj = composeYiji(baseYj, sorted.slice(0, 5));
         const big = signals.some((s) => s.w >= 72);
         return {
           headline: yt[0],
@@ -13616,16 +13948,16 @@ var RhythmEngine = (() => {
         };
       }
       var MONTH_TYPE = {
-        \u6B63\u5B98: { \u559C: ["\u540D\u5206\u6708", "\u8C08\u5B9A\u3001\u8003\u6838\u3001\u89C1\u4E0A\u7EA7\u7684\u4E8B\u987A\u3002"], \u5FCC: ["\u53D7\u5236\u6708", "\u89C4\u77E9\u591A\u3001\u88AB\u7BA1\u7740\uFF0C\u6309\u6D41\u7A0B\u8D70\u3002"] },
-        \u4E03\u6740: { \u559C: ["\u653B\u575A\u6708", "\u786C\u4E8B\u8FD9\u6708\u5543\u5F97\u52A8\u3002"], \u5FCC: ["\u5403\u52B2\u6708", "\u538B\u529B\u96C6\u4E2D\uFF0C\u5148\u7A33\u4F4F\u624B\u91CC\u7684\u3002"] },
-        \u6B63\u5370: { \u559C: ["\u6587\u4E66\u6708", "\u8BC1\u4EF6\u3001\u5408\u540C\u3001\u5B66\u7684\u4E8B\u987A\u3002"], \u5FCC: ["\u8D39\u5FC3\u6708", "\u624B\u7EED\u62D6\u6C93\uFF0C\u6587\u4EF6\u591A\u6838\u5BF9\u3002"] },
-        \u504F\u5370: { \u559C: ["\u94BB\u7814\u6708", "\u5F88\u9002\u5408\u6C89\u4E0B\u6765\u5B66\u4E1C\u897F\u3002"], \u5FCC: ["\u95F7\u6708", "\u88AB\u5B89\u6392\u7684\u4E8B\u591A\uFF0C\u5FC3\u91CC\u5835\u3002"] },
-        \u6B63\u8D22: { \u559C: ["\u8FDB\u8D26\u6708", "\u8C08\u94B1\u3001\u6536\u6B3E\u987A\u3002"], \u5FCC: ["\u7834\u8D39\u6708", "\u5F00\u9500\u96C6\u4E2D\uFF0C\u5927\u989D\u7F13\u4E00\u7F13\u3002"] },
-        \u504F\u8D22: { \u559C: ["\u6D3B\u94B1\u6708", "\u5916\u5FEB\u673A\u4F1A\u591A\uFF0C\u89C1\u597D\u5C31\u6536\u3002"], \u5FCC: ["\u6563\u8D22\u6708", "\u94B1\u8FC7\u624B\u7559\u4E0D\u4F4F\u3002"] },
-        \u98DF\u795E: { \u559C: ["\u8212\u5C55\u6708", "\u8868\u8FBE\u51FA\u6D3B\u987A\uFF0C\u5FC3\u60C5\u677E\u3002"], \u5FCC: ["\u677E\u52B2\u6708", "\u5BB9\u6613\u6563\uFF0C\u8BBE\u4E2A\u622A\u6B62\u65E5\u3002"] },
-        \u4F24\u5B98: { \u559C: ["\u9732\u8138\u6708", "\u4F5C\u54C1\u60F3\u6CD5\u62FF\u51FA\u6765\u89C1\u4EBA\u3002"], \u5FCC: ["\u53E3\u820C\u6708", "\u8BDD\u8FC7\u8111\u518D\u8BF4\uFF0C\u5173\u952E\u4E8B\u7559\u75D5\u3002"] },
-        \u6BD4\u80A9: { \u559C: ["\u642D\u4F19\u6708", "\u627E\u4EBA\u540C\u505A\u4E8B\uFF0C\u987A\u3002"], \u5FCC: ["\u5206\u8D26\u6708", "\u8D26\u8BF4\u6E05\uFF0C\u60C5\u9762\u653E\u540E\u3002"] },
-        \u52AB\u8D22: { \u559C: ["\u4E92\u52A9\u6708", "\u6709\u4EBA\u642D\u628A\u624B\u3002"], \u5FCC: ["\u6F0F\u8D22\u6708", "\u501F\u51FA\u3001\u62C5\u4FDD\u90FD\u8981\u9632\u3002"] }
+        \u6B63\u5B98: { \u559C: ["\u540D\u5206\u6708", "\u540D\u5206\u3001\u6B63\u4E8B\u4E0A\u987A\uFF0C\u8BE5\u8C08\u7684\u8C08\u3002"], \u5FCC: ["\u53D7\u5236\u6708", "\u89C4\u77E9\u591A\u3001\u88AB\u7BA1\u7740\uFF0C\u6309\u6D41\u7A0B\u8D70\u3002"], \u5E73: ["\u672C\u5206\u6708", "\u7167\u7AE0\u529E\u4E8B\u5373\u53EF\uFF0C\u673A\u4F1A\u5230\u4E86\u81EA\u7136\u8F6E\u5230\u3002"] },
+        \u4E03\u6740: { \u559C: ["\u653B\u575A\u6708", "\u786C\u4E8B\u8FD9\u6708\u5543\u5F97\u52A8\u3002"], \u5FCC: ["\u5403\u52B2\u6708", "\u538B\u529B\u96C6\u4E2D\uFF0C\u5148\u7A33\u4F4F\u624B\u91CC\u7684\u3002"], \u5E73: ["\u625B\u4E8B\u6708", "\u62C5\u5B50\u6709\uFF0C\u538B\u5F97\u4F4F\uFF0C\u6311\u8981\u7D27\u7684\u625B\u3002"] },
+        \u6B63\u5370: { \u559C: ["\u6587\u4E66\u6708", "\u6587\u4E66\u3001\u5B66\u4E60\u4E0A\u7684\u4E8B\u987A\u3002"], \u5FCC: ["\u8D39\u5FC3\u6708", "\u624B\u7EED\u62D6\u6C93\uFF0C\u6587\u4EF6\u591A\u6838\u5BF9\u3002"], \u5E73: ["\u79EF\u7D2F\u6708", "\u5B66\u7684\u3001\u529E\u7684\u90FD\u5E73\u987A\uFF0C\u8FDB\u5EA6\u6162\u4E5F\u7B97\u6570\u3002"] },
+        \u504F\u5370: { \u559C: ["\u94BB\u7814\u6708", "\u5F88\u9002\u5408\u6C89\u4E0B\u6765\u5B66\u4E1C\u897F\u3002"], \u5FCC: ["\u95F7\u6708", "\u88AB\u5B89\u6392\u7684\u4E8B\u591A\uFF0C\u5FC3\u91CC\u5835\u3002"], \u5E73: ["\u9759\u4FEE\u6708", "\u5916\u5934\u52A8\u9759\u5C11\uFF0C\u9002\u5408\u78E8\u7EC6\u624B\u827A\u3002"] },
+        \u6B63\u8D22: { \u559C: ["\u8FDB\u8D26\u6708", "\u8C08\u94B1\u3001\u6536\u6B3E\u987A\u3002"], \u5FCC: ["\u7834\u8D39\u6708", "\u5F00\u9500\u96C6\u4E2D\uFF0C\u5927\u989D\u7F13\u4E00\u7F13\u3002"], \u5E73: ["\u5E73\u8FDB\u6708", "\u6536\u5165\u6309\u90E8\u5C31\u73ED\uFF0C\u8BB0\u8D26\u7559\u7ED3\u4F59\u3002"] },
+        \u504F\u8D22: { \u559C: ["\u6D3B\u94B1\u6708", "\u5916\u5FEB\u673A\u4F1A\u591A\uFF0C\u89C1\u597D\u5C31\u6536\u3002"], \u5FCC: ["\u6563\u8D22\u6708", "\u94B1\u8FC7\u624B\u7559\u4E0D\u4F4F\u3002"], \u5E73: ["\u5C0F\u673A\u6708", "\u96F6\u661F\u673A\u4F1A\u6709\uFF0C\u987A\u624B\u63A5\uFF0C\u4E0D\u6539\u4E3B\u7EBF\u3002"] },
+        \u98DF\u795E: { \u559C: ["\u8212\u5C55\u6708", "\u8868\u8FBE\u51FA\u6D3B\u987A\uFF0C\u5FC3\u60C5\u677E\u3002"], \u5FCC: ["\u677E\u52B2\u6708", "\u5BB9\u6613\u6563\uFF0C\u8BBE\u4E2A\u622A\u6B62\u65E5\u3002"], \u5E73: ["\u81EA\u5728\u6708", "\u5FC3\u60C5\u677E\uFF0C\u5B89\u6392\u4E00\u4EF6\u60F3\u505A\u7684\u4E8B\u3002"] },
+        \u4F24\u5B98: { \u559C: ["\u9732\u8138\u6708", "\u4F5C\u54C1\u60F3\u6CD5\u62FF\u51FA\u6765\u89C1\u4EBA\u3002"], \u5FCC: ["\u53E3\u820C\u6708", "\u8BDD\u8FC7\u8111\u518D\u8BF4\uFF0C\u5173\u952E\u4E8B\u7559\u75D5\u3002"], \u5E73: ["\u8868\u8FBE\u6708", "\u60F3\u6CD5\u591A\uFF0C\u91CD\u8981\u573A\u5408\u8BDD\u5148\u8FC7\u8111\u3002"] },
+        \u6BD4\u80A9: { \u559C: ["\u642D\u4F19\u6708", "\u627E\u4EBA\u540C\u505A\u4E8B\uFF0C\u987A\u3002"], \u5FCC: ["\u5206\u8D26\u6708", "\u8D26\u8BF4\u6E05\uFF0C\u60C5\u9762\u653E\u540E\u3002"], \u5E73: ["\u81EA\u7ACB\u6708", "\u4E8B\u60C5\u591A\u9760\u81EA\u5DF1\uFF0C\u642D\u4F19\u5148\u6E05\u8D26\u3002"] },
+        \u52AB\u8D22: { \u559C: ["\u4E92\u52A9\u6708", "\u6709\u4EBA\u642D\u628A\u624B\u3002"], \u5FCC: ["\u6F0F\u8D22\u6708", "\u501F\u51FA\u3001\u62C5\u4FDD\u90FD\u8981\u9632\u3002"], \u5E73: ["\u5B88\u5DF1\u6708", "\u4EBA\u60C5\u5F80\u6765\u591A\uFF0C\u501F\u51FA\u62C5\u4FDD\u7167\u65E7\u8C28\u614E\u3002"] }
       };
       function liuYue2(mj, chart, year, mGan, mZhi, yZhi, dyn) {
         const dayGan = chart.dayGan, dayWx = GAN_WX[dayGan];
@@ -13640,8 +13972,12 @@ var RhythmEngine = (() => {
           cands.push({ w: 68, text: "\u6D41\u5E74\u4E3B\u9898\u5F53\u6708\u6B63\u663E\uFF1A\u5168\u5E74\u7684\u5927\u4E8B\u8FD9\u6708\u96C6\u4E2D\u5E94\u3002", basis: `\u6708\u652F${mZhi}\u4E0E\u6D41\u5E74\u652F\u76F8\u540C` });
         else if (CHONG[mZhi] === yZhi)
           cands.push({ w: 68, text: "\u51B2\u52A8\u6D41\u5E74\uFF1A\u5168\u5E74\u4E3B\u7EBF\u8FD9\u6708\u6709\u53D8\u6570\u3001\u6709\u8F6C\u6298\u3002", basis: `\u6708\u652F${mZhi}\u51B2\u6D41\u5E74\u652F${yZhi}` });
-        const signals = studentize(cands.sort((a, b) => b.w - a.w).slice(0, 2), age).map((g) => ({ text: g.text, basis: g.basis }));
-        return { headline: mt[0], trait: mt[1], signals };
+        const sorted = cands.sort((a, b) => b.w - a.w);
+        const signals = studentize(sorted.slice(0, 2), age).map((g) => ({ text: g.text, basis: g.basis }));
+        const yk = YIJI_KEY[full];
+        const baseYj = YEAR_YIJI[yk + xj] || (xj === "\u5E73" && YEAR_YIJI[yk + "\u559C"] && YEAR_YIJI[yk + "\u5FCC"] ? { yi: [YEAR_YIJI[yk + "\u559C"].yi[0]], ji: [YEAR_YIJI[yk + "\u5FCC"].ji[0]] } : { yi: [], ji: [] });
+        const yj = composeYiji(baseYj, sorted.slice(0, 4));
+        return { headline: mt[0], trait: mt[1], signals, yi: yj.yi, ji: yj.ji };
       }
       var DAYUN_HINT = {
         \u6B63\u5B98: "\u540D\u5206\u4E0E\u8D23\u4EFB\u4E3A\u4E3B\u7EBF",
@@ -14364,6 +14700,7 @@ var RhythmEngine = (() => {
         GAN_CHONG
       } = require_relations();
       var { liuri } = require_liuri();
+      var { personaSignals } = require_profile();
       var { liuNian2, liuYue2 } = require_liunian2();
       var WX_INFO = {
         \u6728: {
@@ -14451,9 +14788,9 @@ var RhythmEngine = (() => {
         \u5370: {
           name: "\u6ECB\u517B\u4E4B\u529B",
           field: "\u5B66\u4E60\u4E0E\u8D35\u4EBA",
-          good: "\u5B66\u4E60\u8FDB\u4FEE\u3001\u6C42\u52A9\u8D35\u4EBA\u3001\u7B7E\u7EA6\u76D6\u7AE0\u3001\u8C03\u517B\u4F11\u6574",
+          good: "\u5B66\u4E60\u8FDB\u4FEE\u3001\u6C42\u52A9\u8D35\u4EBA\u3001\u529E\u6587\u4E66\u3001\u8C03\u517B\u4F11\u6574",
           caution: "\u8FC7\u5EA6\u4F9D\u8D56\u3001\u4E45\u62D6\u4E0D\u51B3\u3001\u5185\u8017",
-          doHi: ["\u62A5\u73ED\u8FDB\u4FEE\u3001\u8003\u53D6\u8BC1\u4E66", "\u5411\u524D\u8F88\u8D35\u4EBA\u8BF7\u6559", "\u8C08\u5B9A\u957F\u671F\u5408\u4F5C\u3001\u7B7E\u7EA6\u76D6\u7AE0", "\u592F\u5B9E\u8EAB\u4F53\u5E95\u5B50"],
+          doHi: ["\u8FDB\u4FEE\u3001\u957F\u672C\u4E8B", "\u5411\u524D\u8F88\u8D35\u4EBA\u8BF7\u6559", "\u8C08\u5B9A\u957F\u671F\u5408\u4F5C", "\u592F\u5B9E\u8EAB\u4F53\u5E95\u5B50"],
           doMid: ["\u6BCF\u65E5\u62BD\u534A\u5C0F\u65F6\u5B66\u4E60", "\u9700\u8981\u65F6\u4E3B\u52A8\u6C42\u52A9", "\u79EF\u7D2F\u8D44\u6599\u4E0E\u4EBA\u8109\u5907\u7528", "\u7A33\u624E\u7A33\u6253\u3001\u4E0D\u6C42\u5FEB"],
           rest: ["\u8865\u8DB3\u7761\u7720\u3001\u628A\u4E8F\u7684\u89C9\u548C\u8EAB\u4F53\u8865\u56DE\u6765", "\u5411\u5185\u6C89\u6DC0\u3001\u8BFB\u4E66\u9759\u517B", "\u628A\u4F5C\u606F\u8C03\u81F3\u89C4\u5F8B", "\u7559\u51FA\u653E\u7A7A\u7684\u65F6\u95F4"],
           avoid: ["\u4E8B\u4E8B\u4F9D\u8D56\u4ED6\u4EBA", "\u4E00\u4E8B\u4E45\u62D6\u4E0D\u51B3", "\u7A7A\u60F3\u5185\u8017", "\u72B9\u8C6B\u4E0D\u51B3\u3001\u9519\u5931\u65F6\u673A"]
@@ -14476,14 +14813,14 @@ var RhythmEngine = (() => {
           doHi: ["\u63A8\u8FDB\u5E76\u8C08\u6210\u624B\u5934\u8981\u4E8B", "\u62D3\u5C55\u4E1A\u52A1\u3001\u8C08\u5B9A\u5408\u4F5C", "\u76D8\u70B9\u8FDB\u9879\u3001\u89C4\u5212\u5F00\u9500", "\u5F53\u51FA\u624B\u65F6\u4E3B\u52A8\u51FA\u624B"],
           doMid: ["\u8981\u4E8B\u9010\u4EF6\u5B8C\u6210", "\u91CF\u5165\u4E3A\u51FA\u3001\u7A33\u4F4F\u76D8\u9762", "\u628A\u73B0\u6709\u4E4B\u4E8B\u505A\u51FA\u7ED3\u679C", "\u8BB0\u597D\u8D26\u3001\u5FC3\u4E2D\u6709\u6570"],
           rest: ["\u5148\u5B88\u597D\u5DF2\u6709\u3001\u4E0D\u53E6\u8D77\u65B0\u5C40", "\u7406\u6E05\u8D26\u76EE\u3001\u8282\u5236\u5F00\u9500", "\u6682\u7F13\u5927\u989D\u652F\u51FA\u4E0E\u6295\u5165", "\u6536\u675F\u624B\u5934\u9879\u76EE\u3001\u4E0D\u8D2A\u591A\u6C42\u65B0"],
-          avoid: ["\u51B2\u52A8\u6D88\u8D39\u3001\u968F\u610F\u8D2D\u7F6E", "\u8D2A\u591A\u3001\u94FA\u5F20\u8FC7\u5EA6", "\u501F\u8D37\u62C5\u4FDD\u4E0D\u53EF\u8F7B\u8BB8", "\u88AB\u4E00\u65F6\u673A\u4F1A\u51B2\u660F\u5934\u8111"]
+          avoid: ["\u51B2\u52A8\u6D88\u8D39", "\u8D2A\u591A\u3001\u94FA\u5F20\u8FC7\u5EA6", "\u501F\u8D37\u62C5\u4FDD\u4E0D\u53EF\u8F7B\u8BB8", "\u88AB\u4E00\u65F6\u673A\u4F1A\u51B2\u660F\u5934\u8111"]
         },
         \u5B98: {
           name: "\u79E9\u5E8F\u4E4B\u529B",
           field: "\u4E8B\u4E1A\u4E0E\u8D23\u4EFB",
-          good: "\u505A\u51B3\u5B9A\u3001\u62C5\u8D23\u4EFB\u3001\u89C1\u4E0A\u7EA7\u3001\u81EA\u5F8B\u7ACB\u89C4",
+          good: "\u505A\u51B3\u5B9A\u3001\u62C5\u8D23\u4EFB\u3001\u81EA\u5F8B\u7ACB\u89C4",
           caution: "\u786C\u78B0\u786C\u3001\u81EA\u6211\u65BD\u538B\u8FC7\u91CD",
-          doHi: ["\u505A\u51FA\u91CD\u8981\u51B3\u5B9A", "\u62C5\u8D77\u66F4\u5927\u7684\u8D23\u4EFB", "\u89C1\u4E0A\u7EA7\u3001\u4E89\u53D6\u5E73\u53F0\u4E0E\u673A\u4F1A", "\u4E3A\u81EA\u5DF1\u7ACB\u89C4\u3001\u4FEE\u70BC\u81EA\u5F8B"],
+          doHi: ["\u505A\u51FA\u91CD\u8981\u51B3\u5B9A", "\u62C5\u8D77\u66F4\u5927\u7684\u8D23\u4EFB", "\u4E89\u53D6\u5E73\u53F0\u4E0E\u673A\u4F1A", "\u4E3A\u81EA\u5DF1\u7ACB\u89C4\u3001\u4FEE\u70BC\u81EA\u5F8B"],
           doMid: ["\u4F9D\u89C4\u628A\u4E8B\u529E\u7A33", "\u5F53\u51B3\u65AD\u65F6\u4E0D\u72B9\u8C6B", "\u7406\u6E05\u8D23\u4EFB\u8303\u56F4", "\u4E0E\u4E0A\u7EA7\u3001\u89C4\u5219\u4FDD\u6301\u540C\u6B65"],
           rest: ["\u5C11\u63FD\u4E8B\u3001\u5148\u5378\u4E0B\u538B\u529B", "\u628A\u5BF9\u81EA\u5DF1\u7684\u8981\u6C42\u653E\u677E\u4E00\u6863", "\u628A\u4E0D\u5FC5\u8981\u7684\u627F\u8BFA\u5EF6\u540E", "\u4E3A\u81EA\u5DF1\u677E\u7ED1\u3001\u4E0D\u52C9\u5F3A"],
           avoid: ["\u4E0E\u4EBA\u786C\u78B0\u3001\u4E24\u8D25\u4FF1\u4F24", "\u81EA\u6211\u65BD\u538B\u8FC7\u91CD", "\u94BB\u725B\u89D2\u5C16\u3001\u56FA\u6267\u5230\u5E95", "\u4E3A\u96BE\u81EA\u5DF1\u3001\u8FC7\u5EA6\u81EA\u5F8B"]
@@ -14552,7 +14889,7 @@ var RhythmEngine = (() => {
           \u5B98: "\u4F46\u4F60\u5BF9\u81EA\u5DF1\u8981\u6C42\u9AD8\uFF0C\u5E38\u628A\u522B\u4EBA\u7684\u4E8B\u63FD\u4E0B\u6765\uFF0C\u53CD\u800C\u628A\u81EA\u5DF1\u6392\u5728\u6700\u540E\u3002"
         },
         \u98DF: {
-          \u5370: "\u4F46\u4F60\u6162\u70ED\u3001\u9700\u8981\u5B89\u5168\u611F\uFF0C\u70ED\u95F9\u662F\u5BF9\u5916\u7684\uFF0C\u72EC\u5904\u624D\u662F\u7559\u7ED9\u81EA\u5DF1\u7684\u3002",
+          \u5370: "\u4F46\u4F60\u4E5F\u9700\u8981\u5B89\u5168\u611F\uFF0C\u70ED\u95F9\u662F\u5BF9\u5916\u7684\uFF0C\u72EC\u5904\u624D\u662F\u7559\u7ED9\u81EA\u5DF1\u7684\u3002",
           \u8D22: "\u4F46\u4F60\u4E5F\u5728\u610F\u4ED8\u51FA\u80FD\u5426\u6709\u56DE\u62A5\uFF0C\u4E00\u8FB9\u60F3\u653E\u624B\u53BB\u505A\uFF0C\u4E00\u8FB9\u53C8\u76D8\u7B97\u503C\u4E0D\u503C\u5F97\u3002",
           \u5B98: "\u4F46\u4F60\u4E5F\u6015\u8BA9\u4EBA\u5931\u671B\uFF0C\u4E00\u8FB9\u60F3\u6323\u8131\u7EA6\u675F\uFF0C\u4E00\u8FB9\u53C8\u628A\u81EA\u5DF1\u62C9\u56DE\u8BE5\u6709\u7684\u6837\u5B50\u3002"
         },
@@ -14622,14 +14959,18 @@ var RhythmEngine = (() => {
         \u5747\u8861: "\u522B\u628A\u5728\u610F\u90FD\u81EA\u5DF1\u6536\u7740\uFF0C\u591A\u8BF4\u5FC3\u91CC\u8BDD\uFF0C\u4E5F\u7ED9\u5BF9\u65B9\u7167\u987E\u4F60\u7684\u673A\u4F1A\uFF0C\u5173\u7CFB\u624D\u4F1A\u8D8A\u8D70\u8D8A\u8FD1\u3002"
       };
       var TAOHUA_STAR = { \u7533: "\u9149", \u5B50: "\u9149", \u8FB0: "\u9149", \u5BC5: "\u536F", \u5348: "\u536F", \u620C: "\u536F", \u5DF3: "\u5348", \u9149: "\u5348", \u4E11: "\u5348", \u4EA5: "\u5B50", \u536F: "\u5B50", \u672A: "\u5B50" };
-      function taohuaDesc(zhis) {
+      function taohuaDesc(zhis, ctx) {
         const star = TAOHUA_STAR[zhis[0]];
         const n = zhis.filter((z) => z === star).length;
         if (n >= 2)
           return "\u4F60\u5929\u751F\u4EB2\u548C\u529B\u5F3A\u3001\u6C14\u573A\u5438\u5F15\u4EBA\uFF0C\u5728\u4EBA\u7FA4\u91CC\u5BB9\u6613\u88AB\u6CE8\u610F\u5230\uFF0C\u793E\u4EA4\u573A\u5408\u5F88\u6709\u5B58\u5728\u611F\u3002";
         if (n === 1)
           return "\u4F60\u7684\u4EB2\u548C\u529B\u4E0D\u9519\uFF0C\u5BB9\u6613\u548C\u4EBA\u6295\u7F18\uFF0C\u9047\u5230\u804A\u5F97\u6765\u7684\u4EBA\u4E5F\u5BB9\u6613\u8D70\u8FD1\u3002";
-        return "\u4F60\u504F\u6162\u70ED\uFF0C\u4E0E\u4EBA\u591A\u662F\u65E5\u4E45\u751F\u60C5\u3001\u6162\u6162\u719F\u7EDC\uFF0C\u4E0D\u592A\u4E00\u89C1\u5982\u6545\u3002";
+        if (ctx && ctx.guanYa)
+          return "\u4F60\u504F\u6162\u70ED\uFF0C\u4E0E\u4EBA\u591A\u662F\u65E5\u4E45\u751F\u60C5\u3001\u6162\u6162\u719F\u7EDC\uFF0C\u4E0D\u592A\u4E00\u89C1\u5982\u6545\u3002";
+        if (ctx && ctx.expressive)
+          return "\u4F60\u7684\u4EB2\u548C\u529B\u4E0D\u9519\uFF0C\u5BB9\u6613\u548C\u4EBA\u6295\u7F18\uFF0C\u9047\u5230\u804A\u5F97\u6765\u7684\u4EBA\u4E5F\u5BB9\u6613\u8D70\u8FD1\u3002";
+        return "";
       }
       var ADVICE_MOOD_SINGLE = {
         \u5370: ["\u770B\u4EBA\u522B\u53EA\u770B\u5BF9\u4F60\u597D\u4E0D\u597D\uFF0C\u4E5F\u770B\u4F60\u4EEC\u80FD\u4E0D\u80FD\u957F\u4E45\u804A\u5230\u4E00\u8D77", "\u522B\u7528\u4ED8\u51FA\u53BB\u6362\u5173\u7CFB\uFF0C\u5148\u8BA9\u81EA\u5DF1\u88AB\u559C\u6B22\uFF0C\u518D\u8C08\u4ED8\u51FA"],
@@ -14673,6 +15014,37 @@ var RhythmEngine = (() => {
       var KW_POL = { \u5F3A: "\u6709\u4E3B\u89C1", \u4E2D: "\u5584\u6743\u8861", \u5F31: "\u5584\u501F\u529B" };
       var KW_GOD = { \u5370: "\u91CD\u60C5\u5FF5\u65E7", \u98DF: "\u6709\u7075\u6C14", \u8D22: "\u52A1\u5B9E", \u5B98: "\u8D23\u4EFB\u5FC3\u5F3A", \u5747\u8861: "\u9002\u5E94\u529B\u5F3A" };
       var KW_SEASON = { \u6625: "\u8282\u594F\u504F\u5FEB", \u590F: "\u70ED\u60C5\u76F4\u63A5", \u79CB: "\u5584\u51B3\u65AD", \u51AC: "\u6C89\u5F97\u4F4F\u6C14" };
+      var SPOUSE_LINE = {
+        \u5973: {
+          \u663E: { \u559C: "\u611F\u60C5\u91CC\u4F60\u8981\u7684\u662F\u9760\u5F97\u4F4F\u3001\u6709\u62C5\u5F53\u7684\u4EBA\uFF0C\u8FD9\u6837\u7684\u4EBA\u4E5F\u5BB9\u6613\u51FA\u73B0\u5728\u4F60\u8EAB\u8FB9\u3002", \u5FCC: "\u4F60\u5BB9\u6613\u9047\u5230\u5F3A\u52BF\u3001\u8981\u6C42\u591A\u7684\u4EBA\uFF0C\u5173\u7CFB\u91CC\u5E38\u662F\u4F60\u5728\u914D\u5408\u3002", \u5E73: "\u611F\u60C5\u91CC\u4F60\u91CD\u627F\u8BFA\uFF0C\u9047\u5230\u7684\u4EBA\u4E5F\u89C4\u77E9\u3001\u7A33\u91CD\u3002" },
+          \u85CF: { \u559C: "\u4F60\u8981\u7684\u662F\u8E0F\u5B9E\u7684\u5173\u7CFB\uFF0C\u7F18\u5206\u6765\u5F97\u4E0D\u5F20\u626C\uFF0C\u591A\u5728\u719F\u4EBA\u5708\u91CC\u3002", \u5FCC: "\u4F60\u5728\u611F\u60C5\u91CC\u5BB9\u6613\u987A\u7740\u5BF9\u65B9\u8D70\uFF0C\u4E45\u4E86\u89C9\u5F97\u7D2F\u3002", \u5E73: "\u4F60\u4E0D\u6025\u4E8E\u5B9A\u4E0B\u6765\uFF0C\u611F\u60C5\u591A\u662F\u6162\u6162\u8D70\u8FD1\u3002" },
+          \u65E0: { \u559C: "\u4F60\u4E0D\u592A\u6309\u4E16\u4FD7\u6807\u51C6\u6311\u4EBA\uFF0C\u5408\u5F97\u6765\u6BD4\u6761\u4EF6\u66F4\u91CD\u8981\u3002", \u5FCC: "\u4F60\u4E0D\u613F\u88AB\u5173\u7CFB\u675F\u7F1A\uFF0C\u66F4\u770B\u91CD\u81EA\u5DF1\u7684\u8282\u594F\u3002", \u5E73: "\u4F60\u5BF9\u611F\u60C5\u6CA1\u6709\u56FA\u5B9A\u6A21\u677F\uFF0C\u9047\u5230\u8C01\u5C31\u662F\u8C01\u3002" }
+        },
+        \u7537: {
+          \u663E: { \u559C: "\u611F\u60C5\u91CC\u4F60\u8981\u7684\u662F\u80FD\u4E00\u8D77\u628A\u65E5\u5B50\u8FC7\u597D\u7684\u4EBA\uFF0C\u8FD9\u6837\u7684\u4EBA\u4E5F\u5BB9\u6613\u8D70\u8FD1\u4F60\u3002", \u5FCC: "\u4F60\u5BB9\u6613\u88AB\u5438\u5F15\u5F97\u5FEB\uFF0C\u4E5F\u5BB9\u6613\u4E3A\u611F\u60C5\u64CD\u5FC3\u7834\u8D39\u3002", \u5E73: "\u4F60\u5728\u611F\u60C5\u91CC\u52A1\u5B9E\uFF0C\u770B\u91CD\u76F8\u5904\u662F\u5426\u8212\u670D\u3002" },
+          \u85CF: { \u559C: "\u7F18\u5206\u4E0D\u5F20\u626C\uFF0C\u591A\u5728\u65E5\u5E38\u6765\u5F80\u91CC\u6162\u6162\u6210\u3002", \u5FCC: "\u4F60\u5BF9\u611F\u60C5\u7684\u4ED8\u51FA\u5E38\u8D85\u8FC7\u56DE\u62A5\uFF0C\u5BB9\u6613\u7D2F\u3002", \u5E73: "\u4F60\u4E0D\u6025\u7740\u5B9A\u4E0B\u6765\uFF0C\u611F\u60C5\u591A\u662F\u6C34\u5230\u6E20\u6210\u3002" },
+          \u65E0: { \u559C: "\u4F60\u4E0D\u6309\u6761\u4EF6\u6311\u4EBA\uFF0C\u6295\u7F18\u6700\u8981\u7D27\u3002", \u5FCC: "\u4F60\u628A\u7CBE\u529B\u591A\u653E\u5728\u81EA\u5DF1\u7684\u4E8B\u4E0A\uFF0C\u611F\u60C5\u6392\u5728\u540E\u9762\u3002", \u5E73: "\u4F60\u5BF9\u611F\u60C5\u6CA1\u6709\u56FA\u5B9A\u6A21\u677F\uFF0C\u9047\u5230\u8C01\u5C31\u662F\u8C01\u3002" }
+        }
+      };
+      function spouseLine(P, love) {
+        const S = P.spouse;
+        if (!S)
+          return "";
+        if (P.domJi && (S.gender === "\u5973" && P.topGod === "\u5B98" || S.gender === "\u7537" && P.topGod === "\u8D22"))
+          return "";
+        const sent = ((SPOUSE_LINE[S.gender] || {})[S.state] || {})[S.fav] || "";
+        if (!sent)
+          return "";
+        if (/强势|要求多/.test(sent) && /强势|要求|迁就/.test(love))
+          return "";
+        if (/付出/.test(sent) && /付出/.test(love))
+          return "";
+        if (/慢慢|不急|水到渠成/.test(sent) && /热情来得快/.test(love))
+          return "";
+        if (/务实|把日子过好/.test(sent) && /经营好|踏实的一半/.test(love))
+          return "";
+        return /^感情里你/.test(sent) && /^感情里/.test(love) ? sent.replace(/^感情里你/, "\u4F60") : sent;
+      }
       function buildPersona(mj, chart) {
         const dayGan = chart.dayGan;
         const dayWx = GAN_WX[dayGan];
@@ -14683,66 +15055,85 @@ var RhythmEngine = (() => {
             short: "\u4E0D\u663E\u950B\u8292\u3001\u6709\u4E3B\u610F",
             surface: "\u5916\u8868\u968F\u548C\u3001\u4E0D\u592A\u663E\u950B\u8292\uFF0C\u4F46\u5FC3\u91CC\u6709\u81EA\u5DF1\u7684\u786C\u4E3B\u610F\uFF1B\u719F\u4E86\u7684\u4EBA\u624D\u77E5\u9053\uFF0C\u4F60\u5176\u5B9E\u6709\u68F1\u89D2\u3001\u4E5F\u729F"
           };
-        const pol = polarityOf(mj.strength);
-        const season = mj.season;
-        const w = mj.weights || {};
-        const total = WX5.reduce((s, x) => s + Math.max(0, w[x] || 0), 0) || 1;
-        const godSum = { \u6BD4: 0, \u5370: 0, \u98DF: 0, \u8D22: 0, \u5B98: 0 };
-        WX5.forEach((x) => {
-          let wv = Math.max(0, w[x] || 0);
-          if (mj.isYinHeavyWeak && tenGodType(dayWx, x) === "\u5370" || mj.isVentDamp && x === "\u571F" && dayWx === "\u91D1")
-            wv *= 0.4;
-          godSum[tenGodType(dayWx, x)] += wv;
-        });
-        const godPct = {};
-        ["\u6BD4", "\u5370", "\u98DF", "\u8D22", "\u5B98"].forEach((k) => {
-          godPct[k] = Math.round(godSum[k] / total * 100);
-        });
-        const nonBi = ["\u5370", "\u98DF", "\u8D22", "\u5B98"].map((k) => ({ k, v: godPct[k] })).sort((a, b) => b.v - a.v);
-        const topGod = nonBi[0].k, secondGod = nonBi[1].k;
-        const balanced = nonBi[0].v - nonBi[1].v < 7 && nonBi[0].v < 30;
-        const dominant = balanced ? "\u5747\u8861" : topGod;
-        const riZhiGod = tenGodType(dayWx, ZHI_WX[chart.zhis[2]]);
-        const emoKey = riZhiGod === "\u5B98" || godPct.\u5B98 >= 24 ? "\u79CB" : godPct.\u98DF >= 24 ? "\u590F" : godPct.\u5370 >= 28 ? "\u51AC" : godPct.\u6BD4 >= 35 ? "\u6625" : season;
+        const P = personaSignals(mj, chart);
+        const { pol, season, w, total, godPct, topGod, secondGod, balanced, dominant, riZhiGod, emoKey } = P;
         const EXPRESS_INNER = { \u4E01: "\u5FC3\u4E8B\u4E0D\u8F7B\u6613\u8868\u9732\uFF0C\u81EA\u5DF1\u5FC3\u91CC\u6709\u5206\u5BF8\uFF0C", \u5DF1: "\u8BDD\u4E0D\u591A\uFF0C\u751F\u6D3B\u6709\u81EA\u5DF1\u7684\u89C4\u5F8B\uFF0C" };
         const shiTouGan = (chart.gans || []).some((g, i) => i !== 2 && tenGodType(dayWx, GAN_WX[g]) === "\u98DF");
         const innerType = !!EXPRESS_INNER[dayGan] && !shiTouGan && godPct.\u5370 >= 20 && godPct.\u98DF < 20;
-        const noun = balanced ? "\u591A\u9762\u624B" : GOD_NOUN[topGod] || "\u884C\u52A8\u6D3E";
+        const noun = balanced ? "" : GOD_NOUN[topGod] || "\u884C\u52A8\u6D3E";
         const modifier = balanced ? `${POL_TITLE[pol]}\u3001${SEASON_TITLE[emoKey] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : daySuppressed ? "\u4E0D\u663E\u950B\u8292" : TONE_PREFIX[dayGan] || "";
-        const identity = (modifier ? modifier + "\u7684" : "") + noun;
+        const identity = balanced ? modifier : (modifier ? modifier + "\u7684" : "") + noun;
         const essence = balanced ? "\uFF0C\u5404\u9762\u5747\u8861\u3001\u9002\u5E94\u529B\u5F3A" : GOD_ESSENCE[topGod] || "";
         const tagline = (innerType ? "\u6E29\u548C\u3001\u6709\u5185\u79C0" : imp.short) + essence + "\u3002";
         const yinyang = YANG_GAN.has(dayGan) ? "\u9633" : "\u9634";
-        const expressLine = daySuppressed && !mj.isYinHeavyWeak ? "\u5FC3\u91CC\u7684\u4E8B\u591A\u662F\u81EA\u5DF1\u6D88\u5316\uFF0C\u4E0D\u592A\u5F80\u5916\u644A\uFF0C" : innerType ? EXPRESS_INNER[dayGan] : EXPRESS[dayGan] || YINYANG_TURN[yinyang];
+        let expressLine = daySuppressed && !mj.isYinHeavyWeak ? "\u5FC3\u91CC\u7684\u4E8B\u591A\u662F\u81EA\u5DF1\u6D88\u5316\uFF0C\u4E0D\u592A\u5F80\u5916\u644A\uFF0C" : innerType ? EXPRESS_INNER[dayGan] : EXPRESS[dayGan] || YINYANG_TURN[yinyang];
+        const EXPR_TRIM = {
+          "\u8868\u9762\u5E94\u5BF9\u5F97\u4F53\uFF0C\u771F\u6B63\u7684\u5FC3\u4E8B\u7559\u7ED9\u81EA\u5DF1\u6D88\u5316\uFF0C": ["\u5185", "\u8868\u9762\u5E94\u5BF9\u5F97\u4F53\uFF0C"],
+          "\u5F88\u5728\u610F\u522B\u4EBA\u7684\u611F\u53D7\uFF0C\u81EA\u5DF1\u7684\u5FC3\u4E8B\u5374\u4E0D\u592A\u8BF4\uFF0C": ["\u5185", "\u5F88\u5728\u610F\u522B\u4EBA\u7684\u611F\u53D7\uFF0C"],
+          "\u5E38\u628A\u522B\u4EBA\u7684\u96BE\u5904\u653E\u5728\u5FC3\u4E0A\uFF0C\u81EA\u5DF1\u7684\u59D4\u5C48\u5374\u4E0D\u592A\u8BF4\u51FA\u53E3\uFF0C": ["\u5185", "\u5E38\u628A\u522B\u4EBA\u7684\u96BE\u5904\u653E\u5728\u5FC3\u4E0A\uFF0C"],
+          "\u5FC3\u4E8B\u4E0D\u8F7B\u6613\u8868\u9732\uFF0C\u81EA\u5DF1\u5FC3\u91CC\u6709\u5206\u5BF8\uFF0C": ["\u5185", "\u81EA\u5DF1\u5FC3\u91CC\u6709\u5206\u5BF8\uFF0C"],
+          "\u518D\u5927\u7684\u60C5\u7EEA\u4E5F\u538B\u5F97\u4F4F\uFF0C\u4E0D\u8F7B\u6613\u8868\u9732\uFF0C": ["\u5185", ""],
+          "\u4E60\u60EF\u628A\u4E8B\u5F80\u5FC3\u91CC\u653E\uFF0C\u5374\u4E0D\u8F7B\u6613\u8BF4\u51FA\u6765\uFF0C": ["\u5185", ""],
+          "\u5FC3\u91CC\u7684\u4E8B\u591A\u662F\u81EA\u5DF1\u6D88\u5316\uFF0C\u4E0D\u592A\u5F80\u5916\u644A\uFF0C": ["\u5185", ""],
+          "\u5FC3\u4E8B\u591A\u81EA\u5DF1\u6D88\u5316\uFF0C": ["\u5185", ""],
+          "\u60C5\u7EEA\u6765\u5F97\u5FEB\u53BB\u5F97\u4E5F\u5FEB\uFF0C\u4E0D\u592A\u85CF\u5F97\u4F4F\uFF0C": ["\u5916", ""],
+          "\u60C5\u7EEA\u4E0D\u592A\u85CF\u5F97\u4F4F\uFF0C": ["\u5916", ""],
+          "\u5FC3\u91CC\u4E00\u6709\u60C5\u7EEA\uFF0C\u5F88\u5FEB\u5C31\u8868\u73B0\u51FA\u6765\uFF0C": ["\u5916", ""],
+          "\u60C5\u7EEA\u5927\u591A\u85CF\u4E0D\u4F4F\uFF0C": ["\u5916", ""]
+        };
+        const emoPol = P.emoPol;
+        const trimRow = EXPR_TRIM[expressLine];
+        if (trimRow && trimRow[0] !== emoPol)
+          expressLine = trimRow[1];
         const surfaceLine = innerType && dayGan === "\u5DF1" ? "\u9762\u5584\u3001\u813E\u6C14\u597D\uFF0C\u5F85\u4EBA\u5B9E\u5728\u3001\u4E0D\u5F20\u626C" : imp.surface;
         const p1 = `\u4F60${surfaceLine}\u3002${expressLine}${POL_INNER[pol]}${balanced ? BAL_DRIVE_HINT : DRIVE_HINT[topGod] || ""}`;
-        const domWx = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"].find((x) => tenGodType(dayWx, x) === dominant);
-        const domJi = !balanced && domWx && ((mj.favVec || {})[domWx] ?? 0) < -0.12;
+        const domJi = P.domJi;
         const CORE_DRIVE_JI = {
           \u5B98: "\u4F60\u8D23\u4EFB\u611F\u91CD\uFF0C\u522B\u4EBA\u7684\u671F\u5F85\u538B\u5728\u8EAB\u4E0A\u5C31\u653E\u4E0D\u4E0B\uFF0C\u6015\u8F9C\u8D1F\u3001\u6015\u51FA\u9519\uFF1B\u4E8B\u60C5\u6CA1\u843D\u5B9A\u65F6\uFF0C\u5FC3\u603B\u60AC\u7740\u3002"
         };
         const p2 = balanced ? balancedDrive(topGod, secondGod) : domJi && CORE_DRIVE_JI[topGod] ? CORE_DRIVE_JI[topGod] : `${CORE_DRIVE[topGod] || ""}${TENSION[topGod] && TENSION[topGod][secondGod] || ""}`;
-        const p3 = `${SEASON_EMO[emoKey] || ""}${balanced ? BAL_BLINDSPOT : BLINDSPOT_SOFT[topGod] || ""}`;
+        const sitStill = P.sitStill;
+        const sitStillVeto = !balanced && topGod === "\u98DF" && sitStill;
+        const p3 = `${SEASON_EMO[emoKey] || ""}${balanced ? BAL_BLINDSPOT : sitStillVeto ? "" : BLINDSPOT_SOFT[topGod] || ""}`;
         const GOD_LOVE_JI = {
           \u5B98: "\u611F\u60C5\u91CC\u4F60\u5BB9\u6613\u9047\u5230\u5F3A\u52BF\u7684\u3001\u8981\u6C42\u591A\u7684\u5BF9\u8C61\uFF0C\u76F8\u5904\u504F\u7D2F\uFF1B\u4F60\u4E60\u60EF\u8FC1\u5C31\uFF0C\u628A\u81EA\u5DF1\u7EF7\u5F97\u7D27\u3002"
         };
-        const love = balanced ? GOD_LOVE["\u5747\u8861"] : domJi && GOD_LOVE_JI[topGod] || GOD_LOVE[topGod] || GOD_LOVE["\u5747\u8861"];
+        const _socialEarly = P.social;
+        const { expressive, guanYa } = P;
+        const loveRaw = balanced ? GOD_LOVE["\u5747\u8861"] : domJi && GOD_LOVE_JI[topGod] || GOD_LOVE[topGod] || GOD_LOVE["\u5747\u8861"];
+        const inwardBucket = balanced || topGod === "\u5370";
+        let love = expressive && inwardBucket ? loveRaw.replace(/；只是[^。]*。?$/, "\u3002").replace("\u613F\u610F\u9ED8\u9ED8\u4ED8\u51FA\uFF0C", "") : loveRaw;
+        if (!balanced && topGod === "\u98DF" && emoPol === "\u5185")
+          love = love.replace(/；只是热情来得快[^。]*。?$/, "\u3002");
+        love = love + spouseLine(P, love);
         const GOD_WORK_JI = {
           \u5B98: "\u89C4\u77E9\u591A\u3001\u76EF\u5F97\u7D27\u7684\u73AF\u5883\u6700\u8017\u4F60\uFF1B\u9002\u5408\u8D23\u4EFB\u8FB9\u754C\u6E05\u695A\u3001\u80FD\u6309\u81EA\u5DF1\u8282\u594F\u505A\u4E8B\u7684\u4F4D\u7F6E\u3002"
         };
         const workBase = balanced ? GOD_WORK["\u5747\u8861"] : domJi && GOD_WORK_JI[topGod] || GOD_WORK[topGod] || GOD_WORK["\u5747\u8861"];
-        const work = `${workBase}${POL_WORK[pol] || ""}`;
+        const MONTH_ROOT = {
+          \u5370: "\u4F60\u7684\u4E8B\u4E1A\u6839\u57FA\u5728\u4E13\u4E1A\u548C\u8D44\u5386\uFF0C\u8D8A\u505A\u8D8A\u503C\u94B1\u7684\u662F\u79EF\u7D2F\u3002",
+          \u98DF: "\u4F60\u7684\u4E8B\u4E1A\u6839\u57FA\u5728\u624B\u827A\u548C\u8868\u8FBE\uFF0C\u4F5C\u54C1\u6BD4\u5934\u8854\u66F4\u80FD\u7ACB\u4F4F\u3002",
+          \u8D22: "\u4F60\u7684\u4E8B\u4E1A\u6839\u57FA\u5728\u7ECF\u8425\u548C\u7ED3\u679C\uFF0C\u80FD\u7B97\u6E05\u8D26\u3001\u62FF\u5F97\u51FA\u6210\u7EE9\u7684\u4F4D\u7F6E\u6700\u7A33\u3002",
+          \u5B98: "\u4F60\u7684\u4E8B\u4E1A\u6839\u57FA\u5728\u4F53\u5236\u548C\u804C\u4F4D\uFF0C\u6309\u89C4\u5219\u8D70\u7684\u5730\u65B9\u4F60\u4E0A\u5347\u6700\u5FEB\u3002",
+          \u6BD4: "\u4F60\u7684\u4E8B\u4E1A\u6839\u57FA\u5728\u540C\u4F34\u548C\u81EA\u7ACB\uFF0C\u5408\u4F19\u6216\u72EC\u7ACB\u505A\u90FD\u6BD4\u7ED9\u4EBA\u6253\u5DE5\u987A\u3002"
+        };
+        const monthGod = tenGodType(dayWx, ZHI_WX[mj.monthZhi]);
+        const rootLine = monthGod !== dominant && MONTH_ROOT[monthGod] || "";
+        const YIMA = { \u7533: "\u5BC5", \u5B50: "\u5BC5", \u8FB0: "\u5BC5", \u5BC5: "\u7533", \u5348: "\u7533", \u620C: "\u7533", \u5DF3: "\u4EA5", \u9149: "\u4EA5", \u4E11: "\u4EA5", \u4EA5: "\u5DF3", \u536F: "\u5DF3", \u672A: "\u5DF3" };
+        const hasYiMa = (chart.zhis || []).some((z, i) => i !== 0 && z === YIMA[chart.zhis[0]]);
+        const yiMaLine = hasYiMa ? "\u4F60\u9002\u5408\u6D41\u52A8\u3001\u5916\u52E4\u6216\u5F02\u5730\u7684\u5DE5\u4F5C\uFF0C\u6362\u5730\u65B9\u53CD\u800C\u66F4\u505A\u5F97\u5F00\u3002" : "";
+        const work = `${workBase}${rootLine}${POL_WORK[pol] || ""}${yiMaLine}`;
         let closing;
         if (balanced) {
-          closing = pol === "\u5F3A" && (season === "\u590F" || season === "\u6625") ? "\u4F60\u7684\u6C89\u7A33\u548C\u51B2\u52B2\u662F\u4E00\u4F53\u4E24\u9762\uFF0C\u6311\u5BF9\u65F6\u673A\u53D1\u529B\uFF0C\u8DEF\u4F1A\u8D8A\u8D70\u8D8A\u5BBD\u3002" : "\u4F60\u4EC0\u4E48\u90FD\u62FF\u5F97\u8D77\uFF0C\u96BE\u5728\u653E\u4E0B\u3001\u9009\u5B9A\u4E00\u4E2A\u65B9\u5411\uFF1B\u8BA4\u51C6\u65B9\u5411\u6C89\u4E0B\u53BB\uFF0C\u8D70\u5F97\u66F4\u8FDC\u66F4\u7A33\u3002";
+          closing = pol === "\u5F3A" && (emoKey === "\u590F" || emoKey === "\u6625") ? "\u4F60\u7684\u6C89\u7A33\u548C\u51B2\u52B2\u662F\u4E00\u4F53\u4E24\u9762\uFF0C\u6311\u5BF9\u65F6\u673A\u53D1\u529B\uFF0C\u8DEF\u4F1A\u8D8A\u8D70\u8D8A\u5BBD\u3002" : "\u4F60\u4EC0\u4E48\u90FD\u62FF\u5F97\u8D77\uFF0C\u96BE\u5728\u653E\u4E0B\u3001\u9009\u5B9A\u4E00\u4E2A\u65B9\u5411\uFF1B\u8BA4\u51C6\u65B9\u5411\u6C89\u4E0B\u53BB\uFF0C\u8D70\u5F97\u66F4\u8FDC\u66F4\u7A33\u3002";
         } else {
-          closing = GOD_CLOSING[topGod] || "\u8BA4\u51C6\u4F60\u6700\u60F3\u8981\u7684\uFF0C\u628A\u52B2\u7528\u5728\u90A3\u4E00\u5904\uFF0C\u65E5\u5B50\u4F1A\u8D8A\u8D70\u8D8A\u987A\u3002";
+          closing = sitStillVeto ? "" : GOD_CLOSING[topGod] || "\u8BA4\u51C6\u4F60\u6700\u60F3\u8981\u7684\uFF0C\u628A\u52B2\u7528\u5728\u90A3\u4E00\u5904\uFF0C\u65E5\u5B50\u4F1A\u8D8A\u8D70\u8D8A\u987A\u3002";
         }
         const kwImp = innerType ? ["\u6E29\u548C", "\u6709\u5185\u79C0"] : (imp.short || "").split(/[、,，]/).map((s) => s.trim()).filter(Boolean).slice(0, 2);
         let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_SEASON[emoKey]]);
         keywords = keywords.filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
-        const _social = Math.max(0, Math.min(100, 50 + (godPct.\u98DF * 0.85 + godPct.\u6BD4 * 0.5 - godPct.\u5370 * 0.55 - godPct.\u5B98 * 0.25)));
-        return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, taohua: taohuaDesc(chart.zhis), _dominant: dominant, _domJi: domJi, _pol: pol, _social };
+        const _social = _socialEarly;
+        return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, taohua: taohuaDesc(chart.zhis, { expressive, guanYa }), _dominant: dominant, _domJi: domJi, _pol: pol, _social };
       }
       var POS_ORDER = { \u5E74: 0, \u6708: 1, \u65E5: 2, \u65F6: 3 };
       var pairKey = (a, b) => POS_ORDER[a] <= POS_ORDER[b] ? a + b : b + a;
@@ -14896,16 +15287,47 @@ var RhythmEngine = (() => {
             care: info.care
           };
         });
-        const jiShen = mj.jiShen.map((wx) => {
-          const t = tenGodType(dayWx, wx);
+        const JI_ACT = {
+          \u6BD4: "\u5408\u4F19\u5206\u8D26\u5BB9\u6613\u8D77\u4E89\u6267\uFF0C\u4E5F\u6613\u4E3A\u4E89\u53E3\u6C14\u786C\u9876\uFF1B\u8D26\u76EE\u5148\u8BF4\u6E05\uFF0C\u5C11\u4E8B\u4E8B\u8981\u5F3A\u3002",
+          \u5370: "\u5BB9\u6613\u4F9D\u8D56\u522B\u4EBA\u3001\u628A\u4E8B\u4E00\u62D6\u518D\u62D6\uFF0C\u60F3\u592A\u591A\u7A7A\u8017\u81EA\u5DF1\uFF1B\u8BE5\u65AD\u65E9\u65AD\u3002",
+          \u98DF: "\u5BB9\u6613\u8BDD\u591A\u8BF4\u9519\u3001\u8D2A\u73A9\u5206\u5FC3\uFF1B\u8981\u7D27\u8BDD\u8FC7\u4E00\u904D\u8111\uFF0C\u522B\u4E00\u6B21\u94FA\u592A\u5F00\u3002",
+          \u8D22: "\u5BB9\u6613\u51B2\u52A8\u82B1\u94B1\u3001\u4E5F\u6613\u56E0\u4EBA\u60C5\u501F\u8D37\u62C5\u4FDD\uFF1B\u5927\u989D\u7F13\u4E00\u665A\uFF0C\u522B\u4EBA\u7684\u6025\u4E0D\u5FC5\u7528\u4F60\u7684\u94B1\u63A5\u3002",
+          \u5B98: "\u5BB9\u6613\u786C\u78B0\u786C\u3001\u628A\u81EA\u5DF1\u903C\u592A\u7D27\uFF1B\u4E0D\u5FC5\u4E8B\u4E8B\u9876\u5230\u5E95\uFF0C\u7559\u4E00\u70B9\u4F59\u5730\u3002"
+        };
+        const wsumJi = WX5.reduce((a, x) => a + Math.max(0, (mj.weights || {})[x] || 0), 0) || 1;
+        const jiScored = mj.jiShen.map((wx) => ({
+          wx,
+          share: Math.max(0, (mj.weights || {})[wx] || 0) / wsumJi,
+          depth: -((mj.favVec || {})[wx] ?? 0)
+        }));
+        jiScored.forEach((o) => {
+          o.score = o.share + o.depth;
+        });
+        const topScore = Math.max(0, ...jiScored.map((o) => o.score));
+        const jiShen = jiScored.map((o) => {
+          const wx = o.wx, t = tenGodType(dayWx, wx);
           const god = GOD_LIFE[t] || { name: "", caution: "" };
-          return { wx, godName: god.name, caution: god.caution, color: WX_COLOR[wx] };
+          const act = JI_ACT[t];
+          let caution;
+          if (!act) {
+            caution = god.caution;
+          } else {
+            const isTop = o.score === topScore && (o.share >= 0.18 || o.depth >= 0.5);
+            caution = isTop ? `\u6700\u8981\u7559\u5FC3\uFF1A${act}` : act;
+          }
+          return { wx, godName: god.name, caution, color: WX_COLOR[wx] };
         });
         const primary = WX_INFO[mj.primaryXi];
-        const colorAdvice = `\u968F\u8EAB\u5E26\u4E00\u70B9\u300C${mj.xiColor.name}\u300D:\u5B89\u795E\u3001\u5B9A\u5FC3\u3001\u5229\u6C9F\u901A\u3002\u6750\u8D28\u9009 ${primary.material} \u4E00\u7C7B\uFF0C\u505A\u6210\u624B\u4E32\u3001\u540A\u5760\u7B49\u8D34\u8EAB\u5C0F\u4EF6\u6700\u597D\u3002`;
+        const xiColors = (mj.xiYong || []).map((wx, i) => {
+          const wgt = xiW[wx] ?? 1;
+          return { wx, name: WX_COLOR[wx].name, hex: WX_COLOR[wx].hex, weight: wgt, badge: i === 0 ? "\u9996\u9009" : wgt < 0.5 ? "\u70B9\u7F00" : "\u5E38\u7528" };
+        });
+        const others = xiColors.slice(1);
+        const colorAdvice = `\u968F\u8EAB\u5E26\u4E00\u70B9\u300C${mj.xiColor.name}\u300D${others.length ? "\uFF0C\u517C\u4E00\u70B9" + others.map((c) => `\u300C${c.name}\u300D`).join("") : ""}\uFF1A\u5B89\u795E\u3001\u5B9A\u5FC3\u3001\u5229\u6C9F\u901A\u3002\u6750\u8D28\u9009 ${primary.material} \u4E00\u7C7B` + (others.length ? `\uFF0C\u517C\u914D ${others.map((c) => (WX_INFO[c.wx].material || "").split(" \xB7 ")[0]).filter(Boolean).join(" \xB7 ")}` : "") + `\uFF1B\u505A\u6210\u624B\u4E32\u3001\u540A\u5760\u7B49\u8D34\u8EAB\u5C0F\u4EF6\u6700\u597D\u3002`;
         const persona = buildPersona(mj, chart);
         const dialectics = buildDialectics(mj, chart);
-        const aspects = buildAspects(mj, dayWx, persona);
+        const { expressive } = personaSignals(mj, chart);
+        const aspects = buildAspects(mj, dayWx, persona, expressive);
         return {
           dayMaster: mj.dayMaster,
           dayGan,
@@ -14928,6 +15350,8 @@ var RhythmEngine = (() => {
           xiColor: mj.xiColor,
           tiaohouNote: mj.tiaohouNote,
           colorAdvice,
+          xiColors,
+          // 全部喜用色,按先后 [{wx,name,hex,weight,badge}];xiColor 仍=首选(分享卡/日历用)
           aspects,
           persona,
           // {identity,tagline,coreText[p1,p2,p3],love,work,closing}
@@ -14949,7 +15373,7 @@ var RhythmEngine = (() => {
         }
         return "";
       }
-      function buildAspects(mj, dayWx, persona) {
+      function buildAspects(mj, dayWx, persona, expressive) {
         const pe = persona || {};
         const dominant = pe._dominant || "\u5747\u8861";
         const xi = mj.xiYong || [];
@@ -15038,7 +15462,14 @@ var RhythmEngine = (() => {
             \u5747\u8861: ["\u4F60\u4EC0\u4E48\u90FD\u987E\u5F97\u5230\uFF0C\u5374\u5E38\u5FD8\u4E86\u300C\u88AB\u7167\u987E\u300D\u4E5F\u662F\u4E00\u79CD\u4EB2\u5BC6\uFF1B\u5076\u5C14\u793A\u5F31\uFF0C\u662F\u7ED9\u5BF9\u65B9\u7559\u51FA\u7167\u987E\u4F60\u7684\u7A7A\u95F4\u3002", "\u522B\u7528\u300C\u6211\u6CA1\u4E8B\u300D\u7EF4\u6301\u4F53\u9762\uFF0C\u771F\u6B63\u7684\u9760\u8FD1\uFF0C\u59CB\u4E8E\u4F60\u613F\u610F\u8BA9\u5BF9\u65B9\u770B\u89C1\u4F60\u7684\u4E0D\u5BB9\u6613\u3002"]
           }
         };
-        const HEALTH_ADVICE = "\u7761\u8DB3\u3001\u5403\u597D\u3001\u9002\u5EA6\u8FD0\u52A8\uFF0C\u80DC\u8FC7\u540D\u8D35\u8865\u54C1\u3002";
+        const H_ADV = {
+          \u6728: ["\u5341\u4E00\u70B9\u524D\u7761\uFF0C\u4E45\u5750\u6BCF\u5C0F\u65F6\u8D77\u8EAB\u8D70\u52A8\u3002", "\u5C11\u751F\u95F7\u6C14\uFF0C\u60C5\u7EEA\u6709\u51FA\u53E3\u6BD4\u538B\u7740\u597D\u3002"],
+          \u706B: ["\u7761\u524D\u4E00\u5C0F\u65F6\u79BB\u5F00\u5C4F\u5E55\uFF0C\u7ED9\u5FC3\u795E\u7559\u7F13\u51B2\u3002", "\u7D27\u7EF7\u7684\u65E5\u5B50\u5B89\u6392\u4E00\u6BB5\u653E\u677E\uFF0C\u522B\u8FDE\u8F74\u8F6C\u3002"],
+          \u571F: ["\u4E09\u9910\u5B9A\u65F6\uFF0C\u5C11\u751F\u51B7\uFF0C\u665A\u996D\u4E03\u5206\u9971\u3002", "\u5FC3\u4E8B\u522B\u79EF\u7740\uFF0C\u8BF4\u51FA\u6765\u6216\u5199\u4E0B\u6765\u3002"],
+          \u91D1: ["\u591A\u559D\u6E29\u6C34\uFF0C\u5E72\u71E5\u5B63\u8282\u5BA4\u5185\u52A0\u6E7F\u3002", "\u6BCF\u5929\u51FA\u95E8\u900F\u6C14\uFF0C\u5C11\u5F85\u5728\u95F7\u7684\u73AF\u5883\u3002"],
+          \u6C34: ["\u4FDD\u6696\uFF0C\u5C24\u5176\u8170\u8179\u4E0E\u811A\u3002", "\u7D2F\u4E86\u5C31\u505C\uFF0C\u522B\u71AC\u5230\u900F\u652F\u518D\u8865\u3002"]
+        };
+        const H_ADV_BASE = { \u6728: "\u56FA\u5B9A\u8FD0\u52A8\u65F6\u6BB5\uFF0C\u52A8\u8D77\u6765\u6700\u517B\u4F60\u3002", \u706B: "\u5348\u540E\u5C0F\u61A9\u5341\u5206\u949F\uFF0C\u80DC\u8FC7\u665A\u4E0A\u8865\u89C9\u3002", \u571F: "\u996D\u540E\u6563\u6B65\u5341\u5206\u949F\uFF0C\u813E\u80C3\u6700\u53D7\u7528\u3002", \u91D1: "\u6BCF\u5929\u5F00\u7A97\u901A\u98CE\uFF0C\u6DF1\u547C\u5438\u51E0\u6B21\u3002", \u6C34: "\u7761\u524D\u6CE1\u811A\uFF0C\u7761\u5F97\u6C89\u3002" };
         const list = [];
         const wSum = ["\u6728", "\u706B", "\u571F", "\u91D1", "\u6C34"].reduce((s, x) => s + Math.max(0, (mj.weights || {})[x] || 0), 0) || 1;
         const yinPct = Math.round(Math.max(0, (mj.weights || {})[yinWx] || 0) / wSum * 100);
@@ -15075,20 +15506,21 @@ var RhythmEngine = (() => {
         const emoTone = has(xi, shiWx) ? "\u987A" : has(ji, shiWx) ? "\u614E" : "\u5E73";
         const loveAct = GOD_LOVE_ACT[dominant] || GOD_LOVE_ACT["\u5747\u8861"];
         const loveBase = pe.love || "\u611F\u60C5\u91CC\u4F60\u5206\u5F97\u6E05\u8F7B\u91CD\u3001\u4E5F\u987E\u5F97\u5468\u5230\uFF0C\u60C5\u7EEA\u548C\u73B0\u5B9E\u90FD\u7167\u5E94\u5F97\u4E0A\uFF0C\u76F8\u5904\u8BA9\u4EBA\u5B89\u5FC3\u3002";
+        const vetoInward = !!expressive && (dominant === "\u5370" || dominant === "\u5747\u8861");
         list.push({
           key: "mood",
           title: "\u60C5\u611F\u65B9\u9762",
           tone: emoTone,
-          dos: loveAct.dos.slice(),
-          avoid: loveAct.avoid.slice(),
+          dos: vetoInward ? [] : loveAct.dos.slice(),
+          avoid: vetoInward ? [] : loveAct.avoid.slice(),
           // 感情按「单身/有伴侣」分叉:UI 据用户所选状态展示对应版本;未选=中性核心。桃花为纯描述。
           text: loveBase,
-          textSingle: loveBase + (GOD_LOVE_SINGLE[dominant] || ""),
-          textPartner: loveBase + (GOD_LOVE_PARTNER[dominant] || ""),
+          textSingle: vetoInward ? loveBase : loveBase + (GOD_LOVE_SINGLE[dominant] || ""),
+          textPartner: vetoInward ? loveBase : loveBase + (GOD_LOVE_PARTNER[dominant] || ""),
           taohua: pe.taohua || "",
-          advice: (ADVICE.mood[dominant] || ADVICE.mood["\u5747\u8861"]).slice(),
-          adviceSingle: (ADVICE_MOOD_SINGLE[dominant] || ADVICE_MOOD_SINGLE["\u5747\u8861"]).slice(),
-          advicePartner: (ADVICE_MOOD_PARTNER[dominant] || ADVICE_MOOD_PARTNER["\u5747\u8861"]).slice()
+          advice: vetoInward ? [] : (ADVICE.mood[dominant] || ADVICE.mood["\u5747\u8861"]).slice(),
+          adviceSingle: vetoInward ? [] : (ADVICE_MOOD_SINGLE[dominant] || ADVICE_MOOD_SINGLE["\u5747\u8861"]).slice(),
+          advicePartner: vetoInward ? [] : (ADVICE_MOOD_PARTNER[dominant] || ADVICE_MOOD_PARTNER["\u5747\u8861"]).slice()
         });
         const HEALTH_AVOID = { \u6728: "\u4E45\u5750\u4E0D\u52A8\u3001\u957F\u671F\u6EE1\u8D1F\u8377", \u706B: "\u71AC\u591C\u3001\u8FC7\u5EA6\u900F\u652F\u7CBE\u529B", \u571F: "\u601D\u8651\u8FC7\u91CD\u3001\u996E\u98DF\u65E0\u8282", \u91D1: "\u72EC\u81EA\u538B\u6291\u3001\u79CB\u71E5\u4F24\u80BA", \u6C34: "\u601D\u8651\u8017\u795E\u3001\u7761\u7720\u4E0D\u8DB3" };
         const ORG = (wx) => (WX_INFO[wx] || {}).organ || "\u8EAB\u4F53";
@@ -15144,7 +15576,7 @@ var RhythmEngine = (() => {
           text: hText,
           dos: hDos,
           avoid: hAvoid,
-          advice: [HEALTH_ADVICE]
+          advice: careList.length ? [...H_ADV[careList[0]] || [], ...careList[1] ? (H_ADV[careList[1]] || []).slice(0, 1) : []] : [H_ADV_BASE[dayWx] || "\u4F5C\u606F\u89C4\u5F8B\uFF0C\u7761\u8DB3\u4E3A\u5148\u3002"]
         });
         const fav = mj.favVec || {};
         const favScore = (wx) => Math.max(28, Math.min(94, Math.round(62 + (fav[wx] || 0) * 34)));
@@ -15209,10 +15641,8 @@ var RhythmEngine = (() => {
           mo.headline = g2.headline;
           mo.trait = g2.trait;
           mo.signals = g2.signals;
-          const dom = dominantTag(mo._tags);
-          const g = deriveDialectic(dom, dynM, mo, mo.level, "\u8FD9\u4E2A\u6708", mo.month);
-          mo.yi = g.yi;
-          mo.ji = g.ji;
+          mo.yi = g2.yi;
+          mo.ji = g2.ji;
           mo.verdict = monthVerdict(mo.level, mo.relation);
           delete mo._tags;
           delete mo._severe;
@@ -15227,101 +15657,6 @@ var RhythmEngine = (() => {
           highMonths: pickByLevel(months, "avg", "month", "\u9AD8", 4),
           lowMonths: pickByLevel(months, "avg", "month", "\u4F4E", 3),
           range: { min: sortedAvg[sortedAvg.length - 1], max: sortedAvg[0] }
-        };
-      }
-      function pickRot(arr, seed, n) {
-        const a = (arr || []).filter(Boolean);
-        if (!a.length)
-          return [];
-        const k = Math.min(n, a.length);
-        const off = (seed % a.length + a.length) % a.length;
-        const out = [];
-        for (let i = 0; i < k; i++)
-          out.push(a[(off + i) % a.length]);
-        return out;
-      }
-      function uniq(arr, n) {
-        const seen = /* @__PURE__ */ new Set(), out = [];
-        for (const x of arr) {
-          if (x && !seen.has(x)) {
-            seen.add(x);
-            out.push(x);
-          }
-        }
-        return n ? out.slice(0, n) : out;
-      }
-      function periodGuide(level, relation, god, unit, seed) {
-        const s = seed || 0;
-        const G = GOD_LIFE[god && god.godType] || {};
-        const name = G.name || god.godName || "\u5E94\u65F6\u7684\u80FD\u91CF";
-        const field = G.field || "\u624B\u5934\u7684\u4E8B";
-        const doHi = G.doHi || [], doMid = G.doMid || [], rest = G.rest || [], avoid = G.avoid || [];
-        const u = unit || "\u8FD9\u4E00\u7A0B";
-        if (level === "\u9AD8") {
-          if (relation === "\u559C") {
-            return {
-              headline: `\u9AD8\u80FD\u91CF\u7A97\u53E3 \xB7 ${field}`,
-              trait: `${u}\u80FD\u91CF\u5F88\u8DB3\uFF0C${field}\u4E0A\u7279\u522B\u987A\u3002${pickRot(doHi, s, 2).join("\u3001")}\uFF0C\u9002\u5408\u653E\u624B\u53BB\u505A\uFF0C\u8FD9\u6BB5\u65F6\u95F4\u4E0D\u5BB9\u6613\u534A\u9014\u5361\u4F4F\u3002`,
-              yi: uniq(pickRot(doHi, s, 3), 3),
-              ji: uniq(pickRot(avoid, s, 1).concat("\u7528\u529B\u8FC7\u731B\u3001\u4E00\u6B21\u900F\u652F"), 2)
-            };
-          }
-          if (relation === "\u5FCC") {
-            const a = pickRot(avoid, s, 1)[0] || "\u56DB\u5904\u5206\u5FC3";
-            return {
-              headline: `\u80FD\u91CF\u8DB3 \xB7 \u5B9C\u4E13\u6CE8${field}`,
-              trait: `${u}\u80FD\u91CF\u4E0D\u4F4E\uFF0C\u4F46\u5BB9\u6613\u5728\u300C${a}\u300D\u4E0A\u5206\u5FC3\u3002\u628A\u7CBE\u529B\u96C6\u4E2D\u5230${field}\u7684\u6B63\u4E8B\u4E0A\uFF0C\u6BD4\u56DB\u5904\u51FA\u51FB\u66F4\u6709\u6548\u3002`,
-              yi: uniq(pickRot(doMid, s, 3), 3),
-              // 忌态不取 doHi 高攻清单
-              ji: uniq(pickRot(avoid, s, 2), 2)
-            };
-          }
-          return {
-            headline: `\u80FD\u91CF\u6700\u8DB3 \xB7 \u5B9C\u4E58\u52BF\u63A8\u8FDB`,
-            trait: `${u}\u6574\u4F53\u504F\u65FA\uFF0C\u4E5F\u6CA1\u6709\u660E\u663E\u7684\u963B\u788D\u3002\u9002\u5408\u8D81\u52BF\u628A${field}\u4E0A\u6401\u7F6E\u7684\u4E8B\u5F80\u524D\u63A8\uFF0C\u4E3B\u52A8\u63A8\u8FDB\u6BD4\u7B49\u5F85\u66F4\u7701\u529B\u3002`,
-            yi: uniq(pickRot(doHi, s, 3), 3),
-            ji: ["\u72B9\u8C6B\u9519\u8FC7\u7A97\u53E3", "\u8D2A\u591A\u7528\u5C3D"]
-          };
-        }
-        if (level === "\u4F4E") {
-          if (relation === "\u5FCC") {
-            const a = pickRot(avoid, s, 1)[0] || "\u8FC7\u5EA6\u6D88\u8017";
-            return {
-              headline: `\u5B9C\u6536\u4E0D\u5B9C\u653E \xB7 \u7559\u610F\u300C${a}\u300D`,
-              trait: `${u}\u80FD\u91CF\u504F\u4F4E\uFF0C\u8FD8\u5BB9\u6613\u5728\u300C${a}\u300D\u4E0A\u767D\u8D39\u529B\u6C14\u3002${field}\u4E0A\u5148\u522B\u5F00\u65B0\u7684\u644A\u5B50\uFF0C\u628A\u72B6\u6001\u517B\u597D\u518D\u8BF4\u3002`,
-              yi: uniq(pickRot(rest, s, 2).concat("\u590D\u76D8\u6574\u7406\u3001\u5904\u7406\u65E7\u52A1"), 3),
-              ji: uniq(pickRot(avoid, s, 2).concat("\u4ED3\u4FC3\u4F5C\u91CD\u5927\u51B3\u5B9A"), 3)
-            };
-          }
-          return {
-            headline: `\u84C4\u529B\u671F \xB7 \u5B9C\u6253\u57FA\u7840`,
-            trait: `${u}\u80FD\u91CF\u504F\u4F4E\uFF0C\u4E0D\u662F\u505C\u4E0B\uFF0C\u800C\u662F\u8BE5\u79EF\u84C4\u3002${field}\u4E0A\u4E0D\u5FC5\u52C9\u5F3A\uFF0C\u8D81\u673A\u4F11\u6574\u3001\u4E3A\u4E0B\u4E00\u9636\u6BB5\u517B\u7CBE\u795E\u3002`,
-            yi: uniq(pickRot(rest, s, 2).concat("\u4F11\u6574\u8C03\u517B\u3001\u653E\u6162\u8282\u594F"), 3),
-            ji: ["\u4ED3\u4FC3\u4F5C\u91CD\u5927\u51B3\u5B9A", "\u8FC7\u5EA6\u6D88\u8017", "\u71AC\u591C\u8D76\u5DE5"]
-          };
-        }
-        if (relation === "\u559C") {
-          return {
-            headline: `\u5E73\u7A33\u504F\u987A \xB7 ${field}`,
-            trait: `${u}\u8282\u594F\u5E73\u7A33\uFF0C${field}\u4E0A\u6BD4\u8F83\u987A\u3002\u4E0D\u7528\u8D76\uFF0C\u7A33\u6B65\u63A8\u8FDB\u4E5F\u6709\u624E\u5B9E\u8FDB\u5C55\u3002`,
-            yi: uniq(pickRot(doMid.concat(doHi), s, 3), 3),
-            ji: ["\u6025\u4E8E\u6C42\u6210", "\u6253\u4E71\u81EA\u5DF1\u7684\u8282\u594F"]
-          };
-        }
-        if (relation === "\u5FCC") {
-          const a = pickRot(avoid, s, 1)[0] || "\u5206\u5FC3\u6D88\u8017";
-          return {
-            headline: `\u5E73\u7A33 \xB7 \u7559\u610F\u300C${a}\u300D`,
-            trait: `${u}\u6574\u4F53\u5E73\u7A33\uFF0C\u5C31\u662F${field}\u4E0A\u8981\u7559\u610F\u300C${a}\u300D\u3002\u5148\u529E\u8981\u7D27\u7684\u4E8B\uFF0C\u628A\u8282\u594F\u653E\u5E73\u3002`,
-            yi: uniq(pickRot(doMid, s, 2).concat("\u5904\u7406\u597D\u624B\u5934\u4E8B"), 3),
-            ji: uniq(pickRot(avoid, s, 2), 2)
-          };
-        }
-        return {
-          headline: `\u5B9C\u5B88\u6210 \xB7 \u592F\u5B9E${field}`,
-          trait: `${u}\u6CA1\u6709\u5927\u8D77\u5927\u843D\uFF0C\u6B63\u597D\u628A${field}\u7684\u6839\u57FA\u6253\u7262\uFF0C\u4E0D\u62A2\u4E0D\u8D76\u4E5F\u80FD\u51FA\u6210\u679C\u3002`,
-          yi: uniq(pickRot(doMid.concat(doHi), s, 3), 3),
-          ji: ["\u597D\u9AD8\u9A9B\u8FDC", "\u65F6\u65AD\u65F6\u7EED\u3001\u96BE\u4EE5\u4E3A\u7EE7"]
         };
       }
       function monthVerdict(level, rel) {
@@ -15369,14 +15704,6 @@ var RhythmEngine = (() => {
           return -1;
         return 0;
       }
-      var TARGET_MEAN = {
-        \u5E74\u652F: "\u957F\u8F88\u4E0E\u5BB6\u5EAD",
-        \u6708\u4EE4: "\u4E8B\u4E1A\u4E0E\u6839\u57FA",
-        \u65E5\u652F: "\u81EA\u8EAB\u4E0E\u4EB2\u5BC6\u5173\u7CFB",
-        \u65F6\u652F: "\u89C4\u5212\u4E0E\u957F\u8FDC",
-        \u5927\u8FD0: "\u6574\u4F53\u72B6\u6001",
-        \u5C40: "\u6574\u4F53\u72B6\u6001"
-      };
       var POS_DOMAIN = {
         \u5E74\u652F: { key: "family", label: "\u957F\u8F88\u5BB6\u65CF" },
         \u6708\u4EE4: { key: "career", label: "\u4E8B\u4E1A" },
@@ -15463,218 +15790,6 @@ var RhythmEngine = (() => {
           tags.push({ ...ev, fav, baseTarget, hitWx: ev.kind.includes("\u51B2") ? posWx[baseTarget] : null });
         }
         return { eDelta, severe, tags };
-      }
-      function dominantTag(tags) {
-        if (!tags.length)
-          return null;
-        const significant = tags.filter((t) => {
-          if (t.kind === "\u5408" && !t.huaWx && Math.abs(t.fav) < 0.5)
-            return false;
-          return true;
-        });
-        if (!significant.length)
-          return null;
-        tags = significant;
-        const rank = (t) => {
-          if (t.kind === "\u5929\u514B\u5730\u51B2")
-            return 100;
-          if (t.kind === "\u5C81\u8FD0\u5E76\u4E34")
-            return 95;
-          if (t.kind === "\u51B2" && t.severe)
-            return 90;
-          if (t.kind === "\u4E09\u4F1A")
-            return 85;
-          if (t.kind === "\u4E09\u5408")
-            return 80;
-          if (t.kind === "\u534A\u5408")
-            return 60;
-          if (t.kind === "\u51B2")
-            return 55;
-          if (t.kind === "\u5408" && t.huaWx)
-            return 50;
-          if (t.kind === "\u5211")
-            return 45;
-          if (t.kind === "\u5BB3")
-            return 40;
-          if (t.kind === "\u5408")
-            return 35;
-          if (t.kind === "\u4F0F\u541F")
-            return 30;
-          return 10;
-        };
-        return [...tags].sort((a, b) => rank(b) - rank(a) || Math.abs(b.fav) - Math.abs(a.fav))[0];
-      }
-      function deriveDialectic(tag, dyn, god, level, unit, seed) {
-        const G = GOD_LIFE[god && god.godType] || {};
-        const field = G.field || "\u624B\u5934\u7684\u4E8B";
-        const name = G.name || "\u5E94\u65F6\u7684\u80FD\u91CF";
-        const doHi = G.doHi || [], doMid = G.doMid || [], rest = G.rest || [], avoid = G.avoid || [];
-        const u = unit || "\u8FD9\u4E00\u7A0B";
-        const PER = unit === "\u8FD9\u4E2A\u6708" ? "\u6708" : unit === "\u8FD9\u4E00\u5E74" ? "\u5E74" : "\u671F";
-        const dom = TARGET_MEAN[tag && tag.baseTarget] || field;
-        const shiftNote = dyn.shifted ? ["\u540C\u65F6\u4F60\u6B63\u5904\u5728\u72B6\u6001\u8F6C\u6362\u671F\uFF0C\u8FC7\u53BB\u7684\u65B9\u6CD5\u672A\u5FC5\u518D\u9002\u7528\u3002", "\u8FD9\u6BB5\u65F6\u95F4\u6574\u4F53\u72B6\u6001\u4E5F\u5728\u5207\u6362\uFF0C\u65E7\u7684\u505A\u6CD5\u5148\u522B\u5168\u4F9D\u8D56\u3002"][(seed || 0) % 2] : "";
-        if (tag) {
-          const positive = level === "\u9AD8" ? true : level === "\u4F4E" ? false : tag.fav >= 0;
-          const sd = seed || 0;
-          const pv = (arr, off) => arr[((sd + (off || 0)) % arr.length + arr.length) % arr.length];
-          const tv = (arr) => arr[(sd % arr.length + arr.length) % arr.length];
-          if (tag.kind === "\u5929\u514B\u5730\u51B2" || tag.kind === "\u51B2" && tag.severe) {
-            if (positive)
-              return {
-                headline: `${pv(["\u7834\u5C40", "\u7A81\u7834", "\u677E\u52A8"], 0)}${PER} \xB7 \u51B2\u5F00${dom}\u65E7\u7ED3`,
-                trait: tv([
-                  `${u}\u53D8\u52A8\u8F83\u5927\uFF0C${dom}\u4E0A\u4E00\u4E9B\u62D6\u4E86\u5F88\u4E45\u3001\u6CA1\u80FD\u89E3\u51B3\u7684\u8001\u95EE\u9898\uFF0C\u8FD9\u6BB5\u65F6\u95F4\u6700\u5BB9\u6613\u4E86\u7ED3\u3002\u9002\u5408\u4E3B\u52A8\u6E05\u7406\u3001\u544A\u4E00\u6BB5\u843D\u3002${shiftNote}`,
-                  `${u}\u53D8\u5316\u660E\u663E\uFF0C${dom}\u4E0A\u79EF\u538B\u5DF2\u4E45\u7684\u95EE\u9898\uFF0C\u6B63\u662F\u89E3\u51B3\u7684\u65F6\u673A\u3002\u4E0D\u5B9C\u518D\u62D6\uFF0C\u8D81\u673A\u7406\u6E05\u3001\u7FFB\u7BC7\u3002${shiftNote}`
-                ]),
-                yi: uniq(pv([["\u4E86\u7ED3\u60AC\u800C\u672A\u51B3\u4E4B\u4E8B", "\u4E3B\u52A8\u8F6C\u6362\u73AF\u5883\u3001\u9664\u65E7\u5E03\u65B0"], ["\u6E05\u7406\u79EF\u538B\u5DF2\u4E45\u7684\u65E7\u52A1", "\u4E3A\u751F\u6D3B\u505A\u4E00\u6B21\u65AD\u820D\u79BB"]], 2).concat(pickRot(doHi, sd, 1)), 3),
-                ji: pv([["\u5FF5\u65E7\u4E0D\u653E\u3001\u539F\u5730\u7EA0\u7F20", "\u5728\u52A8\u8361\u4E2D\u4ED3\u4FC3\u4F5C\u91CD\u5927\u51B3\u5B9A"], ["\u7559\u604B\u65E7\u52A1\u4E0D\u80AF\u653E\u624B", "\u72B9\u8C6B\u800C\u9519\u8FC7\u677E\u52A8\u7684\u7A97\u53E3"]], 1)
-              };
-            return {
-              headline: `${pv(["\u591A\u53D8", "\u8D77\u4F0F", "\u52A8\u8361"], 0)}${PER} \xB7 ${dom}\u6709\u6CE2\u52A8`,
-              trait: tv([
-                `${u}\u5916\u90E8\u53D8\u5316\u591A\uFF0C${dom}\u5BB9\u6613\u53CD\u590D\u6CE2\u52A8\u3002\u8FD9\u6BB5\u65F6\u95F4\u4E0D\u5B9C\u5927\u52A8\uFF0C\u5148\u5B88\u4F4F\u73B0\u6709\u7684\uFF0C\u7B49\u5C40\u52BF\u7A33\u5B9A\u518D\u505A\u5927\u51B3\u5B9A\u3002${shiftNote}`,
-                `${u}\u5916\u90E8\u4E0D\u7A33\uFF0C${dom}\u4E0A\u5BB9\u6613\u8D77\u4F0F\u3002\u4EE5\u7A33\u4E3A\u4E3B\uFF0C\u5B88\u597D\u624B\u91CC\u7684\uFF0C\u522B\u5728\u52A8\u8361\u65F6\u505A\u5927\u6295\u5165\u6216\u5927\u8C03\u6574\u3002${shiftNote}`
-              ]),
-              yi: uniq(["\u5B88\u6210\u3001\u628A\u73B0\u6709\u7684\u7A33\u4F4F", "\u4EE5\u9759\u5236\u52A8\u3001\u4E0D\u8F7B\u6613\u5927\u52A8"].concat(pickRot(rest, sd, 1)), 3),
-              ji: uniq(pv([["\u51B2\u52A8\u642C\u8FC1\u3001\u88F8\u8F9E\u3001\u5927\u989D\u6295\u5165", "\u5728\u52A8\u8361\u4E2D\u5B64\u6CE8\u4E00\u63B7"], ["\u4E00\u65F6\u51B2\u52A8\u4F5C\u91CD\u5927\u51B3\u5B9A", "\u968F\u60C5\u7EEA\u884C\u4E8B\u3001\u4E34\u65F6\u53D8\u5366"]], 1).concat(pickRot(avoid, sd, 1)), 3)
-            };
-          }
-          if (tag.kind === "\u5C81\u8FD0\u5E76\u4E34") {
-            return positive ? {
-              headline: `${pv(["\u52A0\u500D", "\u53E0\u52BF"], 0)}${PER} \xB7 \u52BF\u5934\u7FFB\u500D`,
-              trait: tv([
-                `${u}\u662F\u7CBE\u529B\u6700\u5145\u8DB3\u7684\u4E00\u6BB5\u65F6\u95F4\uFF0C${field}\u4E0A\u60F3\u505A\u7684\u5927\u4E8B\u9002\u5408\u679C\u65AD\u63A8\u8FDB\uFF0C\u4E0D\u5FC5\u72B9\u8C6B\u3002`,
-                `${u}\u80FD\u91CF\u6B63\u65FA\uFF0C${field}\u4E0A\u6401\u7F6E\u5DF2\u4E45\u7684\u5927\u4E8B\uFF0C\u9002\u5408\u8D81\u73B0\u5728\u542F\u52A8\u3001\u653E\u624B\u53BB\u505A\u3002`
-              ]),
-              yi: uniq(pickRot(doHi, sd, 3), 3),
-              ji: pv([["\u77BB\u524D\u987E\u540E\u800C\u9519\u8FC7\u7A97\u53E3", "\u4E00\u6B21\u7528\u5C3D\u3001\u4E0D\u7559\u4F59\u529B"], ["\u72B9\u8C6B\u4E0D\u51B3\u3001\u9519\u5931\u826F\u673A", "\u94FA\u5F20\u8FC7\u5EA6\u3001\u96BE\u4EE5\u6536\u675F"]], 1)
-            } : {
-              headline: `${pv(["\u5403\u52B2", "\u625B\u538B"], 0)}${PER} \xB7 \u538B\u529B\u7FFB\u500D`,
-              trait: tv([
-                `${u}\u52BF\u5934\u5F88\u5F3A\uFF0C\u4F46\u672A\u5FC5\u987A\u5229\uFF0C${dom}\u4E0A\u538B\u529B\u504F\u5927\u3002\u4E0D\u5B9C\u6B63\u9762\u786C\u62FC\uFF0C\u5148\u5B89\u987F\u597D\u81EA\u5DF1\u3001\u7A33\u4F4F\u5C40\u9762\u3002`,
-                `${u}\u80FD\u91CF\u5F88\u8DB3\u5374\u5BB9\u6613\u5403\u529B\uFF0C${dom}\u4E0A\u5C24\u5176\u8D39\u52B2\u3002\u628A\u91CD\u5FC3\u653E\u5728\u5B88\u7A33\u3001\u8C03\u517B\u4E0A\u3002`
-              ]),
-              yi: uniq(pickRot(rest, sd, 2).concat("\u7A33\u4F4F\u57FA\u672C\u76D8\u3001\u4E0D\u5192\u8FDB"), 3),
-              ji: uniq(pickRot(avoid, sd, 2).concat("\u6B63\u9762\u786C\u78B0\u3001\u5B64\u6CE8\u4E00\u63B7"), 3)
-            };
-          }
-          if (tag.kind === "\u4E09\u4F1A" || tag.kind === "\u4E09\u5408") {
-            const word = tag.kind === "\u4E09\u4F1A" ? "\u6210\u52BF" : "\u6210\u5C40";
-            return positive ? {
-              headline: `${pv(["\u6210\u4E8B", "\u805A\u529B", "\u501F\u52BF"], 0)}${PER} \xB7 ${word}\u6258\u5E95`,
-              trait: tv([
-                `${u}\u5408\u4F5C\u673A\u4F1A\u591A\u3001\u5E2E\u624B\u4E5F\u591A\uFF0C${field}\u4E0A\u548C\u4EBA\u4E00\u8D77\u505A\u66F4\u5BB9\u6613\u51FA\u6210\u679C\u3002\u9002\u5408\u501F\u52A9\u4ED6\u4EBA\u4E4B\u529B\uFF0C\u4E0D\u5FC5\u72EC\u81EA\u625B\u3002`,
-                `${u}\u4EBA\u8109\u548C\u5408\u529B\u90FD\u4E0D\u9519\uFF0C${field}\u4E0A\u627E\u4EBA\u534F\u4F5C\u3001\u5171\u540C\u63A8\u8FDB\u6700\u987A\u3002\u9002\u5408\u62B1\u56E2\u505A\u4E8B\u3002`,
-                `${u}\u5BB9\u6613\u805A\u8D77\u52A9\u529B\uFF0C${field}\u4E0A\u501F\u529B\u5408\u4F5C\u6700\u89C1\u6548\u3002\u9002\u5408\u8054\u5408\u4ED6\u4EBA\u4E00\u8D77\u63A8\u8FDB\u3002`
-              ]),
-              yi: uniq(pickRot(doHi, sd, 3), 3),
-              ji: pv([["\u72EC\u529B\u652F\u6491\u3001\u4E0D\u501F\u5916\u529B", "\u8D2A\u591A\u800C\u5206\u6563\u5408\u529B"], ["\u95ED\u95E8\u9020\u8F66\u3001\u4E0D\u5BFB\u534F\u4F5C", "\u4E8B\u4E8B\u90FD\u6293\u3001\u53CD\u800C\u6563\u4E86\u529B"]], 1)
-            } : {
-              headline: `${pv(["\u865A\u65FA", "\u7A7A\u5FD9"], 0)}${PER} \xB7 \u70ED\u95F9\u672A\u5FC5\u4E3A\u4F60`,
-              trait: tv([
-                `${u}\u8868\u9762\u70ED\u95F9\u3001\u673A\u4F1A\u770B\u7740\u591A\uFF0C\u4F46\u771F\u6B63\u548C\u4F60\u76F8\u5173\u7684\u6709\u9650\u3002\u6311\u91CD\u8981\u7684\u505A\uFF0C\u522B\u88AB\u6C14\u6C1B\u5E26\u7740\u8D70\u3002`,
-                `${u}\u8EAB\u8FB9\u5F88\u70ED\u95F9\uFF0C\u673A\u4F1A\u5374\u672A\u5FC5\u843D\u5230\u4F60\u8EAB\u4E0A\u3002\u5206\u6E05\u4E3B\u6B21\u3001\u6293\u4F4F\u8981\u7D27\u7684\u4E8B\uFF0C\u522B\u8DDF\u7740\u8D77\u54C4\u3002`
-              ]),
-              yi: uniq(pickRot(doMid, sd, 2).concat("\u5148\u770B\u6E05\u695A\u518D\u8DDF\u3001\u91CF\u529B\u800C\u884C"), 3),
-              ji: uniq(pickRot(avoid, sd, 1).concat("\u8DDF\u98CE\u5192\u8FDB\u3001\u522B\u88AB\u522B\u4EBA\u5E26\u7740\u8D70"), 3)
-            };
-          }
-          if (tag.kind === "\u534A\u5408") {
-            return positive ? {
-              headline: `${pv(["\u987A\u98CE", "\u52A9\u529B"], 0)}${PER} \xB7 \u6709\u534A\u7A0B\u52A9\u529B`,
-              trait: tv([
-                `${u}\u6709\u4EBA\u80FD\u5E2E\u4E0A\u5FD9\uFF0C${field}\u4E0A\u6BD4\u5E73\u65F6\u7701\u529B\u3002\u9002\u5408\u987A\u52BF\u63A8\u8FDB\uFF0C\u8BE5\u501F\u529B\u65F6\u5C31\u501F\u529B\u3002`,
-                `${u}\u6709\u90E8\u5206\u52A9\u529B\uFF0C${field}\u4E0A\u505A\u8D77\u6765\u6BD4\u5E73\u65F6\u8F7B\u677E\u3002\u9002\u5408\u501F\u7740\u8FD9\u80A1\u52BF\u5934\u5F80\u524D\u63A8\u3002`
-              ]),
-              yi: uniq(pickRot(doMid.concat(doHi), sd, 3), 3),
-              ji: pv([["\u5750\u7B49\u673A\u4F1A\u4E0A\u95E8", "\u7528\u529B\u8FC7\u731B"], ["\u4F9D\u8D56\u7B49\u9760\u3001\u4E0D\u4E3B\u52A8\u5F00\u53E3", "\u5B64\u6CE8\u4E00\u63B7\u3001\u5168\u529B\u538B\u4E0A"]], 1)
-            } : {
-              headline: `${pv(["\u7275\u7D2F", "\u7F20\u8EAB"], 0)}${PER} \xB7 \u770B\u7740\u70ED\u95F9\uFF0C\u5B9E\u5219\u6D88\u8017`,
-              trait: tv([
-                `${u}\u770B\u7740\u6709\u4EBA\u642D\u624B\uFF0C\u5B9E\u5219\u4EBA\u60C5\u548C\u4E8B\u52A1\u7F20\u7740\u4F60\u8D70\uFF0C\u6D88\u8017\u5927\u4E8E\u52A9\u529B\u3002\u80FD\u63A8\u7684\u63A8\u6389\uFF0C\u5B88\u4F4F\u81EA\u5DF1\u7684\u8282\u594F\u3002`,
-                `${u}\u4EBA\u548C\u4E8B\u51D1\u5F97\u70ED\u95F9\uFF0C\u771F\u6B63\u843D\u5230\u4F60\u8EAB\u4E0A\u7684\u591A\u662F\u6D88\u8017\u3002\u5C11\u5E94\u627F\u3001\u5C11\u63BA\u548C\uFF0C\u628A\u529B\u6C14\u7559\u7ED9\u81EA\u5DF1\u7684\u4E8B\u3002`
-              ]),
-              yi: uniq(pickRot(doMid.concat(rest), sd, 3), 3),
-              // 忌态不取 doHi(曾在官忌年给「做出重要决定」)
-              ji: uniq(pickRot(avoid, sd, 2), 2)
-            };
-          }
-          if (tag.kind === "\u5408") {
-            return positive ? {
-              headline: `${pv(["\u4EBA\u548C", "\u548C\u987A", "\u987A\u7F18"], 0)}${PER} \xB7 \u4EBA\u987A\u4E8B\u987A`,
-              trait: tv([
-                `${u}\u4EBA\u9645\u5173\u7CFB\u987A\u3001\u8D35\u4EBA\u591A\uFF0C${field}\u4E0A\u9002\u5408\u8C08\u5408\u4F5C\u3001\u8BF7\u4EBA\u5E2E\u5FD9\uFF0C\u4E5F\u5BB9\u6613\u8C08\u6210\u3002\u53EF\u8D81\u673A\u628A\u91CD\u8981\u5173\u7CFB\u5B9A\u4E0B\u6765\u3002`,
-                `${u}\u4EBA\u548C\u4E8B\u90FD\u6BD4\u8F83\u987A\uFF0C${field}\u4E0A\u8C08\u4E8B\u3001\u627E\u4EBA\u5E2E\u5FD9\u90FD\u6BD4\u5E73\u65F6\u5BB9\u6613\u3002\u9002\u5408\u8D81\u8FD9\u6BB5\u65F6\u95F4\u6572\u5B9A\u5408\u4F5C\u4E0E\u5173\u7CFB\u3002`,
-                `${u}\u8D35\u4EBA\u7F18\u597D\uFF0C${field}\u4E0A\u5408\u4F5C\u3001\u7275\u7EBF\u90FD\u8F83\u987A\u5229\u3002\u91CD\u8981\u7684\u5408\u4F5C\u548C\u5173\u7CFB\uFF0C\u9002\u5408\u8D81\u73B0\u5728\u786E\u5B9A\u3002`
-              ]),
-              yi: uniq(pickRot(doMid.concat(doHi), sd, 3), 3),
-              ji: pv([["\u4F18\u67D4\u5BE1\u65AD\u3001\u9519\u8FC7\u65F6\u673A"], ["\u53EA\u987E\u5E94\u916C\u3001\u803D\u8BEF\u6B63\u4E8B"]], 1)
-            } : {
-              headline: `${pv(["\u7275\u7ECA", "\u7F20\u7ED5"], 0)}${PER} \xB7 \u6613\u88AB\u4EBA\u60C5\u7275\u5236`,
-              trait: tv([
-                `${u}\u5BB9\u6613\u88AB\u4EBA\u60C5\u548C\u65E7\u5173\u7CFB\u7275\u4F4F\uFF0C${dom}\u4E0A\u5C24\u5176\u660E\u663E\u3002\u5EFA\u8BAE\u5148\u7406\u6E05\u7EA0\u7F20\u7684\u5173\u7CFB\uFF0C\u518D\u7740\u624B\u522B\u7684\u4E8B\u3002`,
-                `${u}\u4EBA\u60C5\u548C\u65E7\u5173\u7CFB\u5BB9\u6613\u7F20\u624B\uFF0C${dom}\u4E0A\u8868\u73B0\u660E\u663E\u3002\u5148\u628A\u7EA0\u7F20\u4E0D\u6E05\u7684\u4E8B\u7406\u987A\uFF0C\u518D\u63A8\u8FDB\u5176\u4ED6\u5B89\u6392\u3002`
-              ]),
-              yi: uniq(pickRot(rest, sd, 2).concat("\u7406\u6E05\u4EBA\u9645\u3001\u5206\u6E05\u4E3B\u6B21"), 3),
-              ji: uniq(pickRot(avoid, sd, 2), 2)
-            };
-          }
-          if (tag.kind === "\u5211" || tag.kind === "\u5BB3") {
-            return positive ? {
-              headline: `${pv(["\u5411\u4E0A", "\u987A\u52BF"], 0)}${PER} \xB7 \u7559\u610F${dom}\u7684\u5C0F\u6469\u64E6`,
-              trait: tv([
-                `${u}\u6574\u4F53\u5728\u5411\u4E0A\u8D70\uFF0C\u53EA\u662F${dom}\u4E0A\u5BB9\u6613\u6709\u4E9B\u5C0F\u6469\u64E6\u3001\u5C0F\u53E3\u89D2\uFF0C\u591A\u4E3A\u7EC6\u8282\u4E0A\u7684\u6D88\u8017\u3002\u91CD\u8981\u7684\u4E8B\u63D0\u524D\u8BF4\u6E05\u3001\u628A\u754C\u9650\u8BB2\u660E\uFF0C\u4E13\u6CE8\u4E3B\u7EBF\u5373\u53EF\u3002`,
-                `${u}\u5927\u65B9\u5411\u662F\u597D\u7684\uFF0C\u4F46${dom}\u4E0A\u96BE\u514D\u4E9B\u5C0F\u78D5\u78B0\uFF0C\u591A\u5728\u7EC6\u5904\u3002\u628A\u8BDD\u8BF4\u5728\u524D\u9762\u3001\u8FB9\u754C\u5212\u6E05\u695A\uFF0C\u522B\u4E3A\u5C0F\u4E8B\u5206\u5FC3\u3002`
-              ]),
-              yi: uniq(["\u4E13\u6CE8\u4E3B\u7EBF\u3001\u4E0D\u4E3A\u5C0F\u4E8B\u5206\u5FC3", "\u628A\u8BDD\u8BF4\u6E05\u3001\u628A\u754C\u9650\u5212\u660E"].concat(pickRot(doMid, sd, 1)), 3),
-              ji: pv([["\u66FF\u4EBA\u51FA\u5934\u3001\u5377\u5165\u53E3\u89D2", "\u4E3A\u5C0F\u4E8B\u94BB\u725B\u89D2\u5C16"], ["\u591A\u7BA1\u95F2\u4E8B\u62DB\u81F4\u9EBB\u70E6", "\u4E3A\u53E3\u820C\u4E4B\u4E89\u8017\u795E"]], 1)
-            } : {
-              headline: `${pv(["\u78E8\u5408", "\u7559\u5FC3"], 0)}${PER} \xB7 ${dom}\u6613\u8D77\u6469\u64E6`,
-              trait: tv([
-                `${u}${dom}\u4E0A\u5BB9\u6613\u8D77\u6469\u64E6\u3001\u751F\u662F\u975E\uFF0C\u591A\u4E3A\u7EC6\u8282\u4E0A\u7684\u6D88\u8017\u3002\u91CD\u8981\u7684\u4E8B\u63D0\u524D\u8BF4\u6E05\u3001\u754C\u9650\u8BB2\u660E\uFF1B\u7BA1\u597D\u81EA\u5DF1\u7684\u4E8B\uFF0C\u522B\u4EBA\u7684\u4E8B\u4E0D\u5FC5\u591A\u63FD\u3002`,
-                `${u}${dom}\u4E0A\u5BB9\u6613\u6709\u6469\u64E6\u53E3\u89D2\uFF0C\u9EBB\u70E6\u591A\u85CF\u5728\u7EC6\u5904\u3002\u628A\u8BDD\u63D0\u524D\u8BB2\u660E\u3001\u628A\u754C\u9650\u5212\u6E05\uFF0C\u5404\u4EBA\u505A\u597D\u5404\u4EBA\u7684\u4E8B\u3002`,
-                `${u}${dom}\u4E0A\u5BB9\u6613\u751F\u5206\u6B67\u3001\u53E3\u820C\uFF0C\u591A\u662F\u5C0F\u4E8B\u7D2F\u79EF\u3002\u6C9F\u901A\u63D0\u524D\u8BF4\u6E05\u3001\u8FB9\u754C\u7ACB\u660E\u786E\uFF0C\u907F\u514D\u8BEF\u4F1A\u3002`
-              ]),
-              yi: uniq(["\u628A\u8BDD\u8BF4\u6E05\u3001\u628A\u754C\u9650\u5212\u660E", "\u8FDC\u79BB\u662F\u975E\u3001\u6536\u655B\u60C5\u7EEA"].concat(pickRot(rest, sd, 1)), 3),
-              ji: uniq(["\u66FF\u4EBA\u51FA\u5934\u3001\u5377\u5165\u53E3\u89D2", "\u94BB\u725B\u89D2\u5C16\u3001\u4E0E\u81EA\u5DF1\u8F83\u52B2"].concat(pickRot(avoid, sd, 1)), 3)
-            };
-          }
-          if (tag.kind === "\u4F0F\u541F") {
-            return positive ? {
-              headline: `${pv(["\u91CD\u6574", "\u518D\u89E3"], 0)}${PER} \xB7 \u8001\u9898\u6362\u6CD5\u5B50\u89E3`,
-              trait: tv([
-                `${u}${dom}\u4E0A\u7684\u8001\u95EE\u9898\u53C8\u51FA\u73B0\u4E86\u3002\u4E0D\u5B9C\u518D\u7528\u8001\u529E\u6CD5\uFF0C\u6362\u4E2A\u601D\u8DEF\uFF0C\u8FD9\u6B21\u628A\u5B83\u5F7B\u5E95\u89E3\u51B3\u3002`,
-                `${u}${dom}\u4E0A\u7684\u65E7\u6BDB\u75C5\u518D\u6B21\u6D6E\u73B0\u3002\u522B\u6CBF\u7528\u65E7\u505A\u6CD5\uFF0C\u6362\u4E2A\u65B9\u5F0F\u4E00\u6B21\u6027\u4E86\u7ED3\u3002`
-              ]),
-              yi: uniq(pickRot(doMid, sd, 2).concat("\u6362\u601D\u8DEF\u3001\u5F7B\u5E95\u4E86\u7ED3\u65E7\u4E8B"), 3),
-              ji: ["\u539F\u6837\u91CD\u590D\u65E7\u8DEF", "\u628A\u6CA1\u5B9A\u4E0B\u6765\u7684\u4E8B\u4E00\u62D6\u518D\u62D6"]
-            } : {
-              headline: `${pv(["\u53CD\u590D", "\u65E7\u9898"], 0)}${PER} \xB7 \u65E7\u95EE\u9898\u518D\u73B0`,
-              trait: tv([
-                `${u}${dom}\u4E0A\u7684\u8001\u95EE\u9898\u53C8\u56DE\u6765\u4E86\u3002\u4E0D\u5FC5\u7167\u539F\u6837\u518D\u8D70\u4E00\u904D\uFF0C\u6362\u4E2A\u601D\u8DEF\u628A\u5B83\u6536\u5C3E\u3002`,
-                `${u}${dom}\u4E0A\u7684\u65E7\u95EE\u9898\u91CD\u73B0\u3002\u522B\u91CD\u590D\u8FC7\u53BB\u7684\u505A\u6CD5\uFF0C\u6362\u4E2A\u89D2\u5EA6\u5904\u7406\u3001\u4E86\u7ED3\u5B83\u3002`
-              ]),
-              yi: uniq(pickRot(doMid, sd, 2).concat("\u6362\u601D\u8DEF\u3001\u5F7B\u5E95\u4E86\u7ED3\u65E7\u4E8B"), 3),
-              ji: ["\u539F\u6837\u91CD\u590D\u65E7\u8DEF", "\u628A\u6CA1\u5B9A\u4E0B\u6765\u7684\u4E8B\u4E00\u62D6\u518D\u62D6"]
-            };
-          }
-        }
-        if (dyn.shifted) {
-          const strong = dyn.strength === "\u8EAB\u5F3A" || dyn.strength === "\u504F\u5F3A";
-          const st = seed || 0;
-          const shifted = [
-            `\u4F60\u6B63\u8FDB\u5165\u4E00\u4E2A\u65B0\u7684\u9636\u6BB5\uFF0C\u8FC7\u53BB\u6709\u6548\u7684\u505A\u6CD5\u672A\u5FC5\u518D\u9002\u5408\u3002${strong ? `\u8FD9\u6BB5\u65F6\u95F4\u5B9C\u4E3B\u52A8\u8FDB\u53D6\uFF0C\u628A${field}\u505A\u5927\u505A\u5B9E` : `\u8FD9\u6BB5\u65F6\u95F4\u5B9C\u7A33\u5B88\u6536\u655B\uFF0C\u5148\u6253\u597D${field}\u7684\u57FA\u7840`}\u3002`,
-            `\u4F60\u6B63\u5904\u5728\u72B6\u6001\u7684\u8F6C\u6362\u671F\uFF0C\u4EE5\u524D\u987A\u624B\u7684\u65B9\u5F0F\u53EF\u80FD\u4E0D\u518D\u5408\u7528\u3002${strong ? `\u9002\u5408\u653E\u5F00\u624B\u811A\uFF0C\u628A${field}\u5F80\u5927\u505A` : `\u9002\u5408\u5148\u6536\u4E00\u6536\uFF0C\u628A${field}\u7684\u6839\u57FA\u624E\u7A33`}\u3002`,
-            `\u4F60\u7684\u6574\u4F53\u72B6\u6001\u6B63\u5728\u5207\u6362\uFF0C\u65E7\u7684\u505A\u4E8B\u65B9\u5F0F\u6E10\u6E10\u4E0D\u9002\u7528\u4E86\u3002${strong ? `\u8FD9\u4E00\u7A0B\u5B9C\u8FDB\u53D6\u6269\u5F20\uFF0C\u628A${field}\u505A\u8D77\u6765` : `\u8FD9\u4E00\u7A0B\u5B9C\u5B88\u7A33\u6C89\u6DC0\uFF0C\u5148\u592F\u5B9E${field}\u7684\u57FA\u7840`}\u3002`
-          ];
-          return {
-            headline: `\u8F6C\u5411${PER} \xB7 \u6362\u4E2A\u8282\u594F`,
-            trait: shifted[st % shifted.length],
-            yi: uniq(pickRot(strong ? doHi.concat(doMid) : rest, seed, 3), 3),
-            ji: ["\u6CBF\u7528\u4EE5\u5F80\u7684\u65E7\u6709\u6253\u6CD5", strong ? "\u754F\u7F29\u4E0D\u524D\u3001\u9519\u5931\u8F6C\u673A" : "\u52C9\u529B\u652F\u6491\u3001\u4E0D\u80AF\u653E\u7F13"]
-          };
-        }
-        return periodGuide(level, dyn._relation || "\u5E73", god, unit, seed);
       }
       var GRADE_K = 0.9;
       var GRADE_FLAT = 2.6;
@@ -15891,7 +16006,7 @@ var RhythmEngine = (() => {
           progressive.push({
             key: "sign",
             icon: "\u2713",
-            title: "\u7B7E\u7EA6 \xB7 \u6572\u5B9A\u5927\u4E8B",
+            title: "\u5B9A\u593A \xB7 \u6572\u5B9A\u5927\u4E8B",
             desc: "\u5B9C\u601D\u8651\u6E05\u660E\u3001\u7B03\u5B9A\u4ECE\u5BB9\u7684\u65E5\u5B50",
             days: pick(
               (x) => x.energy >= 70 && !x.volatile && (x.favTypes.includes("\u5370") || x.favTypes.includes("\u5B98")),
@@ -15904,7 +16019,7 @@ var RhythmEngine = (() => {
           progressive.push({
             key: "talk",
             icon: "\u2726",
-            title: "\u8C08\u5224 \xB7 \u9762\u8BD5 \xB7 \u91CD\u8981\u6C9F\u901A",
+            title: "\u8C08\u5224 \xB7 \u91CD\u8981\u6C9F\u901A",
             desc: "\u5B9C\u8868\u8FBE\u6709\u529B\u3001\u4E34\u573A\u6E05\u9192\u7684\u65E5\u5B50",
             days: pick(
               (x) => x.energy >= 68 && !x.volatile && (x.favTypes.includes("\u98DF") || x.favTypes.includes("\u5B98")),
