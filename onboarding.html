@@ -98,6 +98,9 @@
   .truesun .ts-ico{width:7px;height:7px;border-radius:50%;background:var(--sage);flex:none;}
   .truesun .ts-txt{font-size:11.5px;color:var(--sage-d);font-weight:300;line-height:1.5;}
   .truesun .ts-txt b{font-weight:500;}
+  .truesun[hidden]{display:none;}
+  .ts-toggle{display:inline-block;margin-top:10px;padding:8px 2px;min-height:36px;background:none;border:0;font:inherit;font-size:12px;color:var(--muted,#948F86);letter-spacing:1px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .ts-toggle[aria-expanded="true"]{color:var(--gold-d,#E6CF9E);}
 
   .btn{margin-top:auto;width:100%;background:linear-gradient(180deg,var(--gold-d),var(--gold));color:#231A0C;border:none;border-radius:16px;padding:15px;font-size:14px;font-weight:600;letter-spacing:3px;font-family:inherit;cursor:pointer;transition:transform .3s var(--ease),box-shadow .3s var(--ease);box-shadow:0 16px 34px -14px rgba(205,168,98,.5);}
   .btn:hover{transform:translateY(-2px);box-shadow:0 22px 40px -14px rgba(205,168,98,.7);}
@@ -189,13 +192,14 @@
         </div>
 
         <div class="field" style="margin-bottom:14px;">
-          <div class="flabel">出生地 · 城市即可（中/英，海外自动校时区）</div>
+          <div class="flabel">出生地</div>
           <div class="city-search">
             <input id="in-city-q" type="text" placeholder="搜索出生城市，如 成都 / New York" autocomplete="off">
             <div class="city-results" id="city-results"></div>
           </div>
           <input type="hidden" id="in-lon"><input type="hidden" id="in-tz"><input type="hidden" id="in-cityname">
-          <div class="truesun">
+          <button type="button" class="ts-toggle" id="ts-toggle" aria-expanded="false">校准 ›</button>
+          <div class="truesun" id="ts-box" hidden>
             <span class="ts-ico"></span>
             <span class="ts-txt" id="ts-note">已按真太阳时校正</span>
           </div>
@@ -227,7 +231,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=159"></script>
+  <script src="engine_bundle.js?v=160"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -307,7 +311,7 @@
     fetch('geocities.json').then(r=>r.json()).then(d=>{ GEO=d; if(!lonEl.value)pickCity('成都',104.07,'Asia/Shanghai','CN'); }).catch(()=>{ if(!lonEl.value){ lonEl.value=104.07;tzEl.value='Asia/Shanghai';cnameEl.value='成都';cityQ.value='成都 · 中国'; } });
     // 当地时间(IANA时区)→ 北京时间(UTC+8)墙钟,含历史夏令时(Intl内置tzdata)
     function tzOffsetMin(utcMs,zone){ const dtf=new Intl.DateTimeFormat('en-US',{timeZone:zone,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}); const p={}; dtf.formatToParts(new Date(utcMs)).forEach(x=>p[x.type]=x.value); const asUTC=Date.UTC(p.year,p.month-1,p.day,p.hour==='24'?0:p.hour,p.minute,p.second); return Math.round((asUTC-utcMs)/60000); }
-    function localToBeijing(y,mo,d,h,mi,zone){ const wall=Date.UTC(y,mo-1,d,h,mi,0); const off=tzOffsetMin(wall,zone); const utc=wall-off*60000; const bj=new Date(utc+8*3600000); return {year:bj.getUTCFullYear(),month:bj.getUTCMonth()+1,day:bj.getUTCDate(),hour:bj.getUTCHours(),minute:bj.getUTCMinutes()}; }
+    function localToBeijing(y,mo,d,h,mi,zone){ const wall=Date.UTC(y,mo-1,d,h,mi,0); const off=tzOffsetMin(wall,zone); let utc=wall-off*60000; /* 夏令时切换日:偏移须在真 UTC 瞬间再取一次(一次采样会差 1 小时) */ const off2=tzOffsetMin(utc,zone); if(off2!==off){ const u2=wall-off2*60000; if(tzOffsetMin(u2,zone)===off2) utc=u2; } const bj=new Date(utc+8*3600000); return {year:bj.getUTCFullYear(),month:bj.getUTCMonth()+1,day:bj.getUTCDate(),hour:bj.getUTCHours(),minute:bj.getUTCMinutes()}; }
 
     // 段选器:点选即切 .on,值存 data-v
     function segBind(id){
@@ -408,6 +412,9 @@
       }catch(e){ /* 输入未完整时忽略 */ }
     }
     ['in-date','in-time'].forEach(id=>document.getElementById(id).addEventListener('change',updateTrueSun));
+    // 校准信息默认收起(首屏只留 生日/时间/城市/性别),点「校准」展开
+    (function(){ const t=document.getElementById('ts-toggle'), bx=document.getElementById('ts-box'); if(!t||!bx) return;
+      t.addEventListener('click',()=>{ const open=bx.hidden; bx.hidden=!open; t.setAttribute('aria-expanded', open?'true':'false'); t.textContent=open?'校准 ‹':'校准 ›'; }); })();
     document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',updateTrueSun));
     updateTrueSun();
 
@@ -504,6 +511,13 @@
       try{
         const person = readPerson();
         const now = new Date();
+        // 出生日期不能晚于今天(按当地录入日期比;农历已换成公历)
+        { const _b=new Date(person.srcY, person.srcM-1, person.srcD); const _t=new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          let fh=document.getElementById('future-hint');
+          if(_b>_t){ const btn=document.getElementById('btn-go');
+            if(!fh){ fh=document.createElement('div'); fh.id='future-hint'; fh.style.cssText='color:#C4866A;font-size:12px;margin-top:8px;text-align:center;'; btn.parentNode.insertBefore(fh, btn.nextSibling); }
+            fh.textContent='出生日期不能晚于今天'; return; }
+          if(fh) fh.remove(); }
         const today = { year:now.getFullYear(), month:now.getMonth()+1, day:now.getDate() };
         const chart = RhythmEngine.paipan(person);
         const APP = RhythmEngine.buildApp(person, today);

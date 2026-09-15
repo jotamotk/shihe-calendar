@@ -136,6 +136,8 @@
   .tab.on{color:var(--sage-d);}
   .tab .ti{width:23px;height:23px;opacity:.62;transition:opacity .25s var(--ease),transform .25s var(--ease);}
   .tab.on .ti{opacity:1;transform:translateY(-1px);}
+  .tab:focus-visible{outline:2px solid var(--gold-d);outline-offset:3px;border-radius:10px;}
+  .rd-screen .tab:focus-visible{outline-color:var(--rd-acc);}
 
   /* ===== calendar (unified energy + folk) ===== */
   .cal-top{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 10px;}
@@ -431,6 +433,7 @@
   .mine-ov.on{display:flex;opacity:1;}
   .mine-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(14px + env(safe-area-inset-top)) 20px 40px;}
   .mine-scroll>.ch-bar{margin-bottom:18px;}
+  .mine-title{justify-content:center;}
   .mine-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:18px;}
   .mine-hero-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.04em;}
   .mine-hero-sub{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:300;}
@@ -2290,12 +2293,12 @@
             <div class="cal-fine">传统历法与民俗文化整理，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果</div>
           </div>
         </div>
-        <div class="tabbar">
-          <div class="tab on"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
-          <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-          <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
-        </div>
+        <nav class="tabbar" aria-label="主导航">
+          <button class="tab on" type="button" aria-current="page"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-read"></use></svg>解读</button>
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-tools"></use></svg>工具箱</button>
+          <button class="tab tab-mine" type="button"><svg class="ti" aria-hidden="true"><use href="#i-mine"></use></svg>我的</button>
+        </nav>
         <!-- 分享卡 overlay(覆盖在手机内，可截图) -->
         <div class="share-ov" id="share-ov">
           <div class="share-themes" id="share-themes">
@@ -2392,12 +2395,12 @@
 
         </div>
         <!-- 一生能量:从「我的」进入的整屏能量指南页;底部标准 tab 栏,不高亮任何项(它不归属某个底栏 tab) -->
-        <div class="tabbar">
-          <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
-          <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-          <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
-        </div>
+        <nav class="tabbar" aria-label="主导航">
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-read"></use></svg>解读</button>
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-tools"></use></svg>工具箱</button>
+          <button class="tab tab-mine" type="button"><svg class="ti" aria-hidden="true"><use href="#i-mine"></use></svg>我的</button>
+        </nav>
         <!-- 深度报告 overlay 已移至 body 级(见 .stage 之后),任意页面均可全屏打开 -->
       </div></div>
       <div class="frame-label">一生能量 · 生命之轮(可缩放)</div>
@@ -2411,12 +2414,12 @@
         <div class="scroll" id="jd-scroll">
           <div id="jd-main"><!-- 由引擎在本机推算后填充:免费命书速览 + 深度报告入口 --></div>
         </div>
-        <div class="tabbar">
-          <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
-          <div class="tab on"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-          <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
-        </div>
+        <nav class="tabbar" aria-label="主导航">
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
+          <button class="tab on" type="button" aria-current="page"><svg class="ti" aria-hidden="true"><use href="#i-read"></use></svg>解读</button>
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-tools"></use></svg>工具箱</button>
+          <button class="tab tab-mine" type="button"><svg class="ti" aria-hidden="true"><use href="#i-mine"></use></svg>我的</button>
+        </nav>
       </div></div>
       <div class="frame-label">解读 · 命书速览 → 深度报告(全部免费)</div>
     </div>
@@ -2563,12 +2566,12 @@
           </div>
          </div>
         </div>
-        <div class="tabbar">
-          <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
-          <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-          <div class="tab on"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-          <button class="tab tab-mine" type="button"><svg class="ti"><use href="#i-mine"></use></svg>我的</button>
-        </div>
+        <nav class="tabbar" aria-label="主导航">
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
+          <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-read"></use></svg>解读</button>
+          <button class="tab on" type="button" aria-current="page"><svg class="ti" aria-hidden="true"><use href="#i-tools"></use></svg>工具箱</button>
+          <button class="tab tab-mine" type="button"><svg class="ti" aria-hidden="true"><use href="#i-mine"></use></svg>我的</button>
+        </nav>
       </div></div>
       <div class="frame-label">工具箱 · 目录 → 点进查看(吉日 / 养生 / 重点日 / 时令民俗)</div>
     </div>
@@ -2636,7 +2639,7 @@
   <!-- 「我的」overlay:body 级全屏,任意页面均可打开。生辰作为一项(不再整页),含一生能量/分享/协议 -->
   <div class="mine-ov" id="mine-ov">
     <div class="mine-scroll">
-      <div class="ch-bar"><button class="ch-back" id="mine-close" type="button">‹ 返回</button><span class="ch-bar-t">我 的</span><span style="width:52px"></span></div>
+      <div class="ch-bar mine-title"><span class="ch-bar-t">我 的</span></div>
       <div class="mine-card" id="mine-hero">
         <div class="mine-hero-name" id="mine-name">—</div>
         <div class="mine-hero-sub" id="mine-birth">—</div>
@@ -2657,16 +2660,16 @@
       </div>
       <div class="mine-foot">传统历法与民俗文化整理，不构成专业建议 · 全部本机计算，不上传</div>
     </div>
-    <div class="tabbar">
-      <div class="tab"><svg class="ti"><use href="#i-cal"></use></svg>日历</div>
-      <div class="tab"><svg class="ti"><use href="#i-read"></use></svg>解读</div>
-      <div class="tab"><svg class="ti"><use href="#i-tools"></use></svg>工具箱</div>
-      <div class="tab on"><svg class="ti"><use href="#i-mine"></use></svg>我的</div>
-    </div>
+    <nav class="tabbar" aria-label="主导航">
+      <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
+      <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-read"></use></svg>解读</button>
+      <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-tools"></use></svg>工具箱</button>
+      <button class="tab on" type="button" aria-current="page"><svg class="ti" aria-hidden="true"><use href="#i-mine"></use></svg>我的</button>
+    </nav>
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=159"></script>
+  <script src="engine_bundle.js?v=160"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2722,7 +2725,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=159"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=160"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2939,6 +2942,7 @@
 
     // ===== 屏1 · 日历首页(日历 + 当日小部件流)=====
     let SHARE_DAY = null;        // 当前选中日(供分享卡)
+    let SHARE_YM = null;         // 选中日所在年月(日历可翻月,分享卡日期/星期必须跟选中日同源,不能用 APP.month)
     (function renderHome(){
       let PERSON=null;
       try{ PERSON = JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
@@ -3233,7 +3237,7 @@
 
       // —— 选中某日 → 填充下方小部件流 ——
       function showDay(d){
-        SHARE_DAY = d;
+        SHARE_DAY = d; SHARE_YM = { year:curY, month:curM };
         const dt = new Date(curY, curM-1, d.g);
         // 距今天数(参考中华日历:点选某天，底部即显示「X天后 / X天前 / 今天」)
         (function(){
@@ -3245,6 +3249,11 @@
             + ' <span style="color:var(--gold-d);font-weight:500;">'+rel+'</span>';
           // 个人卡标题随选中日:看别的天时不再写死「今日」(防同屏矛盾)
           var _tt=document.querySelector('.wdg-today .wdg-htitle'); if(_tt) _tt.textContent=(diff===0?'今日':'该日')+'状态';
+          // 查日模式:凡写「今日」的地方随选中日切换;不是今天就一直露出「回今天」(同月别的日也露)
+          var _day=(diff===0?'今日':'该日');
+          var _tf=document.querySelector('.wdg-today .tf-h'); if(_tf) _tf.textContent=_day+'各方面';
+          var _xl=document.querySelector('.wdg-today .cue-xilab'); if(_xl) _xl.textContent=_day+'宜色';
+          var _tb=$('c-today-btn'); if(_tb) _tb.style.display=(diff===0?'none':'');
         })();
         // 出生前守卫:选中日早于命主出生 → 个人卡不编造运势,只留历法层
         (function(){
@@ -3306,6 +3315,7 @@
         // 分享卡入口:按今日能量给一句更勾人的邀约，提升「做卡 → 分享」转化
         (function(){
           const b=$('t-share'); if(!b) return;
+          if(!d.today){ b.textContent='为这一天做一张卡片 →'; return; }   // 查日模式:不是今天不写「今日/今天」
           b.textContent = d.e>=72 ? '今日状态正佳，做一张卡片分享 →'
             : d.e<=54 ? '给今天打张卡 →'
             : '为今日做一张卡片 →';
@@ -3454,8 +3464,7 @@
         const td = m.days.find((x)=>x.today) || m.days[0];
         const tdCell = grid.querySelector('.px[data-g="'+td.g+'"]');
         if (tdCell) tdCell.classList.add('sel');
-        showDay(td);
-        $('c-today-btn').style.display = (m.year===REAL.year && m.month===REAL.month) ? 'none' : '';
+        showDay(td);   // showDay 内按「是否今天」控制「回今天」显隐
       }
 
       function goto(Y, M){
@@ -3467,7 +3476,8 @@
 
       $('c-prev').addEventListener('click', ()=> goto(curY, curM-1));
       $('c-next').addEventListener('click', ()=> goto(curY, curM+1));
-      $('c-today-btn').addEventListener('click', ()=> goto(REAL.year, REAL.month));
+      $('c-today-btn').addEventListener('click', ()=> goto(REAL.year, REAL.month));   // goto 重画当月并自动选中今天
+      window.__calGoToday = ()=> goto(REAL.year, REAL.month);   // 「我的 → 今日分享」先回今天
       // 工具箱里增删重点日后，日历实时重画(保持当前所选日)
       MARKS.onChange(()=>{ const m=monthData(curY,curM); if(m){ const keep=SHARE_DAY&&SHARE_DAY.g;
         renderMonth(m);
@@ -3556,7 +3566,7 @@
         +'<path d="M0,128 C78,106 138,144 218,116 C272,98 286,122 288,114" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/></svg>';
       function gzDay(d){
         if(d.ganZhi&&d.ganZhi.day) return d.ganZhi.day+'日';
-        try{ return RhythmEngine.Solar.fromYmd(APP.month.year,APP.month.month,d.g).getLunar().getDayInGanZhi()+'日'; }catch(e){ return ''; }
+        try{ const _ym=SHARE_YM||APP.month; return RhythmEngine.Solar.fromYmd(_ym.year,_ym.month,d.g).getLunar().getDayInGanZhi()+'日'; }catch(e){ return ''; }
       }
       function poeticBreak(s){ s=esc(s||''); return s.replace(/([，。；])/, '$1\n'); }
       const RING_C=2*Math.PI*31;
@@ -3566,7 +3576,7 @@
           +'<defs><linearGradient id="scgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C8AC78"/><stop offset="1" stop-color="#E6CF9E"/></linearGradient></defs></svg>'; }
       function build(d){
         if (!d) return '';
-        const M=APP.month.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
+        const YM=SHARE_YM||{year:APP.month.year,month:APP.month.month}, M=YM.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
         const line=poeticBreak(d.cueLine||('今天平稳，先把要紧的一两件做完。'));
         const e=Math.min(100,d.e), word=esc(d.word||''), xi=XI||GOLD;
         const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'挑最要紧的一件做完');
@@ -3574,7 +3584,7 @@
         const axis=Math.max(4,Math.min(96,(typeof d.axis==='number'?d.axis:50)));
         const sx=(d.ganZhi&&d.ganZhi.shengXiao)?d.ganZhi.shengXiao:'';
         const gzShort=gz.replace('日','');
-        const wd=['日','一','二','三','四','五','六'][new Date(APP.month.year,M-1,d.g).getDay()];
+        const wd=['日','一','二','三','四','五','六'][new Date(YM.year,M-1,d.g).getDay()];
         const jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
         if(THEME==='B'){
           const band=(jq?jq+' · ':'')+M+'月'+d.g+'日';
@@ -3625,7 +3635,7 @@
           +'<div class="xp-hair"></div>'
           +'<div class="xp-orb">'+xorb+'</div>'
           +(xtipsHtml?'<div class="xp-tips">'+xtipsHtml+'</div>':'')
-          +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>今日宜色 · '+esc(XINAME||'')+'</span></div>'
+          +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>'+(d.today?'今日':'该日')+'宜色 · '+esc(XINAME||'')+'</span></div>'
           +'</div></div>';
       }
       // 流年/流月卡(贰卷入口):沿用今日笺宣纸质感,内容=大年份/月份+信号行(chip+断语)
@@ -3688,7 +3698,8 @@
         if(!navigator.share){ go.style.display='none'; return; }   // 不支持系统分享 → 退回「长按存图」
         go.addEventListener('click', async ()=>{
           const d=SHARE_DAY; if(!d) return;
-          const txt='顺时黄历 · '+APP.month.month+'月'+d.g+'日 · 我今天的状态。顺天而养，应时而行。';
+          const _ym=SHARE_YM||APP.month;
+          const txt='顺时黄历 · '+_ym.month+'月'+d.g+'日 · '+(d.today?'我今天的状态':'这一天的状态')+'。顺天而养，应时而行。';
           try{
             await navigator.share({ title:'顺时黄历', text:txt, url:location.origin+location.pathname });
             window.shihe&&window.shihe.track&&window.shihe.track('share_done',{ch:'system'});
@@ -5565,7 +5576,9 @@
         }
         s.innerHTML=h;
         var ord=function(o){ return new Date(o.y,o.m-1,o.d).getTime(); };
-        var go=function(o){ if(ord(o)===ord(RD.D)) return; var g=ord(o)>ord(RD.D)?1:-1; RD.D=o; rdDay(g); };
+        // 日档边界与年/月档一致:出生日 ~ 出生年+99 年末
+        var P0=window.APP_PERSON||{}, bY=P0.year||(T.y-30), dMin=new Date(bY,(P0.month||1)-1,P0.day||1).getTime(), dMax=new Date(bY+99,11,31).getTime();
+        var go=function(o){ var k=ord(o); if(k===ord(RD.D)||k<dMin||k>dMax) return; var g=k>ord(RD.D)?1:-1; RD.D=o; rdDay(g); };
         rdStripBind(function(v){ go({y:RD.D.y, m:RD.D.m, d:+v}); });
         var d=mo.days[RD.D.d-1]; if(!d){ rdEl('rd-tlbody').innerHTML=''; return; }
         var isToday=(RD.D.y===T.y&&RD.D.m===T.m&&RD.D.d===T.d);
@@ -5576,7 +5589,7 @@
           if(p[1]) rows+='<li><b>'+p[0]+'</b><p>'+esc(p[1])+'</p></li>';
         });
         var gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');
-        var html=rdHead('<h3>'+RD.D.m+'月'+RD.D.d+'日 周'+WK[new Date(RD.D.y,RD.D.m-1,RD.D.d).getDay()]+'</h3>', esc(gz)+(gz?'日':'')+' · 能量 '+d.e, false, false)
+        var html=rdHead('<h3>'+RD.D.m+'月'+RD.D.d+'日 周'+WK[new Date(RD.D.y,RD.D.m-1,RD.D.d).getDay()]+'</h3>', esc(gz)+(gz?'日':'')+' · 能量 '+d.e, ord(RD.D)<=dMin, ord(RD.D)>=dMax)
           +'<div class="rd-back"><button type="button" hidden></button></div>'
           +'<div class="rd-card">'+(rows?'<ul class="rd-dom">'+rows+'</ul>':'')+rdYJ(d.yi, d.huan)+'</div>';
         rdSlide(dir, html, function(){
@@ -5628,6 +5641,7 @@
         [rdToc, rdNatal, rdTL, rdCare].forEach(function(fn){ try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e&&e.message); }catch(_){} } });
         window.__jdShowChapter=function(ch){ rdShow(ch==='liunian'?'tl':ch); };
         window.__rdOnShow=function(){ rdCenter(true); rdSpy(); };
+        window.__rdRelChanged=function(){ try{ rdDom(false); if(RD.mode==='d') rdDrawTL(0); }catch(e){} };   // 「我的」改感情状态 → 解读情感面板/日档同步
         rdShow(RD.built?RD.ch:'toc');
         RD.built=true;
       }
@@ -6059,6 +6073,7 @@
     (function(){
       function setScreen(i){
         document.body.dataset.screen = i;
+        if (window.__closeMine) window.__closeMine();   // 切任一屏即离开「我的」
         var fw = document.querySelectorAll('.stage > .frame-wrap')[i];
         if (fw){ var s = fw.querySelector('.scroll'); if (s) s.scrollTop = 0; }
         try{ window.scrollTo(0,0); }catch(e){}
@@ -6072,6 +6087,15 @@
         if (i === 2 && window.__rdOnShow) requestAnimationFrame(window.__rdOnShow);
       }
       window.__setScreen = setScreen; // 供「解读」内联报告 / 工具深链跨屏跳转
+      // 跨午夜:页面挂着过了零点,回到前台(或每分钟检查)发现日期变了 → 重载,「今天」/日历/节气/分享全部换成新的一天
+      (function(){
+        var bootKey=new Date().toDateString();
+        function checkDay(){ if(document.visibilityState==='visible' && new Date().toDateString()!==bootKey){ bootKey=new Date().toDateString(); location.reload(); } }
+        document.addEventListener('visibilitychange', checkDay);
+        window.addEventListener('pageshow', checkDay);
+        window.addEventListener('focus', checkDay);
+        setInterval(checkDay, 60000);
+      })();
       // 录入生辰后落地到「解读」命书(付出→回报可见):onboarding 存了 shihe_goRead
       try{ if(localStorage.getItem('shihe_goRead')==='1'){ localStorage.removeItem('shihe_goRead'); setTimeout(function(){ setScreen(2); }, 80); } }catch(e){}
       // 通用跨屏入口:任意 [data-goto] 元素点击即切屏(日历今日卡 → 解读完整命书 等)
@@ -6102,10 +6126,15 @@
           if(!p && window.__IS_DEMO===false) p=window.APP_PERSON||null;   // 仅真实用户才回落 APP_PERSON;示例态不冒充,走「未设置生辰」
           var nm=document.getElementById('mine-name'), bs=document.getElementById('mine-birth');
           if(p&&p.year){
-            var mn=(p.minute!=null?p.minute:0); mn=(mn<10?'0':'')+mn;
-            var hr=(p.hour!=null?p.hour:0);
-            if(nm) nm.textContent=p.year+'年'+p.month+'月'+p.day+'日';
-            if(bs) bs.textContent=hr+':'+mn+(p.gender?' · '+p.gender:'');
+            // 展示用户录入的原样(海外=当地时间,农历=农历日期),不展示喂引擎的北京基准;时辰未知不显示占位 0:00
+            var hasIn=(p.inY&&p.inM&&p.inD), lunarIn=hasIn&&p.calInput==='农历';
+            var dm=hasIn?p.inM:p.month, leap=lunarIn&&!Number.isInteger(dm);
+            var dateTx=hasIn?((lunarIn?'农历':'')+p.inY+'年'+(leap?'闰':'')+Math.floor(dm)+'月'+p.inD+'日'):(p.year+'年'+p.month+'月'+p.day+'日');
+            var h0=(p.srcH!=null?p.srcH:p.hour), m0=(p.srcMin!=null?p.srcMin:p.minute);
+            var mn=(m0!=null?m0:0); mn=(mn<10?'0':'')+mn;
+            var timeTx=p.hourUnknown?'时辰未知':((h0!=null?h0:0)+':'+mn);
+            if(nm) nm.textContent=dateTx;
+            if(bs) bs.textContent=timeTx+(p.gender?' · '+p.gender:'');
           } else {
             if(nm) nm.textContent='未设置生辰';
             if(bs) bs.textContent='填写后即可查看';
@@ -6119,12 +6148,15 @@
               try{ localStorage.setItem('shihe_relstatus', b.dataset.rel); }catch(err){}
               rs.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
               try{ if(typeof SHARE_DAY!=='undefined'&&SHARE_DAY&&typeof renderFortune==='function') renderFortune(SHARE_DAY); }catch(err){}
+              try{ if(window.__rdRelChanged) window.__rdRelChanged(); }catch(err){}
             }); }
           }
-          mov.classList.add('on');
+          mov.classList.add('on'); document.body.dataset.mine='1';
           window.shihe&&window.shihe.track&&window.shihe.track('mine_open',{});
         }
-        function closeMine(){ mov.classList.remove('on'); }
+        // 「我的」按独立 Tab 页处理(与 iOS 同):无返回键,切任一 Tab 即离开;body 记当前是否在我的页
+        function closeMine(){ mov.classList.remove('on'); delete document.body.dataset.mine; }
+        window.__closeMine = closeMine;
         var mtb = mov.querySelector('.tabbar');
         if (mtb) mtb.addEventListener('click', function(e){
           var t = e.target.closest('.tab');
@@ -6136,6 +6168,7 @@
         var lb=document.getElementById('lf-back'); if(lb) lb.addEventListener('click', function(){ var f=window.__lfFrom; setScreen(f!=null&&f!==1?f:3); });
         var ms=document.getElementById('mine-share'); if(ms) ms.addEventListener('click', function(){
           closeMine(); setScreen(0);
+          try{ if(window.__calGoToday) window.__calGoToday(); }catch(e){}   // 今日分享=今天,先把日历选中日复位
           var ts=document.getElementById('t-share'); if(ts) setTimeout(function(){ ts.click(); }, 80);
         });
         // 每日提醒(仅原生壳+已录生辰;本地通知,内容=当日宜+能量,native.js 排未来14天)
