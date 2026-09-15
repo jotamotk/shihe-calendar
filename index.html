@@ -1895,6 +1895,245 @@
   #jd-chapter .rp-closing{background:none;border:none;border-top:1px solid var(--line);border-radius:0;padding:26px 14px 6px;text-align:center;font-size:16px;line-height:1.7;letter-spacing:.5px;text-wrap:balance;}
   #jd-chapter .rp-closing::before{content:"";left:50%;top:-6px;transform:translateX(-50%);width:22px;height:1px;background:var(--gold-line);font-size:0;}
 </style>
+<style id="rd-css">
+  /* 宋体:iOS 不带任何中文衬线字 → 自带思源宋体(Noto Serif SC,OFL)子集,只含引擎/页面用到的字 */
+  @font-face{font-family:RDSerif;font-weight:400;font-style:normal;font-display:swap;src:url("assets/fonts/notoserif-Regular.woff") format("woff");}
+  @font-face{font-family:RDSerif;font-weight:700;font-style:normal;font-display:swap;src:url("assets/fonts/notoserif-Bold.woff") format("woff");}
+  /* ===== 解读页 · 纸本通书(2026-09 重设计:浅纸 + 赭金单主色;内容与引擎不变) ===== */
+  .rd-screen{
+    --rd-paper:#EEE9DF; --rd-paper2:#E5DFD2; --rd-card:#F6F2EA; --rd-grid:rgba(120,96,60,.07);
+    --rd-ink:#1F1C17; --rd-ink2:#48423A; --rd-ink3:#6B6458;
+    --rd-rule:#D4CBBA; --rd-rule2:#B9AE9B; --rd-on:#FFF8F0;
+    --rd-acc:#86621F; --rd-acc-press:#6D4F18; --rd-acc-soft:#EFE3C8; --rd-acc-line:#CDB27A;
+    --rd-serif:RDSerif,"Songti SC","STSong","Noto Serif SC",serif;
+    --rd-sans:"PingFang SC","Noto Sans SC",-apple-system,"Helvetica Neue",sans-serif;
+    --rd-bar:52px; --rd-idx:51px;
+    background:var(--rd-paper)!important; color:var(--rd-ink);
+  }
+  .rd-screen .status{color:var(--rd-ink3);}
+  .rd-screen .scroll{padding:0;background:var(--rd-paper);}
+  .rd-screen .tabbar{background:var(--rd-paper)!important;border-top:1px solid var(--rd-rule)!important;}
+  .rd-screen .tab{color:var(--rd-ink3);font-weight:400;}
+  .rd-screen .tab.on{color:var(--rd-acc);font-weight:600;}
+  .rd-screen .tab .ti{opacity:.8;}
+  .rd-screen .jd-birth{margin:14px 20px 0;background:var(--rd-card);border-color:var(--rd-rule2);}
+  .rd-screen .jd-birth *{color:var(--rd-ink)!important;}
+  .rd-screen .jd-birth-ic{background:var(--rd-paper2);border-color:var(--rd-rule);}
+  .rd-screen .rp-foot{color:var(--rd-ink3);opacity:1;font-size:11px;padding:18px 24px 20px;}
+  #rp-body.rd-on > #jd-toc, #rp-body.rd-on > #jd-chapter{display:none!important;}
+
+  #rd{font-family:var(--rd-sans);color:var(--rd-ink);background:var(--rd-paper);
+    background-image:repeating-linear-gradient(90deg,transparent 0 35px,var(--rd-grid) 35px 36px);}
+  #rd *{box-sizing:border-box;}
+  #rd button{font:inherit;color:inherit;background:none;border:none;padding:0;margin:0;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none;}
+  #rd :focus-visible{outline:2px solid var(--rd-acc);outline-offset:2px;border-radius:6px;}
+  #rd p,#rd h1,#rd h2,#rd h3,#rd h4,#rd ul,#rd ol{margin:0;padding:0;}
+
+  /* 顶栏:三章 */
+  #rd .rd-bar{position:sticky;top:0;z-index:20;height:var(--rd-bar);background:var(--rd-paper);display:flex;align-items:flex-end;gap:4px;padding:0 14px;border-bottom:1px solid var(--rd-rule);}
+  #rd .rd-bar button{height:var(--rd-bar);padding:0 12px;font-family:var(--rd-serif);font-size:18px;color:var(--rd-ink3);position:relative;letter-spacing:2px;}
+  #rd .rd-bar button[aria-selected="true"]{color:var(--rd-ink);font-weight:700;}
+  #rd.on-toc .rd-bar{display:none;}
+  #rd .rd-bar .rd-backtoc{align-self:center;height:36px;padding:0 14px 0 10px;margin-right:6px;border:1.5px solid var(--rd-ink);border-radius:999px;background:var(--rd-card);font-family:var(--rd-sans);font-size:15px;font-weight:600;letter-spacing:1px;color:var(--rd-ink);}
+  #rd .rd-bar .rd-backtoc:active{background:var(--rd-ink);color:var(--rd-paper);}
+  #rd .rd-bar button[aria-selected="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:3px;background:var(--rd-acc);border-radius:2px;}
+  #rd .rd-view{display:none;padding:0 20px 36px;}
+  #rd .rd-view.on{display:block;}
+
+  /* 本命·卷首 */
+  #rd .rd-hero{display:flex;align-items:center;gap:16px;padding:26px 0 20px;}
+  #rd .rd-seal{flex:none;width:56px;height:56px;border:2.5px solid var(--rd-acc);color:var(--rd-acc);border-radius:7px;display:grid;place-items:center;font-family:var(--rd-serif);font-size:31px;font-weight:700;transform:rotate(-4deg);}
+  #rd .rd-hero h1{font-family:var(--rd-serif);font-size:29px;line-height:1.3;font-weight:700;letter-spacing:1px;text-wrap:balance;color:var(--rd-ink);}
+  #rd .rd-dbl{height:5px;border-top:2px solid var(--rd-ink);border-bottom:1px solid var(--rd-ink);margin-bottom:4px;}
+  /* 目录 */
+  #rd .rd-cover{display:flex;flex-direction:column;align-items:center;text-align:center;padding:44px 0 30px;}
+  #rd .rd-cover .rd-seal{width:84px;height:84px;font-size:48px;border-width:3px;border-radius:10px;}
+  #rd .rd-cover h1{font-family:var(--rd-serif);font-size:30px;line-height:1.35;font-weight:700;letter-spacing:1px;text-wrap:balance;color:var(--rd-ink);}
+  #rd .rd-toc{margin-top:18px;display:flex;flex-direction:column;gap:12px;}
+  #rd .rd-toc button{display:flex;align-items:center;gap:16px;width:100%;min-height:96px;padding:16px 16px 16px 18px;text-align:left;background:var(--rd-card);border:1px solid var(--rd-rule2);border-radius:14px;box-shadow:0 2px 0 var(--rd-rule);transition:transform .12s,background .2s;}
+  #rd .rd-toc button:active{transform:translateY(1px);box-shadow:none;background:var(--rd-paper2);}
+  #rd .rd-toc .n{flex:none;width:48px;height:48px;border:2px solid var(--rd-acc);color:var(--rd-acc);border-radius:6px;display:grid;place-items:center;font-family:var(--rd-serif);font-size:26px;font-weight:700;}
+  #rd .rd-toc .t{flex:1;min-width:0;}
+  #rd .rd-toc .t b{display:flex;align-items:center;gap:8px;font-family:var(--rd-serif);font-size:22px;font-weight:700;letter-spacing:2px;color:var(--rd-ink);}
+  #rd .rd-toc .t b i{font-style:normal;font-family:var(--rd-sans);font-size:12px;font-weight:600;letter-spacing:1px;color:var(--rd-acc);border:1px solid var(--rd-acc-line);background:var(--rd-acc-soft);border-radius:999px;padding:1px 8px;}
+  #rd .rd-toc .t span{display:block;font-size:14px;color:var(--rd-ink3);margin-top:4px;}
+  #rd .rd-toc .go{flex:none;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--rd-ink);display:grid;place-items:center;font-size:20px;color:var(--rd-ink);}
+  #rd #rd-v-natal > .rd-idx{margin-top:0;}
+  #rd #rd-v-natal > .rd-sec:first-of-type{padding-top:26px;}
+
+  /* 吸顶小目录 */
+  #rd .rd-idx{position:sticky;top:var(--rd-bar);z-index:15;background:var(--rd-paper);margin:0 -20px;padding:8px 20px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);border-bottom:1px solid var(--rd-rule);}
+  #rd .rd-idx::-webkit-scrollbar{display:none;}
+  #rd .rd-idx button{flex:none;height:34px;padding:0 13px;border:1px solid var(--rd-rule2);border-radius:999px;font-size:13.5px;color:var(--rd-ink2);background:var(--rd-card);transition:background .2s,color .2s;}
+  #rd .rd-idx button.on{background:var(--rd-ink);color:var(--rd-paper);border-color:var(--rd-ink);}
+  #rd .rd-idx button:active{transform:scale(.96);}
+
+  /* 段 */
+  #rd .rd-sec{padding-top:40px;}
+  #rd .rd-sh{display:flex;align-items:center;gap:10px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid var(--rd-rule);}
+  #rd .rd-sh .no{width:28px;height:28px;border:1.5px solid var(--rd-acc);color:var(--rd-acc);border-radius:4px;display:grid;place-items:center;font-family:var(--rd-serif);font-size:16px;font-weight:700;flex:none;}
+  #rd .rd-sh h2{font-family:var(--rd-serif);font-size:20px;font-weight:700;letter-spacing:1px;color:var(--rd-ink);}
+
+  #rd .rd-read p{font-family:var(--rd-serif);font-size:16.5px;line-height:1.95;color:var(--rd-ink2);margin-bottom:26px;}
+  #rd .rd-read p:last-child{margin-bottom:0;}
+  #rd .rd-read p b{color:var(--rd-ink);font-weight:700;}
+  #rd .rd-about .it{padding:2px 0 22px;}
+  #rd .rd-about .it+.it{border-top:1px dashed var(--rd-rule2);padding-top:22px;}
+  #rd .rd-about h3{font-family:var(--rd-serif);font-size:17.5px;line-height:1.5;font-weight:700;margin-bottom:10px;color:var(--rd-ink);}
+  #rd .rd-about p{font-family:var(--rd-serif);font-size:15.5px;line-height:1.9;color:var(--rd-ink2);}
+  #rd .rd-states{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  #rd .rd-states div{background:var(--rd-card);border:1px solid var(--rd-rule);border-radius:12px;padding:13px 14px;}
+  #rd .rd-states b{font-family:var(--rd-serif);font-size:16px;color:var(--rd-acc);}
+  #rd .rd-states p{font-size:14px;line-height:1.6;color:var(--rd-ink2);margin-top:4px;}
+
+  /* 分段控件(墨框) */
+  #rd .rd-seg{display:flex;border:1.5px solid var(--rd-ink);border-radius:11px;overflow:hidden;background:var(--rd-card);}
+  #rd .rd-seg button{flex:1;height:44px;font-family:var(--rd-serif);font-size:16px;color:var(--rd-ink);transition:background .2s,color .2s;}
+  #rd .rd-seg button+button{border-left:1px solid var(--rd-rule2);}
+  #rd .rd-seg button[aria-selected="true"]{background:var(--rd-ink);color:var(--rd-paper);font-weight:700;}
+  #rd .rd-seg button:active{background:var(--rd-paper2);}
+  #rd .rd-seg button[aria-selected="true"]:active{background:var(--rd-ink2);}
+  #rd .rd-seg.sm{border-width:1px;border-radius:9px;}
+  #rd .rd-seg.sm button{height:34px;font-size:14px;padding:0 12px;flex:none;}
+
+  #rd .rd-panel{margin-top:16px;transition:opacity .18s;touch-action:pan-y;}
+  #rd .rd-panel.fade{opacity:0;}
+  #rd .rd-txt{font-family:var(--rd-serif);font-size:16.5px;line-height:1.95;color:var(--rd-ink);}
+  #rd .rd-lab{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:2px;color:var(--rd-ink3);margin:26px 0 10px;}
+  #rd .rd-lab::after{content:"";flex:1;height:1px;background:var(--rd-rule);}
+  #rd ol.rd-adv{list-style:none;counter-reset:a;}
+  #rd ol.rd-adv li{counter-increment:a;display:grid;grid-template-columns:24px 1fr;font-family:var(--rd-serif);font-size:15.5px;line-height:1.85;color:var(--rd-ink2);padding:7px 0;}
+  #rd ol.rd-adv li+li{margin-top:6px;}
+  #rd ol.rd-adv li::before{content:counter(a);color:var(--rd-acc);font-weight:700;font-size:14px;padding-top:2px;}
+  #rd .rd-kv{display:grid;grid-template-columns:auto 1fr;gap:14px 12px;margin-top:22px;align-items:start;}
+  #rd .rd-kv span{font-family:var(--rd-serif);font-size:13.5px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;}
+  #rd .rd-kv .ok{background:var(--rd-acc);color:var(--rd-on);}
+  #rd .rd-kv .no{background:var(--rd-ink);color:var(--rd-paper);}
+  #rd .rd-kv p{font-family:var(--rd-serif);font-size:15px;line-height:1.8;color:var(--rd-ink2);padding-top:1px;}
+  #rd .rd-note{font-size:12.5px;color:var(--rd-ink3);margin-top:14px;}
+  #rd .rd-rel{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  #rd .rd-rel small{font-size:13px;color:var(--rd-ink3);}
+  #rd .rd-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 6px;}
+  #rd .rd-pick button{height:54px;border:1.5px solid var(--rd-ink);border-radius:12px;font-family:var(--rd-serif);font-size:17px;font-weight:700;background:var(--rd-card);color:var(--rd-ink);}
+  #rd .rd-pick button:active{background:var(--rd-ink);color:var(--rd-paper);}
+  #rd .rd-qin{display:flex;gap:10px;margin-top:22px;padding:12px 14px;background:var(--rd-card);border:1px solid var(--rd-rule);border-radius:12px;}
+  #rd .rd-qin span{flex:none;font-family:var(--rd-serif);font-size:13.5px;font-weight:700;color:var(--rd-acc);padding-top:2px;}
+  #rd .rd-qin p{font-family:var(--rd-serif);font-size:15px;line-height:1.8;color:var(--rd-ink2);}
+
+  #rd .rd-win b{display:block;font-family:var(--rd-serif);font-size:18px;line-height:1.6;font-weight:700;color:var(--rd-ink);margin-bottom:14px;}
+  #rd .rd-win b em{font-style:normal;color:var(--rd-acc);font-size:22px;padding:0 1px;}
+  #rd .rd-win p{font-family:var(--rd-serif);font-size:15.5px;line-height:1.9;color:var(--rd-ink2);}
+
+  #rd .rd-ji .top{background:var(--rd-acc-soft);border-left:4px solid var(--rd-acc);border-radius:0 12px 12px 0;padding:14px 15px 16px;margin-bottom:14px;}
+  #rd .rd-ji .top em{display:block;font-style:normal;font-size:12.5px;font-weight:700;letter-spacing:3px;color:var(--rd-acc);margin-bottom:3px;}
+  #rd .rd-ji .top p{font-family:var(--rd-serif);font-size:16.5px;line-height:1.8;color:var(--rd-ink);font-weight:600;}
+  #rd .rd-ji ul{list-style:none;}
+  #rd .rd-ji li{display:grid;grid-template-columns:18px 1fr;font-family:var(--rd-serif);font-size:15.5px;line-height:1.85;color:var(--rd-ink2);padding:14px 0;border-top:1px dashed var(--rd-rule2);}
+  #rd .rd-ji li:first-child{border-top:none;}
+  #rd .rd-ji li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--rd-ink3);margin-top:12px;}
+
+  #rd .rd-clr{display:flex;gap:16px;align-items:flex-start;}
+  #rd .rd-sws{display:flex;gap:6px;align-items:flex-end;flex:none;}
+  #rd .rd-sw{width:60px;height:60px;border-radius:12px;border:1px solid var(--rd-rule2);}
+  #rd .rd-sw.s{width:32px;height:32px;border-radius:8px;}
+  #rd .rd-clr b{font-family:var(--rd-serif);font-size:18px;display:block;margin-bottom:4px;color:var(--rd-ink);}
+  #rd .rd-clr b small{font-family:var(--rd-sans);font-size:12px;color:var(--rd-ink3);font-weight:400;margin-left:2px;}
+  #rd .rd-clr p{font-family:var(--rd-serif);font-size:15px;line-height:1.85;color:var(--rd-ink2);}
+
+  #rd .rd-closing{text-align:center;padding:44px 8px 8px;}
+  #rd .rd-closing::before,#rd .rd-closing::after{content:"";display:block;width:44px;height:2px;background:var(--rd-acc);margin:0 auto;}
+  #rd .rd-closing p{font-family:var(--rd-serif);font-size:19px;line-height:1.85;font-weight:700;margin:18px 0;text-wrap:balance;color:var(--rd-ink);}
+
+  /* 流年 */
+  #rd .rd-tltop{position:sticky;top:var(--rd-bar);z-index:15;background:var(--rd-paper);margin:0 -20px;padding:14px 20px 12px;border-bottom:1px solid var(--rd-rule);}
+  #rd .rd-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:12px;padding:2px 0 4px;}
+  #rd .rd-strip::-webkit-scrollbar{display:none;}
+  #rd .rd-strip button{flex:none;min-width:58px;height:52px;border:1px solid var(--rd-rule2);border-radius:11px;background:var(--rd-card);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--rd-serif);font-size:16px;color:var(--rd-ink);transition:background .2s,color .2s;}
+  #rd .rd-strip button small{font-family:var(--rd-sans);font-size:11px;color:var(--rd-acc);margin-top:1px;height:14px;line-height:14px;}
+  #rd .rd-strip button[aria-selected="true"]{background:var(--rd-ink);color:var(--rd-paper);border-color:var(--rd-ink);}
+  #rd .rd-strip button[aria-selected="true"] small{color:var(--rd-acc-line);}
+  #rd .rd-strip button:active{transform:scale(.95);}
+  #rd .rd-strip.days button{min-width:52px;height:62px;}
+  #rd .rd-strip.days button span{font-size:11.5px;font-family:var(--rd-sans);color:var(--rd-ink3);}
+  #rd .rd-strip.days button[aria-selected="true"] span{color:var(--rd-rule2);}
+
+  #rd .rd-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 4px;}
+  #rd .rd-nav{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--rd-ink);display:grid;place-items:center;font-size:24px;line-height:1;background:var(--rd-card);color:var(--rd-ink);flex:none;}
+  #rd .rd-nav:active{background:var(--rd-ink);color:var(--rd-paper);}
+  #rd .rd-nav:disabled{opacity:.3;cursor:default;}
+  #rd .rd-big{text-align:center;flex:1;min-width:0;}
+  #rd .rd-big h2{font-family:var(--rd-serif);font-weight:700;font-size:56px;line-height:1;letter-spacing:2px;color:var(--rd-ink);}
+  #rd .rd-big h2 small{font-size:20px;margin-left:2px;letter-spacing:0;}
+  #rd .rd-big h3{font-family:var(--rd-serif);font-weight:700;font-size:30px;line-height:1.2;color:var(--rd-ink);}
+  #rd .rd-big .sub{font-size:13px;color:var(--rd-ink3);margin-top:6px;letter-spacing:1px;}
+  #rd .rd-back{display:flex;justify-content:center;height:36px;margin-top:6px;}
+  #rd .rd-back button{height:34px;padding:0 16px;border:1px solid var(--rd-acc);color:var(--rd-acc);border-radius:999px;font-size:14px;background:var(--rd-card);}
+  #rd .rd-back button:active{background:var(--rd-acc);color:var(--rd-on);}
+  #rd .rd-back button[hidden]{display:none;}
+
+  #rd .rd-card{margin-top:10px;transition:transform .22s ease,opacity .22s ease;touch-action:pan-y;}
+  #rd .rd-card.out-l{transform:translateX(-24px);opacity:0;}
+  #rd .rd-card.out-r{transform:translateX(24px);opacity:0;}
+  #rd ul.rd-sig{list-style:none;border-top:2px solid var(--rd-ink);}
+  #rd ul.rd-sig li{display:flex;gap:12px;padding:19px 0;border-bottom:1px dashed var(--rd-rule2);}
+  #rd .rd-tag{flex:none;height:fit-content;font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-on);background:var(--rd-acc);padding:3px 8px;border-radius:4px;letter-spacing:1px;margin-top:3px;}
+  #rd ul.rd-sig p{font-family:var(--rd-serif);font-size:16px;line-height:1.85;color:var(--rd-ink);}
+  #rd .rd-yj{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
+  #rd .rd-yj div{border:1.5px solid var(--rd-ink);border-radius:12px;padding:13px 14px;background:var(--rd-card);}
+  #rd .rd-yj h4{display:inline-block;font-family:var(--rd-serif);font-size:14.5px;font-weight:700;padding:3px 9px;border-radius:4px;margin-bottom:8px;letter-spacing:1px;}
+  #rd .rd-yj .y h4{background:var(--rd-acc);color:var(--rd-on);}
+  #rd .rd-yj .j h4{background:var(--rd-ink);color:var(--rd-paper);}
+  #rd .rd-yj ul{list-style:none;}
+  #rd .rd-yj li{font-family:var(--rd-serif);font-size:15.5px;line-height:1.9;color:var(--rd-ink);}
+  #rd .rd-yj li+li{margin-top:4px;}
+  #rd .rd-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  #rd .rd-chips span{font-family:var(--rd-serif);font-size:15px;padding:5px 12px;border-radius:999px;border:1px solid var(--rd-rule2);background:var(--rd-card);color:var(--rd-ink);}
+  #rd .rd-row2{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;margin-top:20px;}
+  #rd .rd-row2 .k{font-family:var(--rd-serif);font-size:14px;font-weight:700;padding:4px 9px;border-radius:4px;margin-top:2px;}
+  #rd .rd-row2 .k.y{background:var(--rd-acc);color:var(--rd-on);}
+  #rd .rd-row2 .k.h{background:var(--rd-ink);color:var(--rd-paper);}
+  #rd ul.rd-dom{list-style:none;border-top:2px solid var(--rd-ink);}
+  #rd ul.rd-dom li{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:18px 0;border-bottom:1px dashed var(--rd-rule2);align-items:start;}
+  #rd ul.rd-dom li b{font-family:var(--rd-serif);font-size:15px;color:var(--rd-acc);padding-top:2px;}
+  #rd ul.rd-dom li p{font-family:var(--rd-serif);font-size:16px;line-height:1.8;color:var(--rd-ink);}
+  #rd .rd-cta{display:flex;align-items:center;justify-content:center;width:100%;height:54px;margin-top:22px;background:var(--rd-acc);color:var(--rd-on);border-radius:14px;font-family:var(--rd-serif);font-size:17px;font-weight:700;letter-spacing:2px;box-shadow:0 2px 0 var(--rd-acc-press);}
+  #rd .rd-cta:active{background:var(--rd-acc-press);transform:translateY(1px);box-shadow:none;}
+  #rd .rd-wait{font-family:var(--rd-serif);font-size:15px;color:var(--rd-ink3);padding:24px 0;text-align:center;}
+
+  /* 调养 */
+  #rd .rd-care .blk+.blk{margin-top:24px;}
+  #rd .rd-care h4{font-size:12.5px;font-weight:600;letter-spacing:2px;color:var(--rd-ink3);margin-bottom:10px;}
+  #rd .rd-care .lead{font-size:14px;color:var(--rd-ink3);margin-bottom:14px;}
+  #rd .rd-care .box{background:var(--rd-acc-soft);border:1px solid var(--rd-acc-line);border-radius:12px;padding:12px 14px;font-family:var(--rd-serif);font-size:15.5px;line-height:1.85;color:var(--rd-ink);}
+  #rd .rd-care .box+.box{margin-top:12px;}
+  #rd .rd-care .box b{font-weight:700;}
+  #rd .rd-care .plain{background:var(--rd-card);border-color:var(--rd-rule);}
+  #rd .rd-care .say{text-align:center;font-family:var(--rd-serif);font-size:19px;font-weight:700;margin-top:18px;color:var(--rd-acc);}
+  @media (prefers-reduced-motion:reduce){#rd *{transition:none!important;}}
+
+  /* ===== 分享卡 · 今日笺/年/月:纸本通书(2026-09,与解读页同一套纸、墨、赭金、宋体) ===== */
+  .share-card.sc-tA{background:#F6F2EA;background-image:repeating-linear-gradient(90deg,transparent 0 27px,rgba(120,96,60,.07) 27px 28px);border:1px solid #B9AE9B;border-radius:18px;color:#1F1C17;font-family:RDSerif,"Songti SC","STSong",serif;box-shadow:0 18px 40px rgba(0,0,0,.35);}
+  .share-card.sc-tA .xp{padding:24px 24px 20px;}
+  .share-card.sc-tA .xp-wash,.share-card.sc-tA .xp-wash2,.share-card.sc-tA .xp-grain,.share-card.sc-tA .xp-mk{display:none;}
+  .share-card.sc-tA .xp-brand{font-size:16px;font-weight:700;letter-spacing:4px;color:#1F1C17;gap:10px;}
+  .share-card.sc-tA .xp-seal{display:grid;place-items:center;width:30px;height:30px;border:1.5px solid #86621F;border-radius:4px;color:#86621F;font-size:17px;font-weight:700;letter-spacing:0;transform:rotate(-4deg);}
+  .share-card.sc-tA .xp-date{font-family:"PingFang SC",-apple-system,sans-serif;font-size:12.5px;letter-spacing:1px;color:#6B6458;}
+  .share-card.sc-tA .xp-hair{height:5px;background:none;border-top:2px solid #1F1C17;border-bottom:1px solid #1F1C17;margin:14px 0 0;}
+  .share-card.sc-tA .xp-orb{margin:22px 0 18px;}
+  .share-card.sc-tA .xp-tips{width:100%;gap:0;margin:6px 0 0;border-top:1px dashed #B9AE9B;}
+  .share-card.sc-tA .xp-tip{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline;width:100%;padding:12px 0;border-bottom:1px dashed #B9AE9B;}
+  .share-card.sc-tA .xp-tips{align-items:stretch;}
+  .share-card.sc-tA .xp-tip .xp-k{min-width:2.6em;}
+  .share-card.sc-tA .xp-tip .xp-k{font-size:14px;font-weight:700;letter-spacing:2px;color:#86621F;}
+  .share-card.sc-tA .xp-tip .xp-v{font-size:15.5px;line-height:1.7;color:#1F1C17;}
+  .share-card.sc-tA .xp-foot{margin-top:16px;}
+  .share-card.sc-tA .xp-xi{font-family:"PingFang SC",-apple-system,sans-serif;font-size:12.5px;letter-spacing:1px;color:#48423A;}
+  .share-card.sc-tA .xp-dot{width:13px;height:13px;box-shadow:0 0 0 1px #B9AE9B;}
+  .share-card.sc-tA .xp-year{margin:22px 0 10px;}
+  .share-card.sc-tA .xp-year b{font-size:60px;font-weight:700;color:#1F1C17;letter-spacing:2px;}
+  .share-card.sc-tA .xp-year span{font-size:18px;font-weight:700;color:#1F1C17;letter-spacing:2px;}
+</style>
 <body>
 <!-- 统一图标精灵(线性几何，描边随 currentColor) -->
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs>
@@ -2166,10 +2405,10 @@
 
     <!-- ===== 3. 解读(命书速览 → 深度报告 · 全部免费) ===== -->
     <div class="frame-wrap">
-      <div class="phone"><div class="screen">
+      <div class="phone"><div class="screen rd-screen">
         <div class="notch"></div>
         <div class="status"><span class="clock">9:41</span><span></span></div>
-        <div class="scroll">
+        <div class="scroll" id="jd-scroll">
           <div id="jd-main"><!-- 由引擎在本机推算后填充:免费命书速览 + 深度报告入口 --></div>
         </div>
         <div class="tabbar">
@@ -2427,7 +2666,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=158"></script>
+  <script src="engine_bundle.js?v=159"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2483,7 +2722,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=158"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=159"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3382,7 +3621,7 @@
         var xorb=(typeof energyOrb==='function')?energyOrb(d.e,104,true):ringSVG(d.e);
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
           +'<div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
+          +'<div class="xp-top"><div class="xp-brand"><span class="xp-seal">顺</span>顺时黄历</div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-orb">'+xorb+'</div>'
           +(xtipsHtml?'<div class="xp-tips">'+xtipsHtml+'</div>':'')
@@ -3402,7 +3641,7 @@
         var tips=sigTips(o.sigs,3);
         var doLine=(o.yi&&o.yi.length)?esc(o.yi[0]):'';
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+esc(o.gz||'')+(o.gz?'年':'')+'</div></div>'
+          +'<div class="xp-top"><div class="xp-brand"><span class="xp-seal">顺</span>顺时黄历</div><div class="xp-date">'+esc(o.gz||'')+(o.gz?'年':'')+'</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-year"><b>'+o.year+'</b><span>年</span></div>'
           +(tips?'<div class="xp-tips">'+tips+'</div>':'')
@@ -3412,7 +3651,7 @@
       function buildMonthShare(o){
         var tips=sigTips(o.sigs,2,'流月');
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand">顺时黄历<span class="xp-mk"></span></div><div class="xp-date">'+o.year+'年</div></div>'
+          +'<div class="xp-top"><div class="xp-brand"><span class="xp-seal">顺</span>顺时黄历</div><div class="xp-date">'+o.year+'年</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-year"><b>'+o.m+'</b><span>月</span></div>'
           +(tips?'<div class="xp-tips">'+tips+'</div>':'')
@@ -3653,7 +3892,7 @@
                    day:(APP.month.days.find((x)=>x.today)||{}).g||1, age:L.curAge };
       const WK=['日','一','二','三','四','五','六'];
 
-      const ewordOf=(e)=> e>=78?'舒展上行':e>=66?'平稳渐起':e>=56?'平和过渡':e>=48?'收敛宜缓':'低伏静养';
+      const ewordOf=(e)=> e>=65?'舒展上行':e>=57?'平稳渐起':e>=48?'平和过渡':e>=40?'收敛宜缓':'低伏静养';   // 2026-09-14 创始人定:65以上舒展、40以下低伏
       // 能量配色:连续金光阶——弱=暗哑古铜(收), 强=明亮暖金(放)。
       // 亮度跨度拉满(L 26%→74%),深黑底上一眼可辨「明弱」强弱，不再糊成一团暗金。
       // heatN 接收归一化 0..1(供圆轮按「本层」min/max 着色，使颜色与长短同步、对比拉满)。
@@ -3955,9 +4194,9 @@
       const dIdx=Math.floor(REAL.age/10);
       $('lf-phase').textContent = (dIdx*10)+'–'+(dIdx*10+9)+' 岁 · 当前一程';
       if($('lf-act')){
-        $('lf-act').textContent = curIt.e>=78
+        $('lf-act').textContent = curIt.e>=65
           ? '这一程能量舒展，要紧的事放手推进、适度果决。'
-          : curIt.e>=56
+          : curIt.e>=48
           ? '这一程平稳渐起，宜稳扎稳打，积累胜于冲刺、守好节奏。'
           : '这一程宜收宜守、先养足精神，不必勉强，留待下一程发力。';
       }
@@ -5054,6 +5293,344 @@
         chap.style.display='none'; toc.style.display='block';
         var sc=toc.closest('.rp-scroll'); if(sc) sc.scrollTop=0;
       }
+      // ===== 解读页 · 纸本通书(2026-09 重设计) =====
+      //   只换排布/字体/颜色/交互:三章顶栏常驻 + 本命连续长读(吸顶小目录跳读) + 流年 年/月/日 条带直选 + 调养平铺。
+      //   所有文字取自与旧版完全相同的字段(R.natal / jdYearData / tlMonthsOf / buildMonth / APP.season),一字不改。
+      var RD={ch:'natal', dom:0, mode:'y', Y:null, MY:null, D:null, built:false};
+      var RD_NUM=['壹','贰','叁','肆','伍','陆','柒','捌'];
+      var RD_DOM={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'健康'};
+      function rdEl(id){ return document.getElementById(id); }
+      function rdScroller(){ return rdEl('jd-scroll'); }
+      function rdSplitSig(t){
+        t=t||''; var m=t.match(/^【(.+?)】([\s\S]*)$/);
+        if(m) return [m[1], m[2]];
+        var i=t.indexOf('。'); if(i>0&&i<=7) return [t.slice(0,i), t.slice(i+1)];
+        return ['', t];
+      }
+      function rdFirstSent(t){ var m=/^([\s\S]+?[。；])([\s\S]*)$/.exec(t||''); return m?[m[1],m[2]]:[t||'','']; }
+      function rdSwipe(el, fn){
+        if(!el) return; var x0=null, y0=0;
+        el.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; y0=e.touches[0].clientY; }, {passive:true});
+        el.addEventListener('touchend', function(e){ if(x0==null) return;
+          var dx=e.changedTouches[0].clientX-x0, dy=Math.abs(e.changedTouches[0].clientY-y0); x0=null;
+          if(Math.abs(dx)>50 && Math.abs(dx)>dy*1.5) fn(dx<0?1:-1); }, {passive:true});
+      }
+      function rdStore(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){} return null; }
+
+      /* ---------- 章节 ---------- */
+      function rdShow(ch){
+        if(ch!=='toc'&&ch!=='natal'&&ch!=='tl'&&ch!=='care') ch='toc';
+        RD.ch=ch;
+        var root=rdEl('rd'); if(!root) return;
+        root.classList.toggle('on-toc', ch==='toc');
+        root.querySelectorAll('.rd-bar button').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.ch===ch?'true':'false'); });
+        root.querySelectorAll('.rd-view').forEach(function(v){ v.classList.toggle('on', v.id==='rd-v-'+ch); });
+        var sc=rdScroller(); if(sc) sc.scrollTop=0;
+        if(ch==='natal') rdSpy();
+        if(ch==='tl'){ rdDrawTL(0); requestAnimationFrame(function(){ rdCenter(true); }); }
+      }
+
+      /* ---------- 目录 ---------- */
+      function rdToc(){
+        var pe=(R.natal&&R.natal.persona)||{};
+        var jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
+        var rows=[['natal','壹','本命','','你是什么样的人'],['tl','贰','流年','今年','今年与逐月的运势'],['care','叁','调养',jq||'','眼下节气的起居调养']];
+        var v=rdEl('rd-v-toc');
+        v.innerHTML='<div class="rd-cover"><div class="rd-seal">顺</div></div><div class="rd-dbl"></div>'
+          +'<div class="rd-toc">'+rows.map(function(r){ return '<button type="button" data-go="'+r[0]+'"><span class="n">'+r[1]+'</span><span class="t"><b>'+r[2]+(r[3]?'<i>'+esc(r[3])+'</i>':'')+'</b><span>'+r[4]+'</span></span><span class="go">›</span></button>'; }).join('')+'</div>';
+        v.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click', function(){ rdShow(b.dataset.go); }); });
+      }
+
+      /* ---------- 本命 ---------- */
+      function rdNatal(){
+        var n=R.natal, pe=n.persona||{}, secs=[];
+        var add=function(id,title,html){ secs.push({id:id,title:title,html:html}); };
+        var core=(pe.coreText||[]).filter(Boolean).slice(0,3);
+        if(core.length) add('rd-s-read','读懂你','<div class="rd-read">'+core.map(function(p){ var s=rdFirstSent(p); return '<p><b>'+esc(s[0])+'</b>'+esc(s[1])+'</p>'; }).join('')+'</div>');
+        if(n.dialectics&&n.dialectics.length) add('rd-s-about','关于你','<div class="rd-about">'+n.dialectics.map(function(x){ return '<div class="it">'+(x.t?'<h3>'+esc(x.t)+'</h3>':'')+'<p>'+esc(x.s)+'</p></div>'; }).join('')+'</div>');
+        var dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
+        if(dims.length) add('rd-s-states','四种状态','<div class="rd-states">'+dims.map(function(d){ return '<div><b>'+esc(d.k)+'</b><p>'+esc(rhDesc(d.k,d.v))+'</p></div>'; }).join('')+'</div>');
+        var asps=n.aspects||[];
+        if(RD.dom>=asps.length) RD.dom=0;
+        if(asps.length) add('rd-s-life','生活方面','<div class="rd-seg" role="tablist" id="rd-domseg">'+asps.map(function(a,i){ return '<button type="button" role="tab" data-i="'+i+'" aria-selected="'+(i===RD.dom)+'">'+esc(RD_DOM[a.key]||a.title)+'</button>'; }).join('')+'</div><div class="rd-panel" id="rd-dompanel"></div>');
+        var Y=R.yearMonths;
+        if(Y&&Y.lowMonths&&Y.lowMonths.length){
+          var up=Y.lowMonths.filter(function(m){ return m>=(Y.curMonth||1); }).slice(0,2);
+          if(up.length) add('rd-s-win','近期调养窗口','<div class="rd-win"><b>'+up.map(function(m){ return '<em>'+m+'</em>月'; }).join('、')+'能量偏收，宜蓄力调养</b>'
+            +'<p>这几个月你的能量自然回落——不是低谷，而是身体让你慢下来的信号。适合沉淀、打基础、把作息养回来，不必强求突破；养足了，下一程才走得远。</p></div>');
+        }
+        if(n.jiShen&&n.jiShen.length){
+          var cs=n.jiShen.map(function(j){ return j.caution||''; }).filter(Boolean);
+          var TOP='最要留心：', top=cs.filter(function(t){ return t.indexOf(TOP)===0; })[0];
+          var rest=cs.filter(function(t){ return t!==top; });
+          if(cs.length) add('rd-s-ji','需要注意','<div class="rd-ji">'+(top?'<div class="top"><em>最要留心</em><p>'+esc(top.slice(TOP.length))+'</p></div>':'')
+            +(rest.length?'<ul>'+rest.map(function(t){ return '<li><span>'+esc(t)+'</span></li>'; }).join('')+'</ul>':'')+'</div>');
+        }
+        var xcs=(n.xiColors&&n.xiColors.length)?n.xiColors:(n.xiColor?[{name:n.xiColor.name,hex:n.xiColor.hex,badge:'首选'}]:[]);
+        if(xcs.length) add('rd-s-color','你的幸运色','<div class="rd-clr"><div class="rd-sws">'+xcs.map(function(c,i){ return '<div class="rd-sw'+(i?' s':'')+'" style="background:'+esc(c.hex)+'" title="'+esc(c.name)+'"></div>'; }).join('')+'</div>'
+          +'<div><b>'+xcs.map(function(c,i){ return i?esc(c.name)+'<small>·'+esc(c.badge)+'</small>':esc(c.name); }).join(' · ')+'</b><p>'+esc(n.colorAdvice)+'</p></div></div>');
+        var v=rdEl('rd-v-natal');
+        v.innerHTML='<div class="rd-idx" id="rd-idx">'+secs.map(function(s){ return '<button type="button" data-to="'+s.id+'">'+s.title+'</button>'; }).join('')+'</div>'
+          +secs.map(function(s,i){ return '<div class="rd-sec" id="'+s.id+'"><div class="rd-sh"><span class="no">'+RD_NUM[i]+'</span><h2>'+s.title+'</h2></div>'+s.html+'</div>'; }).join('')
+          +(pe.closing?'<div class="rd-closing"><p>'+esc(pe.closing)+'</p></div>':'');
+        v.querySelectorAll('#rd-idx button').forEach(function(b){ b.addEventListener('click', function(){
+          var el=rdEl(b.dataset.to), sc=rdScroller(); if(!el||!sc) return;
+          var top=sc.scrollTop+el.getBoundingClientRect().top-sc.getBoundingClientRect().top-(52+51)+2;
+          sc.scrollTo({top:top, behavior:'smooth'});
+        }); });
+        v.querySelectorAll('#rd-domseg button').forEach(function(b){ b.addEventListener('click', function(){ rdSetDom(+b.dataset.i); }); });
+        rdSwipe(rdEl('rd-dompanel'), function(d){ rdSetDom(Math.max(0, Math.min(asps.length-1, RD.dom+d))); });
+        rdDom(false);
+      }
+      function rdSetDom(i){
+        if(i===RD.dom) return; RD.dom=i;
+        document.querySelectorAll('#rd-domseg button').forEach(function(b){ b.setAttribute('aria-selected', (+b.dataset.i===i)?'true':'false'); });
+        rdDom(true);
+      }
+      function rdDom(anim){
+        var p=rdEl('rd-dompanel'); var a=(R.natal.aspects||[])[RD.dom]; if(!p||!a) return;
+        var li=function(arr){ return '<div class="rd-lab">建议</div><ol class="rd-adv">'+arr.map(function(x){ return '<li><span>'+esc(x)+'</span></li>'; }).join('')+'</ol>'; };
+        var draw=function(){
+          var h='';
+          // 单身版与有伴版正文/建议完全相同(引擎外放否决后只剩核心句)→ 不分状态,直接出正文
+          var same=(a.textSingle||a.text)===(a.textPartner||a.text) && JSON.stringify(a.adviceSingle||a.advice||[])===JSON.stringify(a.advicePartner||a.advice||[]);
+          if(a.key==='mood' && same){
+            h+='<p class="rd-txt">'+esc(a.textSingle||a.text)+'</p>';
+            if(a.taohua) h+='<div class="rd-qin"><span>亲和力</span><p>'+esc(a.taohua)+'</p></div>';
+            var adv0=a.adviceSingle||a.advice; if(adv0&&adv0.length) h+=li(adv0);
+          } else if(a.key==='mood'){
+            var rel=getRelStatus();
+            if(rel!=='single'&&rel!=='partner'){
+              h+='<div class="rd-pick"><button type="button" data-rel="single">单身</button><button type="button" data-rel="partner">有伴侣</button></div>';
+            } else {
+              h+='<div class="rd-rel"><small>感情状态</small><div class="rd-seg sm" role="tablist"><button type="button" data-rel="single" aria-selected="'+(rel==='single')+'">单身</button><button type="button" data-rel="partner" aria-selected="'+(rel==='partner')+'">有伴侣</button></div></div>';
+              var tx=rel==='single'?(a.textSingle||a.text):(a.textPartner||a.text);
+              var adv=rel==='single'?(a.adviceSingle||a.advice):(a.advicePartner||a.advice);
+              h+='<p class="rd-txt">'+esc(tx)+'</p>';
+              if(a.taohua) h+='<div class="rd-qin"><span>亲和力</span><p>'+esc(a.taohua)+'</p></div>';
+              if(adv&&adv.length) h+=li(adv);
+            }
+          } else {
+            h+='<p class="rd-txt">'+esc(a.text)+'</p>';
+            if(a.advice&&a.advice.length) h+=li(a.advice);
+          }
+          var kv='';
+          if(a.dos&&a.dos.length) kv+='<span class="ok">适合</span><p>'+a.dos.map(esc).join(' · ')+'</p>';
+          if(a.avoid&&a.avoid.length) kv+='<span class="no">避免</span><p>'+a.avoid.map(esc).join(' · ')+'</p>';
+          if(kv) h+='<div class="rd-kv">'+kv+'</div>';
+          if(a.note) h+='<div class="rd-note">'+esc(a.note)+'</div>';
+          p.innerHTML=h;
+          p.querySelectorAll('[data-rel]').forEach(function(b){ b.addEventListener('click', function(){
+            setRelStatus(b.dataset.rel); rdDom(false);
+            if(RD.mode==='d') rdDrawTL(0);
+          }); });
+          p.classList.remove('fade');
+        };
+        if(anim){ p.classList.add('fade'); setTimeout(draw,140); } else draw();
+      }
+      function rdSpy(){
+        var idx=rdEl('rd-idx'), sc=rdScroller(); if(!idx||!sc||RD.ch!=='natal') return;
+        var line=sc.getBoundingClientRect().top+52+51+24, cur=null;
+        idx.querySelectorAll('button').forEach(function(b){ var el=rdEl(b.dataset.to); if(el&&el.getBoundingClientRect().top<=line) cur=b; });
+        if(!cur) cur=idx.querySelector('button'); if(!cur) return;
+        if(cur.classList.contains('on')) return;
+        idx.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b===cur); });
+        idx.scrollTo({left:Math.max(0,cur.offsetLeft-20), behavior:'smooth'});
+      }
+
+      /* ---------- 流年 ---------- */
+      function rdTL(){
+        var v=rdEl('rd-v-tl');
+        v.innerHTML='<div class="rd-tltop"><div class="rd-seg" role="tablist" id="rd-modeseg">'
+          +'<button type="button" role="tab" data-m="y" aria-selected="true">年</button>'
+          +'<button type="button" role="tab" data-m="m" aria-selected="false">月</button>'
+          +'<button type="button" role="tab" data-m="d" aria-selected="false">日</button>'
+          +'</div><div class="rd-strip" id="rd-strip"></div></div><div id="rd-tlbody"></div>';
+        v.querySelectorAll('#rd-modeseg button').forEach(function(b){ b.addEventListener('click', function(){
+          RD.mode=b.dataset.m;
+          v.querySelectorAll('#rd-modeseg button').forEach(function(x){ x.setAttribute('aria-selected', x===b?'true':'false'); });
+          rdDrawTL(0);
+        }); });
+      }
+      function rdDrawTL(dir){ try{ if(RD.mode==='y') rdYear(dir); else if(RD.mode==='m') rdMonth(dir); else rdDay(dir); }catch(e){ try{ console.error('[render] rdTL', e&&e.message); }catch(_){} } }
+      function rdCenter(instant){
+        var s=rdEl('rd-strip'); if(!s||!s.clientWidth) return;
+        var b=s.querySelector('[aria-selected="true"]');
+        if(b) s.scrollTo({left:b.offsetLeft-s.clientWidth/2+b.clientWidth/2, behavior:instant?'auto':'smooth'});
+      }
+      function rdSlide(dir, html, after){
+        var body=rdEl('rd-tlbody'); if(!body) return;
+        var old=body.querySelector('.rd-card');
+        var put=function(){
+          body.innerHTML=html;
+          var c=body.querySelector('.rd-card');
+          if(dir&&c){ c.classList.add(dir>0?'out-r':'out-l'); requestAnimationFrame(function(){ requestAnimationFrame(function(){ c.classList.remove('out-r','out-l'); }); }); }
+          if(after) after();
+        };
+        if(old&&dir){ old.classList.add(dir>0?'out-l':'out-r'); setTimeout(put,160); } else put();
+      }
+      function rdHead(big, sub, prevDis, nextDis){
+        return '<div class="rd-head"><button type="button" class="rd-nav" data-go="-1" aria-label="上一个"'+(prevDis?' disabled':'')+'>‹</button>'
+          +'<div class="rd-big">'+big+(sub?'<div class="sub">'+sub+'</div>':'')+'</div>'
+          +'<button type="button" class="rd-nav" data-go="1" aria-label="下一个"'+(nextDis?' disabled':'')+'>›</button></div>';
+      }
+      function rdBind(fn, backLabel, isHome, goHome){
+        var body=rdEl('rd-tlbody');
+        body.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click', function(){ fn(+b.dataset.go); }); });
+        var bk=body.querySelector('.rd-back button');
+        if(bk){ bk.hidden=isHome; bk.textContent=backLabel; bk.onclick=goHome; }
+        rdSwipe(body.querySelector('.rd-card'), fn);
+      }
+      function rdSigs(arr){
+        if(!arr||!arr.length) return '';
+        return '<ul class="rd-sig">'+arr.map(function(g){ var s=rdSplitSig(g.text); return '<li>'+(s[0]?'<span class="rd-tag">'+esc(s[0])+'</span>':'')+'<p>'+esc(s[1])+'</p></li>'; }).join('')+'</ul>';
+      }
+      function rdYJ(yi, huan){
+        var row=function(k,cls,arr){ return (arr&&arr.length)?'<div class="rd-row2"><span class="k '+cls+'">'+k+'</span><div class="rd-chips">'+arr.map(function(x){ return '<span>'+esc(x)+'</span>'; }).join('')+'</div></div>':''; };
+        return row('宜','y',yi)+row('缓','h',huan);
+      }
+      function rdStripBind(onPick){
+        var s=rdEl('rd-strip');
+        s.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ onPick(b.dataset.v); }); });
+        rdCenter(false);
+      }
+      function rdYear(dir){
+        if(!R.years||!R.years.years||!R.years.years.length){ rdEl('rd-tlbody').innerHTML=''; return; }
+        var curY=R.years.curYear||R.years.years[0].year;
+        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30), maxY=birthY+99;
+        if(RD.Y==null) RD.Y=curY;
+        RD.Y=Math.max(birthY, Math.min(maxY, RD.Y));
+        var s=rdEl('rd-strip'); s.className='rd-strip'; var h='';
+        for(var yy=birthY; yy<=maxY; yy++) h+='<button type="button" data-v="'+yy+'" aria-selected="'+(yy===RD.Y)+'">'+yy+'<small>'+(yy===curY?'今年':'')+'</small></button>';
+        s.innerHTML=h;
+        var go=function(Y2){ if(Y2<birthY||Y2>maxY||Y2===RD.Y) return; var d=Y2>RD.Y?1:-1; RD.Y=Y2; rdYear(d); };
+        rdStripBind(function(v){ go(+v); });
+        var y=jdYearData(RD.Y);
+        if(!y){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; setTimeout(function(){ if(RD.mode==='y') rdYear(0); }, 600); return; }
+        var li=function(arr){ return arr.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); };
+        var yi=y.yi||[], ji=y.ji||[];
+        var html=rdHead('<h2>'+RD.Y+'<small>年</small></h2>', '', RD.Y<=birthY, RD.Y>=maxY)
+          +'<div class="rd-back"><button type="button" hidden></button></div>'
+          +'<div class="rd-card">'+rdSigs(y.signals)
+          +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>今年要做</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
+          +'<button type="button" class="rd-cta" id="rd-share-y">为这一年做一张卡片</button></div>';
+        var Y0=RD.Y;
+        rdSlide(dir, html, function(){
+          rdBind(function(g){ go(RD.Y+g); }, '回今年', RD.Y===curY, function(){ go(curY); });
+          var sb=rdEl('rd-share-y'); if(sb) sb.onclick=function(){ if(window.__shiheShareTL) window.__shiheShareTL('year', { year:Y0, gz:y.ganZhi||'', sigs:y.signals||[], yi:y.yi||[] }); };
+        });
+      }
+      function rdMonth(dir){
+        var A=R.monthsAhead; if(!A||!A.length){ rdEl('rd-tlbody').innerHTML=''; return; }
+        var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
+        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30), maxY=A[A.length-1].year;
+        if(!RD.MY) RD.MY={y:curY,m:curM};
+        if(RD.MY.y<birthY) RD.MY={y:birthY,m:1};
+        if(RD.MY.y>maxY) RD.MY={y:maxY,m:12};
+        var s=rdEl('rd-strip'); s.className='rd-strip'; var h='';
+        for(var mm=1; mm<=12; mm++) h+='<button type="button" data-v="'+mm+'" aria-selected="'+(mm===RD.MY.m)+'">'+mm+'月<small>'+((RD.MY.y===curY&&mm===curM)?'本月':'')+'</small></button>';
+        s.innerHTML=h;
+        var key=function(o){ return o.y*12+o.m; };
+        var go=function(o){ if(o.y<birthY||o.y>maxY||key(o)===key(RD.MY)) return; var d=key(o)>key(RD.MY)?1:-1; RD.MY=o; rdMonth(d); };
+        rdStripBind(function(v){ go({y:RD.MY.y, m:+v}); });
+        var yObj=tlMonthsOf(RD.MY.y);
+        if(!yObj||!yObj.months||!yObj.months.length){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; return; }
+        var m=yObj.months.filter(function(x){ return x.month===RD.MY.m; })[0]||yObj.months[0];
+        var atStart=(RD.MY.y<=birthY&&RD.MY.m<=1), atEnd=(RD.MY.y>=maxY&&RD.MY.m>=12);
+        var isHome=(RD.MY.y===curY&&RD.MY.m===curM), MY0={y:RD.MY.y,m:RD.MY.m};
+        var html=rdHead('<h3>'+RD.MY.y+'年'+RD.MY.m+'月</h3>', '', atStart, atEnd)
+          +'<div class="rd-back"><button type="button" hidden></button></div>'
+          +'<div class="rd-card">'+rdSigs(m.signals)+rdYJ(m.yi,m.ji)
+          +'<button type="button" class="rd-cta" id="rd-share-m">为这个月做一张卡片</button></div>';
+        rdSlide(dir, html, function(){
+          rdBind(function(g){ var y2=RD.MY.y, m2=RD.MY.m+g; if(m2<1){ y2--; m2=12; } if(m2>12){ y2++; m2=1; } go({y:y2,m:m2}); }, '回本月', isHome, function(){ go({y:curY,m:curM}); });
+          var sb=rdEl('rd-share-m'); if(sb) sb.onclick=function(){ if(window.__shiheShareTL) window.__shiheShareTL('month', { year:MY0.y, m:m.month, headline:m.headline, trait:m.trait, sigs:m.signals||[] }); };
+        });
+      }
+      function rdDay(dir){
+        var now=new Date(), T={y:now.getFullYear(), m:now.getMonth()+1, d:now.getDate()};
+        if(!RD.D) RD.D={y:T.y,m:T.m,d:T.d};
+        var mk=RD.D.y+'-'+RD.D.m, mo=_tlMonthCache[mk];
+        if(!mo){ try{ mo=window.RhythmEngine.buildMonth(window.APP_PERSON,{year:RD.D.y,month:RD.D.m}); _tlMonthCache[mk]=mo; }
+          catch(e){ try{ console.error('[render] rdDay', e&&e.message); }catch(_){}
+            rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>';
+            RD.retry=(RD.retry||0)+1; if(RD.retry<=10) setTimeout(function(){ if(RD.mode==='d') rdDay(0); },600);
+            return; } }
+        RD.retry=0;
+        var WK=['日','一','二','三','四','五','六'], nd=new Date(RD.D.y, RD.D.m, 0).getDate();
+        var s=rdEl('rd-strip'); s.className='rd-strip days'; var h='';
+        for(var dd=1; dd<=nd; dd++){
+          var isT=(RD.D.y===T.y&&RD.D.m===T.m&&dd===T.d);
+          h+='<button type="button" data-v="'+dd+'" aria-selected="'+(dd===RD.D.d)+'"><span>周'+WK[new Date(RD.D.y,RD.D.m-1,dd).getDay()]+'</span>'+dd+'<small>'+(isT?'今天':'')+'</small></button>';
+        }
+        s.innerHTML=h;
+        var ord=function(o){ return new Date(o.y,o.m-1,o.d).getTime(); };
+        var go=function(o){ if(ord(o)===ord(RD.D)) return; var g=ord(o)>ord(RD.D)?1:-1; RD.D=o; rdDay(g); };
+        rdStripBind(function(v){ go({y:RD.D.y, m:RD.D.m, d:+v}); });
+        var d=mo.days[RD.D.d-1]; if(!d){ rdEl('rd-tlbody').innerHTML=''; return; }
+        var isToday=(RD.D.y===T.y&&RD.D.m===T.m&&RD.D.d===T.d);
+        var f=d.fortune||{}, rel=getRelStatus();
+        var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
+        var rows='';
+        [['事业',f.career&&f.career.line],['钱财',f.money&&f.money.line],['感情',loveLn],['学习',f.study&&f.study.line]].forEach(function(p){
+          if(p[1]) rows+='<li><b>'+p[0]+'</b><p>'+esc(p[1])+'</p></li>';
+        });
+        var gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');
+        var html=rdHead('<h3>'+RD.D.m+'月'+RD.D.d+'日 周'+WK[new Date(RD.D.y,RD.D.m-1,RD.D.d).getDay()]+'</h3>', esc(gz)+(gz?'日':'')+' · 能量 '+d.e, false, false)
+          +'<div class="rd-back"><button type="button" hidden></button></div>'
+          +'<div class="rd-card">'+(rows?'<ul class="rd-dom">'+rows+'</ul>':'')+rdYJ(d.yi, d.huan)+'</div>';
+        rdSlide(dir, html, function(){
+          rdBind(function(g){ var dt=new Date(RD.D.y,RD.D.m-1,RD.D.d+g); go({y:dt.getFullYear(),m:dt.getMonth()+1,d:dt.getDate()}); }, '回今天', isToday, function(){ go({y:T.y,m:T.m,d:T.d}); });
+        });
+      }
+
+      /* ---------- 调养 ---------- */
+      function rdCare(){
+        var n=R.natal, xs=n.xiYong||[];
+        var S=(window.APP&&APP.season)||null, H=S&&S.health, JQ=(S&&S.jieqi)||{};
+        var split=function(s){ return String(s||'').split(/[、,，;；]/).map(function(x){ return x.trim(); }).filter(Boolean); };
+        var uniq=function(a){ return a.filter(function(x,i){ return x&&a.indexOf(x)===i; }); };
+        var flat=function(k){ var o=[]; xs.forEach(function(x){ o=o.concat(split(x[k])); }); return uniq(o); };
+        var pills=function(a){ return '<div class="rd-chips">'+a.map(function(x){ return '<span>'+esc(x)+'</span>'; }).join('')+'</div>'; };
+        var jq=esc(JQ.name||'');
+        var secs=[
+          ['食养 · 平时多吃这些', '<div class="blk"><h4>日常宜补</h4>'+pills(flat('food'))+'</div>'
+            +(H?'<div class="blk"><h4>眼下时令（'+jq+'）</h4><div class="box">'+esc(H.eat)+(H.food?'　·　推荐 '+esc(H.food):'')+'</div></div>':'')],
+          ['动养 · 适合你的活动', '<div class="blk"><h4>平时多做</h4>'+pills(flat('activity'))+'</div>'
+            +(H?'<div class="blk"><h4>眼下时令</h4><div class="box">'+esc(H.move)+'</div></div>':'')],
+          ['情志 · 心怎么安顿', '<p class="lead">情绪上来时，下面几句话送给你。</p>'+xs.map(function(x){ return '<div class="box plain">'+esc(x.care)+'</div>'; }).join('')
+            +(H?'<div class="box"><b>眼下「'+jq+'」·</b>'+esc(H.mood)+'</div>':'')],
+          ['身体 · 平时多养护', '<p class="lead">这几处平日多养护最省力。</p>'+pills(uniq(xs.map(function(x){ return x.organ; })))],
+        ];
+        if(H) secs.push(['顺时 · 此刻「'+jq+'」', '<div class="blk"><h4>起居</h4><div class="box plain">'+esc(H.from)+'</div></div>'
+          +'<div class="blk"><h4>养生要点</h4><div class="box">'+esc(H.care)+'</div></div>'
+          +(H.say?'<div class="say">「'+esc(H.say)+'」</div>':'')]);
+        rdEl('rd-v-care').innerHTML=secs.map(function(s,i){ return '<div class="rd-sec"><div class="rd-sh"><span class="no">'+RD_NUM[i]+'</span><h2>'+s[0]+'</h2></div>'+s[1]+'</div>'; }).join('');
+      }
+
+      function buildRD(){
+        var body=rdEl('rp-body'); if(!body||!R||!R.natal) return;
+        var root=rdEl('rd');
+        if(!root){
+          root=document.createElement('div'); root.id='rd';
+          root.innerHTML='<nav class="rd-bar" role="tablist">'
+            +'<button type="button" class="rd-backtoc" data-ch="toc" aria-label="返回目录">‹ 目录</button>'
+            +'<button type="button" role="tab" data-ch="natal" aria-selected="false">本命</button>'
+            +'<button type="button" role="tab" data-ch="tl" aria-selected="false">流年</button>'
+            +'<button type="button" role="tab" data-ch="care" aria-selected="false">调养</button></nav>'
+            +'<section class="rd-view on" id="rd-v-toc"></section><section class="rd-view" id="rd-v-natal"></section><section class="rd-view" id="rd-v-tl"></section><section class="rd-view rd-care" id="rd-v-care"></section>';
+          body.insertBefore(root, body.firstChild);
+          root.querySelectorAll('.rd-bar button').forEach(function(b){ b.addEventListener('click', function(){ rdShow(b.dataset.ch); }); });
+          var sc=rdScroller(), raf=0;
+          if(sc) sc.addEventListener('scroll', function(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(rdSpy); }, {passive:true});
+        }
+        body.classList.add('rd-on');
+        [rdToc, rdNatal, rdTL, rdCare].forEach(function(fn){ try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e&&e.message); }catch(_){} } });
+        window.__jdShowChapter=function(ch){ rdShow(ch==='liunian'?'tl':ch); };
+        window.__rdOnShow=function(){ rdCenter(true); rdSpy(); };
+        rdShow(RD.built?RD.ch:'toc');
+        RD.built=true;
+      }
       function buildJiedu(){ try{ renderYearCard(); renderTimeline(); jdToc(); var bk=$('ch-back'); if(bk&&!bk.dataset.b){ bk.dataset.b='1'; bk.addEventListener('click',jdShowToc); } jdShowToc(); }catch(e){ try{ console.error('[render] buildJiedu', e && e.message); }catch(_){} } }
 
       // —— 章内子块折叠 · 卡片手风琴:头=标题+一句概括+箭头;点头开合,开一块自动收同层其余(防串行) ——
@@ -5092,6 +5669,7 @@
           try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e && e.message); }catch(_){} }
         });
         buildJiedu();
+        try{ buildRD(); }catch(e){ try{ console.error('[render] buildRD', e && e.message); }catch(_){} }
         // 贰流年:四大块各折一块(当年运势默认展开);叁调养:各节折叠(食养默认展开)
         try{
           // 贰卷改「年/月/日」三档(tl-tabs),不再用折叠包装
@@ -5490,6 +6068,8 @@
         if (i === 1 && window.__lfShowGuide){ var fn = window.__lfShowGuide; window.__lfShowGuide = null; fn(); }
         // 离开工具箱时回到目录，下次进入从干净目录开始
         if (i !== 3 && window.__tbReset) window.__tbReset();
+        // 进入「解读」:条带此刻才有宽度 → 选中项居中 + 目录高亮
+        if (i === 2 && window.__rdOnShow) requestAnimationFrame(window.__rdOnShow);
       }
       window.__setScreen = setScreen; // 供「解读」内联报告 / 工具深链跨屏跳转
       // 录入生辰后落地到「解读」命书(付出→回报可见):onboarding 存了 shihe_goRead
