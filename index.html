@@ -2669,7 +2669,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=160"></script>
+  <script src="engine_bundle.js?v=161"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2725,7 +2725,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=160"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=161"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2943,6 +2943,17 @@
     // ===== 屏1 · 日历首页(日历 + 当日小部件流)=====
     let SHARE_DAY = null;        // 当前选中日(供分享卡)
     let SHARE_YM = null;         // 选中日所在年月(日历可翻月,分享卡日期/星期必须跟选中日同源,不能用 APP.month)
+    // 🔴 出生日期有两套,不可混用:
+    //   srcY/srcM/srcD = 出生地当地公历日(农历已转公历)→ 所有 UI 生命周期边界(是否已出生 / 日档下限)只用它
+    //   year/month/day = 换算成北京基准后喂冻结引擎的值 → 只给引擎
+    //   老存档无 src* 时回退 year/month/day(国内两者相同;海外可能差一天)
+    window.__birthLocal = function(){
+      var P=window.APP_PERSON||null;
+      try{ if(!P){ var _p=localStorage.getItem('shihe_person'); if(_p) P=JSON.parse(_p); } }catch(e){}
+      if(!P||!P.year) return null;
+      return { y:(P.srcY||P.year), m:(P.srcM||P.month||1), d:(P.srcD||P.day||1) };
+    };
+
     (function renderHome(){
       let PERSON=null;
       try{ PERSON = JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
@@ -3086,6 +3097,8 @@
       var ZRANGE={子:'23–1',丑:'1–3',寅:'3–5',卯:'5–7',辰:'7–9',巳:'9–11',午:'11–13',未:'13–15',申:'15–17',酉:'17–19',戌:'19–21',亥:'21–23'};
 
       function renderHuangli(Y,M,g,gj){
+        // 查日模式:标签按「这张黄历是不是今天」写(renderHuangli 只拿到 Y/M/g,不能用外层 d)
+        const _hlIsToday=()=>{ const _n=new Date(); return Y===_n.getFullYear() && M===(_n.getMonth()+1) && g===_n.getDate(); };
         const box=$('w-huangli'); if(!box) return;
         // 公吉结论行:S级大吉当头置顶金句、A级黄道降调、硬凶/平日静默(负面继续留在下方折叠,不喊吉不吓人)
         (function(){
@@ -3156,7 +3169,8 @@
         }).join(''));
         const shiNow=$('hl2-shi-now');
         const _jishi=ZORDER.filter((z)=>_hlTimes[z]&&_hlTimes[z].luck==='吉').map((z)=>z+'时').join('、');
-        if(shiNow) shiNow.textContent = (nowZ?('此刻'+nowZ+'时·'+((_hlTimes[nowZ]&&_hlTimes[nowZ].luck)||'—')+'　'):'') + (_jishi?('今日吉时 '+_jishi):'（今日无明显吉时）');
+        var _dayW = _hlIsToday() ? '今日' : '该日';
+        if(shiNow) shiNow.textContent = (nowZ?('此刻'+nowZ+'时·'+((_hlTimes[nowZ]&&_hlTimes[nowZ].luck)||'—')+'　'):'') + (_jishi?(_dayW+'吉时 '+_jishi):('（'+_dayW+'无明显吉时）'));
         (function(){
           const det=$('hl2-shi-detail'); if(!det) return;
           if(nowZ && _hlTimes[nowZ]){ det.classList.add('show'); det.innerHTML=shiDetailHTML(nowZ); }
@@ -3182,7 +3196,7 @@
         const _hdEra=(function(){ try{ return (lun.getYear()+2697)+' 年'; }catch(e){ return ''; } })();
         html('hl2-grid',
             cell('黄帝纪年', _hdEra?('<span class="yj-term" data-d="'+esc("黄帝纪年　以华夏人文初祖黄帝即位之年起算（公历年＋2697），属人文纪念、不涉吉凶占断。")+'">'+_hdEra+'</span>'):'', '', true, true)
-          + cell('今日吉方', _jf, '', true, true)
+          + cell((_hlIsToday()?'今日':'该日')+'吉方', _jf, '', true, true)
           + cell('冲煞', chongCell, '与所列生肖同属者当日相冲')
           + cell('岁煞', _suisha, '按日支三合局')
           + cell('六曜', ly+(lyi.t?('('+lyi.t+')'):''))
@@ -3257,9 +3271,9 @@
         })();
         // 出生前守卫:选中日早于命主出生 → 个人卡不编造运势,只留历法层
         (function(){
-          var P=window.APP_PERSON||null; try{ if(!P){ var _p=localStorage.getItem('shihe_person'); if(_p)P=JSON.parse(_p); } }catch(e){}
+          var P=window.__birthLocal&&window.__birthLocal();
           var card=document.querySelector('.wdg-today'), ph=document.getElementById('prebirth-note'), pre=false;
-          if(P&&P.year){ var b=new Date(P.year,(P.month||1)-1,P.day||1); b.setHours(0,0,0,0); var s=new Date(curY,curM-1,d.g); s.setHours(0,0,0,0); pre=s<b; }
+          if(P){ var b=new Date(P.y,P.m-1,P.d); b.setHours(0,0,0,0); var s=new Date(curY,curM-1,d.g); s.setHours(0,0,0,0); pre=s<b; }
           if(card) card.style.display=pre?'none':'';
           if(ph) ph.style.display=pre?'':'none';
         })();
@@ -3478,6 +3492,9 @@
       $('c-next').addEventListener('click', ()=> goto(curY, curM+1));
       $('c-today-btn').addEventListener('click', ()=> goto(REAL.year, REAL.month));   // goto 重画当月并自动选中今天
       window.__calGoToday = ()=> goto(REAL.year, REAL.month);   // 「我的 → 今日分享」先回今天
+      window.__calState = ()=> ({ y:curY, m:curM, g:(SHARE_DAY&&SHARE_DAY.g)||0 });
+      window.__calRestore = (st)=>{ if(!st||!st.y) return; goto(st.y, st.m);
+        if(st.g){ const c=grid.querySelector('.px[data-g="'+st.g+'"]'); if(c) c.click(); } };
       // 工具箱里增删重点日后，日历实时重画(保持当前所选日)
       MARKS.onChange(()=>{ const m=monthData(curY,curM); if(m){ const keep=SHARE_DAY&&SHARE_DAY.g;
         renderMonth(m);
@@ -3655,7 +3672,7 @@
           +'<div class="xp-hair"></div>'
           +'<div class="xp-year"><b>'+o.year+'</b><span>年</span></div>'
           +(tips?'<div class="xp-tips">'+tips+'</div>':'')
-          +'<div class="xp-foot"><span class="xp-xi">'+(doLine?'今年要做 · '+doLine:'顺天而养 · 应时而行')+'</span></div>'
+          +'<div class="xp-foot"><span class="xp-xi">'+(doLine?((o.year===(new Date()).getFullYear()?'今年要做 · ':'这一年要做 · ')+doLine):'顺天而养 · 应时而行')+'</span></div>'
           +'</div></div>';
       }
       function buildMonthShare(o){
@@ -4956,7 +4973,7 @@
         var A=R.monthsAhead; var box=$('tl-month-card'); if(!A||!A.length||!box) return;
         var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
         if(!_tlMY) _tlMY={y:curY,m:curM};
-        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
+        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30);
         var maxY=A[A.length-1].year;
         if(_tlMY.y<birthY) _tlMY={y:birthY,m:1};
         if(_tlMY.y>maxY) _tlMY={y:maxY,m:12};
@@ -5222,7 +5239,7 @@
         var host=$('jd-year-body'); if(!host){ host=document.createElement('div'); host.id='jd-year-body'; el.appendChild(host); }
         if(!R.years||!R.years.years||!R.years.years.length){ host.innerHTML=''; return; }
         var curY=R.years.curYear||R.years.years[0].year;
-        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30);
+        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30);
         if(_jdYearY==null) _jdYearY=curY;
         _jdYearY=Math.max(birthY, Math.min(birthY+99, _jdYearY));
         var y=jdYearData(_jdYearY); if(!y){
@@ -5246,7 +5263,7 @@
           +'</div>'
           +yrSigs(y.signals)
           +'<div class="yc-yj">'
-          +(doL?'<div class="yc-col do"><span class="yc-k do">今年要做</span><ul>'+doL+'</ul></div>':'')
+          +(doL?'<div class="yc-col do"><span class="yc-k do">'+(_jdYearY===curY?'今年要做':'这一年要做')+'</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
           +'</div>'
           +'</div>'
@@ -5508,7 +5525,7 @@
       function rdYear(dir){
         if(!R.years||!R.years.years||!R.years.years.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=R.years.curYear||R.years.years[0].year;
-        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30), maxY=birthY+99;
+        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30), maxY=birthY+99;
         if(RD.Y==null) RD.Y=curY;
         RD.Y=Math.max(birthY, Math.min(maxY, RD.Y));
         var s=rdEl('rd-strip'); s.className='rd-strip'; var h='';
@@ -5523,7 +5540,7 @@
         var html=rdHead('<h2>'+RD.Y+'<small>年</small></h2>', '', RD.Y<=birthY, RD.Y>=maxY)
           +'<div class="rd-back"><button type="button" hidden></button></div>'
           +'<div class="rd-card">'+rdSigs(y.signals)
-          +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>今年要做</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
+          +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>'+(RD.Y===curY?'今年要做':'这一年要做')+'</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
           +'<button type="button" class="rd-cta" id="rd-share-y">为这一年做一张卡片</button></div>';
         var Y0=RD.Y;
         rdSlide(dir, html, function(){
@@ -5534,7 +5551,7 @@
       function rdMonth(dir){
         var A=R.monthsAhead; if(!A||!A.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
-        var birthY=(window.APP_PERSON&&window.APP_PERSON.year)||(curY-30), maxY=A[A.length-1].year;
+        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30), maxY=A[A.length-1].year;
         if(!RD.MY) RD.MY={y:curY,m:curM};
         if(RD.MY.y<birthY) RD.MY={y:birthY,m:1};
         if(RD.MY.y>maxY) RD.MY={y:maxY,m:12};
@@ -5577,7 +5594,7 @@
         s.innerHTML=h;
         var ord=function(o){ return new Date(o.y,o.m-1,o.d).getTime(); };
         // 日档边界与年/月档一致:出生日 ~ 出生年+99 年末
-        var P0=window.APP_PERSON||{}, bY=P0.year||(T.y-30), dMin=new Date(bY,(P0.month||1)-1,P0.day||1).getTime(), dMax=new Date(bY+99,11,31).getTime();
+        var BL=(window.__birthLocal&&window.__birthLocal())||{y:T.y-30,m:1,d:1}, bY=BL.y, dMin=new Date(BL.y,BL.m-1,BL.d).getTime(), dMax=new Date(BL.y+99,11,31).getTime();
         var go=function(o){ var k=ord(o); if(k===ord(RD.D)||k<dMin||k>dMax) return; var g=k>ord(RD.D)?1:-1; RD.D=o; rdDay(g); };
         rdStripBind(function(v){ go({y:RD.D.y, m:RD.D.m, d:+v}); });
         var d=mo.days[RD.D.d-1]; if(!d){ rdEl('rd-tlbody').innerHTML=''; return; }
@@ -5641,6 +5658,8 @@
         [rdToc, rdNatal, rdTL, rdCare].forEach(function(fn){ try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e&&e.message); }catch(_){} } });
         window.__jdShowChapter=function(ch){ rdShow(ch==='liunian'?'tl':ch); };
         window.__rdOnShow=function(){ rdCenter(true); rdSpy(); };
+        window.__rdState=function(){ return { ch:RD.ch, mode:RD.mode }; };                     // 跨日重载前存位
+        window.__rdRestore=function(st){ if(!st) return; if(st.mode) RD.mode=st.mode; rdShow(st.ch||'toc'); };
         window.__rdRelChanged=function(){ try{ rdDom(false); if(RD.mode==='d') rdDrawTL(0); }catch(e){} };   // 「我的」改感情状态 → 解读情感面板/日档同步
         rdShow(RD.built?RD.ch:'toc');
         RD.built=true;
@@ -6087,10 +6106,33 @@
         if (i === 2 && window.__rdOnShow) requestAnimationFrame(window.__rdOnShow);
       }
       window.__setScreen = setScreen; // 供「解读」内联报告 / 工具深链跨屏跳转
+      // 跨日重载后还原位置(所在屏 / 解读章节 / 日历所看月与选中日)
+      (function(){
+        var raw=null; try{ raw=sessionStorage.getItem('shihe_rollover'); sessionStorage.removeItem('shihe_rollover'); }catch(e){}
+        if(!raw) return;
+        var st=null; try{ st=JSON.parse(raw); }catch(e){}
+        if(!st) return;
+        setTimeout(function(){
+          try{ if(st.cal && window.__calRestore) window.__calRestore(st.cal); }catch(e){}
+          try{ if(st.rd && window.__rdRestore) window.__rdRestore(st.rd); }catch(e){}
+          try{ setScreen(+st.screen||0); }catch(e){}
+        }, 260);
+      })();
       // 跨午夜:页面挂着过了零点,回到前台(或每分钟检查)发现日期变了 → 重载,「今天」/日历/节气/分享全部换成新的一天
       (function(){
         var bootKey=new Date().toDateString();
-        function checkDay(){ if(document.visibilityState==='visible' && new Date().toDateString()!==bootKey){ bootKey=new Date().toDateString(); location.reload(); } }
+        function checkDay(){
+          if(document.visibilityState!=='visible' || new Date().toDateString()===bootKey) return;
+          bootKey=new Date().toDateString();
+          // 只换「今天」,不把用户赶回默认页:重载前记住所在屏/解读章节/日历所看月与选中日
+          try{
+            var st={ screen:document.body.dataset.screen||'0' };
+            if(window.__rdState) st.rd=window.__rdState();
+            if(window.__calState) st.cal=window.__calState();
+            sessionStorage.setItem('shihe_rollover', JSON.stringify(st));
+          }catch(e){}
+          location.reload();
+        }
         document.addEventListener('visibilitychange', checkDay);
         window.addEventListener('pageshow', checkDay);
         window.addEventListener('focus', checkDay);
@@ -6152,10 +6194,14 @@
             }); }
           }
           mov.classList.add('on'); document.body.dataset.mine='1';
+          // 无障碍:下层整屏 inert + aria-hidden,焦点移进「我的」,免读屏/键盘还能走到被盖住的页面
+          try{ var stg=document.querySelector('.stage'); if(stg){ stg.setAttribute('inert',''); stg.setAttribute('aria-hidden','true'); }
+               var ttl=mov.querySelector('.ch-bar-t'); if(ttl){ ttl.setAttribute('tabindex','-1'); ttl.focus({preventScroll:true}); } }catch(e){}
           window.shihe&&window.shihe.track&&window.shihe.track('mine_open',{});
         }
         // 「我的」按独立 Tab 页处理(与 iOS 同):无返回键,切任一 Tab 即离开;body 记当前是否在我的页
-        function closeMine(){ mov.classList.remove('on'); delete document.body.dataset.mine; }
+        function closeMine(){ mov.classList.remove('on'); delete document.body.dataset.mine;
+          try{ var stg=document.querySelector('.stage'); if(stg){ stg.removeAttribute('inert'); stg.removeAttribute('aria-hidden'); } }catch(e){} }
         window.__closeMine = closeMine;
         var mtb = mov.querySelector('.tabbar');
         if (mtb) mtb.addEventListener('click', function(e){
@@ -6171,7 +6217,7 @@
           try{ if(window.__calGoToday) window.__calGoToday(); }catch(e){}   // 今日分享=今天,先把日历选中日复位
           var ts=document.getElementById('t-share'); if(ts) setTimeout(function(){ ts.click(); }, 80);
         });
-        // 每日提醒(仅原生壳+已录生辰;本地通知,内容=当日宜+能量,native.js 排未来14天)
+        // 每日提醒(仅原生壳+已录生辰;本地通知,内容=当日宜+能量,native.js 排未来30天)
         (function(){
           var row=document.getElementById('mine-notify'); if(!row) return;
           var hasPerson=false; try{ hasPerson=!!JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}

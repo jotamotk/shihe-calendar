@@ -231,7 +231,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=160"></script>
+  <script src="engine_bundle.js?v=161"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -312,6 +312,15 @@
     // 当地时间(IANA时区)→ 北京时间(UTC+8)墙钟,含历史夏令时(Intl内置tzdata)
     function tzOffsetMin(utcMs,zone){ const dtf=new Intl.DateTimeFormat('en-US',{timeZone:zone,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}); const p={}; dtf.formatToParts(new Date(utcMs)).forEach(x=>p[x.type]=x.value); const asUTC=Date.UTC(p.year,p.month-1,p.day,p.hour==='24'?0:p.hour,p.minute,p.second); return Math.round((asUTC-utcMs)/60000); }
     function localToBeijing(y,mo,d,h,mi,zone){ const wall=Date.UTC(y,mo-1,d,h,mi,0); const off=tzOffsetMin(wall,zone); let utc=wall-off*60000; /* 夏令时切换日:偏移须在真 UTC 瞬间再取一次(一次采样会差 1 小时) */ const off2=tzOffsetMin(utc,zone); if(off2!==off){ const u2=wall-off2*60000; if(tzOffsetMin(u2,zone)===off2) utc=u2; } const bj=new Date(utc+8*3600000); return {year:bj.getUTCFullYear(),month:bj.getUTCMonth()+1,day:bj.getUTCDate(),hour:bj.getUTCHours(),minute:bj.getUTCMinutes()}; }
+
+    // 夏令时缺口校验:换算回来对不上 = 用户填的这个当地时间当年根本没出现过(春季拨快跳掉的一小时)
+    function localWallExists(y,mo,d,h,mi,zone){
+      const bj=localToBeijing(y,mo,d,h,mi,zone);
+      const utc=Date.UTC(bj.year,bj.month-1,bj.day,bj.hour,bj.minute,0)-8*3600000;
+      const back=new Date(utc+tzOffsetMin(utc,zone)*60000);
+      return back.getUTCFullYear()===y && back.getUTCMonth()+1===mo && back.getUTCDate()===d
+          && back.getUTCHours()===h && back.getUTCMinutes()===mi;
+    }
 
     // 段选器:点选即切 .on,值存 data-v
     function segBind(id){
@@ -511,6 +520,15 @@
       try{
         const person = readPerson();
         const now = new Date();
+        // 夏令时缺口:该当地时间不存在 → 拦下,不静默换成别的时刻
+        { const _tz=tzEl.value||'Asia/Shanghai';
+          const _cn=(_tz==='Asia/Shanghai'||_tz==='Asia/Urumqi');
+          let gh=document.getElementById('gap-hint');
+          if(!_cn && !person.hourUnknown && !localWallExists(person.srcY,person.srcM,person.srcD,person.srcH,person.srcMin,_tz)){
+            const btn=document.getElementById('btn-go');
+            if(!gh){ gh=document.createElement('div'); gh.id='gap-hint'; gh.style.cssText='color:#C4866A;font-size:12px;margin-top:8px;text-align:center;line-height:1.6;'; btn.parentNode.insertBefore(gh, btn.nextSibling); }
+            gh.textContent='该时间处于当地夏令时跳时区间，当地钟表没有出现过，请核对出生记录'; return; }
+          if(gh) gh.remove(); }
         // 出生日期不能晚于今天(按当地录入日期比;农历已换成公历)
         { const _b=new Date(person.srcY, person.srcM-1, person.srcD); const _t=new Date(now.getFullYear(), now.getMonth(), now.getDate());
           let fh=document.getElementById('future-hint');

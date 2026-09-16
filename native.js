@@ -30,8 +30,8 @@
     return dt;
   }
 
-  // —— 每日提醒:当日宜 + 能量(仅真实命主;预排未来 14 天,每次打开 App 滚动刷新)——
-  var NOTIFY_KEY = 'shihe_notify';
+  // —— 每日提醒:当日宜 + 能量(仅真实命主;预排未来 30 天,每次打开 App 滚动补齐;与 ShiheNative NotificationManager 同 horizon)——
+  var NOTIFY_KEY = 'shihe_notify', NOTIFY_DAYS = 30;   // 🔴 与原生版 NotificationManager 的 0..<30 必须一致
   function notifyState() {
     try { return JSON.parse(localStorage.getItem(NOTIFY_KEY) || '{"on":false,"time":"08:00"}'); }
     catch (e) { return { on: false, time: '08:00' }; }
@@ -43,7 +43,7 @@
     if (!person || !RE || !RE.buildMonth) return [];   // 示例态不排(演示数据不冒充本人)
     var hm = String(st.time || '08:00').split(':'), hh = (+hm[0] || 8), mi = (+hm[1] || 0);
     var now = new Date(), list = [], cache = {};
-    for (var i = 0; i < 14; i++) {
+    for (var i = 0; i < NOTIFY_DAYS; i++) {
       var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, hh, mi, 0);
       if (d <= now) continue;
       var key = d.getFullYear() + '-' + (d.getMonth() + 1);
@@ -82,8 +82,12 @@
         schedule: { at: at, allowWhileIdle: true }
       });
     });
-    list = list.concat(dailyList());
-    if (list.length) ln.schedule({ notifications: list.slice(0, 60) }).catch(function () {});
+    // 🔴 每日提醒是长期承诺,必须先占位:重点日多时不能把 daily 全挤出 60 条上限(按时间就近取)
+    list.sort(function (x, y) { return x.schedule.at - y.schedule.at; });
+    var daily = dailyList();
+    if (daily.length + list.length > 60) list = list.slice(0, Math.max(0, 60 - daily.length));
+    var all = daily.concat(list);
+    if (all.length) ln.schedule({ notifications: all.slice(0, 60) }).catch(function () {});
   }
 
   function reschedule() {
