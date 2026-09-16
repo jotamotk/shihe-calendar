@@ -2664,7 +2664,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=162"></script>
+  <script src="engine_bundle.js?v=163"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2687,7 +2687,10 @@
     (function(){
       var person=null;
       try{ person = JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
+      // 自动化测试可固定「今天」(localStorage.shihe_test_today='2026-9-16'),否则规格类断言会随日期漂;正常使用永远取真实当天
       var n=new Date(), today={ year:n.getFullYear(), month:n.getMonth()+1, day:n.getDate() };
+      try{ var _tt=(localStorage.getItem('shihe_test_today')||'').split('-').map(Number);
+           if(_tt.length===3 && _tt.every(function(x){ return x>0; })) today={ year:_tt[0], month:_tt[1], day:_tt[2] }; }catch(e){}
       var _todayKey = today.year+'-'+today.month+'-'+today.day;
       // ①a 有真实生日 + 本机已有「今天」的缓存 → 直接用,免每次重跑 buildApp(百年人生+3年报告)约250-500ms
       try{
@@ -2720,7 +2723,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=162"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=163"></scr'+'ipt>');
     })();
   </script>
   <script>
