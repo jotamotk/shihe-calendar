@@ -13740,6 +13740,8 @@ var RhythmEngine = (() => {
         "\u795E\xB7\u6843\u82B1": { yi: ["\u591A\u793E\u4EA4\u3001\u62D3\u4EBA\u8109"], ji: [] },
         "\u795E\xB7\u534E\u76D6": { yi: ["\u6C89\u4E0B\u5FC3\u3001\u4FEE\u5B66\u95EE"], ji: [] },
         "\u795E\xB7\u7EA2\u9E3E\u6210": { yi: ["\u611F\u60C5\u3001\u5BB6\u4E8B\u987A\u559C\u6C14"], ji: [] },
+        "\u795E\xB7\u559C\u7275\u52A8": { yi: ["\u628A\u611F\u60C5\u3001\u5BB6\u91CC\u7684\u4E8B\u6446\u4E0A\u65E5\u7A0B"], ji: [] },
+        // 同域有不利信号时,喜气类降级后的宜项
         "\u795E\xB7\u7EA2\u9E3E\u5C11": { yi: ["\u591A\u7559\u610F\u4EBA\u4E0E\u4EBA\u7684\u7F18\u5206"], ji: [] },
         "\u795E\xB7\u5929\u559C": { yi: ["\u611F\u60C5\u3001\u5BB6\u4E8B\u987A\u559C\u6C14"], ji: [] }
       };
@@ -14273,28 +14275,30 @@ var RhythmEngine = (() => {
         { name: "\u75C5\u7B26", off: 11, w: 58, freeOn: [] }
       ];
       var XIONG_TEXT = {
+        // 🔴 措辞红线(2026-09-18 外审 B06 收紧):只说「安排、留出心力、按医嘱」,
+        //   不预测疾病复发、不提手术/动刀、不替用户判断就医时机,也不断生死。海外 App Store 对医疗类判断审核更严。
         \u4E27\u95E8: {
-          0: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u8FB9\u4ECA\u5E74\u8981\u7559\u51FA\u5FC3\u529B\uFF1A\u5065\u5EB7\u3001\u7167\u6599\u3001\u5F80\u8FD4\u7684\u4E8B\u90FD\u53EF\u80FD\u843D\u5230\u4F60\u5934\u4E0A\u3002",
-          1: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u8FB9\u4ECA\u5E74\u8981\u7559\u51FA\u5FC3\u529B\uFF1A\u5065\u5EB7\u3001\u7167\u6599\u3001\u5F80\u8FD4\u7684\u4E8B\u90FD\u53EF\u80FD\u843D\u5230\u4F60\u5934\u4E0A\u3002",
+          0: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u8FB9\u4ECA\u5E74\u8981\u7559\u51FA\u5FC3\u529B\uFF1A\u7167\u6599\u3001\u5F80\u8FD4\u3001\u966A\u4F34\u7684\u4E8B\u90FD\u53EF\u80FD\u843D\u5230\u4F60\u5934\u4E0A\u3002",
+          1: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u8FB9\u4ECA\u5E74\u8981\u7559\u51FA\u5FC3\u529B\uFF1A\u7167\u6599\u3001\u5F80\u8FD4\u3001\u966A\u4F34\u7684\u4E8B\u90FD\u53EF\u80FD\u843D\u5230\u4F60\u5934\u4E0A\u3002",
           2: "\u4ECA\u5E74\u5BB6\u91CC\u548C\u81EA\u5DF1\u8EAB\u4E0A\u7684\u4E8B\u90FD\u5F97\u591A\u987E\u4E00\u5934\uFF0C\u522B\u628A\u65F6\u95F4\u6392\u6EE1\u3002",
           3: "\u4ECA\u5E74\u5BB6\u91CC\u7684\u4E8B\u4F1A\u5360\u6389\u8BA1\u5212\u5916\u7684\u65F6\u95F4\uFF0C\u624B\u4E0A\u7684\u5B89\u6392\u7559\u51FA\u4F59\u91CF\u3002"
         },
         \u540A\u5BA2: {
-          0: "\u957F\u8F88\u90A3\u8FB9\u4ECA\u5E74\u662F\u8981\u4E0A\u5FC3\u7684\u4E00\u5757\uFF1A\u8BE5\u770B\u7684\u75C5\u3001\u8BE5\u56DE\u7684\u5BB6\uFF0C\u522B\u62D6\u5230\u6700\u540E\u3002",
-          1: "\u957F\u8F88\u90A3\u8FB9\u4ECA\u5E74\u662F\u8981\u4E0A\u5FC3\u7684\u4E00\u5757\uFF1A\u8BE5\u770B\u7684\u75C5\u3001\u8BE5\u56DE\u7684\u5BB6\uFF0C\u522B\u62D6\u5230\u6700\u540E\u3002",
-          2: "\u4ECA\u5E74\u591A\u987E\u4E00\u987E\u8EAB\u8FB9\u4EBA\u7684\u8EAB\u4F53\uFF0C\u4E5F\u987E\u4E00\u987E\u81EA\u5DF1\u7684\u3002",
+          0: "\u957F\u8F88\u90A3\u8FB9\u4ECA\u5E74\u662F\u8981\u4E0A\u5FC3\u7684\u4E00\u5757\uFF1A\u591A\u56DE\u53BB\u770B\u770B\uFF0C\u8BE5\u5B89\u6392\u7684\u7167\u6599\u65E9\u70B9\u5B89\u6392\u3002",
+          1: "\u957F\u8F88\u90A3\u8FB9\u4ECA\u5E74\u662F\u8981\u4E0A\u5FC3\u7684\u4E00\u5757\uFF1A\u591A\u56DE\u53BB\u770B\u770B\uFF0C\u8BE5\u5B89\u6392\u7684\u7167\u6599\u65E9\u70B9\u5B89\u6392\u3002",
+          2: "\u4ECA\u5E74\u591A\u987E\u4E00\u987E\u8EAB\u8FB9\u4EBA\uFF0C\u4E5F\u987E\u4E00\u987E\u81EA\u5DF1\u7684\u4F5C\u606F\u3002",
           3: "\u4ECA\u5E74\u8BA1\u5212\u5916\u7684\u5BB6\u52A1\u4E8B\u4E0D\u4F1A\u5C11\uFF0C\u65F6\u95F4\u548C\u94B1\u90FD\u7559\u4E00\u70B9\u4F59\u5730\u3002"
         },
         \u767D\u864E: {
           0: "\u4ECA\u5E74\u5BB6\u91CC\u5BB9\u6613\u6709\u7A81\u53D1\u7684\u4E8B\uFF0C\u7A33\u7740\u529E\uFF0C\u522B\u8D76\u3002",
-          1: "\u4ECA\u5E74\u7559\u5FC3\u5954\u6CE2\u548C\u52B3\u635F\uFF0C\u8BE5\u68C0\u67E5\u7684\u68C0\u67E5\u3002",
-          2: "\u4ECA\u5E74\u7559\u5FC3\u8EAB\u4F53\u4E0A\u7684\u610F\u5916\u4E0E\u52B3\u635F\uFF1A\u51FA\u884C\u3001\u52A8\u5200\u3001\u5267\u70C8\u8FD0\u52A8\u90FD\u7A33\u7740\u6765\u3002",
+          1: "\u4ECA\u5E74\u7559\u5FC3\u5954\u6CE2\u52B3\u7D2F\uFF0C\u628A\u4F5C\u606F\u548C\u4F11\u606F\u6392\u8FDB\u65E5\u7A0B\u3002",
+          2: "\u4ECA\u5E74\u51FA\u884C\u3001\u8FD0\u52A8\u90FD\u7A33\u7740\u6765\uFF0C\u522B\u901E\u5F3A\uFF0C\u4E5F\u522B\u71AC\u3002",
           3: "\u4ECA\u5E74\u505A\u4E8B\u5F53\u5FC3\u78D5\u78B0\u610F\u5916\uFF0C\u5DE5\u5177\u3001\u8F66\u3001\u5668\u68B0\u8BE5\u68C0\u4FEE\u5C31\u68C0\u4FEE\u3002"
         },
         \u75C5\u7B26: {
-          0: "\u4ECA\u5E74\u957F\u8F88\u7684\u65E7\u75C5\u5BB9\u6613\u7FFB\u51FA\u6765\uFF0C\u5B9A\u671F\u966A\u7740\u67E5\u4E00\u67E5\u3002",
-          1: "\u4ECA\u5E74\u65E7\u75C5\u3001\u8001\u6BDB\u75C5\u5BB9\u6613\u7FFB\u51FA\u6765\uFF0C\u5B9A\u671F\u68C0\u67E5\u522B\u7701\u3002",
-          2: "\u4ECA\u5E74\u81EA\u5DF1\u7684\u65E7\u6BDB\u75C5\u5BB9\u6613\u72AF\uFF0C\u4F5C\u606F\u548C\u590D\u67E5\u90FD\u522B\u65AD\u3002",
+          0: "\u4ECA\u5E74\u591A\u5173\u5FC3\u957F\u8F88\u7684\u65E5\u5E38\u7167\u6599\uFF0C\u5E38\u89C4\u7684\u5065\u5EB7\u7BA1\u7406\u6309\u533B\u751F\u7684\u5B89\u6392\u8D70\u3002",
+          1: "\u4ECA\u5E74\u628A\u5E38\u89C4\u5065\u5EB7\u7BA1\u7406\u6392\u8FDB\u65E5\u7A0B\uFF1B\u8EAB\u4F53\u4E0A\u7684\u4E8B\u542C\u533B\u751F\u7684\uFF0C\u522B\u81EA\u5DF1\u625B\u3002",
+          2: "\u4ECA\u5E74\u4F5C\u606F\u5BB9\u6613\u4E71\uFF0C\u89C4\u5F8B\u5403\u7761\u6BD4\u4EC0\u4E48\u90FD\u5B9E\u5728\uFF1B\u6709\u4E0D\u9002\u6309\u533B\u5631\u5904\u7406\u3002",
           3: "\u4ECA\u5E74\u7CBE\u529B\u5BB9\u6613\u900F\u652F\uFF0C\u522B\u9760\u6B7B\u6491\u3002"
         }
       };
@@ -14576,12 +14580,29 @@ var RhythmEngine = (() => {
             heavy = true;
           }
         }
-        if (heavy) {
+        {
+          const ADV = ["\u51B2", "\u5211", "\u5BB3", "\u81EA"];
+          const yRels2 = gongRelOf(chart, yZhi);
+          const advOn = (idx) => {
+            const r = yRels2.find((x) => x.idx === idx);
+            if (!r)
+              return false;
+            if (ADV.includes(r.rel))
+              return true;
+            return r.rel === "\u5408" && favSign(dayWx, favVec, r.wx || ZHI_WX[zhis[idx]], null) !== "\u559C";
+          };
+          const loveBad = advOn(2), homeBad = advOn(0);
           for (const c of cands) {
-            if (c.suiyun === "\u795E\xB7\u7EA2\u9E3E\u6210" || c.suiyun === "\u795E\xB7\u5929\u559C") {
-              c.text = c.suiyun === "\u795E\xB7\u5929\u559C" ? "\u5BB6\u91CC\u7684\u4E8B\u4ECA\u5E74\u7275\u52A8\u591A\uFF0C\u559C\u5FE7\u90FD\u53EF\u80FD\u6709\u3002" : "\u611F\u60C5\u3001\u5BB6\u4E8B\u4ECA\u5E74\u88AB\u7275\u52A8\uFF0C\u5FC3\u601D\u591A\u3002";
-              c.w = Math.min(c.w, 30);
-            }
+            const k = c.suiyun || c.k;
+            if (k !== "\u795E\xB7\u7EA2\u9E3E\u6210" && k !== "\u795E\xB7\u5929\u559C" && k !== "\u795E\xB7\u7EA2\u9E3E\u5C11")
+              continue;
+            const clash = heavy || loveBad || homeBad;
+            if (!clash)
+              continue;
+            c.text = k === "\u795E\xB7\u5929\u559C" ? homeBad ? "\u5BB6\u91CC\u7684\u4E8B\u4ECA\u5E74\u7275\u52A8\u591A\uFF0C\u559C\u5FE7\u90FD\u53EF\u80FD\u6709\u3002" : "\u5BB6\u91CC\u4ECA\u5E74\u6709\u503C\u5F97\u9AD8\u5174\u7684\u4E8B\uFF0C\u4E5F\u6709\u8981\u64CD\u5FC3\u7684\u4E8B\u3002" : loveBad ? "\u611F\u60C5\u4ECA\u5E74\u88AB\u7275\u52A8\u5F97\u591A\uFF1A\u6709\u70ED\u95F9\uFF0C\u4E5F\u6709\u8981\u7406\u7684\u4E8B\u3002" : "\u611F\u60C5\u3001\u5BB6\u4E8B\u4ECA\u5E74\u88AB\u7275\u52A8\uFF0C\u5FC3\u601D\u591A\u3002";
+            c.w = Math.min(c.w, 30);
+            c.suiyun = "\u795E\xB7\u559C\u7275\u52A8";
+            c.k = "\u795E\xB7\u559C\u7275\u52A8";
           }
         }
         const sorted = cands.sort((a, b) => b.w - a.w);
@@ -14659,12 +14680,21 @@ var RhythmEngine = (() => {
         const monRels = gongRelOf(chart, mZhi);
         const stage = lifeStage(age);
         const gongLabel = (g) => ((STAGE_GONG[stage] || {})[g] || {}).label || g;
-        const monTxt = (g, rel, wx) => {
+        const ADV_REL = ["\u51B2", "\u5211", "\u5BB3", "\u81EA"];
+        const yearAdverseOn = (idx) => {
+          const r = yearRels.find((x) => x.idx === idx);
+          if (!r)
+            return false;
+          if (ADV_REL.includes(r.rel))
+            return true;
+          return r.rel === "\u5408" && favSign(dayWx, favVec, r.wx || ZHI_WX[chart.zhis[idx]], null) !== "\u559C";
+        };
+        const monTxt = (g, rel, wx, yearBad) => {
           const st = (STAGE_GONG[stage] || {})[g];
           const tbl = st ? Object.fromEntries(Object.keys(st).filter((k) => k !== "label").map((k) => [k, st[k].m])) : GONG_TEXT_MONTH[g];
           let key = rel;
           if (rel === "\u51B2" || rel === "\u5408") {
-            const pos = favSign(dayWx, favVec, wx || ZHI_WX[mZhi], wx ? null : mZhi) === "\u559C";
+            const pos = !yearBad && favSign(dayWx, favVec, wx || ZHI_WX[mZhi], wx ? null : mZhi) === "\u559C";
             key = rel + (pos ? "\u559C" : "\u5FCC");
             if (rel === "\u5408" && g === "\u5A5A\u59FB\u611F\u60C5" && age < 22)
               key = "\u5408\u5C11";
@@ -14678,7 +14708,7 @@ var RhythmEngine = (() => {
           const hit = yearRels.find((y) => y.gong === r.gong);
           if (!hit)
             continue;
-          const txt = monTxt(r.gong, r.rel, r.wx);
+          const txt = monTxt(r.gong, r.rel, r.wx, yearAdverseOn(r.idx));
           if (!txt)
             continue;
           const bad = ["\u51B2", "\u5211", "\u5BB3", "\u81EA"].includes(r.rel);
@@ -16170,7 +16200,12 @@ var RhythmEngine = (() => {
         const byXi = tbl["\u559C" + (mj.primaryXi || "")];
         return byXi || tbl["\u2014"] || "";
       }
-      function buildNatal(mj, chart) {
+      function natalStage(chart, today) {
+        const y = today && today.year || (/* @__PURE__ */ new Date()).getFullYear();
+        const age = chart.birthYear ? y - chart.birthYear : 30;
+        return age < 16 ? "child" : age < 23 ? "study" : age < 60 ? "work" : "elder";
+      }
+      function buildNatal(mj, chart, today) {
         const dayGan = chart.dayGan;
         const dayWx = GAN_WX[dayGan];
         const strengthExplain = strengthExplainOf(mj);
@@ -16250,7 +16285,7 @@ var RhythmEngine = (() => {
         const persona = buildPersona(mj, chart);
         const dialectics = buildDialectics(mj, chart);
         const { expressive } = personaSignals(mj, chart);
-        const aspects = buildAspects(mj, dayWx, persona, expressive);
+        const aspects = buildAspects(mj, dayWx, persona, expressive, natalStage(chart, today));
         return {
           dayMaster: mj.dayMaster,
           dayGan,
@@ -16363,7 +16398,62 @@ var RhythmEngine = (() => {
           \u6BD4: "\u4F60\u9002\u5408\u7ED3\u4F34\u5B66\uFF1A\u540C\u4F34\u7684\u8282\u594F\u4F1A\u628A\u4F60\u5E26\u8D77\u6765\u3002"
         }
       };
-      function buildAspects(mj, dayWx, persona, expressive) {
+      var STAGE_ASPECT = {
+        child: {
+          career: {
+            title: "\u5728\u5B66\u6821",
+            \u987A: "\u4F60\u5728\u73ED\u4E0A\u5F85\u5F97\u4F4F\uFF0C\u4EA4\u4EE3\u7684\u4E8B\u529E\u5F97\u59A5\uFF0C\u8001\u5E08\u540C\u5B66\u90FD\u5BB9\u6613\u770B\u89C1\u4F60\u3002",
+            \u614E: "\u89C4\u77E9\u591A\u7684\u65F6\u5019\u4F60\u4F1A\u89C9\u5F97\u95F7\uFF0C\u4F46\u7167\u7740\u8981\u6C42\u8D70\u80FD\u7701\u6389\u5F88\u591A\u9EBB\u70E6\u3002",
+            \u5E73: "\u4F60\u5728\u5B66\u6821\u4E0D\u62A2\u4E5F\u4E0D\u843D\uFF0C\u628A\u8BE5\u505A\u7684\u6309\u65F6\u505A\u5B8C\uFF0C\u65E5\u5B50\u633A\u987A\u3002",
+            advice: ["\u628A\u8001\u5E08\u4EA4\u4EE3\u7684\u4E8B\u5F53\u5929\u8BB0\u4E0B\u6765\uFF0C\u505A\u5B8C\u5212\u6389\uFF0C\u6BD4\u8BB0\u5728\u8111\u5B50\u91CC\u7A33", "\u4E0D\u61C2\u5C31\u5F53\u573A\u95EE\uFF0C\u522B\u7B49\u6512\u6210\u4E00\u5806"]
+          },
+          money: {
+            title: "\u96F6\u82B1\u94B1",
+            \u987A: "\u4F60\u5BF9\u94B1\u6709\u6982\u5FF5\uFF0C\u7ED9\u591A\u5C11\u80FD\u5B89\u6392\u591A\u5C11\uFF0C\u8FD8\u6512\u5F97\u4E0B\u6765\u3002",
+            \u614E: "\u4F60\u624B\u91CC\u5B58\u4E0D\u4F4F\u94B1\uFF0C\u559C\u6B22\u7684\u5C31\u60F3\u4E70\uFF1B\u96F6\u82B1\u94B1\u5206\u4E24\u4EFD\uFF0C\u4E00\u4EFD\u5148\u5B58\u8D77\u6765\u3002",
+            \u5E73: "\u4F60\u82B1\u94B1\u4E0D\u591A\u4E0D\u5C11\uFF0C\u8BB0\u4E00\u8BB0\u8D26\u4F1A\u66F4\u6E05\u695A\u3002",
+            advice: ["\u60F3\u4E70\u7684\u4E1C\u897F\u5148\u7B49\u4E09\u5929\uFF0C\u8FD8\u60F3\u8981\u518D\u4E70", "\u81EA\u5DF1\u8BB0\u4E00\u7B14\u5C0F\u8D26\uFF0C\u77E5\u9053\u94B1\u53BB\u54EA\u513F\u4E86"]
+          },
+          mood: {
+            title: "\u670B\u53CB\u76F8\u5904",
+            \u987A: "\u4F60\u5BB9\u6613\u4EA4\u5230\u670B\u53CB\uFF0C\u613F\u610F\u7167\u987E\u4EBA\uFF0C\u540C\u5B66\u4E5F\u4E50\u610F\u627E\u4F60\u3002",
+            \u614E: "\u4F60\u5728\u670B\u53CB\u91CC\u5BB9\u6613\u59D4\u5C48\u81EA\u5DF1\u3001\u60F3\u8BA9\u6240\u6709\u4EBA\u90FD\u6EE1\u610F\uFF1B\u4E0D\u559C\u6B22\u7684\u53EF\u4EE5\u76F4\u63A5\u8BF4\u3002",
+            \u5E73: "\u4F60\u548C\u540C\u5B66\u5904\u5F97\u5E73\u987A\uFF0C\u6709\u51E0\u4E2A\u5408\u5F97\u6765\u7684\u5C31\u591F\u4E86\u3002",
+            advice: ["\u6709\u59D4\u5C48\u5F53\u573A\u8BF4\u51FA\u6765\uFF0C\u522B\u618B\u5230\u56DE\u5BB6", "\u4E0D\u5FC5\u4E3A\u4E86\u5408\u7FA4\u53BB\u505A\u81EA\u5DF1\u4E0D\u60F3\u505A\u7684\u4E8B"]
+          },
+          study: { advice: ["\u6BCF\u5929\u56FA\u5B9A\u4E00\u4E2A\u65F6\u6BB5\u5199\u4F5C\u4E1A\uFF0C\u54EA\u6015\u53EA\u6709\u534A\u5C0F\u65F6", "\u5B66\u5B8C\u8BB2\u7ED9\u5BB6\u91CC\u4EBA\u6216\u540C\u5B66\u542C\u4E00\u904D\uFF0C\u5370\u8C61\u66F4\u6DF1"] }
+        },
+        elder: {
+          career: {
+            title: "\u65E5\u5E38\u5B89\u6392",
+            \u987A: "\u4F60\u624B\u4E0A\u7684\u4E8B\u5B89\u6392\u5F97\u5F00\uFF0C\u613F\u610F\u5F20\u7F57\uFF0C\u65E5\u5B50\u8FC7\u5F97\u6709\u6761\u7406\u3002",
+            \u614E: "\u4F60\u5BB9\u6613\u66FF\u522B\u4EBA\u64CD\u5FC3\u3001\u628A\u4E8B\u63FD\u5230\u81EA\u5DF1\u8EAB\u4E0A\uFF1B\u5206\u4E00\u4E9B\u51FA\u53BB\uFF0C\u65E5\u5B50\u4F1A\u677E\u5FEB\u3002",
+            \u5E73: "\u4F60\u65E5\u5B50\u8FC7\u5F97\u7A33\u5F53\uFF0C\u6309\u81EA\u5DF1\u7684\u8282\u594F\u6765\u6700\u8212\u670D\u3002",
+            advice: ["\u4E00\u5929\u6392\u4E00\u4E24\u4EF6\u6B63\u4E8B\u5C31\u591F\uFF0C\u522B\u8D76", "\u80FD\u4EA4\u7ED9\u665A\u8F88\u7684\u4EA4\u51FA\u53BB\uFF0C\u4F60\u53EA\u505A\u62FF\u4E3B\u610F\u90A3\u4E00\u6B65"]
+          },
+          money: { advice: ["\u5927\u989D\u652F\u51FA\u548C\u66FF\u4EBA\u62C5\u4FDD\uFF0C\u5148\u8FC7\u4E00\u665A\u518D\u51B3\u5B9A", "\u8D26\u76EE\u3001\u8BC1\u4EF6\u653E\u5728\u56FA\u5B9A\u7684\u5730\u65B9\uFF0C\u4E5F\u8BA9\u5BB6\u91CC\u4EBA\u77E5\u9053"] },
+          study: { advice: ["\u5B66\u70B9\u65B0\u4E1C\u897F\u56FE\u7684\u662F\u5174\u81F4\uFF0C\u4E0D\u5FC5\u8D76\u8FDB\u5EA6", "\u5199\u5199\u8BB0\u8BB0\u3001\u627E\u4EBA\u804A\u804A\uFF0C\u6BD4\u95F7\u5934\u770B\u66F4\u5BB9\u6613\u8BB0\u4F4F"] },
+          mood: { advice: ["\u6709\u8BDD\u76F4\u63A5\u8BF4\uFF0C\u522B\u8BA9\u5C0F\u8BEF\u4F1A\u8FC7\u591C", "\u5E38\u8054\u7CFB\u51E0\u4F4D\u8001\u53CB\uFF0C\u6BD4\u65B0\u8BA4\u8BC6\u591A\u5C11\u4EBA\u90FD\u5B9E\u5728"] }
+        }
+      };
+      function applyStageAspects(list, stage) {
+        const tbl = STAGE_ASPECT[stage];
+        if (!tbl)
+          return list;
+        for (const it of list) {
+          const o = tbl[it.key];
+          if (!o)
+            continue;
+          if (o.title)
+            it.title = o.title;
+          if (o[it.tone])
+            it.text = o[it.tone];
+          if (o.advice)
+            it.advice = o.advice.slice();
+        }
+        return list;
+      }
+      function buildAspects(mj, dayWx, persona, expressive, stage) {
         const pe = persona || {};
         const dominant = pe._dominant || "\u5747\u8861";
         const xi = mj.xiYong || [];
@@ -16585,7 +16675,7 @@ var RhythmEngine = (() => {
         list.forEach((it) => {
           it.score = SCORE_BY_KEY[it.key] ?? 60;
         });
-        return list;
+        return applyStageAspects(list, stage);
       }
       function buildYearMonths(mj, chart, year, curMonth, monthAvgs) {
         const dayWx = GAN_WX[chart.dayGan];
@@ -17133,7 +17223,7 @@ var RhythmEngine = (() => {
         const monthAvgs = ctx && ctx.monthAvgs || null;
         const monthAvgs3 = ctx && ctx.monthAvgs3 || null;
         return {
-          natal: buildNatal(mj, chart),
+          natal: buildNatal(mj, chart, today),
           yearMonths: monthAvgs ? buildYearMonths(mj, chart, today.year, today.month, monthAvgs) : null,
           years: buildYears(mj, chart, today.year),
           picker: buildPicker(mj, chart, today),

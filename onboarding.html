@@ -237,7 +237,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=171"></script>
+  <script src="engine_bundle.js?v=172"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -327,10 +327,40 @@
     cityQ.addEventListener('focus',()=>{ if(cityRes.innerHTML)cityRes.classList.add('on'); });
     cityRes.addEventListener('click',(e)=>{ const it=e.target.closest('.city-res-item'); if(!it)return; pickCity(it.dataset.name,parseFloat(it.dataset.lon),it.dataset.tz,it.dataset.cc); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('.city-search'))cityRes.classList.remove('on'); });
-    fetch('geocities.json').then(r=>r.json()).then(d=>{ GEO=d; if(!lonEl.value)pickCity('成都',104.07,'Asia/Shanghai','CN'); }).catch(()=>{ if(!lonEl.value){ lonEl.value=104.07;tzEl.value='Asia/Shanghai';cnameEl.value='成都';cityQ.value='成都 · 中国'; } });
+    // 城市库(2026-09-18 外审 B09):加载失败时不再静默写入「成都」——海外用户会在毫不知情的情况下按中国城市排盘。
+    //   失败即 fail closed:留空 + 明确提示 + 禁止提交,直到重试成功。
+    var GEO_FAILED=false;
+    function cityLoadFailed(){
+      GEO_FAILED=true;
+      if(!lonEl.value){ lonEl.value='';tzEl.value='';cnameEl.value='';cityQ.value=''; }
+      cityQ.placeholder='城市库未加载，请联网后重试';
+      cityRes.innerHTML='<div class="city-res-item" data-retry="1" style="color:var(--gold-d)">城市库暂未加载 · 点此重试</div>';
+      cityRes.classList.add('on');
+    }
+    function loadGeo(){
+      return fetch('geocities.json').then(r=>r.json()).then(d=>{ GEO=d; GEO_FAILED=false; cityQ.placeholder='输入城市名，如 西宁 / New York';
+        cityRes.innerHTML=''; cityRes.classList.remove('on'); if(!lonEl.value)pickCity('成都',104.07,'Asia/Shanghai','CN'); }).catch(cityLoadFailed);
+    }
+    cityRes.addEventListener('click',(e)=>{ if(e.target.closest('[data-retry]')) loadGeo(); });
+    loadGeo();
     // 当地时间(IANA时区)→ 北京时间(UTC+8)墙钟,含历史夏令时(Intl内置tzdata)
     function tzOffsetMin(utcMs,zone){ const dtf=new Intl.DateTimeFormat('en-US',{timeZone:zone,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}); const p={}; dtf.formatToParts(new Date(utcMs)).forEach(x=>p[x.type]=x.value); const asUTC=Date.UTC(p.year,p.month-1,p.day,p.hour==='24'?0:p.hour,p.minute,p.second); return Math.round((asUTC-utcMs)/60000); }
     function localToBeijing(y,mo,d,h,mi,zone){ const wall=Date.UTC(y,mo-1,d,h,mi,0); const off=tzOffsetMin(wall,zone); let utc=wall-off*60000; /* 夏令时切换日:偏移须在真 UTC 瞬间再取一次(一次采样会差 1 小时) */ const off2=tzOffsetMin(utc,zone); if(off2!==off){ const u2=wall-off2*60000; if(tzOffsetMin(u2,zone)===off2) utc=u2; } const bj=new Date(utc+8*3600000); return {year:bj.getUTCFullYear(),month:bj.getUTCMonth()+1,day:bj.getUTCDate(),hour:bj.getUTCHours(),minute:bj.getUTCMinutes()}; }
+
+    // 夏令时「重复时刻」(2026-09-18 外审 B02):秋季回拨那天,同一个当地钟点会出现两次(夏令时一次、标准时一次)。
+    //   旧代码只识别春季跳掉的一小时,重复时刻会被静默取其一 → 时柱可能差一个时辰。
+    //   这里枚举候选:返回 0 个=当地没出现过;1 个=正常;2 个=需要用户选第一次还是第二次。
+    var DST_PICK = null;   // 用户已选的那次(UTC 毫秒),仅当出现两个候选时有值
+    function localWallCandidates(y,mo,d,h,mi,zone){
+      const wall=Date.UTC(y,mo-1,d,h,mi,0), out=[];
+      for(const probe of [wall-12*3600000, wall+12*3600000]){
+        const off=tzOffsetMin(probe,zone), utc=wall-off*60000;
+        if(tzOffsetMin(utc,zone)===off && !out.includes(utc)) out.push(utc);
+      }
+      return out.sort((a,b)=>a-b);
+    }
+    function bjFromUtc(utc){ const bj=new Date(utc+8*3600000);
+      return {year:bj.getUTCFullYear(),month:bj.getUTCMonth()+1,day:bj.getUTCDate(),hour:bj.getUTCHours(),minute:bj.getUTCMinutes()}; }
 
     // 夏令时缺口校验:换算回来对不上 = 用户填的这个当地时间当年根本没出现过(春季拨快跳掉的一小时)
     function localWallExists(y,mo,d,h,mi,zone){
@@ -437,7 +467,13 @@
       // ⚠️ 中国全境民用钟统一北京时(UTC+8):新疆虽属 Asia/Urumqi(+6),出生证/医院仍记北京时,必须直通不换算,否则凭空+2h污染时柱/日柱。
       const cnBeijingTz = (tz==='Asia/Shanghai' || tz==='Asia/Urumqi');
       let eY=sy,eM=sm,eD=sd,eH=hh||0,eMin=mi||0;
-      if (tz && !cnBeijingTz && timeMode!=='unknown'){ const bj=localToBeijing(sy,sm,sd,hh||0,mi||0,tz); eY=bj.year;eM=bj.month;eD=bj.day;eH=bj.hour;eMin=bj.minute; }
+      if (tz && !cnBeijingTz && timeMode!=='unknown'){
+        const cands = localWallCandidates(sy,sm,sd,hh||0,mi||0,tz);
+        // 重复时刻且用户已选 → 用用户选的那一次;其余情况维持既有换算(逐字不变)
+        const bj = (cands.length===2 && DST_PICK!=null && cands.indexOf(DST_PICK)>=0)
+          ? bjFromUtc(DST_PICK) : localToBeijing(sy,sm,sd,hh||0,mi||0,tz);
+        eY=bj.year;eM=bj.month;eD=bj.day;eH=bj.hour;eMin=bj.minute;
+      }
       return { year:eY, month:eM, day:eD, hour:eH, minute:eMin, longitude:lon, gender:segVal('seg-sex'), hourUnknown: timeMode==='unknown',
         calInput: cal, inY: y, inM: m, inD: d, tz, cityName: cnameEl.value,
         srcY: sy, srcM: sm, srcD: sd, srcH: hh||0, srcMin: mi||0 };
@@ -549,6 +585,36 @@
         hint.textContent='请从下拉列表里点选你的出生城市（海外城市会自动校准时区），不要只打字';
         return;
       }
+      // 城市库没加载成功 → 不允许提交(否则会拿一个「合法但错误」的默认城市去算)
+      if (typeof GEO_FAILED!=='undefined' && GEO_FAILED){
+        let gf=document.getElementById('geo-hint');
+        const btn=document.getElementById('btn-go');
+        if(!gf){ gf=document.createElement('div'); gf.id='geo-hint'; gf.style.cssText='color:#C4866A;font-size:12px;margin-top:8px;text-align:center;line-height:1.6;'; btn.parentNode.insertBefore(gf, btn.nextSibling); }
+        gf.textContent='城市库还没加载成功，请联网后重试，别用默认城市排盘'; return;
+      }
+      // 夏令时重复时刻:同一个当地钟点当天出现了两次,必须由用户指定是哪一次
+      try{
+        const _tz0=tzEl.value||'Asia/Shanghai';
+        if(_tz0!=='Asia/Shanghai' && _tz0!=='Asia/Urumqi' && timeMode!=='unknown'){
+          const [_y,_m,_d]=document.getElementById('in-date').value.split('-').map(Number);
+          const _t=document.getElementById('in-time').value.split(':').map(Number);
+          let sy=_y,sm=_m,sd=_d;
+          if(segVal('seg-cal')==='农历'){ const leap=!Number.isInteger(_m), mm=Math.floor(_m); const s0=RhythmEngine.lunarToSolar(_y,mm,_d,leap); sy=s0.year;sm=s0.month;sd=s0.day; }
+          const cands=localWallCandidates(sy,sm,sd,_t[0]||0,_t[1]||0,_tz0);
+          if(cands.length===2 && (DST_PICK==null || cands.indexOf(DST_PICK)<0)){
+            const btn=document.getElementById('btn-go');
+            let dh=document.getElementById('dst-hint');
+            if(!dh){ dh=document.createElement('div'); dh.id='dst-hint'; dh.style.cssText='margin-top:10px;text-align:center;font-size:12.5px;line-height:1.7;color:#C4866A;'; btn.parentNode.insertBefore(dh, btn.nextSibling); }
+            const fmt=(u)=>{ const o=tzOffsetMin(u,_tz0); return (o>=0?'+':'')+(o/60)+'（'+(o===Math.max(tzOffsetMin(cands[0],_tz0),tzOffsetMin(cands[1],_tz0))?'夏令时':'标准时')+'）'; };
+            dh.innerHTML='这一天当地夏令时结束，这个钟点出现了两次，请选择：<br>'
+              +'<button type="button" class="dst-b" data-u="'+cands[0]+'" style="margin:8px 6px 0;padding:7px 14px;border:1px solid var(--gold-line);border-radius:9px;background:var(--card-2);color:var(--ink);font-family:inherit;font-size:13px;">第一次 UTC'+fmt(cands[0])+'</button>'
+              +'<button type="button" class="dst-b" data-u="'+cands[1]+'" style="margin:8px 6px 0;padding:7px 14px;border:1px solid var(--gold-line);border-radius:9px;background:var(--card-2);color:var(--ink);font-family:inherit;font-size:13px;">第二次 UTC'+fmt(cands[1])+'</button>';
+            dh.querySelectorAll('.dst-b').forEach((b)=>b.addEventListener('click',()=>{ DST_PICK=+b.dataset.u; dh.remove(); document.getElementById('btn-go').click(); }));
+            return;
+          }
+          const dh0=document.getElementById('dst-hint'); if(dh0 && cands.length!==2) dh0.remove();
+        }
+      }catch(e){}
       try{
         const person = readPerson();
         const now = new Date();

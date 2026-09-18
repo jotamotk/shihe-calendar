@@ -2681,7 +2681,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=171"></script>
+  <script src="engine_bundle.js?v=172"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2709,26 +2709,35 @@
       try{ var _tt=(localStorage.getItem('shihe_test_today')||'').split('-').map(Number);
            if(_tt.length===3 && _tt.every(function(x){ return x>0; })) today={ year:_tt[0], month:_tt[1], day:_tt[2] }; }catch(e){}
       var _todayKey = today.year+'-'+today.month+'-'+today.day;
+      // 缓存信封(2026-09-18 外审 B03):旧版只按日期判,异常兜底时甚至不判身份/版本,
+      //   可能把上一份出生资料或旧引擎的结果当成当前用户的真结果展示。现在四项全对才认。
+      var _fp = function(p){ try{ return [p.year,p.month,p.day,p.hour,p.minute,p.longitude,p.gender,p.srcY,p.srcM,p.srcD].join('|'); }catch(e){ return ''; } };
+      var _ENG_V = (function(){ try{ return (document.querySelector('script[src*="engine_bundle"]')||{}).src.replace(/^.*\?v=/,'')||'0'; }catch(e){ return '0'; } })();
+      var _cacheOK = function(env){
+        return env && env.schemaVersion===1 && env.dateKey===_todayKey
+          && env.engineVersion===_ENG_V && person && env.personFingerprint===_fp(person) && env.payload;
+      };
+      var _readCache = function(){ try{ return JSON.parse(localStorage.getItem('shihe_app')||'null'); }catch(e){ return null; } };
       // ①a 有真实生日 + 本机已有「今天」的缓存 → 直接用,免每次重跑 buildApp(百年人生+3年报告)约250-500ms
       try{
-        if (person && localStorage.getItem('shihe_app_date')===_todayKey){
-          var _ca = localStorage.getItem('shihe_app');
-          if (_ca){ window.APP = JSON.parse(_ca); window.APP_PERSON = person; window.__IS_DEMO = false; return; }
-        }
+        var _env = _readCache();
+        if (_cacheOK(_env)){ window.APP = _env.payload; window.APP_PERSON = person; window.__IS_DEMO = false; return; }
       }catch(e){}
       // ①b 有真实生日但缓存跨天/缺失 → 重算:「今日」永远是当天,且带上最新引擎字段
       try{
         if (person && window.RhythmEngine && RhythmEngine.buildApp){
           window.APP = RhythmEngine.buildApp(person, today);
           window.APP_PERSON = person; window.__IS_DEMO = false;
-          try{ localStorage.setItem('shihe_app', JSON.stringify(window.APP)); localStorage.setItem('shihe_app_date', _todayKey); }catch(e){}
+          try{ localStorage.setItem('shihe_app', JSON.stringify({ schemaVersion:1, engineVersion:_ENG_V, dateKey:_todayKey, personFingerprint:_fp(person), payload:window.APP }));
+               localStorage.setItem('shihe_app_date', _todayKey); }catch(e){}
           return;
         }
       }catch(e){}
-      // ② 有存档但引擎不可用 → 用存档兜底
+      // ② 引擎不可用:只有信封四项(schema/引擎版本/日期/本人指纹)全对才敢用缓存;否则宁可空着也不拿旧结果冒充
       try{
-        var saved = localStorage.getItem('shihe_app');
-        if (saved){ window.APP = JSON.parse(saved); window.__IS_DEMO = false; return; }
+        var _env2 = _readCache();
+        if (_cacheOK(_env2)){ window.APP = _env2.payload; window.APP_PERSON = person; window.__IS_DEMO = false; return; }
+        if (person){ window.APP = null; window.APP_PERSON = person; window.__IS_DEMO = false; window.__ENGINE_DOWN = true; return; }
       }catch(e){}
       // ③ 无存档 → 演示命主 + 真实今天(分享给朋友打开时,「今日」永远是当天)
       try{
@@ -2740,7 +2749,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=171"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=172"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2749,7 +2758,8 @@
     // 这正是为「引擎在浏览器抛错」那类事故准备的安全网,自己却无护栏。改为:先画一个可恢复的
     // 「请刷新」提示,再主动中止本块(此时本就无数据可渲染,中止即可,不再连累用户看到白屏)。
     if(!window.APP){
-      document.body.innerHTML='<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2em;text-align:center;color:#A9A296;font-size:15px;line-height:1.9">内容加载失败<br>请检查网络后刷新页面</div>';
+      document.body.innerHTML='<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2em;text-align:center;color:#A9A296;font-size:15px;line-height:1.9">'
+        +(window.__ENGINE_DOWN?'本机数据未准备好<br>请联网后重新打开（不会用旧结果冒充今天）':'内容加载失败<br>请检查网络后刷新页面')+'</div>';
       throw new Error('APP unavailable — showed recovery notice');
     }
     const APP = window.APP;
@@ -2902,19 +2912,23 @@
       function add(m){ m.id='m'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36); list.push(m); save(); return m; }
       function remove(id){ list=list.filter((x)=>x.id!==id); save(); }
       function all(){ return list.slice(); }
-      // 某一天的重点日:repeat=每年(按月-日匹配),否则按完整日期匹配
+      // 2 月 29 日的每年重复(2026-09-18 外审 B10):统一规则 = 非闰年按 2 月 28 日。
+      //   此前日历按 02-29 严格匹配(非闰年整年不出现),倒计时却被 Date 归一化到 3/1,两处对不上。
+      const isLeap=(y)=> (y%4===0&&y%100!==0)||y%400===0;
+      function repMD(m,Y){ const md=m.date.slice(5); return (md==='02-29'&&!isLeap(Y))?'02-28':md; }
+      // 某一天的重点日:repeat=每年(按月-日匹配,2/29 见上),否则按完整日期匹配
       function forDate(Y,M,D){
         const md=pad(M)+'-'+pad(D), full=Y+'-'+md;
-        return list.filter((m)=> m.repeat ? (m.date.slice(5)===md) : (m.date===full));
+        return list.filter((m)=> m.repeat ? (repMD(m,Y)===md) : (m.date===full));
       }
       // 距下一次发生的天数(repeat 取今年/明年最近一次)
       function daysTo(m){
         const t=new Date(); t.setHours(0,0,0,0);
         let dt;
         if(m.repeat){
-          const md=m.date.slice(5).split('-');
-          dt=new Date(t.getFullYear(), +md[0]-1, +md[1]);
-          if(dt<t) dt=new Date(t.getFullYear()+1, +md[0]-1, +md[1]);
+          const y0=t.getFullYear(), a=repMD(m,y0).split('-');
+          dt=new Date(y0, +a[0]-1, +a[1]);
+          if(dt<t){ const b=repMD(m,y0+1).split('-'); dt=new Date(y0+1, +b[0]-1, +b[1]); }
         } else {
           const p=m.date.split('-'); dt=new Date(+p[0], +p[1]-1, +p[2]);
         }
@@ -2932,7 +2946,11 @@
         const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//shihe//rhythm-calendar//CN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
           'BEGIN:VEVENT','UID:'+m.id+'@shihe.app','DTSTAMP:'+stamp,'DTSTART;VALUE=DATE:'+dstart,
           'SUMMARY:'+icsEsc(m.name),'DESCRIPTION:'+icsEsc(catNm+' · 由「顺时黄历」加入'),'TRANSP:TRANSPARENT'];
-        if(m.repeat) L.push('RRULE:FREQ=YEARLY');
+        // 2/29 每年重复:RFC 5545 的 FREQ=YEARLY 只在闰年命中,与 App 内「非闰年按 2/28」不一致 →
+        //   用 BYMONTHDAY=28,29 + BYSETPOS=-1 取当月最后一个候选(闰年 29、平年 28),两边规则对齐。
+        if(m.repeat) L.push(m.date.slice(5)==='02-29'
+          ? 'RRULE:FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=28,29;BYSETPOS=-1'
+          : 'RRULE:FREQ=YEARLY');
         L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(m.name),'TRIGGER:PT9H','END:VALARM','END:VEVENT','END:VCALENDAR');
         return L.join('\r\n');
       }
