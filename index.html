@@ -1647,6 +1647,10 @@
   .fj-tips p:last-child{margin-bottom:0;}
   /* 工具箱 · 诸神方位 */
   /* 工具箱 · 近期吉日(季度视图) */
+  .luck-scene{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:10px 0 2px;padding-bottom:2px;}
+  .luck-scene::-webkit-scrollbar{display:none;}
+  .luck-scene button{flex:none;min-height:36px;padding:0 13px;border-radius:10px;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .18s var(--ease);}
+  .luck-scene button[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold-line);color:var(--gold-d);}
   .luck-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 14px;}
   .luck-nav button{width:32px;height:32px;border-radius:50%;background:var(--card-2);border:1px solid var(--line);color:var(--gold-d);font-size:16px;line-height:1;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:border-color .18s var(--ease);}
   .luck-nav button:active{border-color:var(--gold);}
@@ -2487,6 +2491,7 @@
               <span class="cdc-go">立即录入 →</span>
             </a>
             <div class="luck-intro" id="luck-intro"></div>
+            <div class="luck-scene" id="luck-scene"></div>
             <div class="luck-nav"><button id="luck-prev" type="button" aria-label="上一季">‹</button><span id="luck-range"></span><button id="luck-next" type="button" aria-label="下一季">›</button></div>
             <div id="luck-list"></div>
             <div class="hl-note">传统民俗参考 · 本机计算</div>
@@ -2658,7 +2663,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=164"></script>
+  <script src="engine_bundle.js?v=165"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2717,7 +2722,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=164"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=165"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5529,7 +5534,9 @@
         if(!y){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; setTimeout(function(){ if(RD.mode==='y') rdYear(0); }, 600); return; }
         var li=function(arr){ return arr.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); };
         var yi=y.yi||[], ji=y.ji||[];
-        var html=rdHead('<h2>'+RD.Y+'<small>年</small></h2>', '', RD.Y<=birthY, RD.Y>=maxY)
+        // 岁数(年份差,与引擎 age 同源;出生当年写「出生这年」)
+        var ageN=(typeof y.age==='number')?y.age:(RD.Y-birthY);
+        var html=rdHead('<h2>'+RD.Y+'<small>年</small></h2>', ageN>0?(ageN+' 岁'):'出生这年', RD.Y<=birthY, RD.Y>=maxY)
           +'<div class="rd-back"><button type="button" hidden></button></div>'
           +'<div class="rd-card">'+rdSigs(y.signals)
           +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>'+(RD.Y===curY?'今年要做':'这一年要做')+'</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
@@ -5788,7 +5795,9 @@
         if(!S || typeof RE.energyRange!=='function' || !P){ list.innerHTML='<div class="tb-empty">近期吉日需先录入生辰</div>'; return; }
         const WHY={天赦:'一年少数的「赦日」，宜静心复盘、翻篇重启',天愿:'传统视为顺遂之日，宜推进搁置的事',月德:'当月月德所临，护佑诸事和顺',月德合:'月德相合，和合成事、化解冲扰',天德:'当月福泽所临，传统视为诸事和顺',天德合:'天德相合，化冲解扰',三合:'与本月三合成局，众力相成、宜合作订盟',六合:'与本月六合，人事相得、宜洽谈缔结',天医:'天医星临，宜求医、疗养、安康',母仓:'母仓育物，宜栽种、蓄养、积贮',月恩:'月中恩泽所钟，得贵人恩助',时德:'四时旺德，宜庆贺、施惠',五富:'五谷丰盈，宜求财、开市、经营',民日:'利于百姓，诸事顺遂'};
         const STRONG=Object.keys(WHY), WK=['日','一','二','三','四','五','六'], WIN=91;
-        let offset=0;
+        // 场景 = 现代事项标签(engine/folk.js modernYi),选中后只留该事项的吉日
+        const SCENE=[['','全部'],['搬家入住','搬家'],['签约收款','签约'],['开业开工','开业'],['入学考试','考试'],['见面商谈','见面'],['提亲成婚','婚嫁'],['出行远门','出行'],['就医调养','就医'],['装修动工','装修']];
+        let offset=0, scene='';
         function draw(){
           const base=new Date(); base.setHours(0,0,0,0); base.setDate(base.getDate()+offset*WIN);
           const sy=base.getFullYear(), sm=base.getMonth()+1, sd=base.getDate();
@@ -5807,30 +5816,43 @@
             const gods=gj.jiShen||[];
             const head = gj.grade==='S' ? ((gj.names&&gj.names[0]) || (gj.reasons&&gj.reasons[0]) || '黄历大吉') : '';
             const why = WHY[gods[0]] || (gj.grade==='S' ? '黄历上吉之辰，宜隆重办要紧事、祈福和解' : '黄道当值，诸事可为');
-            cand.push({ m:d.month, day:d.day, e:d.energy, ts:gj.tianShen||'', tt:gj.tianShenType||'', grade:gj.grade, head, gods:gods.slice(0,4), why, yi:yi.slice(0,4),
+            // 宜项转成现代说法(搬家/签约/考试…),命不中再回退历注原词
+            const uses = (typeof RE.modernYi==='function') ? RE.modernYi(yi,6) : [];
+            cand.push({ m:d.month, day:d.day, e:d.energy, ts:gj.tianShen||'', tt:gj.tianShenType||'', grade:gj.grade, head, gods:gods.slice(0,4), why, uses, yi:(uses.length?uses.slice(0,3):yi.slice(0,4)),
               wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?100:0) + gods.length*2 + (d.energy>=72?2:0) + d.energy/30 });
           }
           cand.sort((a,b)=> b.score-a.score);
-          const top=cand.slice(0,14).sort((a,b)=> (a.m-b.m)||(a.day-b.day));
+          const pool = scene ? cand.filter((x)=> x.uses.indexOf(scene)>=0) : cand;
+          const top=pool.slice(0,14).sort((a,b)=> (a.m-b.m)||(a.day-b.day));
+          const sc=$('luck-scene');
+          if(sc) sc.innerHTML=SCENE.map(function(kv){ return '<button type="button" data-s="'+kv[0]+'" aria-pressed="'+(scene===kv[0])+'">'+kv[1]+'</button>'; }).join('');
           const end=new Date(sy,sm-1,sd+WIN-1);
           if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 本季':'');
           if(chip && offset===0) chip.textContent= top.length? ('本季 '+top.length+' 个吉日') : '本季平稳';
+          const scName=(SCENE.filter(function(kv){return kv[0]===scene;})[0]||['',''])[1];
           if($('luck-intro')) $('luck-intro').textContent= top.length
-            ? '按黄历神煞 × 你的能量，挑出这一季的好日子，把要紧事往这几天排。'
-            : '这一季没有格外突出的吉日，要紧事挑能量高的几天办即可。';
-          list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">这一季暂无特别突出的吉日</div>';
+            ? (scene ? ('按黄历宜忌 × 你的能量，挑出这一季适合'+scName+'的日子。') : '按黄历神煞 × 你的能量，挑出这一季的好日子，把要紧事往这几天排。')
+            : (scene ? ('这一季没有适合'+scName+'的日子，可看下一季。') : '这一季没有格外突出的吉日，要紧事挑能量高的几天办即可。');
+          list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">'+(scene?('本季暂无适合'+scName+'的日子'):'这一季暂无特别突出的吉日')+'</div>';
         }
         function rowHtml(x){
           const badge = x.grade==='S' && x.head ? '<span class="lk-god" style="color:var(--gold-d);border-color:var(--gold-line)">'+esc(x.head)+'</span>' : '';
           const gods = (x.gods||[]).map((s)=>'<span class="lk-god">'+esc(s)+'</span>').join('');
           const hd = (x.ts && x.tt==='黄道') ? '<span class="lk-hd">'+esc(x.ts)+'黄道</span>' : '';
           const eCls=x.e>=72?'hi':(x.e>=56?'mid':'lo');
+          // 选了场景时把该事项排在最前(一眼看到自己要办的那件事)
+          const yiList = scene ? [scene].concat(x.yi.filter((t)=> t!==scene)).slice(0,3) : x.yi;
           return '<div class="lk-day"><div class="lk-dt"><b>'+x.m+'/'+x.day+'</b><span>'+esc(x.wk)+'</span></div>'
             +'<div class="lk-main"><div class="lk-tags">'+badge+gods+hd+'<span class="lk-e '+eCls+'">能量'+x.e+'</span></div>'
             +'<div class="lk-why">'+esc(x.why||'')+'</div>'
-            +(x.yi.length?'<div class="lk-yi">宜 '+esc(x.yi.join(' · '))+'</div>':'')
+            +(yiList.length?'<div class="lk-yi">宜 '+esc(yiList.join(' · '))+'</div>':'')
             +'</div></div>';
         }
+        const sceneEl=$('luck-scene');
+        if(sceneEl) sceneEl.addEventListener('click', function(e){
+          const b=e.target.closest('button[data-s]'); if(!b) return;
+          e.stopPropagation(); scene=b.dataset.s; draw();
+        });
         const prev=$('luck-prev'), next=$('luck-next');
         if(prev) prev.addEventListener('click',(e)=>{ e.stopPropagation(); if(offset>0){ offset--; draw(); } });
         if(next) next.addEventListener('click',(e)=>{ e.stopPropagation(); offset++; draw(); });
