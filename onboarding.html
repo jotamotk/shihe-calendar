@@ -103,7 +103,8 @@
   .ts-toggle[aria-expanded="true"]{color:var(--gold-d,#E6CF9E);}
 
   .btn{margin-top:auto;width:100%;background:linear-gradient(180deg,var(--gold-d),var(--gold));color:#231A0C;border:none;border-radius:16px;padding:15px;font-size:14px;font-weight:600;letter-spacing:3px;font-family:inherit;cursor:pointer;transition:transform .3s var(--ease),box-shadow .3s var(--ease);box-shadow:0 16px 34px -14px rgba(205,168,98,.5);}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 22px 40px -14px rgba(205,168,98,.7);}
+  /* 悬停只变阴影不位移:上移会让指针脱离按钮→再悬停→来回抖(点不准) */
+  .btn:hover{box-shadow:0 22px 40px -14px rgba(205,168,98,.7);}
   .privacy{text-align:center;font-size:10.5px;color:var(--muted);font-weight:300;margin-top:12px;}
   .privacy .pv-link{color:var(--gold-d);text-decoration:none;border-bottom:1px solid var(--gold-line);padding-bottom:1px;margin:0 5px;}
   .privacy .pv-link:active{opacity:.6;}
@@ -192,6 +193,11 @@
         </div>
 
         <div class="field" style="margin-bottom:14px;">
+          <div class="flabel">感情状态</div>
+          <div class="seg" id="seg-rel"><button data-v="single">单身</button><button data-v="partner">有伴侣</button></div>
+        </div>
+
+        <div class="field" style="margin-bottom:14px;">
           <div class="flabel">出生地</div>
           <div class="city-search">
             <input id="in-city-q" type="text" placeholder="搜索出生城市，如 成都 / New York" autocomplete="off">
@@ -231,7 +237,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=163"></script>
+  <script src="engine_bundle.js?v=164"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -303,7 +309,20 @@
       for(const k in CITY_ALIAS){ if(k===q.trim()||k.indexOf(q.trim())===0){ t=CITY_ALIAS[k].toLowerCase(); break; } }
       for(const c of GEO.c){ if(c[0].toLowerCase().indexOf(t)>=0){ hits.push(c); if(hits.length>=300)break; } } hits.sort((a,b)=>b[4]-a[4]); const top=hits.slice(0,20);
       cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+GEO.tz[c[2]]+'" data-cc="'+c[3]+'" data-name="'+String(c[0]).replace(/"/g,'')+'">'+c[0]+' <span>'+ccName(c[3])+'</span></div>').join('') : '<div class="city-res-empty">没找到；可换中/英文写法，或选就近的大城市</div>';
-      cityRes.classList.add('on'); }
+      cityRes.classList.add('on');
+      fitCityResults(); }
+    // 下拉高度按可用空间算:不能盖住底部主按钮(盖住时点「生成我的黄历」会误点成城市项)
+    function fitCityResults(){
+      try{
+        var btn=document.getElementById('btn-go'); if(!btn) return;
+        var inputBottom=cityQ.getBoundingClientRect().bottom;
+        var room=btn.getBoundingClientRect().top-12-inputBottom;      // 输入框下方到主按钮之间的空间
+        if(room>=150){ cityRes.style.top='calc(100% + 6px)'; cityRes.style.bottom='auto'; cityRes.style.maxHeight=Math.min(230,room)+'px'; }
+        else { cityRes.style.top='auto'; cityRes.style.bottom='calc(100% + 6px)';   // 空间不够就往上弹,别压住按钮
+               cityRes.style.maxHeight=Math.max(140, Math.min(230, cityQ.getBoundingClientRect().top-70))+'px'; }
+      }catch(e){}
+    }
+    window.addEventListener('resize', function(){ if(cityRes.classList.contains('on')) fitCityResults(); });
     cityQ.addEventListener('input',()=>searchCity(cityQ.value));
     cityQ.addEventListener('focus',()=>{ if(cityRes.innerHTML)cityRes.classList.add('on'); });
     cityRes.addEventListener('click',(e)=>{ const it=e.target.closest('.city-res-item'); if(!it)return; pickCity(it.dataset.name,parseFloat(it.dataset.lon),it.dataset.tz,it.dataset.cc); });
@@ -329,6 +348,19 @@
     }
     function segVal(id){return document.querySelector('#'+id+' button.on').dataset.v;}
     segBind('seg-sex');segBind('seg-cal');
+    // 感情状态(原在「我的」,并入生辰信息):即点即存;再点同一个=取消选择
+    (function(){
+      var box=document.getElementById('seg-rel'); if(!box) return;
+      var cur=''; try{ cur=localStorage.getItem('shihe_relstatus')||''; }catch(e){}
+      box.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===cur); });
+      box.addEventListener('click', function(e){
+        var b=e.target.closest('button'); if(!b) return;
+        var on=b.classList.contains('on');
+        box.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        if(!on) b.classList.add('on');
+        try{ if(on) localStorage.removeItem('shihe_relstatus'); else localStorage.setItem('shihe_relstatus', b.dataset.v); }catch(err){}
+      });
+    })();
 
     // —— 出生时间:准确时间 / 不确定(无时辰→三柱) 两种模式 ——
     // 决策:时辰不确定不再让用户「猜大致时段」(会捏造时柱、污染结果),改为按三柱推算。

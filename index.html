@@ -437,6 +437,7 @@
   .mine-card{background:linear-gradient(180deg,var(--bg-top),var(--card));border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:18px;}
   .mine-hero-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.04em;}
   .mine-hero-sub{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:300;}
+  .mine-val{font-size:12.5px;color:var(--muted);font-weight:300;margin-left:auto;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56%;}
   .mine-list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px;}
   .mine-it{display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;background:none;border:none;border-bottom:1px solid var(--line);color:var(--ink);font-size:15px;text-align:left;text-decoration:none;cursor:pointer;transition:background .15s;}
   .mine-it:last-child{border-bottom:none;}
@@ -2306,7 +2307,7 @@
           </div>
           <div class="share-card sc-tA" id="share-card"></div>
           <div class="share-acts">
-            <button class="share-go" id="share-go">分享给朋友</button>
+            <button class="share-go" id="share-go">发送给朋友</button>
             <button class="share-close" id="share-close">关闭</button>
           </div>
         </div>
@@ -2637,16 +2638,9 @@
   <div class="mine-ov" id="mine-ov">
     <div class="mine-scroll">
       <div class="ch-bar mine-title"><span class="ch-bar-t">我 的</span></div>
-      <div class="mine-card" id="mine-hero">
-        <div class="mine-hero-name" id="mine-name">—</div>
-        <div class="mine-hero-sub" id="mine-birth">—</div>
-      </div>
       <div class="mine-list">
-        <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-go">›</span></a>
-        <!-- 感情状态:单身/有伴侣在此改(用户拍板:日历/命书面板只按首次选的出,修改入口只在这) -->
-        <div class="mine-it" id="mine-rel"><svg class="mine-ic"><use href="#i-mark"></use></svg><span class="mine-it-t">感情状态</span><span class="rel-seg rel-seg-sm" id="mine-rel-seg"></span></div>
-        <button class="mine-it" type="button" id="mine-life"><svg class="mine-ic"><use href="#i-rhythm"></use></svg><span class="mine-it-t">一生能量</span><span class="mine-go">›</span></button>
-        <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日分享</span><span class="mine-go">›</span></button>
+        <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-val" id="mine-birth">—</span><span class="mine-go">›</span></a>
+        <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日状态</span><span class="mine-go">›</span></button>
         <!-- 每日提醒:仅原生壳+已录生辰显示(Web/示例态隐藏;本地通知,零上传) -->
       </div>
       <div class="mine-list">
@@ -2664,7 +2658,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=163"></script>
+  <script src="engine_bundle.js?v=164"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2723,7 +2717,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=163"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=164"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -6164,7 +6158,7 @@
         function openMine(){
           var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
           if(!p && window.__IS_DEMO===false) p=window.APP_PERSON||null;   // 仅真实用户才回落 APP_PERSON;示例态不冒充,走「未设置生辰」
-          var nm=document.getElementById('mine-name'), bs=document.getElementById('mine-birth');
+          var bs=document.getElementById('mine-birth');   // 生辰信息行右侧摘要(顶部大卡已删)
           if(p&&p.year){
             // 展示用户录入的原样(海外=当地时间,农历=农历日期),不展示喂引擎的北京基准;时辰未知不显示占位 0:00
             var hasIn=(p.inY&&p.inM&&p.inD), lunarIn=hasIn&&p.calInput==='农历';
@@ -6173,23 +6167,9 @@
             var h0=(p.srcH!=null?p.srcH:p.hour), m0=(p.srcMin!=null?p.srcMin:p.minute);
             var mn=(m0!=null?m0:0); mn=(mn<10?'0':'')+mn;
             var timeTx=p.hourUnknown?'时辰未知':((h0!=null?h0:0)+':'+mn);
-            if(nm) nm.textContent=dateTx;
-            if(bs) bs.textContent=timeTx+(p.gender?' · '+p.gender:'');
+            if(bs) bs.textContent=dateTx+' · '+timeTx+(p.gender?' · '+p.gender:'');
           } else {
-            if(nm) nm.textContent='未设置生辰';
-            if(bs) bs.textContent='填写后即可查看';
-          }
-          // 感情状态行:未选也可在这首选;选了显示当前态,点即切换(日历/命书面板不放开关)
-          var rs=document.getElementById('mine-rel-seg');
-          if(rs){
-            var _rel=''; try{ _rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){}
-            rs.innerHTML=[['single','单身'],['partner','有伴侣']].map(function(o){return '<button type="button" data-rel="'+o[0]+'"'+(_rel===o[0]?' class="on"':'')+'>'+o[1]+'</button>';}).join('');
-            if(!rs._b){ rs._b=1; rs.addEventListener('click', function(e){ var b=e.target.closest('button'); if(!b) return;
-              try{ localStorage.setItem('shihe_relstatus', b.dataset.rel); }catch(err){}
-              rs.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
-              try{ if(typeof SHARE_DAY!=='undefined'&&SHARE_DAY&&typeof renderFortune==='function') renderFortune(SHARE_DAY); }catch(err){}
-              try{ if(window.__rdRelChanged) window.__rdRelChanged(); }catch(err){}
-            }); }
+            if(bs) bs.textContent='未设置';
           }
           mov.classList.add('on'); document.body.dataset.mine='1';
           // 无障碍:下层整屏 inert + aria-hidden,焦点移进「我的」,免读屏/键盘还能走到被盖住的页面
@@ -6208,7 +6188,6 @@
         });
         document.querySelectorAll('.tab-mine').forEach(function(t){ t.addEventListener('click', openMine); });
         var mc=document.getElementById('mine-close'); if(mc) mc.addEventListener('click', closeMine);
-        var ml=document.getElementById('mine-life'); if(ml) ml.addEventListener('click', function(){ window.__lfFrom=+(document.body.dataset.screen||0); closeMine(); setScreen(1); });
         var lb=document.getElementById('lf-back'); if(lb) lb.addEventListener('click', function(){ var f=window.__lfFrom; setScreen(f!=null&&f!==1?f:3); });
         var ms=document.getElementById('mine-share'); if(ms) ms.addEventListener('click', function(){
           closeMine(); setScreen(0);
