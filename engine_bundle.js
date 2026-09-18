@@ -14326,6 +14326,30 @@ var RhythmEngine = (() => {
         }
         return out;
       }
+      var GONG_HEAVY = {
+        work: {
+          \u957F\u8F88\u5BB6\u5B85: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u6761\u7EBF\u4ECA\u5E74\u662F\u4E3B\u7EBF\uFF1A\u5065\u5EB7\u3001\u7167\u6599\u3001\u5F80\u8FD4\u4F1A\u96C6\u4E2D\u538B\u8FC7\u6765\u3002\u63D0\u524D\u628A\u65F6\u95F4\u548C\u94B1\u7559\u51FA\u6765\uFF0C\u522B\u6307\u671B\u6324\u4E00\u6324\u5C31\u8FC7\u53BB\u3002",
+          \u4E8B\u4E1A\u73AF\u5883: "\u5DE5\u4F5C\u8FD9\u6761\u7EBF\u4ECA\u5E74\u52A8\u5F97\u5389\u5BB3\uFF1A\u4F4D\u7F6E\u3001\u8282\u594F\u3001\u4EBA\u4E8B\u591A\u534A\u8981\u91CD\u6392\u3002\u65E9\u70B9\u81EA\u5DF1\u6311\u65B9\u5411\uFF0C\u6BD4\u7B49\u7740\u88AB\u5B89\u6392\u597D\u3002",
+          \u5A5A\u59FB\u611F\u60C5: "\u611F\u60C5\u4ECA\u5E74\u662F\u4E3B\u7EBF\uFF0C\u8D77\u843D\u90FD\u5927\u3002\u5927\u51B3\u5B9A\u522B\u5728\u60C5\u7EEA\u4E0A\u505A\uFF0C\u4F46\u4E5F\u522B\u5F53\u6CA1\u8FD9\u56DE\u4E8B\u3002",
+          \u4F5C\u54C1\u9879\u76EE: "\u624B\u4E0A\u7684\u4E8B\u4ECA\u5E74\u6700\u8017\u4EBA\uFF1A\u53CD\u590D\u3001\u8FD4\u5DE5\u3001\u6536\u4E0D\u4E86\u5C3E\u4F1A\u4E00\u8D77\u6765\u3002\u780D\u6389\u4E00\u534A\uFF0C\u4FDD\u4F4F\u6700\u8981\u7D27\u7684\u90A3\u4EF6\u3002"
+        },
+        study: {
+          \u957F\u8F88\u5BB6\u5B85: "\u5BB6\u91CC\u8FD9\u6761\u7EBF\u4ECA\u5E74\u662F\u4E3B\u7EBF\uFF1A\u957F\u8F88\u7684\u8EAB\u4F53\u3001\u5BB6\u91CC\u7684\u5B89\u6392\u4F1A\u5360\u6389\u4E0D\u5C11\u65F6\u95F4\u548C\u5FC3\u529B\uFF0C\u65E9\u505A\u6253\u7B97\u3002",
+          \u4E8B\u4E1A\u73AF\u5883: "\u5B66\u4E1A\u8FD9\u6761\u7EBF\u4ECA\u5E74\u52A8\u5F97\u5389\u5BB3\uFF1A\u73AF\u5883\u3001\u65B9\u5411\u3001\u8282\u594F\u591A\u534A\u8981\u91CD\u6392\u3002\u65E9\u70B9\u81EA\u5DF1\u6311\u65B9\u5411\uFF0C\u6BD4\u7B49\u7740\u88AB\u5B89\u6392\u597D\u3002",
+          \u5A5A\u59FB\u611F\u60C5: "\u611F\u60C5\u4ECA\u5E74\u662F\u4E3B\u7EBF\uFF0C\u8D77\u843D\u90FD\u5927\u3002\u5927\u51B3\u5B9A\u522B\u5728\u60C5\u7EEA\u4E0A\u505A\uFF0C\u4F46\u4E5F\u522B\u5F53\u6CA1\u8FD9\u56DE\u4E8B\u3002",
+          \u4F5C\u54C1\u9879\u76EE: "\u624B\u4E0A\u7684\u8BFE\u9898\u3001\u4F5C\u54C1\u4ECA\u5E74\u6700\u8017\u4EBA\uFF1A\u53CD\u590D\u3001\u8FD4\u5DE5\u3001\u6536\u4E0D\u4E86\u5C3E\u4F1A\u4E00\u8D77\u6765\u3002\u780D\u6389\u4E00\u534A\uFF0C\u4FDD\u4F4F\u6700\u8981\u7D27\u7684\u90A3\u4EF6\u3002"
+        },
+        elder: {
+          \u957F\u8F88\u5BB6\u5B85: "\u5BB6\u91CC\u8FD9\u6761\u7EBF\u4ECA\u5E74\u6700\u5403\u91CD\uFF1A\u4EB2\u4EBA\u7684\u8EAB\u4F53\u3001\u4F4F\u5904\u3001\u7167\u6599\u4F1A\u96C6\u4E2D\u6765\u3002\u65E9\u505A\u5B89\u6392\uFF0C\u522B\u4E00\u4E2A\u4EBA\u625B\u3002",
+          \u4E8B\u4E1A\u73AF\u5883: "\u4ECA\u5E74\u65E5\u5E38\u6700\u8017\u795E\uFF1A\u4F4F\u5904\u3001\u6765\u5F80\u3001\u4F5C\u606F\u90FD\u53EF\u80FD\u4E00\u8D77\u53D8\u3002\u4E00\u4EF6\u4EF6\u6765\uFF0C\u522B\u8D76\u3002",
+          \u4F5C\u54C1\u9879\u76EE: "\u624B\u8FB9\u7684\u4E8B\u4ECA\u5E74\u6700\u78E8\u4EBA\uFF1A\u6765\u56DE\u8DD1\u3001\u53CD\u590D\u6539\u4F1A\u4E00\u8D77\u6765\u3002\u4E00\u6B21\u53EA\u529E\u4E00\u4EF6\u3002"
+        },
+        child: {
+          \u957F\u8F88\u5BB6\u5B85: "\u5BB6\u91CC\u4ECA\u5E74\u4E8B\u591A\uFF0C\u4F60\u4E5F\u4F1A\u88AB\u5E26\u7740\u8DD1\u3002\u5FC3\u91CC\u4E0D\u8212\u670D\u5C31\u627E\u4FE1\u5F97\u8FC7\u7684\u5927\u4EBA\u8BF4\u3002",
+          \u4E8B\u4E1A\u73AF\u5883: "\u5B66\u6821\u8FD9\u6761\u7EBF\u4ECA\u5E74\u52A8\u5F97\u5927\uFF1A\u73AF\u5883\u3001\u8001\u5E08\u3001\u8282\u594F\u90FD\u53EF\u80FD\u53D8\u3002\u8DDF\u7740\u8C03\u6574\uFF0C\u522B\u786C\u625B\u3002",
+          \u4F5C\u54C1\u9879\u76EE: "\u529F\u8BFE\u548C\u5174\u8DA3\u4E0A\u7684\u4E8B\u4ECA\u5E74\u6700\u8D39\u52B2\uFF1A\u53CD\u590D\u6539\u3001\u6536\u4E0D\u4E86\u5C3E\u4F1A\u4E00\u8D77\u6765\u3002\u4E00\u4EF6\u4EF6\u505A\u5B8C\u3002"
+        }
+      };
       var SUIYUN_TEXT = {
         \u6362\u6321: "\u6362\u6321\u4E4B\u5E74\u3002\u4ECE\u8FD9\u5E74\u8D77\u5341\u5E74\u8282\u594F\u6362\u4E86\u5E95\u8272\uFF0C\u5934\u4E00\u4E24\u5E74\u662F\u9002\u5E94\u671F\u3002",
         \u5E76\u4E34: "\u91CD\u53E0\u4E4B\u5E74\u3002\u597D\u574F\u90FD\u653E\u5927\uFF0C\u5927\u4E8B\u591A\uFF1B\u8FD9\u5E74\u7684\u51B3\u5B9A\u5206\u91CF\u91CD\uFF0C\u6162\u70B9\u4E0B\u3002",
@@ -14463,6 +14487,7 @@ var RhythmEngine = (() => {
         const yIdx = ZHI12.indexOf(yZhi);
         let heavy = false;
         const suiYunClash = !!(dy && (HARM[dy.zhi] === yZhi || isXingPair(dy.zhi, yZhi) && dy.zhi !== yZhi));
+        const xiongPillars = [];
         if (yIdx >= 0) {
           const xiongHits = [];
           for (const x of XIONG_SHEN) {
@@ -14482,6 +14507,7 @@ var RhythmEngine = (() => {
               continue;
             if (!wxBad && !gongHurt && !(x.freeOn || []).includes(hit))
               continue;
+            xiongPillars.push(hit);
             xiongHits.push({ w: x.w, txt, basis: `${year}\u5E74${x.name}\u4E34${pos}${at}`, key: "\u51F6\xB7" + x.name });
           }
           if (xiongHits.length) {
@@ -14500,6 +14526,45 @@ var RhythmEngine = (() => {
             );
           }
         }
+        {
+          const SH2GONG = { \u4E8B\u4E1A: "\u4E8B\u4E1A\u73AF\u5883", \u5A5A\u59FB: "\u5A5A\u59FB\u611F\u60C5", \u5BB6\u5B85: "\u957F\u8F88\u5BB6\u5B85", \u9879\u76EE: "\u4F5C\u54C1\u9879\u76EE" };
+          const IDX = { \u4E8B\u4E1A\u73AF\u5883: 1, \u5A5A\u59FB\u611F\u60C5: 2, \u957F\u8F88\u5BB6\u5B85: 0, \u4F5C\u54C1\u9879\u76EE: 3 };
+          const REL_W = { \u51B2: 4, \u5211: 3, \u5BB3: 2, \u5408: 1 };
+          const stg = lifeStage(age);
+          const heavyTbl = GONG_HEAVY[stg] || GONG_HEAVY.work;
+          const yRels = gongRelOf(chart, yZhi);
+          const dyRels = dy ? gongRelOf(chart, dy.zhi) : [];
+          let best = null;
+          for (const c of cands) {
+            const m = /^(冲|刑|害|合)·(事业|婚姻|家宅|项目)$/.exec(c.k || c.suiyun || "");
+            if (!m)
+              continue;
+            const gong = SH2GONG[m[2]], idx = IDX[gong];
+            const txt = heavyTbl[gong];
+            if (!txt)
+              continue;
+            const yr = yRels.find((r) => r.idx === idx);
+            if (!yr)
+              continue;
+            const adverse = ["\u51B2", "\u5211", "\u5BB3"].includes(yr.rel) || yr.rel === "\u5408" && favSign(dayWx, favVec, yr.wx || ZHI_WX[zhis[idx]], null) !== "\u559C";
+            if (!adverse)
+              continue;
+            const xiongHere = xiongPillars.includes(idx);
+            const dyBad = suiYunClash && dyRels.some((r) => r.idx === idx && ["\u51B2", "\u5211", "\u5BB3", "\u81EA"].includes(r.rel));
+            if (!xiongHere && !dyBad)
+              continue;
+            const score = (REL_W[yr.rel] || 1) + (dyBad ? 2.5 : 0) + (xiongHere ? 1.5 : 0);
+            if (!best || score > best.score)
+              best = { c, gong, txt, score };
+          }
+          if (best) {
+            best.c.text = `\u3010${((STAGE_GONG[stg] || {})[best.gong] || {}).label || best.gong}\u3011${best.txt}`;
+            best.c.w0 = best.c.w;
+            best.c.w = Math.max(best.c.w, 88);
+            best.c.heavy = true;
+            heavy = true;
+          }
+        }
         if (heavy) {
           for (const c of cands) {
             if (c.suiyun === "\u795E\xB7\u7EA2\u9E3E\u6210" || c.suiyun === "\u795E\xB7\u5929\u559C") {
@@ -14514,7 +14579,7 @@ var RhythmEngine = (() => {
         const YJ0 = (k) => (YEAR_YIJI_STAGE[lifeStage(age)] || {})[k] || YEAR_YIJI[k];
         const baseYj = YJ0(yk + xj) || (xj === "\u5E73" && YJ0(yk + "\u559C") && YJ0(yk + "\u5FCC") ? { yi: [YJ0(yk + "\u559C").yi[0]], ji: [YJ0(yk + "\u5FCC").ji[0]] } : { yi: [], ji: [] });
         const yj = composeYiji(baseYj, sorted.slice(0, 5), lifeStage(age));
-        const big = signals.some((s) => s.w >= 72 && !/^凶·/.test(s.suiyun || ""));
+        const big = signals.some((s) => (s.w0 != null ? s.w0 : s.w) >= 72 && !/^凶·/.test(s.suiyun || ""));
         return {
           headline: yt[0],
           trait: yt[1],
