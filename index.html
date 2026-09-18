@@ -828,7 +828,7 @@
   .tl-pill.on{border-color:var(--gold-d);color:var(--gold-d);font-weight:600;}
   .tl-pill.now{color:var(--ink);}
   .tl-ynav{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 14px;}
-  .tl-ynav button{background:var(--card);border:1px solid var(--line);border-radius:50%;width:30px;height:30px;color:var(--ink-2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .tl-ynav button{position:relative;background:var(--card);border:1px solid var(--line);border-radius:50%;width:30px;height:30px;color:var(--ink-2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .tl-ynav b{font-family:var(--serif);font-size:17px;color:var(--ink);letter-spacing:1.5px;font-weight:600;min-width:128px;text-align:center;}
   .tl-ynav .tl-today{width:auto;border-radius:9px;padding:0 10px;font-size:11.5px;color:var(--gold-d);}
   .tl-day-gz{text-align:center;font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:1px;}
@@ -1652,8 +1652,9 @@
   .luck-scene button{flex:none;min-height:36px;padding:0 13px;border-radius:10px;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .18s var(--ease);}
   .luck-scene button[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold-line);color:var(--gold-d);}
   .luck-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 14px;}
-  .luck-nav button{width:32px;height:32px;border-radius:50%;background:var(--card-2);border:1px solid var(--line);color:var(--gold-d);font-size:16px;line-height:1;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:border-color .18s var(--ease);}
+  .luck-nav button{position:relative;width:32px;height:32px;border-radius:50%;background:var(--card-2);border:1px solid var(--line);color:var(--gold-d);font-size:16px;line-height:1;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:border-color .18s var(--ease);}
   .luck-nav button:active{border-color:var(--gold);}
+  .luck-nav button::after{content:"";position:absolute;inset:-6px;}
   .luck-nav span{font-size:12.5px;color:var(--ink);letter-spacing:.5px;min-width:190px;text-align:center;}
   .lk-day{display:flex;gap:12px;background:var(--card-2);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:9px;}
   .lk-dt{flex:none;width:50px;text-align:center;border-right:1px solid var(--line);padding-right:11px;display:flex;flex-direction:column;justify-content:center;}
@@ -1970,7 +1971,8 @@
   #rd .rd-idx{position:sticky;top:var(--rd-bar);z-index:15;background:var(--rd-paper);margin:0 -20px;padding:8px 20px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
     -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);border-bottom:1px solid var(--rd-rule);}
   #rd .rd-idx::-webkit-scrollbar{display:none;}
-  #rd .rd-idx button{flex:none;height:34px;padding:0 13px;border:1px solid var(--rd-rule2);border-radius:999px;font-size:13.5px;color:var(--rd-ink2);background:var(--rd-card);transition:background .2s,color .2s;}
+  .tl-ynav button::after{content:"";position:absolute;inset:-7px;}
+  #rd .rd-idx button{position:relative;flex:none;height:34px;padding:0 13px;border:1px solid var(--rd-rule2);border-radius:999px;font-size:13.5px;color:var(--rd-ink2);background:var(--rd-card);transition:background .2s,color .2s;}
   #rd .rd-idx button.on{background:var(--rd-ink);color:var(--rd-paper);border-color:var(--rd-ink);}
   #rd .rd-idx button:active{transform:scale(.96);}
 
@@ -2000,7 +2002,8 @@
   #rd .rd-seg button:active{background:var(--rd-paper2);}
   #rd .rd-seg button[aria-selected="true"]:active{background:var(--rd-ink2);}
   #rd .rd-seg.sm{border-width:1px;border-radius:9px;}
-  #rd .rd-seg.sm button{height:34px;font-size:14px;padding:0 12px;flex:none;}
+  #rd .rd-idx button::after{content:"";position:absolute;inset:-5px 0;}
+  #rd .rd-seg.sm button{position:relative;height:34px;font-size:14px;padding:0 12px;flex:none;}
 
   #rd .rd-panel{margin-top:16px;transition:opacity .18s;touch-action:pan-y;}
   #rd .rd-panel.fade{opacity:0;}
@@ -2073,8 +2076,10 @@
   #rd .rd-big h3{font-family:var(--rd-serif);font-weight:700;font-size:30px;line-height:1.2;color:var(--rd-ink);}
   #rd .rd-big .sub{font-size:13px;color:var(--rd-ink3);margin-top:6px;letter-spacing:1px;}
   #rd .rd-back{display:flex;justify-content:center;height:36px;margin-top:6px;}
-  #rd .rd-back button{height:34px;padding:0 16px;border:1px solid var(--rd-acc);color:var(--rd-acc);border-radius:999px;font-size:14px;background:var(--rd-card);}
+  #rd .rd-seg.sm button::after{content:"";position:absolute;inset:-5px 0;}
+  #rd .rd-back button{position:relative;height:34px;padding:0 16px;border:1px solid var(--rd-acc);color:var(--rd-acc);border-radius:999px;font-size:14px;background:var(--rd-card);}
   #rd .rd-back button:active{background:var(--rd-acc);color:var(--rd-on);}
+  #rd .rd-back button::after{content:"";position:absolute;inset:-5px 0;}
   #rd .rd-back button[hidden]{display:none;}
 
   #rd .rd-card{margin-top:10px;transition:transform .22s ease,opacity .22s ease;touch-action:pan-y;}
@@ -2663,7 +2668,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=165"></script>
+  <script src="engine_bundle.js?v=166"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2722,7 +2727,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=165"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=166"></scr'+'ipt>');
     })();
   </script>
   <script>
