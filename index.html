@@ -2097,6 +2097,11 @@
   #rd .rd-yj ul{list-style:none;}
   #rd .rd-yj li{font-family:var(--rd-serif);font-size:15.5px;line-height:1.9;color:var(--rd-ink);}
   #rd .rd-yj li+li{margin-top:4px;}
+  #rd .rd-km{margin-top:16px;border-top:1px dashed var(--rd-rule2);padding-top:14px;}
+  #rd .rd-km h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:9px;}
+  #rd .rd-km ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;}
+  #rd .rd-km li{font-family:var(--rd-serif);font-size:14.5px;color:var(--rd-ink);border:1px solid var(--rd-rule2);border-radius:9px;padding:5px 11px;background:var(--rd-card);}
+  #rd .rd-km li b{font-weight:700;color:var(--rd-acc);margin-right:6px;}
   #rd .rd-chips{display:flex;flex-wrap:wrap;gap:8px;}
   #rd .rd-chips span{font-family:var(--rd-serif);font-size:15px;padding:5px 12px;border-radius:999px;border:1px solid var(--rd-rule2);background:var(--rd-card);color:var(--rd-ink);}
   #rd .rd-row2{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;margin-top:20px;}
@@ -2668,7 +2673,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=167"></script>
+  <script src="engine_bundle.js?v=168"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2727,7 +2732,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=167"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=168"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5545,6 +5550,7 @@
           +'<div class="rd-back"><button type="button" hidden></button></div>'
           +'<div class="rd-card">'+rdSigs(y.signals)
           +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>'+(RD.Y===curY?'今年要做':'这一年要做')+'</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
+          +(((y.keyMonths||[]).length)?'<div class="rd-km"><h4>关键月份</h4><ul>'+y.keyMonths.map(function(k){ return '<li><b>'+k.month+'月</b>'+esc(k.tag)+'</li>'; }).join('')+'</ul></div>':'')
           +'<button type="button" class="rd-cta" id="rd-share-y">为这一年做一张卡片</button></div>';
         var Y0=RD.Y;
         rdSlide(dir, html, function(){

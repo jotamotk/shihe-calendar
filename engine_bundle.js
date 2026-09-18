@@ -13611,6 +13611,7 @@ var RhythmEngine = (() => {
   var require_liunian2 = __commonJS({
     "engine/liunian2.js"(exports, module) {
       "use strict";
+      var { Solar } = require_lunar();
       var { GAN_WX, tenGodFull } = require_analyze();
       var { activeDaYun } = require_liuri();
       var ZHI_WX = { \u5B50: "\u6C34", \u4E11: "\u571F", \u5BC5: "\u6728", \u536F: "\u6728", \u8FB0: "\u571F", \u5DF3: "\u706B", \u5348: "\u706B", \u672A: "\u571F", \u7533: "\u91D1", \u9149: "\u91D1", \u620C: "\u571F", \u4EA5: "\u6C34" };
@@ -13725,6 +13726,12 @@ var RhythmEngine = (() => {
         "\u5211\xB7\u9879\u76EE": { yi: ["\u7A33\u624E\u7A33\u6253"], ji: ["\u8D2A\u591A\u3001\u53CD\u590D\u8FD4\u5DE5"] },
         "\u5BB3\xB7\u9879\u76EE": { yi: [], ji: ["\u5206\u5FC3\u591A\u5934"] },
         "\u4F0F\xB7\u9879\u76EE": { yi: ["\u65E7\u4F5C\u91CD\u6574"], ji: [] },
+        "\u5E94\xB7\u4F0F": { yi: ["\u628A\u5168\u5E74\u6700\u8981\u7D27\u7684\u4E8B\u6392\u5728\u8FD9\u4E2A\u6708"], ji: [] },
+        "\u5E94\xB7\u51B2": { yi: ["\u7559\u51FA\u6539\u671F\u7684\u4F59\u5730"], ji: ["\u8FD9\u4E2A\u6708\u628A\u5927\u4E8B\u5B9A\u6B7B"] },
+        "\u5E94\xB7\u5408\u559C": { yi: ["\u987A\u52BF\u63A8\u8FDB"], ji: [] },
+        "\u5E94\xB7\u5408\u5FCC": { yi: ["\u5148\u7406\u987A\u518D\u63A8\u8FDB"], ji: ["\u786C\u63A8"] },
+        "\u5E94\xB7\u5211": { yi: ["\u8981\u7D27\u7684\u4E8B\u907F\u5F00\u8FD9\u4E2A\u6708"], ji: ["\u8D76\u8282\u70B9"] },
+        "\u5E94\xB7\u5BB3": { yi: ["\u76EF\u5230\u5E95\u3001\u522B\u653E\u624B"], ji: ["\u6307\u671B\u522B\u4EBA\u81EA\u89C9"] },
         "\u795E\xB7\u5929\u4E59": { yi: ["\u9047\u4E8B\u591A\u627E\u4EBA\u3001\u501F\u5916\u529B"], ji: [] },
         "\u795E\xB7\u7984\u795E": { yi: ["\u9760\u672C\u4E8B\u53D1\u529B"], ji: [] },
         "\u795E\xB7\u9A7F\u9A6C": { yi: ["\u52A8\u4E2D\u6C42\u8FDB"], ji: ["\u539F\u5730\u6B7B\u5B88"] },
@@ -14245,6 +14252,80 @@ var RhythmEngine = (() => {
           \u5929\u559C: "\u5BB6\u91CC\u5BB9\u6613\u6709\u987A\u5FC3\u4E8B\u3002"
         }
       };
+      var ZHI12 = ["\u5B50", "\u4E11", "\u5BC5", "\u536F", "\u8FB0", "\u5DF3", "\u5348", "\u672A", "\u7533", "\u9149", "\u620C", "\u4EA5"];
+      var XIONG_SHEN = [
+        // 丧门/吊客落年支、月支(祖上宫/父母宫)时不再加喜忌闸:这两位本就是长辈那条线的指针,
+        //   但权重压在宫位冲刑之下,信号多的年份自然被挤掉,不会年年喊。
+        { name: "\u4E27\u95E8", off: 2, w: 68, freeOn: [0, 1] },
+        { name: "\u767D\u864E", off: 8, w: 64, freeOn: [] },
+        { name: "\u540A\u5BA2", off: 10, w: 66, freeOn: [0, 1] },
+        { name: "\u75C5\u7B26", off: 11, w: 58, freeOn: [] }
+      ];
+      var XIONG_TEXT = {
+        \u4E27\u95E8: {
+          0: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u8FB9\u4ECA\u5E74\u8981\u7559\u51FA\u5FC3\u529B\uFF1A\u5065\u5EB7\u3001\u7167\u6599\u3001\u5F80\u8FD4\u7684\u4E8B\u90FD\u53EF\u80FD\u843D\u5230\u4F60\u5934\u4E0A\u3002",
+          1: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u8FB9\u4ECA\u5E74\u8981\u7559\u51FA\u5FC3\u529B\uFF1A\u5065\u5EB7\u3001\u7167\u6599\u3001\u5F80\u8FD4\u7684\u4E8B\u90FD\u53EF\u80FD\u843D\u5230\u4F60\u5934\u4E0A\u3002",
+          2: "\u4ECA\u5E74\u5BB6\u91CC\u548C\u81EA\u5DF1\u8EAB\u4E0A\u7684\u4E8B\u90FD\u5F97\u591A\u987E\u4E00\u5934\uFF0C\u522B\u628A\u65F6\u95F4\u6392\u6EE1\u3002",
+          3: "\u4ECA\u5E74\u5BB6\u91CC\u7684\u4E8B\u4F1A\u5360\u6389\u8BA1\u5212\u5916\u7684\u65F6\u95F4\uFF0C\u624B\u4E0A\u7684\u5B89\u6392\u7559\u51FA\u4F59\u91CF\u3002"
+        },
+        \u540A\u5BA2: {
+          0: "\u957F\u8F88\u90A3\u8FB9\u4ECA\u5E74\u662F\u8981\u4E0A\u5FC3\u7684\u4E00\u5757\uFF1A\u8BE5\u770B\u7684\u75C5\u3001\u8BE5\u56DE\u7684\u5BB6\uFF0C\u522B\u62D6\u5230\u6700\u540E\u3002",
+          1: "\u957F\u8F88\u90A3\u8FB9\u4ECA\u5E74\u662F\u8981\u4E0A\u5FC3\u7684\u4E00\u5757\uFF1A\u8BE5\u770B\u7684\u75C5\u3001\u8BE5\u56DE\u7684\u5BB6\uFF0C\u522B\u62D6\u5230\u6700\u540E\u3002",
+          2: "\u4ECA\u5E74\u591A\u987E\u4E00\u987E\u8EAB\u8FB9\u4EBA\u7684\u8EAB\u4F53\uFF0C\u4E5F\u987E\u4E00\u987E\u81EA\u5DF1\u7684\u3002",
+          3: "\u4ECA\u5E74\u8BA1\u5212\u5916\u7684\u5BB6\u52A1\u4E8B\u4E0D\u4F1A\u5C11\uFF0C\u65F6\u95F4\u548C\u94B1\u90FD\u7559\u4E00\u70B9\u4F59\u5730\u3002"
+        },
+        \u767D\u864E: {
+          0: "\u4ECA\u5E74\u5BB6\u91CC\u5BB9\u6613\u6709\u7A81\u53D1\u7684\u4E8B\uFF0C\u7A33\u7740\u529E\uFF0C\u522B\u8D76\u3002",
+          1: "\u4ECA\u5E74\u7559\u5FC3\u5954\u6CE2\u548C\u52B3\u635F\uFF0C\u8BE5\u68C0\u67E5\u7684\u68C0\u67E5\u3002",
+          2: "\u4ECA\u5E74\u7559\u5FC3\u8EAB\u4F53\u4E0A\u7684\u610F\u5916\u4E0E\u52B3\u635F\uFF1A\u51FA\u884C\u3001\u52A8\u5200\u3001\u5267\u70C8\u8FD0\u52A8\u90FD\u7A33\u7740\u6765\u3002",
+          3: "\u4ECA\u5E74\u505A\u4E8B\u5F53\u5FC3\u78D5\u78B0\u610F\u5916\uFF0C\u5DE5\u5177\u3001\u8F66\u3001\u5668\u68B0\u8BE5\u68C0\u4FEE\u5C31\u68C0\u4FEE\u3002"
+        },
+        \u75C5\u7B26: {
+          0: "\u4ECA\u5E74\u957F\u8F88\u7684\u65E7\u75C5\u5BB9\u6613\u7FFB\u51FA\u6765\uFF0C\u5B9A\u671F\u966A\u7740\u67E5\u4E00\u67E5\u3002",
+          1: "\u4ECA\u5E74\u65E7\u75C5\u3001\u8001\u6BDB\u75C5\u5BB9\u6613\u7FFB\u51FA\u6765\uFF0C\u5B9A\u671F\u68C0\u67E5\u522B\u7701\u3002",
+          2: "\u4ECA\u5E74\u81EA\u5DF1\u7684\u65E7\u6BDB\u75C5\u5BB9\u6613\u72AF\uFF0C\u4F5C\u606F\u548C\u590D\u67E5\u90FD\u522B\u65AD\u3002",
+          3: "\u4ECA\u5E74\u7CBE\u529B\u5BB9\u6613\u900F\u652F\uFF0C\u522B\u9760\u786C\u625B\u3002"
+        }
+      };
+      var YING_TEXT = {
+        \u4F0F: ["\u4ECA\u5E74\u90A3\u4EF6\u4E8B\uFF0C\u8FD9\u4E2A\u6708\u6700\u96C6\u4E2D\u3002", "\u5168\u5E74\u7684\u4E3B\u7EBF\u538B\u5728\u8FD9\u4E2A\u6708\uFF0C\u4E8B\u90FD\u8D76\u5728\u4E00\u5904\u3002", "\u4ECA\u5E74\u7684\u91CD\u5934\u5728\u8FD9\u4E2A\u6708\u843D\u5730\uFF0C\u522B\u5B89\u6392\u592A\u591A\u522B\u7684\u3002"],
+        \u51B2: ["\u4ECA\u5E74\u7684\u4E3B\u7EBF\u8FD9\u4E2A\u6708\u8D77\u53D8\u6570\uFF1A\u5BB9\u6613\u7FFB\u7BC7\uFF0C\u4E5F\u5BB9\u6613\u88AB\u6253\u65AD\u3002", "\u8FD9\u4E2A\u6708\u4E0E\u5168\u5E74\u7684\u52BF\u9876\u4E0A\uFF0C\u8BA1\u5212\u5BB9\u6613\u4E34\u65F6\u6539\u3002", "\u4ECA\u5E74\u7684\u4E8B\u5230\u8FD9\u4E2A\u6708\u8F6C\u5411\uFF0C\u987A\u7740\u53D8\u6BD4\u5B88\u7740\u5F3A\u3002"],
+        \u5408\u559C: ["\u987A\u7740\u4ECA\u5E74\u7684\u52BF\uFF0C\u8FD9\u4E2A\u6708\u63A8\u5F97\u52A8\u3002", "\u8FD9\u4E2A\u6708\u63A5\u5F97\u4E0A\u5168\u5E74\u7684\u52B2\uFF0C\u8BE5\u529E\u7684\u4E8B\u5F80\u8FD9\u513F\u6392\u3002", "\u4ECA\u5E74\u60F3\u6210\u7684\u4E8B\uFF0C\u8FD9\u4E2A\u6708\u6700\u5BB9\u6613\u677E\u53E3\u3002"],
+        \u5408\u5FCC: ["\u8FD9\u4E2A\u6708\u548C\u4ECA\u5E74\u7684\u9EBB\u70E6\u7F20\u5728\u4E00\u8D77\uFF0C\u8FDB\u5EA6\u53D1\u9ECF\u3002", "\u5168\u5E74\u7684\u62D6\u7D2F\u8FD9\u4E2A\u6708\u4E00\u8D77\u6765\uFF0C\u5148\u7406\u987A\u518D\u63A8\u8FDB\u3002", "\u8FD9\u4E2A\u6708\u88AB\u4ECA\u5E74\u7684\u65E7\u644A\u5B50\u7ECA\u4F4F\uFF0C\u522B\u6025\u7740\u5F00\u65B0\u7684\u3002"],
+        \u5211: ["\u8FD9\u4E2A\u6708\u548C\u4ECA\u5E74\u7684\u4E8B\u9876\u4E0A\u4E86\uFF0C\u5BB9\u6613\u51FA\u5C94\u5B50\u3002\u8981\u7D27\u7684\u4E8B\u907F\u5F00\u3002", "\u548C\u5168\u5E74\u4E3B\u7EBF\u649E\u4E0A\uFF0C\u8FD9\u4E2A\u6708\u522B\u8D76\u8282\u70B9\u3002", "\u4ECA\u5E74\u7684\u9EBB\u70E6\u8FD9\u4E2A\u6708\u6700\u5BB9\u6613\u7206\uFF0C\u7A33\u7740\u6765\u3002"],
+        \u5BB3: ["\u4ECA\u5E74\u7684\u4E8B\u8FD9\u4E2A\u6708\u5BB9\u6613\u6697\u8017\uFF1A\u88AB\u4EBA\u62D6\u3001\u88AB\u8BDD\u7ECA\u3002", "\u8FD9\u4E2A\u6708\u4F7F\u4E0D\u4E0A\u52B2\uFF0C\u8FDB\u5EA6\u88AB\u65C1\u7684\u4E8B\u78E8\u6389\u3002", "\u4ECA\u5E74\u7684\u8FDB\u5EA6\u8FD9\u4E2A\u6708\u88AB\u4EBA\u60C5\u7ECA\u4F4F\uFF0C\u76EF\u7D27\u5173\u952E\u90A3\u51E0\u6B65\u3002"]
+      };
+      var GONG_DEF = [["\u4E8B\u4E1A\u73AF\u5883", 1, "\u4E8B\u4E1A"], ["\u5A5A\u59FB\u611F\u60C5", 2, "\u5A5A\u59FB"], ["\u957F\u8F88\u5BB6\u5B85", 0, "\u5BB6\u5B85"], ["\u4F5C\u54C1\u9879\u76EE", 3, "\u9879\u76EE"]];
+      function gongRelOf(chart, subjectZhi) {
+        const zhis = chart.zhis, out = [];
+        for (const [gong, idx, sh] of GONG_DEF) {
+          const zhi = zhis[idx];
+          let rel = null, wx = null;
+          if (CHONG[subjectZhi] === zhi)
+            rel = "\u51B2";
+          else if (subjectZhi === zhi && ZIXING.includes(subjectZhi))
+            rel = "\u81EA";
+          else if (isXingPair(subjectZhi, zhi) && subjectZhi !== zhi)
+            rel = "\u5211";
+          else if (LIUHE[subjectZhi] === zhi) {
+            rel = "\u5408";
+            wx = LIUHE_WX[subjectZhi + zhi] || ZHI_WX[zhi];
+          } else if (HARM[subjectZhi] === zhi)
+            rel = "\u5BB3";
+          else if (subjectZhi === zhi)
+            rel = "\u4F0F";
+          else {
+            const ban = SANHE.find((g) => g.trio.includes(subjectZhi) && g.trio.includes(zhi) && subjectZhi !== zhi && (g.wang === subjectZhi || g.wang === zhi));
+            if (ban) {
+              rel = "\u5408";
+              wx = ban.wx;
+            }
+          }
+          if (rel)
+            out.push({ gong, idx, sh, rel, wx });
+        }
+        return out;
+      }
       var SUIYUN_TEXT = {
         \u6362\u6321: "\u6362\u6321\u4E4B\u5E74\u3002\u4ECE\u8FD9\u5E74\u8D77\u5341\u5E74\u8282\u594F\u6362\u4E86\u5E95\u8272\uFF0C\u5934\u4E00\u4E24\u5E74\u662F\u9002\u5E94\u671F\u3002",
         \u5E76\u4E34: "\u91CD\u53E0\u4E4B\u5E74\u3002\u597D\u574F\u90FD\u653E\u5927\uFF0C\u5927\u4E8B\u591A\uFF1B\u8FD9\u5E74\u7684\u51B3\u5B9A\u5206\u91CF\u91CD\uFF0C\u6162\u70B9\u4E0B\u3002",
@@ -14379,13 +14460,61 @@ var RhythmEngine = (() => {
           push(99, SUIYUN_TEXT.\u5E76\u4E34, "\u6D41\u5E74\u4E0E\u5927\u8FD0\u5E72\u652F\u76F8\u540C\uFF08\u5C81\u8FD0\u5E76\u4E34\uFF09", "\u5E76\u4E34");
         if (KE[GAN_WX[yGan]] === dayWx && CHONG[yZhi] === zhis[2])
           push(98, SUIYUN_TEXT.\u7FFB\u8986, `\u6D41\u5E74${yGan}\u514B\u65E5\u4E3B\u3001${yZhi}\u51B2\u65E5\u652F\uFF08\u5929\u514B\u5730\u51B2\uFF09`, "\u7FFB\u8986");
+        const yIdx = ZHI12.indexOf(yZhi);
+        let heavy = false;
+        const suiYunClash = !!(dy && (HARM[dy.zhi] === yZhi || isXingPair(dy.zhi, yZhi) && dy.zhi !== yZhi));
+        if (yIdx >= 0) {
+          const xiongHits = [];
+          for (const x of XIONG_SHEN) {
+            const at = ZHI12[(yIdx + x.off) % 12];
+            const hit = zhis.findIndex((z, i) => z === at && i <= 3);
+            if (hit < 0)
+              continue;
+            const pos = ["\u5E74\u652F", "\u6708\u652F", "\u65E5\u652F", "\u65F6\u652F"][hit];
+            const txt = (XIONG_TEXT[x.name] || {})[hit];
+            if (!txt)
+              continue;
+            const wxBad = favSign(dayWx, favVec, ZHI_WX[at], at) !== "\u559C";
+            const rels = gongRelOf(chart, yZhi);
+            const gongHurt = rels.some((r) => r.idx === hit && ["\u51B2", "\u5211", "\u5BB3", "\u81EA"].includes(r.rel));
+            const resonate = gongHurt || suiYunClash;
+            if (!resonate)
+              continue;
+            if (!wxBad && !gongHurt && !(x.freeOn || []).includes(hit))
+              continue;
+            xiongHits.push({ w: x.w, txt, basis: `${year}\u5E74${x.name}\u4E34${pos}${at}`, key: "\u51F6\xB7" + x.name });
+          }
+          if (xiongHits.length) {
+            xiongHits.sort((a, b) => b.w - a.w);
+            const top = xiongHits[0];
+            heavy = true;
+            push(top.w, top.txt, top.basis, top.key);
+          }
+          if (suiYunClash) {
+            heavy = true;
+            push(
+              76,
+              "\u4ECA\u5E74\u4E0E\u5927\u8FD0\u4E0D\u5BF9\u4ED8\uFF1A\u4E8B\u60C5\u5BB9\u6613\u534A\u8DEF\u751F\u679D\u8282\uFF0C\u8EAB\u4F53\u548C\u5BB6\u91CC\u90FD\u522B\u786C\u6491\u3002",
+              `\u5927\u8FD0\u652F${dy.zhi}\u4E0E\u6D41\u5E74\u652F${yZhi}${HARM[dy.zhi] === yZhi ? "\u76F8\u5BB3" : "\u76F8\u5211"}`,
+              "\u51F6\xB7\u5C81\u8FD0"
+            );
+          }
+        }
+        if (heavy) {
+          for (const c of cands) {
+            if (c.suiyun === "\u795E\xB7\u7EA2\u9E3E\u6210" || c.suiyun === "\u795E\xB7\u5929\u559C") {
+              c.text = c.suiyun === "\u795E\xB7\u5929\u559C" ? "\u5BB6\u91CC\u7684\u4E8B\u4ECA\u5E74\u7275\u52A8\u591A\uFF0C\u559C\u5FE7\u90FD\u53EF\u80FD\u6709\u3002" : "\u611F\u60C5\u3001\u5BB6\u4E8B\u4ECA\u5E74\u88AB\u7275\u52A8\uFF0C\u5FC3\u601D\u591A\u3002";
+              c.w = Math.min(c.w, 30);
+            }
+          }
+        }
         const sorted = cands.sort((a, b) => b.w - a.w);
         const signals = studentize(sorted.slice(0, 3), age);
         const yk = YIJI_KEY[full];
         const YJ0 = (k) => (YEAR_YIJI_STAGE[lifeStage(age)] || {})[k] || YEAR_YIJI[k];
         const baseYj = YJ0(yk + xj) || (xj === "\u5E73" && YJ0(yk + "\u559C") && YJ0(yk + "\u5FCC") ? { yi: [YJ0(yk + "\u559C").yi[0]], ji: [YJ0(yk + "\u5FCC").ji[0]] } : { yi: [], ji: [] });
         const yj = composeYiji(baseYj, sorted.slice(0, 5), lifeStage(age));
-        const big = signals.some((s) => s.w >= 72);
+        const big = signals.some((s) => s.w >= 72 && !/^凶·/.test(s.suiyun || ""));
         return {
           headline: yt[0],
           trait: yt[1],
@@ -14428,13 +14557,64 @@ var RhythmEngine = (() => {
         const xj = favOfWx(dayWx, favVec, GAN_WX[mGan], tzhi);
         const MT = lifeStage(age) === "child" ? MONTH_TYPE_CHILD[full] || MONTH_TYPE_CHILD.\u6BD4\u80A9 : MONTH_TYPE[full] || MONTH_TYPE.\u6BD4\u80A9;
         const mt = MT[xj];
-        const cands = gongShenSignals(chart, mZhi, age, favVec, dayWx, dayGan, "\u6D41\u6708");
-        if (mZhi === yZhi)
-          cands.push({ w: 68, text: "\u6D41\u5E74\u4E3B\u9898\u5F53\u6708\u6B63\u663E\uFF1A\u5168\u5E74\u7684\u5927\u4E8B\u8FD9\u6708\u96C6\u4E2D\u5E94\u3002", basis: `\u6708\u652F${mZhi}\u4E0E\u6D41\u5E74\u652F\u76F8\u540C` });
-        else if (CHONG[mZhi] === yZhi)
-          cands.push({ w: 68, text: "\u51B2\u52A8\u6D41\u5E74\uFF1A\u5168\u5E74\u4E3B\u7EBF\u8FD9\u6708\u6709\u53D8\u6570\u3001\u6709\u8F6C\u6298\u3002", basis: `\u6708\u652F${mZhi}\u51B2\u6D41\u5E74\u652F${yZhi}` });
+        const cands = [];
+        const vzi = Math.max(0, VAR_ZHI.indexOf(mZhi));
+        const pickVar = (arr) => arr[VAR_PICK[vzi] % arr.length];
+        if (mZhi === yZhi) {
+          cands.push({ w: 92, text: pickVar(YING_TEXT.\u4F0F), basis: `\u6708\u652F${mZhi}\u4E0E\u6D41\u5E74\u652F\u76F8\u540C`, suiyun: "\u5E94\xB7\u4F0F" });
+        } else if (CHONG[mZhi] === yZhi) {
+          cands.push({ w: 90, text: pickVar(YING_TEXT.\u51B2), basis: `\u6708\u652F${mZhi}\u51B2\u6D41\u5E74\u652F${yZhi}`, suiyun: "\u5E94\xB7\u51B2" });
+        } else if (LIUHE[mZhi] === yZhi || SANHE.some((g) => g.trio.includes(mZhi) && g.trio.includes(yZhi) && (g.wang === mZhi || g.wang === yZhi))) {
+          const ban = SANHE.find((g) => g.trio.includes(mZhi) && g.trio.includes(yZhi) && (g.wang === mZhi || g.wang === yZhi));
+          const hwx = LIUHE[mZhi] === yZhi ? LIUHE_WX[mZhi + yZhi] || ZHI_WX[yZhi] : ban ? ban.wx : ZHI_WX[yZhi];
+          const pos = favSign(dayWx, favVec, hwx, null) === "\u559C";
+          cands.push({
+            w: 86,
+            text: pickVar(pos ? YING_TEXT.\u5408\u559C : YING_TEXT.\u5408\u5FCC),
+            basis: `\u6708\u652F${mZhi}${LIUHE[mZhi] === yZhi ? "\u5408" : "\u534A\u5408"}\u6D41\u5E74\u652F${yZhi}`,
+            suiyun: pos ? "\u5E94\xB7\u5408\u559C" : "\u5E94\xB7\u5408\u5FCC"
+          });
+        } else if (isXingPair(mZhi, yZhi) && mZhi !== yZhi) {
+          cands.push({ w: 84, text: pickVar(YING_TEXT.\u5211), basis: `\u6708\u652F${mZhi}\u5211\u6D41\u5E74\u652F${yZhi}`, suiyun: "\u5E94\xB7\u5211" });
+        } else if (HARM[mZhi] === yZhi) {
+          cands.push({ w: 82, text: pickVar(YING_TEXT.\u5BB3), basis: `\u6708\u652F${mZhi}\u5BB3\u6D41\u5E74\u652F${yZhi}`, suiyun: "\u5E94\xB7\u5BB3" });
+        }
+        const yearRels = gongRelOf(chart, yZhi);
+        const monRels = gongRelOf(chart, mZhi);
+        const stage = lifeStage(age);
+        const gongLabel = (g) => ((STAGE_GONG[stage] || {})[g] || {}).label || g;
+        const monTxt = (g, rel, wx) => {
+          const st = (STAGE_GONG[stage] || {})[g];
+          const tbl = st ? Object.fromEntries(Object.keys(st).filter((k) => k !== "label").map((k) => [k, st[k].m])) : GONG_TEXT_MONTH[g];
+          let key = rel;
+          if (rel === "\u51B2" || rel === "\u5408") {
+            const pos = favSign(dayWx, favVec, wx || ZHI_WX[mZhi], wx ? null : mZhi) === "\u559C";
+            key = rel + (pos ? "\u559C" : "\u5FCC");
+            if (rel === "\u5408" && g === "\u5A5A\u59FB\u611F\u60C5" && age < 22)
+              key = "\u5408\u5C11";
+          }
+          if (rel === "\u4F0F" && g === "\u5A5A\u59FB\u611F\u60C5")
+            key = age >= 22 ? "\u4F0F\u6210" : "\u4F0F\u5C11";
+          const v = tbl && (tbl[key] || tbl[rel]);
+          return Array.isArray(v) ? v[VAR_PICK[vzi] % v.length] : v;
+        };
+        for (const r of monRels) {
+          const hit = yearRels.find((y) => y.gong === r.gong);
+          if (!hit)
+            continue;
+          const txt = monTxt(r.gong, r.rel, r.wx);
+          if (!txt)
+            continue;
+          const bad = ["\u51B2", "\u5211", "\u5BB3", "\u81EA"].includes(r.rel);
+          cands.push({
+            w: bad ? 78 : 74,
+            text: `\u3010${gongLabel(r.gong)}\u3011${txt}`,
+            basis: `${year}\u5E74\u6D41\u5E74${yZhi}\u4E0E\u6D41\u6708${mZhi}\u540C\u52A8${gongLabel(r.gong)}\uFF08${r.rel}\uFF09`,
+            suiyun: r.rel + "\xB7" + r.sh
+          });
+        }
         const sorted = cands.sort((a, b) => b.w - a.w);
-        const signals = studentize(sorted.slice(0, 2), age).map((g) => ({ text: g.text, basis: g.basis }));
+        const signals = studentize(sorted.slice(0, 1), age).map((g) => ({ text: g.text, basis: g.basis }));
         const yk = YIJI_KEY[full];
         const YJ0 = (k) => (YEAR_YIJI_STAGE[lifeStage(age)] || {})[k] || YEAR_YIJI[k];
         const baseYj = YJ0(yk + xj) || (xj === "\u5E73" && YJ0(yk + "\u559C") && YJ0(yk + "\u5FCC") ? { yi: [YJ0(yk + "\u559C").yi[0]], ji: [YJ0(yk + "\u5FCC").ji[0]] } : { yi: [], ji: [] });
@@ -14468,7 +14648,36 @@ var RhythmEngine = (() => {
           god: full
         };
       }
-      module.exports = { liuNian2, liuYue2, daYunCard };
+      function keyMonthsOf(chart, year, yZhi, favVec, dayWx) {
+        const out = [];
+        for (let m = 1; m <= 12; m++) {
+          const mZhi = Solar.fromYmd(year, m, 15).getLunar().getMonthZhi();
+          if (mZhi === yZhi) {
+            out.push({ m, tag: "\u4E3B\u7EBF\u6700\u96C6\u4E2D", w: 92 });
+            continue;
+          }
+          if (CHONG[mZhi] === yZhi) {
+            out.push({ m, tag: "\u5BB9\u6613\u8F6C\u5411", w: 90 });
+            continue;
+          }
+          if (isXingPair(mZhi, yZhi) && mZhi !== yZhi) {
+            out.push({ m, tag: "\u522B\u8D76\u8282\u70B9", w: 84 });
+            continue;
+          }
+          if (HARM[mZhi] === yZhi) {
+            out.push({ m, tag: "\u5BB9\u6613\u6697\u8017", w: 82 });
+            continue;
+          }
+          const ban = SANHE.find((g) => g.trio.includes(mZhi) && g.trio.includes(yZhi) && (g.wang === mZhi || g.wang === yZhi));
+          if (LIUHE[mZhi] === yZhi || ban) {
+            const hwx = LIUHE[mZhi] === yZhi ? LIUHE_WX[mZhi + yZhi] || ZHI_WX[yZhi] : ban.wx;
+            const pos = favSign(dayWx, favVec, hwx, null) === "\u559C";
+            out.push({ m, tag: pos ? "\u63A8\u5F97\u52A8" : "\u8FDB\u5EA6\u53D1\u9ECF", w: pos ? 86 : 80 });
+          }
+        }
+        return out.sort((a, b) => b.w - a.w).slice(0, 3).sort((a, b) => a.m - b.m).map(({ m, tag }) => ({ month: m, tag }));
+      }
+      module.exports = { liuNian2, liuYue2, daYunCard, keyMonthsOf };
     }
   });
 
@@ -15192,7 +15401,7 @@ var RhythmEngine = (() => {
       } = require_relations();
       var { liuri } = require_liuri();
       var { personaSignals } = require_profile();
-      var { liuNian2, liuYue2 } = require_liunian2();
+      var { liuNian2, liuYue2, keyMonthsOf } = require_liunian2();
       var WX_INFO = {
         \u6728: {
           keyword: "\u751F\u957F \xB7 \u8212\u5C55",
@@ -16385,6 +16594,7 @@ var RhythmEngine = (() => {
           yr.big = g2.big;
           yr.yi = g2.yi;
           yr.ji = g2.ji;
+          yr.keyMonths = keyMonthsOf(chart, yr.year, yr.ganZhi[1], yr._dyn.favVec || mj.favVec, dayWx);
           yr.shifted = !!yr._dyn.shifted;
           delete yr._tags;
           delete yr._severe;
@@ -16434,6 +16644,7 @@ var RhythmEngine = (() => {
         yr.big = g2.big;
         yr.yi = g2.yi;
         yr.ji = g2.ji;
+        yr.keyMonths = keyMonthsOf(chart, yr.year, yr.ganZhi[1], yr._dyn && yr._dyn.favVec || mj.favVec, dayWx);
         yr.shifted = !!yr._dyn.shifted;
         delete yr._tags;
         delete yr._severe;
