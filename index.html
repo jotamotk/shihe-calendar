@@ -2097,6 +2097,14 @@
   #rd .rd-yj ul{list-style:none;}
   #rd .rd-yj li{font-family:var(--rd-serif);font-size:15.5px;line-height:1.9;color:var(--rd-ink);}
   #rd .rd-yj li+li{margin-top:4px;}
+  #rd .rd-mchart{padding:6px 2px 0;}
+  #rd .rd-mchart svg{width:100%;height:auto;display:block;overflow:visible;}
+  #rd .km-x{font-family:var(--rd-serif);font-size:11px;fill:var(--rd-ink3);}
+  #rd .km-x.on{fill:var(--rd-acc);font-weight:700;}
+  #rd .km-x.cur{text-decoration:underline;}
+  #rd .km-v{font-family:var(--rd-serif);font-size:11px;fill:var(--rd-acc);font-weight:700;}
+  #rd .rd-mnote{margin-top:14px;padding-top:12px;border-top:1px dashed var(--rd-rule2);font-family:var(--rd-serif);font-size:15px;color:var(--rd-ink);letter-spacing:.5px;}
+  #rd .rd-mnote b{color:var(--rd-ink3);font-size:13px;font-weight:700;letter-spacing:2px;margin-right:10px;}
   #rd .rd-km{margin-top:16px;border-top:1px dashed var(--rd-rule2);padding-top:14px;}
   #rd .rd-km h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:9px;}
   #rd .rd-km ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;}
@@ -2673,7 +2681,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=170"></script>
+  <script src="engine_bundle.js?v=171"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2732,7 +2740,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=170"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=171"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5558,31 +5566,43 @@
           var sb=rdEl('rd-share-y'); if(sb) sb.onclick=function(){ if(window.__shiheShareTL) window.__shiheShareTL('year', { year:Y0, gz:y.ganZhi||'', sigs:y.signals||[], yi:y.yi||[] }); };
         });
       }
+      // 月档(2026-09-18 用户拍板:流月逐月断语不做了,只留一条起伏线 + 标出能量好的月份)。
+      //   逐月的「今年主线落在哪个月」已收进年卡的「关键月份」一行,这里只回答「今年哪几个月状态好」。
       function rdMonth(dir){
         var A=R.monthsAhead; if(!A||!A.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
-        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30), maxY=A[A.length-1].year;
+        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30), maxY=birthY+99;
         if(!RD.MY) RD.MY={y:curY,m:curM};
-        if(RD.MY.y<birthY) RD.MY={y:birthY,m:1};
-        if(RD.MY.y>maxY) RD.MY={y:maxY,m:12};
-        var s=rdEl('rd-strip'); s.className='rd-strip'; var h='';
-        for(var mm=1; mm<=12; mm++) h+='<button type="button" data-v="'+mm+'" aria-selected="'+(mm===RD.MY.m)+'">'+mm+'月<small>'+((RD.MY.y===curY&&mm===curM)?'本月':'')+'</small></button>';
-        s.innerHTML=h;
-        var key=function(o){ return o.y*12+o.m; };
-        var go=function(o){ if(o.y<birthY||o.y>maxY||key(o)===key(RD.MY)) return; var d=key(o)>key(RD.MY)?1:-1; RD.MY=o; rdMonth(d); };
-        rdStripBind(function(v){ go({y:RD.MY.y, m:+v}); });
+        RD.MY.y=Math.max(birthY, Math.min(maxY, RD.MY.y));
+        var s=rdEl('rd-strip'); s.className='rd-strip'; s.innerHTML='';
         var yObj=tlMonthsOf(RD.MY.y);
-        if(!yObj||!yObj.months||!yObj.months.length){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; return; }
-        var m=yObj.months.filter(function(x){ return x.month===RD.MY.m; })[0]||yObj.months[0];
-        var atStart=(RD.MY.y<=birthY&&RD.MY.m<=1), atEnd=(RD.MY.y>=maxY&&RD.MY.m>=12);
-        var isHome=(RD.MY.y===curY&&RD.MY.m===curM), MY0={y:RD.MY.y,m:RD.MY.m};
-        var html=rdHead('<h3>'+RD.MY.y+'年'+RD.MY.m+'月</h3>', '', atStart, atEnd)
+        if(!yObj||!yObj.months||!yObj.months.length){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; setTimeout(function(){ if(RD.mode==='m') rdMonth(0); }, 600); return; }
+        var ms=yObj.months, vals=ms.map(function(x){ return x.avg; });
+        var hi=Math.max.apply(null,vals), lo=Math.min.apply(null,vals), span=Math.max(6, hi-lo);
+        var good=(yObj.highMonths||[]).slice(0,3);
+        if(!good.length) good=ms.filter(function(x){ return x.avg>=hi-1; }).map(function(x){ return x.month; }).slice(0,3);
+        // 折线:12 点,纵向按当年自身的高低拉满(跨年不可比,所以不标绝对刻度)
+        var W=336, H=132, PL=14, PR=14, PT=16, PB=26, iw=W-PL-PR, ih=H-PT-PB;
+        var px=function(i){ return PL+iw*i/11; }, py=function(v){ return PT+ih*(1-(v-lo)/span); };
+        var pts=vals.map(function(v,i){ return px(i).toFixed(1)+','+py(v).toFixed(1); }).join(' ');
+        var dots='', labs='';
+        for(var i=0;i<12;i++){
+          var on=good.indexOf(i+1)>=0, isCur=(RD.MY.y===curY&&(i+1)===curM);
+          dots+='<circle cx="'+px(i).toFixed(1)+'" cy="'+py(vals[i]).toFixed(1)+'" r="'+(on?4.2:2.4)+'" fill="'+(on?'var(--rd-acc)':'var(--rd-rule2)')+'"/>';
+          if(on) dots+='<text x="'+px(i).toFixed(1)+'" y="'+(py(vals[i])-10).toFixed(1)+'" text-anchor="middle" class="km-v">'+vals[i]+'</text>';
+          labs+='<text x="'+px(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" class="km-x'+(on?' on':'')+(isCur?' cur':'')+'">'+(i+1)+'</text>';
+        }
+        var goodTx=good.length? good.join('月、')+'月' : '';
+        var html=rdHead('<h3>'+RD.MY.y+'年</h3>', '十二个月的起伏', RD.MY.y<=birthY, RD.MY.y>=maxY)
           +'<div class="rd-back"><button type="button" hidden></button></div>'
-          +'<div class="rd-card">'+rdSigs(m.signals)+rdYJ(m.yi,m.ji)
-          +'<button type="button" class="rd-cta" id="rd-share-m">为这个月做一张卡片</button></div>';
+          +'<div class="rd-card"><div class="rd-mchart"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'
+          +'<polyline points="'+pts+'" fill="none" stroke="var(--rd-ink)" stroke-width="1.6" stroke-linejoin="round"/>'
+          +dots+labs+'</svg></div>'
+          +(goodTx?'<div class="rd-mnote"><b>状态好的月份</b>'+goodTx+'</div>':'<div class="rd-mnote">这一年十二个月起伏不大，没有特别突出的月份。</div>')
+          +'</div>';
         rdSlide(dir, html, function(){
-          rdBind(function(g){ var y2=RD.MY.y, m2=RD.MY.m+g; if(m2<1){ y2--; m2=12; } if(m2>12){ y2++; m2=1; } go({y:y2,m:m2}); }, '回本月', isHome, function(){ go({y:curY,m:curM}); });
-          var sb=rdEl('rd-share-m'); if(sb) sb.onclick=function(){ if(window.__shiheShareTL) window.__shiheShareTL('month', { year:MY0.y, m:m.month, headline:m.headline, trait:m.trait, sigs:m.signals||[] }); };
+          rdBind(function(g){ var y2=RD.MY.y+g; if(y2<birthY||y2>maxY) return; RD.MY={y:y2,m:RD.MY.m}; rdMonth(g); },
+            '回今年', RD.MY.y===curY, function(){ var d=curY>RD.MY.y?1:-1; RD.MY={y:curY,m:curM}; rdMonth(d); });
         });
       }
       function rdDay(dir){
