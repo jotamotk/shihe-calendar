@@ -237,7 +237,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=172"></script>
+  <script src="engine_bundle.js?v=173"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -416,7 +416,8 @@
     function wSet(el,value){ let i=el._values.indexOf(value); if(i<0)i=0; el._idx=i; el.scrollTop=i*W_ITEM_H; wMark(el); }
     function wBind(el,onChange){ let t; el.addEventListener('scroll',()=>{ wMark(el); clearTimeout(t); t=setTimeout(()=>{ el._idx=wIndex(el); if(onChange)onChange(); },130); },{passive:true}); el.addEventListener('click',(e)=>{ const it=e.target.closest('.wheel-item'); if(!it)return; const items=[].slice.call(el.children[0].children); const i=items.indexOf(it); if(i>=0) el.scrollTo({top:i*W_ITEM_H,behavior:'smooth'}); }); }
     const THIS_YEAR=new Date().getFullYear();
-    const yearVals=[]; for(let y=1920;y<=THIS_YEAR;y++) yearVals.push(y);
+    const ADULT_YEAR = THIS_YEAR - 18;   // 年龄门:年份轮只到「今年-18」
+    const yearVals=[]; for(let y=1920;y<=ADULT_YEAR;y++) yearVals.push(y);
     fillWheel(whY,yearVals,(v)=>v);
     fillWheel(whH,Array.from({length:24},(_,i)=>i),(v)=>pad2(v));
     fillWheel(whMi,Array.from({length:60},(_,i)=>i),(v)=>pad2(v));
@@ -627,6 +628,13 @@
             if(!gh){ gh=document.createElement('div'); gh.id='gap-hint'; gh.style.cssText='color:#C4866A;font-size:12px;margin-top:8px;text-align:center;line-height:1.6;'; btn.parentNode.insertBefore(gh, btn.nextSibling); }
             gh.textContent='该时间处于当地夏令时跳时区间，当地钟表没有出现过，请核对出生记录'; return; }
           if(gh) gh.remove(); }
+        // 年龄门:未满 18 周岁拦下(本命与生活方面的正文按成年人语境撰写)
+        { const _b18=new Date(person.srcY+18, person.srcM-1, person.srcD);
+          let ah=document.getElementById('adult-hint');
+          if(_b18 > now){ const btn=document.getElementById('btn-go');
+            if(!ah){ ah=document.createElement('div'); ah.id='adult-hint'; ah.style.cssText='color:#C4866A;font-size:12px;margin-top:8px;text-align:center;line-height:1.6;'; btn.parentNode.insertBefore(ah, btn.nextSibling); }
+            ah.textContent='本报告按成年人语境撰写，暂不支持未成年人的出生信息'; return; }
+          if(ah) ah.remove(); }
         // 出生日期不能晚于今天(按当地录入日期比;农历已换成公历)
         { const _b=new Date(person.srcY, person.srcM-1, person.srcD); const _t=new Date(now.getFullYear(), now.getMonth(), now.getDate());
           let fh=document.getElementById('future-hint');

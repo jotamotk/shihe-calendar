@@ -2681,7 +2681,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=172"></script>
+  <script src="engine_bundle.js?v=173"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2749,7 +2749,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=172"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=173"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5274,7 +5274,7 @@
         var curY=R.years.curYear||R.years.years[0].year;
         var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30);
         if(_jdYearY==null) _jdYearY=curY;
-        _jdYearY=Math.max(birthY, Math.min(birthY+99, _jdYearY));
+        _jdYearY=Math.max(Math.max(birthY, curY-8), Math.min(curY+20, _jdYearY));
         var y=jdYearData(_jdYearY); if(!y){
           // 引擎未就绪时不留空白(过去年曾点开只见空),稍后自动重试
           host.innerHTML='<div class="yc"><div class="yc-sub">载入中…</div></div>';
@@ -5555,10 +5555,16 @@
         s.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ onPick(b.dataset.v); }); });
         rdCenter(false);
       }
+      // 年档范围(2026-09-19 拍板):过去 8 年够对账,未来 20 年够看两个大运;不再做到出生年+99
+      var RD_PAST = 8, RD_FUTURE = 20;
+      function rdYearRange(curY){
+        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30);
+        return { lo: Math.max(birthY, curY - RD_PAST), hi: curY + RD_FUTURE };
+      }
       function rdYear(dir){
         if(!R.years||!R.years.years||!R.years.years.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=R.years.curYear||R.years.years[0].year;
-        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30), maxY=birthY+99;
+        var _r=rdYearRange(curY), birthY=_r.lo, maxY=_r.hi;
         if(RD.Y==null) RD.Y=curY;
         RD.Y=Math.max(birthY, Math.min(maxY, RD.Y));
         var s=rdEl('rd-strip'); s.className='rd-strip'; var h='';
@@ -5589,7 +5595,7 @@
       function rdMonth(dir){
         var A=R.monthsAhead; if(!A||!A.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
-        var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30), maxY=birthY+99;
+        var _rm=rdYearRange(curY), birthY=_rm.lo, maxY=_rm.hi;
         if(!RD.MY) RD.MY={y:curY,m:curM};
         RD.MY.y=Math.max(birthY, Math.min(maxY, RD.MY.y));
         var s=rdEl('rd-strip'); s.className='rd-strip'; s.innerHTML='';
@@ -5641,8 +5647,10 @@
         }
         s.innerHTML=h;
         var ord=function(o){ return new Date(o.y,o.m-1,o.d).getTime(); };
-        // 日档边界与年/月档一致:出生日 ~ 出生年+99 年末
-        var BL=(window.__birthLocal&&window.__birthLocal())||{y:T.y-30,m:1,d:1}, bY=BL.y, dMin=new Date(BL.y,BL.m-1,BL.d).getTime(), dMax=new Date(BL.y+99,11,31).getTime();
+        // 日档边界(2026-09-19 拍板):日档只查最近,今年前后各一年;起点不早于出生日
+        var BL=(window.__birthLocal&&window.__birthLocal())||{y:T.y-30,m:1,d:1}, bY=BL.y;
+        var dMin=Math.max(new Date(BL.y,BL.m-1,BL.d).getTime(), new Date(T.y-1,0,1).getTime());
+        var dMax=new Date(T.y+1,11,31).getTime();
         var go=function(o){ var k=ord(o); if(k===ord(RD.D)||k<dMin||k>dMax) return; var g=k>ord(RD.D)?1:-1; RD.D=o; rdDay(g); };
         rdStripBind(function(v){ go({y:RD.D.y, m:RD.D.m, d:+v}); });
         var d=mo.days[RD.D.d-1]; if(!d){ rdEl('rd-tlbody').innerHTML=''; return; }
