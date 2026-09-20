@@ -1758,7 +1758,7 @@
   .mk-item .mk-del{flex:none;width:28px;height:28px;border-radius:8px;border:1px solid var(--line-2);background:transparent;color:var(--muted);
     font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s var(--ease);}
   .mk-item .mk-del:hover{border-color:var(--clay);color:var(--clay);}
-  .mk-empty{text-align:center;font-size:12px;color:var(--muted);font-weight:300;padding:22px 10px;line-height:1.7;}
+  .mk-empty{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;font-size:13px;color:var(--muted);font-weight:300;padding:34px 10px;letter-spacing:1px;}
   /* 近期吉日 */
   .luck-intro{font-size:12.5px;color:var(--ink-2);font-weight:300;line-height:1.7;margin:2px 2px 13px;}
   .tb-row.luck .tb-dd.big b{color:var(--gold-d);font-weight:600;}
@@ -2595,7 +2595,6 @@
               </div>
               <div class="hl-care" id="hl-care"></div>
               <div class="jqn-dots" id="jq-dots"></div>
-              <div class="hl-note">传统养生参考，非医疗建议</div>
             </div>
             <div class="sea-wis" id="sea-wis">
               <div class="sw-lab">今日一则</div>
@@ -2723,7 +2722,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=179"></script>
+  <script src="engine_bundle.js?v=180"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2791,7 +2790,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=179"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=180"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -6103,7 +6102,7 @@
         }
         function paintList(){
           const all=MARKS.all().slice().sort((a,b)=> MARKS.daysTo(a)-MARKS.daysTo(b));
-          if(!all.length){ listEl.innerHTML='<div class="mk-empty">还没有重点日。<br>记下生日、纪念日或要紧的提醒，会在日历上为你点亮。</div>'; updateCue(0); return; }
+          if(!all.length){ listEl.innerHTML='<div class="mk-empty"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.45"><path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></svg><p>尚无重点日</p></div>'; updateCue(0); return; }
           listEl.innerHTML=all.map((m)=>{ const c=MARKS.CATS[m.cat]||{}, n=MARKS.daysTo(m);
             return '<div class="mk-item">'
               + '<span class="mk-dot"></span>'
