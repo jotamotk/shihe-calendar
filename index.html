@@ -446,15 +446,6 @@
   .mine-ic{width:19px;height:19px;flex:none;color:var(--gold-d);opacity:.9;}
   .mine-it-t{flex:1;}
   .mine-go{color:var(--muted);font-size:16px;line-height:1;opacity:.85;}
-  /* 产品说明:点开才展开,收起时只有一行标题 */
-  .mine-faq{border-bottom:1px solid var(--line);}
-  .mine-faq:last-child{border-bottom:none;}
-  .mine-faq>button{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:16px;background:none;border:none;color:var(--ink);font-size:15px;text-align:left;cursor:pointer;}
-  .mine-faq>button .q{flex:1;}
-  .mine-faq>button .cv{color:var(--muted);font-size:13px;transition:transform .18s;}
-  .mine-faq.on>button .cv{transform:rotate(90deg);}
-  .mine-faq .a{display:none;padding:0 16px 16px 16px;font-size:13.5px;line-height:1.95;color:var(--ink-2);font-weight:300;}
-  .mine-faq.on .a{display:block;}
   .mine-foot{text-align:center;font-size:10.5px;color:var(--muted);font-weight:300;line-height:1.9;padding:14px 20px 0;}
   .mine-foot b{color:var(--ink-2);font-weight:400;}
   /* ===== 解读页 · 免费命书速览(复用 .rp-* 卡片样式，只补少量专属类)===== */
@@ -1917,7 +1908,7 @@
   @font-face{font-family:RDSerif;font-weight:700;font-style:normal;font-display:swap;src:url("assets/fonts/notoserif-Bold.woff") format("woff");}
   /* ===== 解读页 · 纸本通书(2026-09 重设计:浅纸 + 赭金单主色;内容与引擎不变) ===== */
   .rd-screen{
-    --rd-paper:#EEE9DF; --rd-paper2:#E5DFD2; --rd-card:#F6F2EA; --rd-grid:rgba(120,96,60,.07);
+    --rd-paper:#F1F0EB; --rd-paper2:#E8E7E0; --rd-card:#FAFAF7; --rd-grid:rgba(110,104,88,.06);
     --rd-ink:#1F1C17; --rd-ink2:#48423A; --rd-ink3:#6B6458;
     --rd-rule:#D4CBBA; --rd-rule2:#B9AE9B; --rd-on:#FFF8F0;
     --rd-acc:#86621F; --rd-acc-press:#6D4F18; --rd-acc-soft:#EFE3C8; --rd-acc-line:#CDB27A;
@@ -2155,7 +2146,7 @@
   @media (prefers-reduced-motion:reduce){#rd *{transition:none!important;}}
 
   /* ===== 分享卡 · 今日笺/年/月:纸本通书(2026-09,与解读页同一套纸、墨、赭金、宋体) ===== */
-  .share-card.sc-tA{background:#F6F2EA;background-image:repeating-linear-gradient(90deg,transparent 0 27px,rgba(120,96,60,.07) 27px 28px);border:1px solid #B9AE9B;border-radius:18px;color:#1F1C17;font-family:RDSerif,"Songti SC","STSong",serif;box-shadow:0 18px 40px rgba(0,0,0,.35);}
+  .share-card.sc-tA{background:#FAFAF7;background-image:repeating-linear-gradient(90deg,transparent 0 27px,rgba(110,104,88,.06) 27px 28px);border:1px solid #B9AE9B;border-radius:18px;color:#1F1C17;font-family:RDSerif,"Songti SC","STSong",serif;box-shadow:0 18px 40px rgba(0,0,0,.35);}
   .share-card.sc-tA .xp{padding:24px 24px 20px;}
   .share-card.sc-tA .xp-wash,.share-card.sc-tA .xp-wash2,.share-card.sc-tA .xp-grain,.share-card.sc-tA .xp-mk{display:none;}
   .share-card.sc-tA .xp-brand{font-size:16px;font-weight:700;letter-spacing:4px;color:#1F1C17;gap:10px;}
@@ -2687,15 +2678,11 @@
         <!-- 每日提醒:仅原生壳+已录生辰显示(Web/示例态隐藏;本地通知,零上传) -->
       </div>
       <div class="mine-grp">说　明</div>
-      <div class="mine-list" id="mine-faq">
-        <div class="mine-faq"><button type="button"><span class="q">这份内容是怎么来的</span><span class="cv">›</span></button>
-          <div class="a">按你的出生年月日与时辰排出四柱，依传统历法与命理推演，再换成日常说法呈现。每一条判断在页面里都能看到对应的干支依据。全部在本机计算，不联网、不上传。</div></div>
-        <div class="mine-faq"><button type="button"><span class="q">四个页面分别看什么</span><span class="cv">›</span></button>
-          <div class="a">日历：今天的能量、宜与缓、黄历宜忌。<br>解读：本命（你是什么样的人）、流年（今年与未来的节奏）、调养（眼下节气怎么养）。<br>工具箱：挑日子、节气、三伏三九、重点日、老黄历。<br>我的：生辰信息、每日提醒、今日状态。</div></div>
-        <div class="mine-faq"><button type="button"><span class="q">数据存在哪里</span><span class="cv">›</span></button>
-          <div class="a">出生信息与设置只保存在你这台设备上，不会发送到任何服务器，也没有账号。卸载或清除浏览器数据即全部消失，我们这边不留副本，也无法找回。</div></div>
-        <div class="mine-faq"><button type="button"><span class="q">它能做什么、不做什么</span><span class="cv">›</span></button>
-          <div class="a">它以描述为主：讲你的性情、节奏、容易遇到的处境，供你自己对照。<br>它不预测具体事件，不替你做医疗、投资、婚恋决定；身体不适请就医，钱与合同的事请咨询专业人士。</div></div>
+      <div class="mine-list">
+        <a class="mine-it" href="about.html#source"><span class="mine-it-t">内容来源</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#usage"><span class="mine-it-t">使用说明</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#data"><span class="mine-it-t">数据与隐私</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#disclaimer"><span class="mine-it-t">免责声明</span><span class="mine-go">›</span></a>
       </div>
       <div class="mine-grp">条　款</div>
       <div class="mine-list">
@@ -2712,18 +2699,8 @@
     </nav>
   </div>
 
-  <script>
-    // 我的·产品说明:点标题展开/收起(同时只开一条)
-    document.addEventListener('click', function(e){
-      var b = e.target.closest('#mine-faq .mine-faq > button'); if(!b) return;
-      var it = b.parentNode, open = it.classList.contains('on');
-      it.parentNode.querySelectorAll('.mine-faq.on').forEach(function(x){ x.classList.remove('on'); });
-      if(!open) it.classList.add('on');
-    });
-  </script>
-
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=174"></script>
+  <script src="engine_bundle.js?v=175"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2791,7 +2768,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=174"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=175"></scr'+'ipt>');
     })();
   </script>
   <script>

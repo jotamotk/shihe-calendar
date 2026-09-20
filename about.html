@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0D0B09">
+<meta name="color-scheme" content="dark">
+<title>使用说明 · 顺时黄历</title>
+<style>
+  :root{
+    --bg:#0B0B0C;--card:#17161A;--ink:#F1EDE6;--ink-2:#C2BDB3;--muted:#948F86;
+    --line:#262529;--line-2:#33323A;--gold:#C8AC78;--gold-d:#E6CF9E;--gold-soft:#201C14;--gold-line:#4A4028;
+    --serif:'Songti SC','STSong','Source Han Serif SC','Noto Serif CJK SC',Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','HarmonyOS Sans SC','Source Han Sans SC','Noto Sans CJK SC','Microsoft YaHei',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--ink-2);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+  body{line-height:1.85;font-size:15px;font-weight:300;padding:0 0 60px;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 22px;}
+  .top{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg) 72%,transparent);padding:14px 0 12px;}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--gold-d);text-decoration:none;font-size:13.5px;font-weight:400;padding:8px 4px;}
+  .back:active{opacity:.6;}
+  header{text-align:center;padding:20px 0 26px;border-bottom:1px solid var(--line);margin-bottom:26px;}
+  .seal{width:46px;height:46px;border-radius:13px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:23px;color:#231A0C;background:linear-gradient(135deg,var(--gold-d),var(--gold));box-shadow:0 8px 22px -8px rgba(205,168,98,.55);}
+  h1{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:2px;color:var(--ink);margin-bottom:10px;}
+  .meta{font-size:12px;color:var(--muted);letter-spacing:.5px;}
+  .lead{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:26px;font-size:14px;color:var(--ink-2);line-height:1.9;}
+  .lead b{color:var(--gold-d);font-weight:500;}
+  h2{font-family:var(--serif);font-size:17px;font-weight:500;letter-spacing:1px;color:var(--ink);margin:28px 0 12px;padding-left:12px;border-left:3px solid var(--gold);}
+  p{margin:10px 0;}
+  ul{margin:10px 0 10px 4px;list-style:none;}
+  li{position:relative;padding-left:18px;margin:8px 0;}
+  li::before{content:'·';position:absolute;left:4px;top:-1px;color:var(--gold);font-weight:700;}
+  strong{color:var(--ink);font-weight:500;}
+  .callout{background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:12px;padding:14px 16px;margin:16px 0;font-size:13.5px;color:var(--ink-2);}
+  .fillin{color:var(--gold-d);border-bottom:1px dashed var(--gold-line);}
+  .foot{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--muted);line-height:1.8;}
+  a.inl{color:var(--gold-d);text-decoration:none;border-bottom:1px solid var(--gold-line);}
+</style>
+</head>
+<body>
+  <div class="top"><div class="wrap"><a class="back" href="./index.html">‹ 返回顺时黄历</a></div></div>
+  <div class="wrap">
+    <header>
+      <div class="seal">顺</div>
+      <h1>使用说明</h1>
+      <div class="meta">顺时黄历 &nbsp;|&nbsp; 内容来源 · 使用说明 · 数据与隐私 · 免责声明</div>
+    </header>
+<section id="source">
+  <h2>内容来源</h2>
+  <p>本应用依据你录入的出生年月日、时刻与出生地经度排定四柱，按传统历法与命理体例推演，结论以日常语言呈现；页面内每条判断均标注对应的干支依据，可自行核对。</p>
+  <p>历法、节气与干支取自公开天文算法库；推演与文案组织在本机完成，不依赖任何服务器。</p>
+</section>
+<section id="usage">
+  <h2>使用说明</h2>
+  <p><b>日历</b>　当日能量、宜与缓、黄历宜忌与节气节日；点选任意日期可查看当日详情。</p>
+  <p><b>解读</b>　分三卷：本命（性情与生活各面）、流年（今年与未来年份的节奏）、调养（眼下节气的起居）。</p>
+  <p><b>工具箱</b>　近期吉日（可按搬家、签约、考试等事项筛选）、二十四节气、三伏三九、重点日、老黄历、方位罗盘。</p>
+  <p><b>我的</b>　生辰信息、每日提醒、今日状态分享。</p>
+</section>
+<section id="data">
+  <h2>数据与隐私</h2>
+  <p>出生信息与各项设置仅保存在本机（浏览器本地存储或设备内），不设账号，不上传服务器。</p>
+  <p>卸载应用或清除浏览器数据后本机记录即被清除，开发者不留副本，亦无法协助恢复。</p>
+  <p>详细条款见<a href="privacy.html">隐私政策</a>。</p>
+</section>
+<section id="disclaimer">
+  <h2>免责声明</h2>
+  <p>本应用为传统历法与民俗文化的整理与呈现，属文化与生活方式参考，不构成医疗、投资、法律或婚恋等专业建议。</p>
+  <p>内容以描述为主，不对具体事件作出预测；如遇身体不适请咨询医疗专业人士，涉及资金与合同事项请咨询相应专业人士。</p>
+</section>
+
+</div>
+</body>
+</html>
