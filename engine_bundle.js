@@ -16288,7 +16288,9 @@ var RhythmEngine = (() => {
           const isPrimary = i === 0;
           const isAux = weight < 0.5;
           const tier = isPrimary ? "primary" : isAux ? "aux" : "mid";
-          const badge = isPrimary ? "\u9996\u9009" : isAux ? "\u70B9\u7F00" : "\u5E38\u7528";
+          const isTiaohou = !isPrimary && wx === mj.tiaohouWx;
+          const badge = isPrimary ? "\u9996\u9009" : isTiaohou ? "\u8C03\u5019" : isAux ? "\u70B9\u7F00" : "\u5E38\u7528";
+          const tiaohouUse = isTiaohou ? ["\u706B"].includes(wx) ? "\u8FD9\u4E00\u9879\u662F\u7528\u6765\u6696\u5C40\u7684\uFF0C\u4E0D\u662F\u7528\u6765\u8865\u529B\u6C14\uFF1A\u591A\u6652\u592A\u9633\u3001\u52A8\u4E00\u52A8\u3001\u5403\u6E29\u70ED\u7684\u3001\u5F80\u5357\u5411\u9633\u5904\u5F85\u7740\u5373\u53EF\u3002" : "\u8FD9\u4E00\u9879\u662F\u7528\u6765\u8C03\u8282\u5BD2\u71E5\u7684\uFF0C\u4E0D\u662F\u7528\u6765\u8865\u529B\u6C14\uFF1A\u4ECE\u73AF\u5883\u3001\u4F5C\u606F\u4E0E\u996E\u98DF\u4E0A\u53D6\u7528\u5373\u53EF\u3002" : "";
           return {
             wx,
             isPrimary,
@@ -16296,6 +16298,8 @@ var RhythmEngine = (() => {
             tier,
             badge,
             weight,
+            isTiaohou,
+            tiaohouUse,
             keyword: info.keyword,
             color: info.color,
             godName: god.name,
@@ -16347,7 +16351,8 @@ var RhythmEngine = (() => {
         const primary = WX_INFO[mj.primaryXi];
         const xiColors = (mj.xiYong || []).map((wx, i) => {
           const wgt = xiW[wx] ?? 1;
-          return { wx, name: WX_COLOR[wx].name, hex: WX_COLOR[wx].hex, weight: wgt, badge: i === 0 ? "\u9996\u9009" : wgt < 0.5 ? "\u70B9\u7F00" : "\u5E38\u7528" };
+          const th = i > 0 && wx === mj.tiaohouWx;
+          return { wx, name: WX_COLOR[wx].name, hex: WX_COLOR[wx].hex, weight: wgt, badge: i === 0 ? "\u9996\u9009" : th ? "\u8C03\u5019" : wgt < 0.5 ? "\u70B9\u7F00" : "\u5E38\u7528" };
         });
         const others = xiColors.slice(1);
         const colorAdvice = `\u968F\u8EAB\u5E26\u4E00\u70B9\u300C${mj.xiColor.name}\u300D${others.length ? "\uFF0C\u517C\u4E00\u70B9" + others.map((c) => `\u300C${c.name}\u300D`).join("") : ""}\uFF1A\u5B89\u795E\u3001\u5B9A\u5FC3\u3001\u5229\u6C9F\u901A\u3002\u6750\u8D28\u9009 ${primary.material} \u4E00\u7C7B` + (others.length ? `\uFF0C\u517C\u914D ${others.map((c) => (WX_INFO[c.wx].material || "").split(" \xB7 ")[0]).filter(Boolean).join(" \xB7 ")}` : "") + `\uFF1B\u505A\u6210\u624B\u4E32\u3001\u540A\u5760\u7B49\u8D34\u8EAB\u5C0F\u4EF6\u6700\u597D\u3002`;

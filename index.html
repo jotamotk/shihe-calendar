@@ -2118,6 +2118,9 @@
   #rd .km-v{font-family:var(--rd-serif);font-size:11px;fill:var(--rd-acc);font-weight:700;}
   #rd .rd-mnote{margin-top:14px;padding-top:12px;border-top:1px dashed var(--rd-rule2);font-family:var(--rd-serif);font-size:15px;color:var(--rd-ink);letter-spacing:.5px;}
   #rd .rd-mnote b{color:var(--rd-ink3);font-size:13px;font-weight:700;letter-spacing:2px;margin-right:10px;}
+  #rd .rd-thnote{margin:18px 0 4px;padding:14px 16px;border:1px solid var(--rd-accLine,var(--rd-acc-line));border-radius:12px;background:var(--rd-acc-soft);
+    font-family:var(--rd-serif);font-size:14.5px;line-height:1.85;color:var(--rd-ink2);}
+  #rd .rd-thnote b{display:block;font-size:13px;letter-spacing:2px;color:var(--rd-acc);margin-bottom:5px;}
   #rd .rd-mkey{margin-top:16px;padding-top:14px;border-top:1px dashed var(--rd-rule2);}
   #rd .rd-mkey h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:10px;}
   #rd .rd-mkey ul{list-style:none;}
@@ -2330,7 +2333,6 @@
             </div>
 
             <button class="share-btn" id="t-share">生成今日卡片</button>
-            <div class="cal-fine">传统历法与民俗文化整理，不构成医疗 / 投资 / 婚恋 / 法律建议，不承诺任何结果</div>
           </div>
         </div>
         <nav class="tabbar" aria-label="主导航">
@@ -2515,7 +2517,7 @@
 
           <div class="tb-legal">
             <div class="tb-legal-links"><a href="./privacy.html">隐私政策</a><a href="./terms.html">用户协议</a></div>
-            所载内容为传统历法与民俗文化整理，不构成医疗 / 投资 / 婚恋 / 法律等专业建议，不承诺任何结果<br>本应用不提供算命、占卜或有偿测算服务<br>出生信息与全部计算结果只存在你的设备本机 · 不上传、不外传
+            全部本机计算 · 不上传
           </div>
          </div>
 
@@ -2676,7 +2678,6 @@
             <div class="rp-page on" data-p="care" id="rp-p-care"></div>
           </div>
         </div>
-        <div class="rp-foot">传统历法与民俗文化整理，不构成专业建议 · 全部本机计算，不上传</div>
       </div>
     </div>
   </div>
@@ -2704,7 +2705,6 @@
         <a class="mine-it" href="terms.html"><span class="mine-it-t">用户协议</span><span class="mine-go">›</span></a>
         <a class="mine-it" href="privacy.html"><span class="mine-it-t">隐私政策</span><span class="mine-go">›</span></a>
       </div>
-      <div class="mine-foot">传统历法与民俗文化整理，不构成专业建议 · 全部本机计算，不上传</div>
     </div>
     <nav class="tabbar" aria-label="主导航">
       <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
@@ -2715,7 +2715,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=177"></script>
+  <script src="engine_bundle.js?v=178"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2783,7 +2783,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=177"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=178"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5736,6 +5736,9 @@
       /* ---------- 调养 ---------- */
       function rdCare(){
         var n=R.natal, xs=n.xiYong||[];
+        // 调候项与扶身用神混在一起容易让人看懵(如喜金水却出现火),单独点一句
+        var _th=xs.filter(function(x){ return x.isTiaohou; })[0];
+        var thNote=_th?('<div class="rd-thnote"><b>'+esc(_th.wx)+' · 调候</b>'+esc(_th.tiaohouUse||'')+'</div>'):'';
         var S=(window.APP&&APP.season)||null, H=S&&S.health, JQ=(S&&S.jieqi)||{};
         var split=function(s){ return String(s||'').split(/[、,，;；]/).map(function(x){ return x.trim(); }).filter(Boolean); };
         var uniq=function(a){ return a.filter(function(x,i){ return x&&a.indexOf(x)===i; }); };
@@ -5754,7 +5757,7 @@
         if(H) secs.push(['顺时 · 此刻「'+jq+'」', '<div class="blk"><h4>起居</h4><div class="box plain">'+esc(H.from)+'</div></div>'
           +'<div class="blk"><h4>养生要点</h4><div class="box">'+esc(H.care)+'</div></div>'
           +(H.say?'<div class="say">「'+esc(H.say)+'」</div>':'')]);
-        rdEl('rd-v-care').innerHTML=secs.map(function(s,i){ return '<div class="rd-sec"><div class="rd-sh"><span class="no">'+RD_NUM[i]+'</span><h2>'+s[0]+'</h2></div>'+s[1]+'</div>'; }).join('');
+        rdEl('rd-v-care').innerHTML=thNote+secs.map(function(s,i){ return '<div class="rd-sec"><div class="rd-sh"><span class="no">'+RD_NUM[i]+'</span><h2>'+s[0]+'</h2></div>'+s[1]+'</div>'; }).join('');
       }
 
       function buildRD(){
