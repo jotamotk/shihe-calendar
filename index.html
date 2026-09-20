@@ -270,12 +270,16 @@
   .share-btn{display:block;width:100%;margin:14px 0 4px;padding:13px;border:1px solid var(--gold-line);background:var(--gold-soft);border-radius:14px;font-family:inherit;font-size:12.5px;color:var(--gold-d);font-weight:500;letter-spacing:1px;cursor:pointer;transition:all .25s var(--ease);}
   .share-btn:hover{background:var(--sage-soft);border-color:var(--sage);}
   .cal-fine{text-align:center;font-size:10px;color:var(--muted);font-weight:300;letter-spacing:.5px;padding:16px 0 6px;}
-  .share-ov{position:fixed;inset:0;max-width:430px;margin:0 auto;z-index:130;background:rgba(6,6,7,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s var(--ease);}
+  .th-orbw{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .th-score{display:flex;align-items:baseline;gap:2px;}
+  .th-score b{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--ink);}
+  .th-score span{font-size:10px;color:var(--muted);}
+  .share-ov{position:fixed;inset:0;max-width:430px;margin:0 auto;z-index:130;background:#F1F0EB;display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s var(--ease);overflow:auto;}
   .share-ov.on{display:flex;opacity:1;}
   /* 主题切换胶囊 */
-  .share-kind{display:flex;gap:4px;margin-bottom:12px;padding:3px;border-radius:13px;background:rgba(255,255,255,.07);}
-  .share-kind button{font-family:inherit;font-size:14px;letter-spacing:2px;color:rgba(241,237,230,.66);background:none;border:0;border-radius:10px;padding:8px 26px;min-height:40px;cursor:pointer;transition:all .2s var(--ease);}
-  .share-kind button.on{color:#241c0d;background:linear-gradient(135deg,var(--gold-d),var(--gold));font-weight:600;}
+  .share-kind{display:flex;margin-bottom:16px;border:1.5px solid #26282d;border-radius:11px;overflow:hidden;}
+  .share-kind button{font-family:var(--serif);font-size:15px;letter-spacing:2px;color:#26282d;background:none;border:0;padding:0 30px;min-height:40px;cursor:pointer;transition:all .2s var(--ease);}
+  .share-kind button.on{color:#F1F0EB;background:#26282d;font-weight:700;}
   .share-themes{display:flex;gap:7px;margin-bottom:15px;}
   .share-themes button{font-family:inherit;font-size:11px;letter-spacing:1.5px;color:rgba(241,237,230,.62);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 15px;cursor:pointer;transition:all .22s var(--ease);}
   .share-themes button.on{color:#241c0d;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;font-weight:600;}
@@ -387,12 +391,12 @@
   .sc-tC .sc-cbar .sc-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-d));}
   .sc-tC .sc-cfoot{margin-top:20px;padding-top:14px;border-top:1px dashed var(--gold-line);display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);letter-spacing:1px;}
 
-  .share-acts{display:flex;flex-direction:column;align-items:center;gap:11px;margin-top:16px;}
-  .share-tip{font-size:10.5px;color:rgba(241,237,230,.7);font-weight:300;letter-spacing:.5px;}
-  .share-go{background:linear-gradient(180deg,var(--gold),var(--gold-d));border:none;color:#1a1712;font-family:inherit;font-size:13px;font-weight:600;border-radius:22px;padding:11px 42px;cursor:pointer;letter-spacing:3px;box-shadow:0 6px 18px rgba(200,172,120,.28);transition:transform .15s,box-shadow .25s;}
+  .share-acts{display:flex;align-items:center;gap:12px;margin-top:20px;}
+  .share-tip{font-size:10.5px;color:#7C7A73;font-weight:300;letter-spacing:.5px;}
+  .share-go{background:#26282d;border:1.5px solid #26282d;color:#F1F0EB;font-family:var(--serif);font-size:15px;font-weight:700;border-radius:13px;padding:14px 46px;cursor:pointer;letter-spacing:3px;transition:transform .15s;}
   .share-go:active{transform:translateY(1px);}
-  .share-close{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);color:#fff;font-family:inherit;font-size:12px;border-radius:20px;padding:8px 28px;cursor:pointer;font-weight:300;letter-spacing:2px;transition:background .25s;}
-  .share-close:hover{background:rgba(255,255,255,.22);}
+  .share-close{background:none;border:1.5px solid #26282d;color:#26282d;font-family:var(--serif);font-size:15px;border-radius:13px;padding:13px 40px;cursor:pointer;font-weight:400;letter-spacing:3px;transition:background .25s;}
+  .share-close:hover{background:rgba(38,40,45,.06);}
   /* D · 本周能量回顾周卡 */
   .share-card.sc-tD{background:radial-gradient(130% 88% at 50% 0%,#1a1814 0%,#0b0a09 62%);border:1px solid var(--line);padding:26px 22px;min-height:372px;}
   .sc-tD .sc-wkhead{display:flex;align-items:center;gap:11px;}
@@ -2124,9 +2128,11 @@
   #rd .rd-mkey{margin-top:16px;padding-top:14px;border-top:1px dashed var(--rd-rule2);}
   #rd .rd-mkey h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:10px;}
   #rd .rd-mkey ul{list-style:none;}
-  #rd .rd-mkey li{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed var(--rd-rule2);}
+  #rd .rd-mkey li{display:grid;grid-template-columns:58px 1fr;gap:4px 12px;padding:11px 0;border-bottom:1px dashed var(--rd-rule2);}
+  #rd .rd-mkey li p{grid-column:2;grid-row:1 / span 2;}
   #rd .rd-mkey li:last-child{border-bottom:0;}
-  #rd .rd-mkey li b{flex:none;font-family:var(--rd-serif);font-size:15px;font-weight:700;color:var(--rd-acc);min-width:34px;}
+  #rd .rd-mkey li b{flex:none;font-family:var(--rd-serif);font-size:15px;font-weight:700;color:var(--rd-acc);}
+  #rd .rd-mkey li i{flex:none;font-style:normal;font-size:11px;color:var(--rd-ink3);align-self:flex-start;margin-top:4px;white-space:nowrap;}
   #rd .rd-mkey li p{font-family:var(--rd-serif);font-size:15px;line-height:1.75;color:var(--rd-ink);}
   #rd .rd-km{margin-top:16px;border-top:1px dashed var(--rd-rule2);padding-top:14px;}
   #rd .rd-km h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:9px;}
@@ -2163,6 +2169,8 @@
   .share-card.sc-tA .xp{padding:24px 24px 20px;}
   .share-card.sc-tA .xp-wash,.share-card.sc-tA .xp-wash2,.share-card.sc-tA .xp-grain,.share-card.sc-tA .xp-mk{display:none;}
   .share-card.sc-tA .xp-brand{font-size:16px;font-weight:700;letter-spacing:4px;color:#1F1C17;gap:10px;}
+  .share-card.sc-tA .xp-word{text-align:center;font-family:var(--serif);font-size:15px;letter-spacing:3px;color:#86621F;}
+  .share-card.sc-tA .xp-cue{text-align:center;font-family:var(--serif);font-size:16px;line-height:1.7;color:#26282d;margin:12px 4px 16px;}
   .share-card.sc-tA .xp-seal{display:grid;place-items:center;width:30px;height:30px;border:1.5px solid #86621F;border-radius:4px;color:#86621F;font-size:17px;font-weight:700;letter-spacing:0;transform:rotate(-4deg);}
   .share-card.sc-tA .xp-date{font-family:"PingFang SC",-apple-system,sans-serif;font-size:12.5px;letter-spacing:1px;color:#6B6458;}
   .share-card.sc-tA .xp-hair{height:5px;background:none;border-top:2px solid #1F1C17;border-bottom:1px solid #1F1C17;margin:14px 0 0;}
@@ -2272,7 +2280,7 @@
               <div class="wdg-body"><div class="wdg-body-in">
                 <!-- 光球 + 今日宜/缓(直接给建议:一眼看完;去掉冗余的状态一句) -->
                 <div class="today-hero">
-                  <div class="th-orb" id="w-orb"></div>
+                  <div class="th-orbw"><div class="th-orb" id="w-orb"></div><div class="th-score"><b id="w-score">—</b><span>分</span></div></div>
                   <div class="th-side">
                     <div class="yi-row"><span class="yi-k">宜</span><span class="yi-v" id="w-yi">静养蓄力 · 处理琐事</span></div>
                     <div class="yi-row"><span class="yi-k huan">缓</span><span class="yi-v" id="w-huan">无须刻意避忌</span></div>
@@ -2715,7 +2723,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=178"></script>
+  <script src="engine_bundle.js?v=179"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2783,7 +2791,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=178"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=179"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3364,6 +3372,7 @@
         else { fest.style.display='none'; }
         // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)。整体能量值存 dataset,供「按住浮出 0-100」读取
         if($('w-orb')){ $('w-orb').innerHTML = energyOrb(d.e); $('w-orb').dataset.e = d.e; bindOrbPeek(); }
+        if($('w-score')) $('w-score').textContent = d.e;
         // 今日一句:干货生成器主句(说中你+能照做)
         // 折叠态角标:改显能量词(不再裸露分数,与去分数一致)
         if($('w-score-chip')) $('w-score-chip').innerHTML = energyOrb(d.e, 26);   // 收起态显示小能量球(替代原状态标语)
@@ -3712,12 +3721,14 @@
         var XORD=['career','money','love','study'];
         var xtips=XORD.map(function(k){var lab=(XDOM.find(function(p){return p[0]===k;})||[])[1];var f=(d.fortune&&d.fortune[k])||{};var ln=f.line; if(k==='love'){ var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){} ln=rel==='single'?(f.lineSingle||f.line):rel==='partner'?(f.linePartner||f.line):''; } return {lab:lab,tone:f.tone||'',line:ln||''};}).filter(function(x){return x.line;});
         var xtipsHtml=xtips.map(function(t){return '<div class="xp-tip"><span class="xp-k">'+t.lab+'</span><span class="xp-v">'+esc(t.line)+'</span></div>';}).join('');
-        var xorb=(typeof energyOrb==='function')?energyOrb(d.e,104,true):ringSVG(d.e);
+
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div>'
           +'<div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand"><span class="xp-seal">顺</span>顺时黄历</div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历</div><div class="xp-date">'+M+'月'+d.g+'日 · 周'+wd+'</div></div>'
           +'<div class="xp-hair"></div>'
-          +'<div class="xp-orb">'+xorb+'</div>'
+          +'<div class="xp-year"><b>'+(d.e||0)+'</b><span>分</span></div>'
+          +(d.word?'<div class="xp-word">'+esc(d.word)+'</div>':'')
+          +(d.cueLine?'<div class="xp-cue">'+esc(d.cueLine)+'</div>':'')
           +(xtipsHtml?'<div class="xp-tips">'+xtipsHtml+'</div>':'')
           +'<div class="xp-foot"><span class="xp-xi"><span class="xp-dot" style="background:'+xi+'"></span>'+(d.today?'今日':'该日')+'宜色 · '+esc(XINAME||'')+'</span></div>'
           +'</div></div>';
@@ -3735,7 +3746,7 @@
         var tips=sigTips(o.sigs,3);
         var doLine=(o.yi&&o.yi.length)?esc(o.yi[0]):'';
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand"><span class="xp-seal">顺</span>顺时黄历</div><div class="xp-date">'+esc(o.gz||'')+(o.gz?'年':'')+'</div></div>'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历</div><div class="xp-date">'+esc(o.gz||'')+(o.gz?'年':'')+'</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-year"><b>'+o.year+'</b><span>年</span></div>'
           +(tips?'<div class="xp-tips">'+tips+'</div>':'')
@@ -3745,7 +3756,7 @@
       function buildMonthShare(o){
         var tips=sigTips(o.sigs,2,'流月');
         return '<div class="xp"><div class="xp-wash"></div><div class="xp-wash2"></div><div class="xp-grain"></div><div class="xp-in">'
-          +'<div class="xp-top"><div class="xp-brand"><span class="xp-seal">顺</span>顺时黄历</div><div class="xp-date">'+o.year+'年</div></div>'
+          +'<div class="xp-top"><div class="xp-brand">顺时黄历</div><div class="xp-date">'+o.year+'年</div></div>'
           +'<div class="xp-hair"></div>'
           +'<div class="xp-year"><b>'+o.m+'</b><span>月</span></div>'
           +(tips?'<div class="xp-tips">'+tips+'</div>':'')
@@ -5645,10 +5656,13 @@
         });
       }
       // 关键月份逐条(2026-09-20:月档只有一条曲线太简单,补上今年主线落在哪几个月、各一句)
-      function rdKeyMonthLines(ms){
-        var rows=(ms||[]).filter(function(m){ return (m.signals||[]).length && /流年|与流年支相同/.test((m.signals[0].basis||'')); })
-          .slice(0,4)
-          .map(function(m){ return '<li><b>'+m.month+'月</b><p>'+esc(m.signals[0].text)+'</p></li>'; });
+      // 关键月份:用引擎 keyMonths(与年卡同判据的那三个月),不再把十二个月全铺出来
+      function rdKeyMonthLines(ms, keys){
+        var byM={}; (ms||[]).forEach(function(m){ byM[m.month]=m; });
+        var rows=(keys||[]).map(function(k){
+          var m=byM[k.month]; if(!m||!(m.signals||[]).length) return '';
+          return '<li><b>'+k.month+'月</b><i>'+esc(k.tag||'')+'</i><p>'+esc(m.signals[0].text)+'</p></li>';
+        }).filter(Boolean);
         if(!rows.length) return '';
         return '<div class="rd-mkey"><h4>关键月份</h4><ul>'+rows.join('')+'</ul></div>';
       }
@@ -5685,7 +5699,7 @@
           +'<polyline points="'+pts+'" fill="none" stroke="var(--rd-ink)" stroke-width="1.6" stroke-linejoin="round"/>'
           +dots+labs+'</svg></div>'
           +(goodTx?'<div class="rd-mnote"><b>状态好的月份</b>'+goodTx+'</div>':'<div class="rd-mnote">这一年十二个月起伏不大，没有特别突出的月份。</div>')
-          +rdKeyMonthLines(ms)
+          +rdKeyMonthLines(ms, yObj.keyMonths)
           +'</div>';
         rdSlide(dir, html, function(){
           rdBind(function(g){ var y2=RD.MY.y+g; if(y2<birthY||y2>maxY) return; RD.MY={y:y2,m:RD.MY.m}; rdMonth(g); },
@@ -5916,6 +5930,7 @@
         if(!P) P=window.APP_PERSON||null;
         const chip=$('tb-c-luck');
         if(!S || typeof RE.energyRange!=='function' || !P){ list.innerHTML='<div class="tb-empty">近期吉日需先录入生辰</div>'; return; }
+        const COLD=['理发清洁','祈福还愿','祭扫安葬'];
         const WHY={天赦:'一年少数的「赦日」，宜静心复盘、翻篇重启',天愿:'传统视为顺遂之日，宜推进搁置的事',月德:'当月月德所临，护佑诸事和顺',月德合:'月德相合，和合成事、化解冲扰',天德:'当月福泽所临，传统视为诸事和顺',天德合:'天德相合，化冲解扰',三合:'与本月三合成局，众力相成、宜合作订盟',六合:'与本月六合，人事相得、宜洽谈缔结',天医:'天医星临，宜求医、疗养、安康',母仓:'母仓育物，宜栽种、蓄养、积贮',月恩:'月中恩泽所钟，得贵人恩助',时德:'四时旺德，宜庆贺、施惠',五富:'五谷丰盈，宜求财、开市、经营',民日:'利于百姓，诸事顺遂'};
         const STRONG=Object.keys(WHY), WK=['日','一','二','三','四','五','六'], WIN=91;
         // 场景 = 现代事项标签(engine/folk.js modernYi),选中后只留该事项的吉日
@@ -5941,8 +5956,11 @@
             const why = WHY[gods[0]] || (gj.grade==='S' ? '黄历上吉之辰，宜隆重办要紧事、祈福和解' : '黄道当值，诸事可为');
             // 宜项转成现代说法(搬家/签约/考试…),命不中再回退历注原词
             const uses = (typeof RE.modernYi==='function') ? RE.modernYi(yi,6) : [];
+            // 冷门事项(理发/祈福/安葬)不足以让一天进「挑好日子办要紧事」的名单;选了场景时另算
+            const warm = uses.filter((t)=> COLD.indexOf(t)<0);
+            if(!scene && !warm.length) continue;
             cand.push({ m:d.month, day:d.day, e:d.energy, ts:gj.tianShen||'', tt:gj.tianShenType||'', grade:gj.grade, head, gods:gods.slice(0,4), why, uses, yi:(uses.length?uses.slice(0,3):yi.slice(0,4)),
-              wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?100:0) + gods.length*2 + (d.energy>=72?2:0) + d.energy/30 });
+              wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?100:0) + gods.length*2 + warm.length*3 + (d.energy-50)/6 });
           }
           cand.sort((a,b)=> b.score-a.score);
           const pool = scene ? cand.filter((x)=> x.uses.indexOf(scene)>=0) : cand;
@@ -5953,13 +5971,12 @@
           if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 本季':'');
           if(chip && offset===0) chip.textContent= top.length? ('本季 '+top.length+' 个吉日') : '本季平稳';
           const scName=(SCENE.filter(function(kv){return kv[0]===scene;})[0]||['',''])[1];
-          if($('luck-intro')) $('luck-intro').textContent= top.length
-            ? (scene ? ('按黄历宜忌 × 你的能量，挑出这一季适合'+scName+'的日子。') : '按黄历神煞 × 你的能量，挑出这一季的好日子，把要紧事往这几天排。')
-            : (scene ? ('这一季没有适合'+scName+'的日子，可看下一季。') : '这一季没有格外突出的吉日，要紧事挑能量高的几天办即可。');
+          if($('luck-intro')) $('luck-intro').textContent= top.length ? ''
+            : (scene ? ('这一季没有适合'+scName+'的日子，可看下一季。') : '这一季没有格外突出的吉日。');
           list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">'+(scene?('本季暂无适合'+scName+'的日子'):'这一季暂无特别突出的吉日')+'</div>';
         }
         function rowHtml(x){
-          const badge = x.grade==='S' && x.head ? '<span class="lk-god" style="color:var(--gold-d);border-color:var(--gold-line)">'+esc(x.head)+'</span>' : '';
+          const badge = '';   // S 级名(天德月德临)与下方吉神标、理由句三处重复,只留吉神标
           const gods = (x.gods||[]).map((s)=>'<span class="lk-god">'+esc(s)+'</span>').join('');
           const hd = (x.ts && x.tt==='黄道') ? '<span class="lk-hd">'+esc(x.ts)+'黄道</span>' : '';
           const eCls=x.e>=72?'hi':(x.e>=56?'mid':'lo');
