@@ -273,6 +273,9 @@
   .share-ov{position:fixed;inset:0;max-width:430px;margin:0 auto;z-index:130;background:rgba(6,6,7,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s var(--ease);}
   .share-ov.on{display:flex;opacity:1;}
   /* 主题切换胶囊 */
+  .share-kind{display:flex;gap:4px;margin-bottom:12px;padding:3px;border-radius:13px;background:rgba(255,255,255,.07);}
+  .share-kind button{font-family:inherit;font-size:14px;letter-spacing:2px;color:rgba(241,237,230,.66);background:none;border:0;border-radius:10px;padding:8px 26px;min-height:40px;cursor:pointer;transition:all .2s var(--ease);}
+  .share-kind button.on{color:#241c0d;background:linear-gradient(135deg,var(--gold-d),var(--gold));font-weight:600;}
   .share-themes{display:flex;gap:7px;margin-bottom:15px;}
   .share-themes button{font-family:inherit;font-size:11px;letter-spacing:1.5px;color:rgba(241,237,230,.62);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 15px;cursor:pointer;transition:all .22s var(--ease);}
   .share-themes button.on{color:#241c0d;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;font-weight:600;}
@@ -2297,7 +2300,7 @@
                 <div class="hl2-yj-col hl2-ji"><span class="hl2-yj-k">忌</span><div class="hl2-yj-v" id="hl2-ji"></div></div>
               </div>
               <!-- 更多细节(折叠):时辰吉凶 + 神煞四法参断,默认收起(养生壳、弱化玄学,时辰仍一键可见) -->
-              <div class="hl2-more collapsible collapsed" data-wid="hlmore">
+              <div class="hl2-more collapsible" data-wid="hlmore">
                 <div class="hl2-more-h wdg-toggle">更多历法细节<svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
                 <div class="wdg-body"><div class="wdg-body-in">
                   <div class="hl2-shi">
@@ -2338,6 +2341,10 @@
         </nav>
         <!-- 分享卡 overlay(覆盖在手机内，可截图) -->
         <div class="share-ov" id="share-ov">
+          <div class="share-kind" id="share-kind">
+            <button type="button" data-k="day" class="on">今日</button>
+            <button type="button" data-k="year">今年</button>
+          </div>
           <div class="share-themes" id="share-themes">
             <button data-th="A" class="on">今日笺</button>
             <button data-th="B">请柬</button>
@@ -2684,12 +2691,13 @@
         <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日状态</span><span class="mine-go">›</span></button>
         <!-- 每日提醒:仅原生壳+已录生辰显示(Web/示例态隐藏;本地通知,零上传) -->
       </div>
-      <div class="mine-grp">说　明</div>
+      <div class="mine-grp">使 用 指 南</div>
       <div class="mine-list">
-        <a class="mine-it" href="about.html#source"><span class="mine-it-t">内容来源</span><span class="mine-go">›</span></a>
-        <a class="mine-it" href="about.html#usage"><span class="mine-it-t">使用说明</span><span class="mine-go">›</span></a>
-        <a class="mine-it" href="about.html#data"><span class="mine-it-t">数据与隐私</span><span class="mine-go">›</span></a>
-        <a class="mine-it" href="about.html#disclaimer"><span class="mine-it-t">免责声明</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#guide"><span class="mine-it-t">怎么用</span><span class="mine-val">四个页面各管一件事</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#energy"><span class="mine-it-t">每日能量</span><span class="mine-val">今天适合冲还是缓</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#pick"><span class="mine-it-t">择吉日</span><span class="mine-val">搬家签约考试挑天</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#year"><span class="mine-it-t">流年与流月</span><span class="mine-val">一年的节奏怎么看</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#data"><span class="mine-it-t">关于与隐私</span><span class="mine-go">›</span></a>
       </div>
       <div class="mine-grp">条　款</div>
       <div class="mine-list">
@@ -2707,7 +2715,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=176"></script>
+  <script src="engine_bundle.js?v=177"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2775,7 +2783,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=176"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=177"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3746,6 +3754,8 @@
       }
       function render(){
         var th=$('share-themes');
+        var kd=$('share-kind');
+        if(kd){ kd.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.k===(MODE==='year'?'year':'day')); }); }
         if(MODE==='year'||MODE==='month'){
           card.className='share-card sc-tA';
           card.innerHTML=MODE==='year'?buildYearShare(PAYLOAD):buildMonthShare(PAYLOAD);
@@ -3767,6 +3777,17 @@
         window.shihe&&window.shihe.track&&window.shihe.track('share_open',{mode:mode});
       };
       $('t-share').addEventListener('click', ()=>{ MODE='day'; PAYLOAD=null; render(); ov.classList.add('on'); window.shihe&&window.shihe.track&&window.shihe.track('share_open',{}); });
+      // 页内切换今日/今年:今年取当年那条年卡,不必回解读页另找入口
+      document.querySelectorAll('#share-kind button').forEach(function(b){
+        b.addEventListener('click', function(){
+          if(b.dataset.k==='day'){ MODE='day'; PAYLOAD=null; render(); return; }
+          try{
+            var R=(window.APP&&APP.report)||{}, ys=(R.years&&R.years.years)||[], cy=(R.years&&R.years.curYear)||new Date().getFullYear();
+            var y=ys.filter(function(x){ return x.year===cy; })[0]||ys[0];
+            if(y){ MODE='year'; PAYLOAD={ year:y.year, gz:y.ganZhi||'', sigs:y.signals||[], yi:y.yi||[] }; render(); }
+          }catch(e){}
+        });
+      });
       $('share-close').addEventListener('click', ()=> ov.classList.remove('on'));
       ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('on'); });
       (function(){
@@ -3788,7 +3809,7 @@
     (function fold(){
       const KEY='shihe_wdg_fold'; let st={};
       try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
-      const DEF={hlmore:true};  // 今日详解默认展开；老黄历「更多细节·四法参断」默认收起
+      const DEF={hlmore:true};  // 今日详解与老黄历「更多细节·四法参断」都默认展开(2026-09-20:折叠导致用户以为内容变少)
       document.querySelectorAll('.widgets .collapsible').forEach((w)=>{
         const id=w.dataset.wid;
         const collapsed=(id in st)?st[id]:!!DEF[id];
