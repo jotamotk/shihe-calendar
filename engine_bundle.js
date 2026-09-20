@@ -13847,7 +13847,7 @@ var RhythmEngine = (() => {
           \u5211: "\u804C\u573A\u4E0D\u987A\u3002\u662F\u975E\u3001\u6469\u64E6\u591A\uFF0C\u4E8B\u60C5\u63A8\u4E0D\u987A\uFF1B\u628A\u81EA\u5DF1\u7684\u4E8B\u505A\u624E\u5B9E\uFF0C\u4E0D\u8981\u5377\u8FDB\u522B\u4EBA\u7684\u4E8B\u3002",
           \u5408\u559C: "\u4E8B\u4E1A\u6709\u9760\u3002\u73AF\u5883\u5408\u610F\u3001\u6709\u4EBA\u63A5\u5E94\uFF0C\u8C08\u4E8B\u987A\uFF1B\u60F3\u4E89\u53D6\u7684\u8FD9\u5E74\u5F00\u53E3\u5BB9\u6613\u6210\u3002",
           \u5408\u5FCC: "\u73AF\u5883\u7F20\u4EBA\u3002\u4EBA\u60C5\u4E8B\u52A1\u591A\u3001\u6548\u7387\u4F4E\uFF1B\u80FD\u63A8\u7684\u6742\u4E8B\u63A8\u6389\uFF0C\u5B88\u4F4F\u81EA\u5DF1\u7684\u6B63\u4E8B\u3002",
-          \u5BB3: "\u5F53\u5FC3\u80CC\u540E\u6709\u4EBA\u4F7F\u7ECA\u3002\u53F0\u9762\u4E0B\u7684\u52A8\u4F5C\u591A\uFF1B\u91CD\u8981\u7684\u4E8B\u7559\u75D5\uFF0C\u53E3\u5934\u627F\u8BFA\u522B\u5F53\u771F\u3002",
+          \u5BB3: "\u5F53\u5FC3\u6697\u5904\u7684\u6D88\u8017\uFF1A\u6709\u4EBA\u4E0D\u5F53\u9762\u8BF4\u3001\u7B54\u5E94\u8FC7\u7684\u4E8B\u4E0D\u8BA4\u8D26\u3002\u8981\u7D27\u7684\u4E8B\u843D\u5230\u6587\u5B57\u4E0A\uFF0C\u522B\u53EA\u51ED\u53E3\u5934\u3002",
           \u4F0F: "\u5DE5\u4F5C\u539F\u5730\u6253\u8F6C\u3002\u4E8B\u60C5\u91CD\u590D\u3001\u8FDB\u5C55\u6162\uFF1B\u8FD9\u5E74\u9002\u5408\u6253\u5E95\u5B50\uFF0C\u522B\u6307\u671B\u5927\u8DE8\u6B65\u3002",
           \u81EA: "\u5DE5\u4F5C\u4E0A\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u94BB\u725B\u89D2\u5C16\uFF0C\u5065\u5EB7\u3001\u72B6\u6001\u5BB9\u6613\u900F\u652F\u3002"
         },
@@ -13925,7 +13925,7 @@ var RhythmEngine = (() => {
             "\u5E94\u916C\u548C\u7410\u4E8B\u591A\uFF0C\u5FD9\u4F46\u6CA1\u7ED3\u679C\u3002\u6BCF\u5929\u5148\u505A\u4E00\u4EF6\u6B63\u4E8B\uFF0C\u518D\u5E94\u4ED8\u5176\u4ED6\u3002"
           ],
           \u5BB3: [
-            "\u53F0\u9762\u4E0B\u7684\u52A8\u4F5C\u591A\uFF0C\u53E3\u5934\u627F\u8BFA\u9760\u4E0D\u4F4F\u3002\u8981\u7D27\u7684\u4E8B\u8D70\u4E66\u9762\uFF0C\u7559\u4E00\u4EFD\u5E95\u3002",
+            "\u6697\u5904\u7684\u6D88\u8017\u591A\uFF1A\u6709\u4EBA\u4E0D\u5F53\u9762\u8BF4\u3001\u53E3\u5934\u7B54\u5E94\u4E0D\u7B97\u6570\u3002\u8981\u7D27\u7684\u4E8B\u8D70\u4E66\u9762\uFF0C\u7559\u4E00\u4EFD\u5E95\u3002",
             "\u8FD9\u4E2A\u6708\u5BB9\u6613\u88AB\u8F6C\u8FF0\u5E26\u504F\u3002\u5173\u952E\u4FE1\u606F\u81EA\u5DF1\u8DDF\u6E90\u5934\u786E\u8BA4\u4E00\u904D\u3002",
             "\u9762\u4E0A\u5BA2\u6C14\u3001\u80CC\u540E\u53E6\u4E00\u5957\u3002\u628A\u627F\u8BFA\u53D8\u6210\u6587\u5B57\uFF0C\u522B\u53EA\u8BB0\u5728\u8111\u5B50\u91CC\u3002"
           ],
@@ -14133,7 +14133,7 @@ var RhythmEngine = (() => {
             \u5211: { y: "\u4EBA\u9645\u6469\u64E6\u591A\u3002\u540C\u5B66\u3001\u5E08\u751F\u3001\u540C\u4E8B\u4E4B\u95F4\u7684\u662F\u975E\uFF0C\u522B\u5377\u8FDB\u53BB\u3002", m: "\u4EBA\u9645\u6469\u64E6\u591A\uFF0C\u662F\u975E\u7ED5\u4E0D\u5F00\u3002\u628A\u81EA\u5DF1\u90A3\u4EFD\u505A\u624E\u5B9E\u3002" },
             \u5408\u559C: { y: "\u6709\u4EBA\u63A5\u5E94\u3002\u8001\u5E08\u3001\u524D\u8F88\u3001\u670B\u53CB\u5E2E\u5F97\u4E0A\uFF0C\u60F3\u4E89\u53D6\u7684\u4E8B\u8FD9\u5E74\u5F00\u53E3\u5BB9\u6613\u6210\u3002", m: "\u8FD9\u4E2A\u6708\u597D\u5F00\u53E3\u3002\u8981\u8BF7\u6559\u3001\u8981\u4E89\u53D6\u7684\uFF0C\u672C\u6708\u63D0\u3002" },
             \u5408\u5FCC: { y: "\u4EBA\u60C5\u6742\u4E8B\u591A\u3001\u6548\u7387\u4F4E\u3002\u80FD\u63A8\u7684\u63A8\u6389\uFF0C\u5B88\u4F4F\u6B63\u4E8B\u3002", m: "\u6742\u4E8B\u7F20\u4EBA\uFF0C\u6B63\u4E8B\u63A8\u4E0D\u52A8\u3002\u5148\u505A\u8981\u7D27\u7684\uFF0C\u5176\u4F59\u5F80\u540E\u653E\u3002" },
-            \u5BB3: { y: "\u5F53\u5FC3\u80CC\u540E\u6709\u4EBA\u4F7F\u7ECA\u3002\u91CD\u8981\u7684\u4E8B\u7559\u75D5\uFF0C\u53E3\u5934\u627F\u8BFA\u522B\u5F53\u771F\u3002", m: "\u53F0\u9762\u4E0B\u7684\u52A8\u4F5C\u591A\u3002\u8981\u7D27\u7684\u4E8B\u7559\u4E2A\u8BB0\u5F55\u3002" },
+            \u5BB3: { y: "\u5F53\u5FC3\u6697\u5904\u7684\u6D88\u8017\uFF1A\u6709\u4EBA\u4E0D\u5F53\u9762\u8BF4\u3001\u7B54\u5E94\u7684\u4E8B\u4E0D\u8BA4\u8D26\u3002\u8981\u7D27\u7684\u4E8B\u7559\u75D5\u3002", m: "\u6709\u4EBA\u4E0D\u5F53\u9762\u8BF4\u3001\u7B54\u5E94\u7684\u4E8B\u4E0D\u8BA4\u8D26\u3002\u8981\u7D27\u7684\u4E8B\u7559\u4E2A\u8BB0\u5F55\u3002" },
             \u4F0F: { y: "\u539F\u5730\u6253\u8F6C\u3002\u8FDB\u5C55\u6162\uFF0C\u8FD9\u5E74\u9002\u5408\u6253\u5E95\u5B50\u3002", m: "\u8FDB\u5C55\u6162\uFF0C\u770B\u4E0D\u51FA\u53D8\u5316\u3002\u8FD9\u4E2A\u6708\u9002\u5408\u8865\u5E95\u5B50\u3002" },
             \u81EA: { y: "\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u94BB\u725B\u89D2\u5C16\u3001\u900F\u652F\u72B6\u6001\u3002", m: "\u5BB9\u6613\u94BB\u725B\u89D2\u5C16\u3001\u6B7B\u6491\u3002\u5B9A\u4E2A\u622A\u6B62\u70B9\uFF0C\u5148\u4EA4\u51FA\u6765\u3002" }
           },
@@ -14341,6 +14341,36 @@ var RhythmEngine = (() => {
         }
         return out;
       }
+      var LOVE_REL_TEXT = {
+        \u51B2\u559C: {
+          partner: "\u5173\u7CFB\u91CC\u4F1A\u6709\u8C03\u6574\uFF1A\u4F4F\u5904\u3001\u8282\u594F\u3001\u5206\u5DE5\u8FD9\u7C7B\u4E8B\u53EF\u80FD\u53D8\u52A8\uFF0C\u52A8\u5B8C\u6BD4\u73B0\u5728\u987A\u3002",
+          single: "\u611F\u60C5\u4E0A\u4F1A\u6709\u53D8\u5316\uFF0C\u4E14\u662F\u5F80\u597D\u5904\u53D8\uFF1B\u53D8\u540E\u89C1\u5206\u6653\u3002"
+        },
+        \u51B2\u5FCC: {
+          partner: "\u5173\u7CFB\u5BB9\u6613\u8D77\u6CE2\u6F9C\uFF1A\u805A\u5C11\u79BB\u591A\u3001\u6469\u64E6\u53D8\u591A\u90FD\u53EF\u80FD\u3002\u522B\u5728\u6C14\u5934\u4E0A\u505A\u51B3\u5B9A\uFF0C\u4E8B\u8FC7\u4E86\u518D\u8C08\u3002",
+          single: "\u611F\u60C5\u805A\u6563\u5FEB\u3002\u5173\u7CFB\u5BB9\u6613\u8D77\u5927\u53D8\u5316\uFF0C\u5206\u5408\u90FD\u5728\u4E00\u5FF5\u95F4\uFF1B\u5927\u51B3\u5B9A\u522B\u5728\u60C5\u7EEA\u5934\u4E0A\u505A\u3002"
+        },
+        \u5211: {
+          partner: "\u76F8\u5904\u8D39\u52B2\u7684\u4E00\u5E74\uFF1A\u65E7\u4E8B\u5BB9\u6613\u88AB\u7FFB\u51FA\u6765\uFF0C\u53E3\u89D2\u6BD4\u5E73\u65F6\u591A\u3002\u4E8B\u5F52\u4E8B\u3001\u4EBA\u5F52\u4EBA\u3002",
+          single: "\u611F\u60C5\u78E8\u64E6\u591A\u3002\u76F8\u5904\u8D39\u52B2\u3001\u53E3\u89D2\u591A\uFF1B\u4E8B\u5F52\u4E8B\u3001\u4EBA\u5F52\u4EBA\uFF0C\u522B\u7FFB\u65E7\u8D26\u3002"
+        },
+        \u5408\u5FCC: {
+          partner: "\u4E24\u4E2A\u4EBA\u5F80\u4E00\u5904\u4F7F\u52B2\uFF0C\u4F46\u5916\u9762\u7684\u4E8B\u62D6\u7740\uFF1A\u94B1\u3001\u5BB6\u91CC\u3001\u5DE5\u4F5C\u90FD\u53EF\u80FD\u538B\u8FDB\u5173\u7CFB\u91CC\u3002",
+          single: "\u611F\u60C5\u6709\u8FDB\u5C55\uFF0C\u4E5F\u4F34\u7740\u538B\u529B\uFF1B\u5173\u7CFB\u5F80\u524D\u8D70\uFF0C\u4F46\u5916\u9762\u7684\u4E8B\u62D6\u7D2F\u4E24\u4E2A\u4EBA\u3002"
+        },
+        \u5BB3: {
+          partner: "\u8BEF\u4F1A\u5E38\u4ECE\u7B2C\u4E09\u65B9\u6765\uFF1A\u8BDD\u4F20\u5C94\u3001\u65C1\u4EBA\u63D2\u4E00\u53E5\u3002\u6709\u4E8B\u5F53\u9762\u8BF4\u6E05\u3002",
+          single: "\u611F\u60C5\u751F\u5ACC\u9699\u3002\u8BEF\u4F1A\u3001\u731C\u7591\u3001\u95F2\u8BDD\u5BB9\u6613\u8D77\uFF1B\u6709\u8BDD\u5F53\u9762\u8BF4\uFF0C\u522B\u8BA9\u7B2C\u4E09\u4E2A\u4EBA\u4F20\u3002"
+        },
+        \u4F0F\u6210: {
+          partner: "\u4ECA\u5E74\u611F\u60C5\u662F\u4E3B\u7EBF\uFF1A\u8BE5\u8C08\u7684\u3001\u8BE5\u5B9A\u7684\u4E8B\u7ED5\u4E0D\u5F00\uFF0C\u503C\u5F97\u6B63\u7ECF\u82B1\u65F6\u95F4\u3002",
+          single: "\u5A5A\u59FB\u5BAB\u5F15\u52A8\u3002\u611F\u60C5\u662F\u8FD9\u5E74\u7684\u4E3B\u7EBF\uFF0C\u5B9C\u591A\u4E0A\u5FC3\u3002"
+        },
+        \u81EA: {
+          partner: "\u5BB9\u6613\u81EA\u5DF1\u8DDF\u81EA\u5DF1\u8F83\u52B2\uFF1A\u628A\u5BF9\u65B9\u7684\u8BDD\u53CD\u590D\u7422\u78E8\u3002\u60F3\u4E0D\u901A\u5C31\u76F4\u63A5\u95EE\u3002",
+          single: "\u611F\u60C5\u91CC\u81EA\u6211\u6D88\u8017\u3002\u5BB9\u6613\u94BB\u725B\u89D2\u5C16\u3001\u60F3\u592A\u591A\u3002"
+        }
+      };
       var GONG_HEAVY = {
         work: {
           \u957F\u8F88\u5BB6\u5B85: "\u957F\u8F88\u3001\u5BB6\u91CC\u8FD9\u6761\u7EBF\u4ECA\u5E74\u662F\u4E3B\u7EBF\uFF1A\u5065\u5EB7\u3001\u7167\u6599\u3001\u5F80\u8FD4\u4F1A\u96C6\u4E2D\u538B\u8FC7\u6765\u3002\u63D0\u524D\u628A\u65F6\u95F4\u548C\u94B1\u7559\u51FA\u6765\uFF0C\u522B\u6307\u671B\u6324\u4E00\u6324\u5C31\u8FC7\u53BB\u3002",
@@ -14392,7 +14422,16 @@ var RhythmEngine = (() => {
       function gongShenSignals(chart, subjectZhi, age, favVec, dayWx, dayGan, label) {
         const zhis = chart.zhis;
         const cands = [];
-        const push = (w, text, basis, k) => cands.push({ w, text, basis, k });
+        const push = (w, text, basis, k, rel) => {
+          const o = { w, text, basis, k };
+          if (rel && !isMonth) {
+            if (rel.partner)
+              o.textPartner = `\u3010${rel.label}\u3011${rel.partner}`;
+            if (rel.single)
+              o.textSingle = `\u3010${rel.label}\u3011${rel.single}`;
+          }
+          cands.push(o);
+        };
         const GONGS = [["\u4E8B\u4E1A\u73AF\u5883", 1, "\u4E8B\u4E1A"], ["\u5A5A\u59FB\u611F\u60C5", 2, "\u5A5A\u59FB"], ["\u957F\u8F88\u5BB6\u5B85", 0, "\u5BB6\u5B85"], ["\u4F5C\u54C1\u9879\u76EE", 3, "\u9879\u76EE"]];
         const isMonth = label === "\u6D41\u6708";
         const stage = lifeStage(age);
@@ -14414,19 +14453,32 @@ var RhythmEngine = (() => {
             out[k] = one(src[k]);
           return out;
         };
+        const loveRel = (gong0, label0, key) => gong0 === "\u5A5A\u59FB\u611F\u60C5" && LOVE_REL_TEXT[key] ? { label: label0, partner: LOVE_REL_TEXT[key].partner, single: LOVE_REL_TEXT[key].single } : null;
         for (const [name0, idx, sh] of GONGS) {
           const P = pick(name0), name = P.label || name0;
           const zhi = zhis[idx];
           const gongLabel = ["\u5E74\u652F", "\u6708\u652F", "\u65E5\u652F", "\u65F6\u652F"][idx];
           if (CHONG[subjectZhi] === zhi) {
             const pos = favSign(dayWx, favVec, ZHI_WX[subjectZhi], subjectZhi) === "\u559C";
-            push(80, `\u3010${name}\u3011${pos ? P.\u51B2\u559C : P.\u51B2\u5FCC}`, `${label}${subjectZhi}\u51B2${gongLabel}${zhi}`, "\u51B2\xB7" + sh);
+            push(
+              80,
+              `\u3010${name}\u3011${pos ? P.\u51B2\u559C : P.\u51B2\u5FCC}`,
+              `${label}${subjectZhi}\u51B2${gongLabel}${zhi}`,
+              "\u51B2\xB7" + sh,
+              loveRel(name0, name, pos ? "\u51B2\u559C" : "\u51B2\u5FCC")
+            );
           } else if (subjectZhi === zhi && ZIXING.includes(subjectZhi)) {
-            push(75, `\u3010${name}\u3011${P.\u81EA}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u81EA\u5211`, "\u5211\xB7" + sh);
+            push(75, `\u3010${name}\u3011${P.\u81EA}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u81EA\u5211`, "\u5211\xB7" + sh, loveRel(name0, name, "\u81EA"));
           } else if (subjectZhi === zhi && idx === 2) {
-            push(72, `\u3010${name}\u3011${age >= 22 ? P.\u4F0F\u6210 : P.\u4F0F\u5C11}`, `${label}${subjectZhi}\u5165\u65E5\u652F\uFF08\u5A5A\u59FB\u5BAB\u5F15\u52A8\uFF09`, "\u5A5A\u5F15\xB7\u5A5A\u59FB");
+            push(
+              72,
+              `\u3010${name}\u3011${age >= 22 ? P.\u4F0F\u6210 : P.\u4F0F\u5C11}`,
+              `${label}${subjectZhi}\u5165\u65E5\u652F\uFF08\u5A5A\u59FB\u5BAB\u5F15\u52A8\uFF09`,
+              "\u5A5A\u5F15\xB7\u5A5A\u59FB",
+              age >= 22 ? loveRel(name0, name, "\u4F0F\u6210") : null
+            );
           } else if (isXingPair(subjectZhi, zhi) && subjectZhi !== zhi) {
-            push(70, `\u3010${name}\u3011${P.\u5211}`, `${label}${subjectZhi}\u5211${gongLabel}${zhi}`, "\u5211\xB7" + sh);
+            push(70, `\u3010${name}\u3011${P.\u5211}`, `${label}${subjectZhi}\u5211${gongLabel}${zhi}`, "\u5211\xB7" + sh, loveRel(name0, name, "\u5211"));
           } else if (LIUHE[subjectZhi] === zhi) {
             const hwx = LIUHE_WX[subjectZhi + zhi] || ZHI_WX[zhi];
             const hz = hwx === "\u571F" ? ["\u4E11", "\u8FB0"].includes(subjectZhi) || ["\u4E11", "\u8FB0"].includes(zhi) ? "\u4E11" : "\u620C" : null;
@@ -14440,7 +14492,7 @@ var RhythmEngine = (() => {
               const txt = idx === 2 && age < 22 ? P.\u5408\u5C11 : pos ? P.\u5408\u559C : P.\u5408\u5FCC;
               push(58, `\u3010${name}\u3011${txt}`, `${label}${subjectZhi}\u4E0E${gongLabel}${zhi}\u534A\u5408${ban.wx}\u5C40`, "\u5408\xB7" + sh);
             } else if (HARM[subjectZhi] === zhi) {
-              push(50, `\u3010${name}\u3011${P.\u5BB3}`, `${label}${subjectZhi}\u5BB3${gongLabel}${zhi}`, "\u5BB3\xB7" + sh);
+              push(50, `\u3010${name}\u3011${P.\u5BB3}`, `${label}${subjectZhi}\u5BB3${gongLabel}${zhi}`, "\u5BB3\xB7" + sh, loveRel(name0, name, "\u5BB3"));
             } else if (subjectZhi === zhi) {
               push(40, `\u3010${name}\u3011${P.\u4F0F}`, `${label}${subjectZhi}\u4E0E${gongLabel}\u4F0F\u541F`, "\u4F0F\xB7" + sh);
             }
@@ -14615,7 +14667,7 @@ var RhythmEngine = (() => {
         return {
           headline: yt[0],
           trait: yt[1],
-          signals: signals.map((s) => ({ text: s.text, basis: s.basis })),
+          signals: signals.map((s) => s.textPartner || s.textSingle ? { text: s.text, basis: s.basis, textPartner: s.textPartner, textSingle: s.textSingle } : { text: s.text, basis: s.basis }),
           yi: yj.yi.slice(),
           ji: yj.ji.slice(),
           big

@@ -2115,6 +2115,13 @@
   #rd .km-v{font-family:var(--rd-serif);font-size:11px;fill:var(--rd-acc);font-weight:700;}
   #rd .rd-mnote{margin-top:14px;padding-top:12px;border-top:1px dashed var(--rd-rule2);font-family:var(--rd-serif);font-size:15px;color:var(--rd-ink);letter-spacing:.5px;}
   #rd .rd-mnote b{color:var(--rd-ink3);font-size:13px;font-weight:700;letter-spacing:2px;margin-right:10px;}
+  #rd .rd-mkey{margin-top:16px;padding-top:14px;border-top:1px dashed var(--rd-rule2);}
+  #rd .rd-mkey h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:10px;}
+  #rd .rd-mkey ul{list-style:none;}
+  #rd .rd-mkey li{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed var(--rd-rule2);}
+  #rd .rd-mkey li:last-child{border-bottom:0;}
+  #rd .rd-mkey li b{flex:none;font-family:var(--rd-serif);font-size:15px;font-weight:700;color:var(--rd-acc);min-width:34px;}
+  #rd .rd-mkey li p{font-family:var(--rd-serif);font-size:15px;line-height:1.75;color:var(--rd-ink);}
   #rd .rd-km{margin-top:16px;border-top:1px dashed var(--rd-rule2);padding-top:14px;}
   #rd .rd-km h4{font-family:var(--rd-serif);font-size:13px;font-weight:700;color:var(--rd-ink3);letter-spacing:2px;margin-bottom:9px;}
   #rd .rd-km ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;}
@@ -2700,7 +2707,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=175"></script>
+  <script src="engine_bundle.js?v=176"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2768,7 +2775,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=175"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=176"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5567,7 +5574,10 @@
       }
       function rdSigs(arr){
         if(!arr||!arr.length) return '';
-        return '<ul class="rd-sig">'+arr.map(function(g){ var s=rdSplitSig(g.text); return '<li>'+(s[0]?'<span class="rd-tag">'+esc(s[0])+'</span>':'')+'<p>'+esc(s[1])+'</p></li>'; }).join('')+'</ul>';
+        var rel=getRelStatus();   // 婚姻感情宫按已选状态取说法(未选则用通用句)
+        return '<ul class="rd-sig">'+arr.map(function(g){
+          var t=(rel==='partner'&&g.textPartner)?g.textPartner:((rel==='single'&&g.textSingle)?g.textSingle:g.text);
+          var s=rdSplitSig(t); return '<li>'+(s[0]?'<span class="rd-tag">'+esc(s[0])+'</span>':'')+'<p>'+esc(s[1])+'</p></li>'; }).join('')+'</ul>';
       }
       function rdYJ(yi, huan){
         var row=function(k,cls,arr){ return (arr&&arr.length)?'<div class="rd-row2"><span class="k '+cls+'">'+k+'</span><div class="rd-chips">'+arr.map(function(x){ return '<span>'+esc(x)+'</span>'; }).join('')+'</div></div>':''; };
@@ -5613,6 +5623,14 @@
           var sb=rdEl('rd-share-y'); if(sb) sb.onclick=function(){ if(window.__shiheShareTL) window.__shiheShareTL('year', { year:Y0, gz:y.ganZhi||'', sigs:y.signals||[], yi:y.yi||[] }); };
         });
       }
+      // 关键月份逐条(2026-09-20:月档只有一条曲线太简单,补上今年主线落在哪几个月、各一句)
+      function rdKeyMonthLines(ms){
+        var rows=(ms||[]).filter(function(m){ return (m.signals||[]).length && /流年|与流年支相同/.test((m.signals[0].basis||'')); })
+          .slice(0,4)
+          .map(function(m){ return '<li><b>'+m.month+'月</b><p>'+esc(m.signals[0].text)+'</p></li>'; });
+        if(!rows.length) return '';
+        return '<div class="rd-mkey"><h4>关键月份</h4><ul>'+rows.join('')+'</ul></div>';
+      }
       // 月档(2026-09-18 用户拍板:流月逐月断语不做了,只留一条起伏线 + 标出能量好的月份)。
       //   逐月的「今年主线落在哪个月」已收进年卡的「关键月份」一行,这里只回答「今年哪几个月状态好」。
       function rdMonth(dir){
@@ -5646,6 +5664,7 @@
           +'<polyline points="'+pts+'" fill="none" stroke="var(--rd-ink)" stroke-width="1.6" stroke-linejoin="round"/>'
           +dots+labs+'</svg></div>'
           +(goodTx?'<div class="rd-mnote"><b>状态好的月份</b>'+goodTx+'</div>':'<div class="rd-mnote">这一年十二个月起伏不大，没有特别突出的月份。</div>')
+          +rdKeyMonthLines(ms)
           +'</div>';
         rdSlide(dir, html, function(){
           rdBind(function(g){ var y2=RD.MY.y+g; if(y2<birthY||y2>maxY) return; RD.MY={y:y2,m:RD.MY.m}; rdMonth(g); },
