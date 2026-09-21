@@ -2723,7 +2723,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=183"></script>
+  <script src="engine_bundle.js?v=184"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2791,7 +2791,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=183"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=184"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5894,7 +5894,7 @@
         const WHY={天赦:'一年少数的「赦日」，宜静心复盘、翻篇重启',天愿:'传统视为顺遂之日，宜推进搁置的事',月德:'当月月德所临，护佑诸事和顺',月德合:'月德相合，和合成事、化解冲扰',天德:'当月福泽所临，传统视为诸事和顺',天德合:'天德相合，化冲解扰',三合:'与本月三合成局，众力相成、宜合作订盟',六合:'与本月六合，人事相得、宜洽谈缔结',天医:'天医星临，宜求医、疗养、安康',母仓:'母仓育物，宜栽种、蓄养、积贮',月恩:'月中恩泽所钟，得贵人恩助',时德:'四时旺德，宜庆贺、施惠',五富:'五谷丰盈，宜求财、开市、经营',民日:'利于百姓，诸事顺遂'};
         const STRONG=Object.keys(WHY), WK=['日','一','二','三','四','五','六'], WIN=91;
         // 场景 = 现代事项标签(engine/folk.js modernYi),选中后只留该事项的吉日
-        const SCENE=[['','全部'],['搬家入住','搬家'],['签约收款','签约'],['开业开工','开业'],['入学考试','考试'],['见面商谈','见面'],['提亲成婚','婚嫁'],['出行远门','出行'],['就医调养','就医'],['装修动工','装修']];
+        const SCENE=[['','全部'],['搬家入住','搬家'],['签约收款','签约'],['开业开工','开业'],['入学考试','考试'],['见面商谈','见面'],['提亲成婚','婚嫁'],['出行远门','出行'],['休养调理','休养'],['装修动工','装修']];
         let offset=0, scene='';
         function draw(){
           const base=new Date(); base.setHours(0,0,0,0); base.setDate(base.getDate()+offset*WIN);
@@ -5928,12 +5928,12 @@
           const sc=$('luck-scene');
           if(sc) sc.innerHTML=SCENE.map(function(kv){ return '<button type="button" data-s="'+kv[0]+'" aria-pressed="'+(scene===kv[0])+'">'+kv[1]+'</button>'; }).join('');
           const end=new Date(sy,sm-1,sd+WIN-1);
-          if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 本季':'');
-          if(chip && offset===0) chip.textContent= top.length? ('本季 '+top.length+' 个吉日') : '本季平稳';
+          if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 未来三个月':'');
+          if(chip && offset===0) chip.textContent= top.length? ('近三个月 '+top.length+' 个吉日') : '近三个月平稳';
           const scName=(SCENE.filter(function(kv){return kv[0]===scene;})[0]||['',''])[1];
           if($('luck-intro')) $('luck-intro').textContent= top.length ? ''
             : (scene ? ('这一季没有适合'+scName+'的日子，可看下一季。') : '这一季没有格外突出的吉日。');
-          list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">'+(scene?('本季暂无适合'+scName+'的日子'):'这一季暂无特别突出的吉日')+'</div>';
+          list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">'+(scene?('这三个月暂无适合'+scName+'的日子'):'这一季暂无特别突出的吉日')+'</div>';
         }
         function rowHtml(x){
           const badge = '';   // S 级名(天德月德临)与下方吉神标、理由句三处重复,只留吉神标
