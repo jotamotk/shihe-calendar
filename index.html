@@ -1387,6 +1387,11 @@
   .tf-dot.up{background:var(--gold-d);}
   .tf-dot.mid,.tf-dot.warn{background:var(--muted);opacity:.5;}
   .tf-body{background:var(--card-2);border:1px solid var(--line);border-radius:13px;padding:14px 15px;}
+  /* 今日各方面:简单列表(2026-09-21 去 tab/色点) */
+  .tf-body .tf-li{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line);}
+  .tf-body .tf-li:last-child{border-bottom:none;}
+  .tf-li-k{flex:none;width:38px;font-size:13px;font-weight:600;color:var(--gold-d);}
+  .tf-li-v{flex:1;font-size:13.5px;color:var(--ink-2);line-height:1.6;}
   .tf-body-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
   .tf-body-lab{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:1px;}
   /* 感情面板:当前状态小开关(单身/有伴侣),与命书 rel-seg 同存储 */
@@ -2700,10 +2705,7 @@
       </div>
       <div class="mine-grp">使 用 指 南</div>
       <div class="mine-list">
-        <a class="mine-it" href="about.html#guide"><span class="mine-it-t">怎么用</span><span class="mine-val">四个页面各管一件事</span><span class="mine-go">›</span></a>
-        <a class="mine-it" href="about.html#energy"><span class="mine-it-t">每日能量</span><span class="mine-val">今天适合冲还是缓</span><span class="mine-go">›</span></a>
-        <a class="mine-it" href="about.html#pick"><span class="mine-it-t">择吉日</span><span class="mine-val">搬家签约考试挑天</span><span class="mine-go">›</span></a>
-        <a class="mine-it" href="about.html#year"><span class="mine-it-t">流年与流月</span><span class="mine-val">一年的节奏怎么看</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#guide"><span class="mine-it-t">怎么用</span><span class="mine-val">一分钟看懂</span><span class="mine-go">›</span></a>
         <a class="mine-it" href="about.html#data"><span class="mine-it-t">关于与隐私</span><span class="mine-go">›</span></a>
       </div>
       <div class="mine-grp">条　款</div>
@@ -2721,7 +2723,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=182"></script>
+  <script src="engine_bundle.js?v=183"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2789,7 +2791,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=182"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=183"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3084,52 +3086,13 @@
         var f=d.fortune;
         if(!f){ wrap.style.display='none'; return; }
         wrap.style.display='';
-        // 默认选当天最值得看的:首个「顺」→否则事业(不回落「慎」,免一进来先看到提醒)
-        if(_ftSel===null || !f[_ftSel]){
-          _ftSel = FT_ORDER.find(function(k){return f[k]&&f[k].tone==='顺';})
-                || 'career';
-        }
-        var tabs=$('w-fortune-tabs');
-        tabs.innerHTML=FT_ORDER.map(function(k){
-          var it=f[k]||{tone:'平'}; var tc=FT_TONECLS[it.tone]||'mid';
-          return '<button type="button" class="tf-tab'+(k===_ftSel?' on':'')+'" data-k="'+k+'">'
-            +'<span class="tf-dot '+tc+'"></span>'+FT_LABEL[k]+'</button>';
-        }).join('');
-        if(!tabs._bound){
-          tabs._bound=true;
-          tabs.addEventListener('click',function(e){
-            var b=e.target.closest('.tf-tab'); if(!b) return;
-            e.stopPropagation();
-            _ftSel=b.dataset.k;
-            if(SHARE_DAY) renderFortune(SHARE_DAY);
-          });
-        }
-        var it=f[_ftSel]||{tone:'平',line:''};
-        var tc=FT_TONECLS[it.tone]||'mid';
-        // 感情未选状态:不给通用含糊话,给一次性二选(选完立即出精准版;与命书开关同存储)
-        if(_ftSel==='love'){
-          var _rel=''; try{ _rel=localStorage.getItem(REL_KEY)||''; }catch(e){}
-          if(_rel!=='single' && _rel!=='partner'){
-            $('w-fortune-body').innerHTML=
-              '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
-              +'<div class="tf-relpick"><button type="button" data-rel="single">单身</button><button type="button" data-rel="partner">有伴侣</button></div>';
-            var _rp=$('w-fortune-body').querySelector('.tf-relpick');
-            _rp.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; e.stopPropagation();
-              try{ localStorage.setItem(REL_KEY,b.dataset.rel); }catch(err){}
-              renderFortune(d); });
-            return;
-          }
-        }
-        // 机会并入事业:选中事业时,若机会有独立显象(非平档、且与事业文案不同),在下方追加一条带「机会」小标的子行
-        //   —— 机会源自 liuri 的 食/合/冲(与事业读的「官」不同源),故不丢内容;平档无独立显象、不追加(免同义堆叠)
-        var extra='';
-        if(_ftSel==='career' && f.chance && f.chance.tone!=='平' && f.chance.line && f.chance.line!==it.line){
-          extra='<div class="tf-body-sub"><span class="tf-body-sublab">机会</span>'+esc(f.chance.line)+'</div>';
-        }
-        // 感情按首次选的状态出断语(用户拍板:面板不放开关,改状态去「我的·感情状态」)
-        $('w-fortune-body').innerHTML=
-          '<div class="tf-body-top"><span class="tf-body-lab">'+FT_LABEL[_ftSel]+'</span></div>'
-          +'<div class="tf-body-line">'+esc(_ftSel==='love'?loveLineOf(it):it.line)+'</div>'+extra;
+        var tabs=$('w-fortune-tabs'); if(tabs) tabs.style.display='none';   // tab 版下架:改简单列表(2026-09-21)
+        var rows = FT_ORDER.map(function(k){
+          var it=f[k]||{}; var line = (k==='love') ? loveLineOf(it) : it.line;
+          if(!line) return '';
+          return '<div class="tf-li"><span class="tf-li-k">'+FT_LABEL[k]+'</span><span class="tf-li-v">'+esc(line)+'</span></div>';
+        }).filter(Boolean);
+        $('w-fortune-body').innerHTML = rows.join('');
       }
 
       // —— 老黄历(选中日 · 传统历法速查)——
