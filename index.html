@@ -2721,7 +2721,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=181"></script>
+  <script src="engine_bundle.js?v=182"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2789,7 +2789,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=181"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=182"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5957,7 +5957,7 @@
             const warm = uses.filter((t)=> COLD.indexOf(t)<0);
             if(!scene && !warm.length) continue;
             cand.push({ m:d.month, day:d.day, e:d.energy, ts:gj.tianShen||'', tt:gj.tianShenType||'', grade:gj.grade, head, gods:gods.slice(0,4), why, uses, yi:(uses.length?uses.slice(0,3):yi.slice(0,4)),
-              wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?100:0) + gods.length*2 + warm.length*3 + (d.energy-50)/6 });
+              wk:'周'+WK[dt.getDay()], score:(gj.grade==='S'?12:0) + gods.length*2 + warm.length*3 + (d.energy-50)/3 });
           }
           cand.sort((a,b)=> b.score-a.score);
           const pool = scene ? cand.filter((x)=> x.uses.indexOf(scene)>=0) : cand;

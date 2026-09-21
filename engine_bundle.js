@@ -11795,6 +11795,9 @@ var RhythmEngine = (() => {
           dayGan: ec.getDayGan(),
           monthZhi: ec.getMonthZhi(),
           birthYear: year,
+          birthMonth: month,
+          birthDay: day,
+          // 精确年龄要用(人生阶段按真实生日切,别按年份相减)
           daYun: { forward, list: daYunList },
           _solar: solar,
           _lunar: lunar,
@@ -16274,9 +16277,20 @@ var RhythmEngine = (() => {
         const byXi = tbl["\u559C" + (mj.primaryXi || "")];
         return byXi || tbl["\u2014"] || "";
       }
-      function natalStage(chart, today) {
+      function ageOn(chart, today) {
+        if (!chart.birthYear)
+          return 30;
         const y = today && today.year || (/* @__PURE__ */ new Date()).getFullYear();
-        const age = chart.birthYear ? y - chart.birthYear : 30;
+        const m = today && today.month || (/* @__PURE__ */ new Date()).getMonth() + 1;
+        const d = today && today.day || (/* @__PURE__ */ new Date()).getDate();
+        let age = y - chart.birthYear;
+        const bm = chart.birthMonth, bd = chart.birthDay;
+        if (bm && bd && (m < bm || m === bm && d < bd))
+          age -= 1;
+        return age;
+      }
+      function natalStage(chart, today) {
+        const age = ageOn(chart, today);
         return age < 16 ? "child" : age < 23 ? "study" : age < 60 ? "work" : "elder";
       }
       function buildNatal(mj, chart, today) {
@@ -17370,6 +17384,14 @@ var RhythmEngine = (() => {
           return "\u7A0D\u6B20\u7CBE\u795E";
         return "\u7CBE\u795E\u4E0D\u6D4E";
       }
+      function hasAnyShun(f) {
+        if (!f)
+          return true;
+        return ["career", "money", "love", "study"].some((k) => f[k] && f[k].tone === "\u987A");
+      }
+      function energyWordOf(e, fortune) {
+        return e >= 75 && !hasAnyShun(fortune) ? "\u7CBE\u529B\u5728\u7EBF\uFF0C\u4E8B\u6311\u7740\u505A" : energyWord(e);
+      }
       var GOOD = 72;
       function sanitizeYi(yi, wuRi) {
         if (!wuRi)
@@ -17412,7 +17434,7 @@ var RhythmEngine = (() => {
             lunarDayCN: folk.lunarDayCN,
             lunarLabel: folk.lunarLabel,
             e: d.energy,
-            word: energyWord(d.energy),
+            word: energyWordOf(d.energy, d.fortune),
             fill: fill(d.energy),
             axis: d.axis,
             tone: d.tone,
@@ -17476,7 +17498,7 @@ var RhythmEngine = (() => {
             lunarLabel: "\u519C\u5386" + folk.lunarLabel,
             jieqi: nextJq ? nextJq.getName() + "\u5C06\u81F3" : "",
             energy: LR.energy,
-            energyWord: energyWord(LR.energy),
+            energyWord: energyWordOf(LR.energy, LR.fortune),
             axis: LR.axis,
             tone: LR.tone,
             toneShort: TONE_SHORT[LR.tone] || "\u5E73\u7A33",
