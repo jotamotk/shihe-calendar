@@ -2722,7 +2722,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=190"></script>
+  <script src="engine_bundle.js?v=191"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2790,7 +2790,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=190"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=191"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3088,10 +3088,11 @@
         var tabs=$('w-fortune-tabs'); if(tabs) tabs.style.display='none';   // tab 版下架:改简单列表(2026-09-21)
         var rows = FT_ORDER.map(function(k){
           var it=f[k]||{}; var line = (k==='love') ? loveLineOf(it) : it.line;
-          if(!line) return '';
+          if(!it.tone || it.tone==='平' || !line) return '';   // 平档=没信号=不显示(她定:不准不如不说)
           return '<div class="tf-li"><span class="tf-li-k">'+FT_LABEL[k]+'</span><span class="tf-li-v">'+esc(line)+'</span></div>';
         }).filter(Boolean);
         $('w-fortune-body').innerHTML = rows.join('');
+        wrap.style.display = rows.length ? '' : 'none';   // 全平的日子整块不出现
       }
 
       // —— 老黄历(选中日 · 传统历法速查)——

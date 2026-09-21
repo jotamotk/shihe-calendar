@@ -12743,7 +12743,9 @@ var RhythmEngine = (() => {
         const balanced = nonBi[0].v < th.top && (diff0 < th.diff || topIsJi && diff0 < 7);
         const dominant = balanced ? "\u5747\u8861" : topGod;
         const riZhiGod = tenGodType(dayWx, ZHI_WX[chart.zhis[2]]);
-        const emoKey = riZhiGod === "\u5B98" || godPct.\u5B98 >= 24 ? "\u79CB" : godPct.\u98DF >= 24 ? "\u590F" : godPct.\u5370 >= 28 ? "\u51AC" : godPct.\u6BD4 >= 35 ? "\u6625" : season;
+        const _emoRank = [["\u5B98", godPct.\u5B98 || 0, "\u79CB"], ["\u98DF", godPct.\u98DF || 0, "\u590F"], ["\u5370", godPct.\u5370 || 0, "\u51AC"], ["\u6BD4", godPct.\u6BD4 || 0, "\u6625"]].sort((a, b) => b[1] - a[1]);
+        const emoFromGod = riZhiGod === "\u5B98" || godPct.\u5B98 >= 22 || _emoRank[0][1] >= 18;
+        const emoKey = riZhiGod === "\u5B98" || godPct.\u5B98 >= 22 ? "\u79CB" : _emoRank[0][1] >= 18 ? _emoRank[0][2] : season;
         const emoPol = emoKey === "\u6625" || emoKey === "\u590F" ? "\u5916" : "\u5185";
         const domWx = WX5.find((x) => tenGodType(dayWx, x) === dominant);
         const domJi = !balanced && !!domWx && ((mj.favVec || {})[domWx] ?? 0) < -0.12;
@@ -12788,6 +12790,7 @@ var RhythmEngine = (() => {
           domJi,
           riZhiGod,
           emoKey,
+          emoFromGod,
           emoPol,
           social,
           expressive: ex.expressive,
@@ -14292,17 +14295,11 @@ var RhythmEngine = (() => {
           2: "\u4ECA\u5E74\u591A\u987E\u4E00\u987E\u8EAB\u8FB9\u4EBA\uFF0C\u4E5F\u987E\u4E00\u987E\u81EA\u5DF1\u7684\u4F5C\u606F\u3002",
           3: "\u4ECA\u5E74\u8BA1\u5212\u5916\u7684\u5BB6\u52A1\u4E8B\u4E0D\u4F1A\u5C11\u3002"
         },
-        \u767D\u864E: {
-          0: "\u4ECA\u5E74\u5BB6\u91CC\u5BB9\u6613\u6709\u7A81\u53D1\u7684\u4E8B\u3002",
-          1: "\u4ECA\u5E74\u5954\u6CE2\u52B3\u7D2F\u591A\u3002",
-          2: "\u4ECA\u5E74\u51FA\u884C\u3001\u8FD0\u52A8\u5F53\u5FC3\u8FC7\u91CF\u3002",
-          3: "\u4ECA\u5E74\u505A\u4E8B\u5F53\u5FC3\u78D5\u78B0\u610F\u5916\u3002"
-        },
         \u75C5\u7B26: {
           0: "\u4ECA\u5E74\u957F\u8F88\u7684\u65E5\u5E38\u7167\u6599\u8981\u591A\u4E0A\u5FC3\u3002",
           1: "\u4ECA\u5E74\u628A\u5E38\u89C4\u5065\u5EB7\u7BA1\u7406\u6392\u8FDB\u65E5\u7A0B\u3002",
-          2: "\u4ECA\u5E74\u4F5C\u606F\u5BB9\u6613\u4E71\u3002",
-          3: "\u4ECA\u5E74\u7CBE\u529B\u5BB9\u6613\u900F\u652F\u3002"
+          2: "\u4ECA\u5E74\u628A\u5E38\u89C4\u5065\u5EB7\u7BA1\u7406\u6392\u8FDB\u65E5\u7A0B\u3002",
+          3: "\u4ECA\u5E74\u628A\u5E38\u89C4\u5065\u5EB7\u7BA1\u7406\u6392\u8FDB\u65E5\u7A0B\u3002"
         }
       };
       var YING_TEXT = {
@@ -16025,7 +16022,7 @@ var RhythmEngine = (() => {
             surface: "\u5916\u8868\u968F\u548C\u3001\u4E0D\u592A\u663E\u950B\u8292\uFF0C\u4F46\u5FC3\u91CC\u6709\u81EA\u5DF1\u7684\u786C\u4E3B\u610F\uFF1B\u719F\u4E86\u7684\u4EBA\u624D\u77E5\u9053\uFF0C\u4F60\u5176\u5B9E\u6709\u68F1\u89D2\u3001\u4E5F\u729F"
           };
         const P = personaSignals(mj, chart);
-        const { pol, season, w, total, godPct, topGod, secondGod, balanced, dominant, riZhiGod, emoKey } = P;
+        const { pol, season, w, total, godPct, topGod, secondGod, balanced, dominant, riZhiGod, emoKey, emoFromGod } = P;
         const EXPRESS_INNER = { \u4E01: "\u5FC3\u4E8B\u4E0D\u8F7B\u6613\u8868\u9732\uFF0C\u81EA\u5DF1\u5FC3\u91CC\u6709\u5206\u5BF8\uFF0C", \u5DF1: "\u8BDD\u4E0D\u591A\uFF0C\u751F\u6D3B\u6709\u81EA\u5DF1\u7684\u89C4\u5F8B\uFF0C" };
         const shiTouGan = (chart.gans || []).some((g, i) => i !== 2 && tenGodType(dayWx, GAN_WX[g]) === "\u98DF");
         const innerType = !!EXPRESS_INNER[dayGan] && !shiTouGan && godPct.\u5370 >= 20 && godPct.\u98DF < 20;
@@ -16063,7 +16060,7 @@ var RhythmEngine = (() => {
         const p2 = balanced ? balancedDrive(topGod, secondGod) : domJi && CORE_DRIVE_JI[topGod] ? CORE_DRIVE_JI[topGod] : `${CORE_DRIVE[topGod] || ""}${TENSION[topGod] && TENSION[topGod][secondGod] || ""}`;
         const sitStill = P.sitStill;
         const sitStillVeto = !balanced && topGod === "\u98DF" && sitStill;
-        const p3 = `${SEASON_EMO[emoKey] || ""}${balanced ? BAL_BLINDSPOT : sitStillVeto ? "" : BLINDSPOT_SOFT[topGod] || ""}`;
+        const p3 = `${emoFromGod ? SEASON_EMO[emoKey] || "" : ""}${balanced ? BAL_BLINDSPOT : sitStillVeto ? "" : BLINDSPOT_SOFT[topGod] || ""}`;
         const GOD_LOVE_JI = {
           \u5B98: "\u611F\u60C5\u91CC\u4F60\u5BB9\u6613\u9047\u5230\u5F3A\u52BF\u7684\u3001\u8981\u6C42\u591A\u7684\u5BF9\u8C61\uFF0C\u76F8\u5904\u504F\u7D2F\uFF1B\u4F60\u4E60\u60EF\u8FC1\u5C31\uFF0C\u628A\u81EA\u5DF1\u7EF7\u5F97\u7D27\u3002"
         };
@@ -16664,7 +16661,7 @@ var RhythmEngine = (() => {
           title: "\u4E8B\u4E1A",
           tone: tCareer,
           ...act(guanWx, tCareer),
-          text: pe.work || "\u505A\u4E8B\u4E0A\u4F60\u9002\u5E94\u529B\u5F3A\uFF0C\u627E\u5230\u4E00\u4E2A\u80FD\u957F\u671F\u6DF1\u8015\u7684\u65B9\u5411\uFF0C\u5C31\u4F1A\u8D8A\u8D70\u8D8A\u7A33\u3002",
+          text: pe.work || "",
           advice: (persona._domJi && dominant === "\u5B98" && ADVICE.career["\u5B98\u5FCC"] || ADVICE.career[dominant] || ADVICE.career["\u5747\u8861"]).slice()
         });
         const tMoney = tone(caiWx);
