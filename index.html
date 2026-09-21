@@ -1385,8 +1385,7 @@
   .tf-tab.on{color:var(--ink);border-color:var(--gold-line);background:var(--gold-soft);font-weight:500;}
   .tf-dot{width:6px;height:6px;border-radius:50%;flex:none;}
   .tf-dot.up{background:var(--gold-d);}
-  .tf-dot.mid{background:var(--muted);}
-  .tf-dot.warn{background:var(--rest);}
+  .tf-dot.mid,.tf-dot.warn{background:var(--muted);opacity:.5;}
   .tf-body{background:var(--card-2);border:1px solid var(--line);border-radius:13px;padding:14px 15px;}
   .tf-body-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
   .tf-body-lab{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:1px;}
@@ -2722,7 +2721,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=180"></script>
+  <script src="engine_bundle.js?v=181"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2790,7 +2789,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=180"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=181"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3085,10 +3084,9 @@
         var f=d.fortune;
         if(!f){ wrap.style.display='none'; return; }
         wrap.style.display='';
-        // 默认选当天最值得看的:首个「顺」→否则首个「慎」→否则事业
+        // 默认选当天最值得看的:首个「顺」→否则事业(不回落「慎」,免一进来先看到提醒)
         if(_ftSel===null || !f[_ftSel]){
           _ftSel = FT_ORDER.find(function(k){return f[k]&&f[k].tone==='顺';})
-                || FT_ORDER.find(function(k){return f[k]&&f[k].tone==='慎';})
                 || 'career';
         }
         var tabs=$('w-fortune-tabs');
