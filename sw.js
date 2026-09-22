@@ -1,6 +1,6 @@
 // 时和 · 离线缓存 Service Worker(纯静态,无追踪;失败不影响在线使用)
 // 策略:网络优先(始终拿最新),离线时回退缓存——避免更新后看到旧版本。
-const CACHE = 'shihe-v195';
+const CACHE = 'shihe-v196';
 // 核心资源:首屏必需,原子预缓存(任一失败则整体失败,保证一致)
 const CORE = [
   './', './index.html', './onboarding.html', './privacy.html', './about.html', './terms.html',
@@ -35,6 +35,12 @@ self.addEventListener('activate', (e) => {
     caches.keys()
       .then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
+      // 缓存优先策略固有的「慢一步」:用户这次打开拿到的是旧页面,新版要等下次打开才显形。
+      //   更糟的是旧 HTML 里的 engine_bundle.js?v=NNN 正是本地算好数据的缓存键,
+      //   于是解读内容也被一起钉在旧版(创始人 2026-09-22 在手机上就栽在这:本命还在说旧文案)。
+      //   这里在新版接管后通知页面,由页面决定要不要就地刷新(它自己判断打断不打断用户)。
+      .then(() => self.clients.matchAll({ type: 'window' }))
+      .then((cs) => cs.forEach((c) => { try { c.postMessage({ type: 'sw-activated', cache: CACHE }); } catch (_) {} }))
   );
 });
 

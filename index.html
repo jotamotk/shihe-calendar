@@ -2726,7 +2726,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=195"></script>
+  <script src="engine_bundle.js?v=196"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2794,7 +2794,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=195"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=196"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -6369,6 +6369,23 @@
       window.addEventListener('load', function(){
         navigator.serviceWorker.register('sw.js').catch(function(){});
       });
+      // 新版接管后就地刷新一次 —— 补上「缓存优先」缺的那一步。
+      //   SW 是缓存优先:这次打开先给旧页面,新版在后台装好才接管,于是用户眼前这屏永远慢一版;
+      //   而旧 HTML 里的 engine_bundle.js?v=196NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
+      //   三道闸:① 首装不刷(没有旧 controller = 干净安装,本来就是新的)
+      //          ② 只在刚打开的头 12 秒内刷(用户还没开始读,不打断;超时就留给下次打开)
+      //          ③ sessionStorage 标记防连环刷
+      var _swT0 = Date.now();
+      navigator.serviceWorker.addEventListener('controllerchange', function(){
+        if (!window.__hadController) return;                       // ① 首装
+        if (Date.now() - _swT0 > 12000) return;                    // ② 已在阅读,不打断
+        try { if (sessionStorage.getItem('shihe_sw_reloaded')) return; // ③ 防连环
+              sessionStorage.setItem('shihe_sw_reloaded', '1'); } catch (e) {}
+        // 必须推到下一个事件循环:在 controllerchange 里同步调 reload,新 SW 正在接管、
+        //   文档还没稳住,浏览器会把这次 reload 吞掉(实测:标志位已置、页面纹丝不动)。
+        setTimeout(function(){ location.reload(); }, 0);
+      });
+      window.__hadController = !!navigator.serviceWorker.controller;
     }
   </script>
 </body>
