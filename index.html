@@ -856,6 +856,10 @@
   .yr-sig .yr-tag{margin:0 0 7px;}
   .yr-sig .tx{display:block;}
   .yr-sig b{color:var(--ink);font-weight:500;}
+  /* B 版年卡:条目序号 + 收尾一句 */
+  .yr-sig .yr-no{display:inline-block;margin:0 7px 7px 0;font-size:12px;color:var(--gold);font-weight:500;vertical-align:top;}
+  .yr-sig .yr-no + .yr-tag{display:inline-block;}
+  .yr-caution{margin-top:13px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.95;letter-spacing:.2px;}
   /* 贰卷时间线卡(年/月/日同款容器)+主句+小注+宜缓签行 */
   .tl-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 16px;}
   .tl-lead{font-family:var(--serif);font-size:15.5px;line-height:2;color:var(--ink);text-align:center;margin:2px 6px 10px;text-wrap:pretty;}
@@ -2722,7 +2726,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=194"></script>
+  <script src="engine_bundle.js?v=195"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2790,7 +2794,7 @@
         }
       }catch(e){}
       window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=194"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=195"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4864,6 +4868,29 @@
           else { var i=t.indexOf('。'); if(i>0&&i<=7){ lab=t.slice(0,i); tx=t.slice(i+1); } }
           return '<div class="yr-sig">'+(lab?'<span class="yr-tag">'+esc(lab)+'</span>':'')+'<span class="tx">'+esc(tx)+'</span></div>';
         }).join(''); }
+      // 流年 B 版正文:定调 + 开场 + 序号条目(「防」已并进对应那条) + 收尾一句。
+      //   rel = 'partner' | 'single'(已婚/单身在渲染时才定),引擎两版都算好了,这里只挑。
+      //   opts.itemsOnly:只出重排后的条目(不出定调/开场/收尾)。当年卡用它——
+      //   定调段与年型名行是创始人 2026-09 拍板砍掉的层,「忌」也已由该卡的「要注意」栏承担;
+      //   B 在那张卡上只负责一件事:岁运这类「过程修饰」别占头,具体的事排前面。
+      function yrB(y, rel, opts){
+        opts = opts || {};
+        var b = y.b && (rel==='partner' ? y.b.partner : y.b.single);
+        if(!b) return (y.headline?'<div class="yr-hl">'+esc(y.headline)+'</div>':'')
+              + (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
+              + yrSigs(y.signals);   // 兜底:旧 payload(缓存里的老数据)照旧渲染
+        var n = ['①','②','③','④','⑤'];
+        var list = (opts.itemsOnly ? (b.plainItems || b.items) : b.items) || [];
+        return ((b.tone && !opts.itemsOnly)?'<div class="yr-hl">'+esc(b.tone)+'</div>':'')
+          + ((b.lead && !opts.itemsOnly)?'<div class="rp-mo-trait">'+esc(b.lead)+'</div>':'')
+          + list.map(function(it,i){
+              return '<div class="yr-sig">'
+                + ((list.length>1 && !opts.itemsOnly)?'<span class="yr-no">'+n[i]+'</span>':'')
+                + (it.label?'<span class="yr-tag">'+esc(it.label)+'</span>':'')
+                + '<span class="tx">'+esc(it.text)+'</span></div>';
+            }).join('')
+          + ((b.caution && !opts.itemsOnly)?'<div class="yr-caution">'+esc(b.caution)+'</div>':'');
+      }
       function moEnergy(v, level, lo, hi){
         const band = level==='高'?'hi':level==='低'?'lo':'';
         let pos;
@@ -4962,12 +4989,11 @@
           var vf=v==='y'?'<span class="rp-mo-vf y">✓ 对上了</span>':v==='n'?'<span class="rp-mo-vf n">✗ 没对上</span>':'';
           return '<div class="rp-mo" data-pyr="'+y.year+'">'
             + '<div class="rp-mo-top">'
-            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+'</span>'+(y.headline?'<span class="rp-mo-hl">'+esc(y.headline)+'</span>':'')+vf+'</div>'
+            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+'</span>'+(function(){var _b=y.b&&(getRelStatus()==='partner'?y.b.partner:y.b.single);var _t=(_b&&_b.tone)||y.headline;return _t?'<span class="rp-mo-hl">'+esc(_t)+'</span>':'';})()+vf+'</div>'
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
-            +   (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
-            +   yrSigs(y.signals)
+            +   yrB(y, getRelStatus())
             +   '<div class="yc-verify"><span>这年的说法对上了吗</span>'
             +     '<button type="button" data-v="y"'+(v==='y'?' class="on"':'')+'>对</button>'
             +     '<button type="button" data-v="n"'+(v==='n'?' class="on"':'')+'>不对</button></div>'
@@ -5114,14 +5140,12 @@
           const isCur=y.year===Y.curYear;
           return '<div class="rp-mo'+(isCur?' cur':'')+'" data-yr="'+y.year+'">'
             + '<div class="rp-mo-top">'
-            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span>'+(y.headline?'<span class="rp-mo-hl">'+esc(y.headline)+'</span>':'')+(y.big?'<span class="rp-mo-big">大年</span>':'')+'</div>'
+            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span>'+(function(){var _b=y.b&&(getRelStatus()==='partner'?y.b.partner:y.b.single);var _t=(_b&&_b.tone)||y.headline;return _t?'<span class="rp-mo-hl">'+esc(_t)+'</span>':'';})()+(y.big?'<span class="rp-mo-big">大年</span>':'')+'</div>'
             + moEnergy(y.energy, y.level, yLo, yHi)
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
-            +   (y.headline?'<div class="yr-hl">'+esc(y.headline)+'</div>':'')
-            +   (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
-            +   yrSigs(y.signals)
+            +   yrB(y, getRelStatus())
             +   yijiHtml(y.yi,y.ji)
             + '</div>'
             + '</div>';
@@ -5320,7 +5344,7 @@
           +'<div class="yc-ttl"><b>'+_jdYearY+'</b><span>年</span></div>'
           +'<button class="yc-arw" id="jd-yr-next" type="button" aria-label="下一年">›</button>'
           +'</div>'
-          +yrSigs(y.signals)
+          +yrB(y, getRelStatus(), {itemsOnly:true})
           +'<div class="yc-yj">'
           +(doL?'<div class="yc-col do"><span class="yc-k do">'+(_jdYearY===curY?'今年要做':'这一年要做')+'</span><ul>'+doL+'</ul></div>':'')
           +(watchL?'<div class="yc-col watch"><span class="yc-k watch">要注意</span><ul>'+watchL+'</ul></div>':'')
@@ -5436,7 +5460,8 @@
       function rdNatal(){
         var n=R.natal, pe=n.persona||{}, secs=[];
         var add=function(id,title,html){ secs.push({id:id,title:title,html:html}); };
-        var core=(pe.coreText||[]).filter(Boolean).slice(0,3);
+        var pb=n.personaB||null;                        // B 版本命(引擎已算好);缺失则退回原文案
+        var core=((pb&&pb.paras)||pe.coreText||[]).filter(Boolean).slice(0,3);
         if(core.length) add('rd-s-read','读懂你','<div class="rd-read">'+core.map(function(p){ var s=rdFirstSent(p); return '<p><b>'+esc(s[0])+'</b>'+esc(s[1])+'</p>'; }).join('')+'</div>');
         if(n.dialectics&&n.dialectics.length) add('rd-s-about','关于你','<div class="rd-about">'+n.dialectics.map(function(x){ return '<div class="it">'+(x.t?'<h3>'+esc(x.t)+'</h3>':'')+'<p>'+esc(x.s)+'</p></div>'; }).join('')+'</div>');
         var dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
@@ -5463,7 +5488,7 @@
         var v=rdEl('rd-v-natal');
         v.innerHTML='<div class="rd-idx" id="rd-idx">'+secs.map(function(s){ return '<button type="button" data-to="'+s.id+'">'+s.title+'</button>'; }).join('')+'</div>'
           +secs.map(function(s,i){ return '<div class="rd-sec" id="'+s.id+'"><div class="rd-sh"><span class="no">'+RD_NUM[i]+'</span><h2>'+s.title+'</h2></div>'+s.html+'</div>'; }).join('')
-          +(pe.closing?'<div class="rd-closing"><p>'+esc(pe.closing)+'</p></div>':'');
+          +(function(){ var c=(pb&&pb.closing)||pe.closing; return c?'<div class="rd-closing"><p>'+esc(c)+'</p></div>':''; })();
         v.querySelectorAll('#rd-idx button').forEach(function(b){ b.addEventListener('click', function(){
           var el=rdEl(b.dataset.to), sc=rdScroller(); if(!el||!sc) return;
           var top=sc.scrollTop+el.getBoundingClientRect().top-sc.getBoundingClientRect().top-(52+51)+2;
@@ -5579,6 +5604,18 @@
           var t=(rel==='partner'&&g.textPartner)?g.textPartner:((rel==='single'&&g.textSingle)?g.textSingle:g.text);
           var s=rdSplitSig(t); return '<li>'+(s[0]?'<span class="rd-tag">'+esc(s[0])+'</span>':'')+'<p>'+esc(s[1])+'</p></li>'; }).join('')+'</ul>';
       }
+      // 年档信号的 B 版排序:用引擎算好的 b.plainItems(按分量重排,岁运这类「过程修饰」排到具体的事后面)。
+      //   用 plainItems 而非 items——「忌」已由本卡的「要注意」栏承担,不能再并进条目里说第二遍。
+      //   拿不到 b(旧缓存)就退回原样,不影响老数据。
+      function rdSigsB(y){
+        var rel=getRelStatus();
+        var b=y.b&&(rel==='partner'?y.b.partner:y.b.single);
+        var list=b&&(b.plainItems||b.items);
+        if(!list||!list.length) return rdSigs(y.signals);
+        return '<ul class="rd-sig">'+list.map(function(it){
+          return '<li>'+(it.label?'<span class="rd-tag">'+esc(it.label)+'</span>':'')+'<p>'+esc(it.text)+'</p></li>';
+        }).join('')+'</ul>';
+      }
       function rdYJ(yi, huan){
         var row=function(k,cls,arr){ return (arr&&arr.length)?'<div class="rd-row2"><span class="k '+cls+'">'+k+'</span><div class="rd-chips">'+arr.map(function(x){ return '<span>'+esc(x)+'</span>'; }).join('')+'</div></div>':''; };
         return row('宜','y',yi)+row('缓','h',huan);
@@ -5613,7 +5650,7 @@
         var ageN=(typeof y.age==='number')?y.age:(RD.Y-birthY);
         var html=rdHead('<h2>'+RD.Y+'<small>年</small></h2>', ageN>0?(ageN+' 岁'):'出生这年', RD.Y<=birthY, RD.Y>=maxY)
           +'<div class="rd-back"><button type="button" hidden></button></div>'
-          +'<div class="rd-card">'+rdSigs(y.signals)
+          +'<div class="rd-card">'+rdSigsB(y)
           +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>'+(RD.Y===curY?'今年要做':'这一年要做')+'</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
           +(((y.keyMonths||[]).length)?'<div class="rd-km"><h4>关键月份</h4><ul>'+y.keyMonths.map(function(k){ return '<li><b>'+k.month+'月</b>'+esc(k.tag)+'</li>'; }).join('')+'</ul></div>':'')
           +'<button type="button" class="rd-cta" id="rd-share-y">为这一年做一张卡片</button></div>';

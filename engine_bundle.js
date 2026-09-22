@@ -15540,6 +15540,202 @@ var RhythmEngine = (() => {
     }
   });
 
+  // engine/liunianB.js
+  var require_liunianB = __commonJS({
+    "engine/liunianB.js"(exports, module) {
+      "use strict";
+      var JI_LINE = {
+        "\u501F\u8D37\u62C5\u4FDD": "\u501F\u51FA\u3001\u62C5\u4FDD\u3001\u5408\u4F19\u90FD\u8981\u9632\uFF0C\u522B\u4EBA\u7684\u6025\u522B\u7528\u4F60\u7684\u94B1\u63A5",
+        "\u4E3A\u5BB6\u4E8B\u52A8\u6C14": "\u522B\u4E3A\u5BB6\u91CC\u7684\u4E8B\u52A8\u6C14",
+        "\u4E0E\u957F\u8F88\u786C\u9876": "\u522B\u8DDF\u957F\u8F88\u6B63\u9762\u9876",
+        "\u786C\u78B0\u786C": "\u522B\u786C\u78B0\u786C\uFF0C\u8FD9\u5E74\u9876\u4E0D\u8FC7\uFF0C\u987A\u7740\u6765\u53CD\u800C\u7A33",
+        "\u611F\u60C5\u4E0A\u8D4C\u6C14\u52A8\u5FF5": "\u611F\u60C5\u4E0A\u7684\u5927\u51B3\u5B9A\u522B\u5728\u6C14\u5934\u4E0A\u505A",
+        "\u4E3A\u5BB6\u4E8B\u65E0\u58F0\u515C\u5E95": "\u5BB6\u91CC\u7684\u4E8B\u522B\u4E00\u4E2A\u4EBA\u9ED8\u9ED8\u5168\u515C\u4E0B\u6765\uFF0C\u8BE5\u5206\u7684\u5206\u3001\u8BE5\u8BF4\u7684\u8BF4",
+        "\u8F7B\u4FE1\u53E3\u5934\u627F\u8BFA": "\u522B\u4FE1\u53E3\u5934\u627F\u8BFA\uFF0C\u8981\u7D27\u7684\u767D\u7EB8\u9ED1\u5B57\u843D\u4E0B\u6765",
+        "\u8D38\u7136\u5927\u52A8": "\u522B\u8D38\u7136\u5927\u52A8\uFF0C\u770B\u6E05\u4E86\u518D\u632A",
+        "\u4E00\u4E2A\u4EBA\u625B\u4E8B": "\u522B\u4E00\u4E2A\u4EBA\u625B\uFF0C\u4E3B\u52A8\u5F00\u53E3\u627E\u4EBA\u642D\u624B",
+        "\u8FD4\u5DE5\u8F83\u52B2": "\u522B\u8DDF\u8FD4\u5DE5\u8F83\u52B2\uFF0C\u780D\u5230\u6700\u8981\u7D27\u7684\u4E00\u4EF6",
+        "\u8D2A\u591A\u3001\u53CD\u590D\u8FD4\u5DE5": "\u522B\u8D2A\u591A\uFF0C\u780D\u5230\u6700\u8981\u7D27\u7684\u4E00\u4EF6\uFF0C\u4FDD\u4F4F\u5B83",
+        "\u53E3\u820C\u4E4B\u4E89": "\u91CD\u8981\u573A\u5408\uFF0C\u8BDD\u8FC7\u4E00\u904D\u8111\u518D\u51FA\u53E3",
+        "\u5377\u5165\u662F\u975E": "\u522B\u5377\u8FDB\u522B\u4EBA\u7684\u4E8B",
+        "\u7FFB\u65E7\u8D26\u3001\u8F83\u771F": "\u522B\u7FFB\u65E7\u8D26\u3001\u522B\u8F83\u771F",
+        "\u677E\u52B2\u8BEF\u4E8B": "\u5BB9\u6613\u677E\u52B2\uFF0C\u9760\u81EA\u5F8B\u628A\u8282\u594F\u6491\u4F4F"
+      };
+      function weightOf(s) {
+        const t = s.text || "";
+        if (t.includes("\u3010\u6362\u6321\u4E4B\u5E74\u3011"))
+          return 100;
+        if (t.includes("\u3010\u7FFB\u8986\u4E4B\u5E74\u3011"))
+          return 95;
+        if (t.includes("\u3010\u7984\u9A6C\u3011"))
+          return 90;
+        if (t.includes("\u3010\u5A5A\u59FB\u611F\u60C5\u3011"))
+          return 85;
+        if (t.includes("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011") && (s.basis || "").includes("\u51B2"))
+          return 80;
+        if (t.includes("\u3010\u957F\u8F88\u5BB6\u5B85\u3011"))
+          return 65;
+        if (t.includes("\u3010\u4F5C\u54C1\u9879\u76EE\u3011"))
+          return 60;
+        if (t.includes("\u3010\u5C81\u8FD0\u3011"))
+          return 58;
+        if (t.includes("\u3010\u5929\u4E59\u3011") || t.includes("\u3010\u6587\u660C\u3011"))
+          return 55;
+        if (t.includes("\u3010\u6843\u82B1\u3011") || t.includes("\u3010\u7984\u795E\u3011") || t.includes("\u3010\u534E\u76D6\u3011"))
+          return 50;
+        return 40;
+      }
+      function toneOf(sigs, fallback) {
+        const has = (k) => sigs.some((s) => (s.text || "").includes(k));
+        const hasBasis = (k) => sigs.some((s) => (s.basis || "").includes(k));
+        if (has("\u3010\u6362\u6321\u4E4B\u5E74\u3011"))
+          return { name: "\u6362\u6321\u5E74", big: true };
+        if (has("\u3010\u7FFB\u8986\u4E4B\u5E74\u3011"))
+          return { name: "\u5927\u53D8\u5E74", big: true };
+        const luma = has("\u3010\u7984\u9A6C\u3011"), marry = has("\u3010\u5A5A\u59FB\u611F\u60C5\u3011");
+        if (luma && marry)
+          return { name: "\u53D8\u52A8\u5927\u5E74", big: true };
+        if (luma)
+          return { name: "\u4E0A\u884C\u53D8\u52A8\u5E74", big: true };
+        if (marry && hasBasis("\u51B2\u65E5\u652F"))
+          return { name: "\u611F\u60C5\u5927\u5E74", big: true };
+        if (has("\u3010\u4E8B\u4E1A\u73AF\u5883\u3011") && hasBasis("\u51B2\u6708\u652F"))
+          return { name: "\u73AF\u5883\u5927\u53D8\u5E74", big: true };
+        const press = sigs.filter((s) => /【岁运】/.test(s.text || "") || /自刑|相害|相刑/.test(s.basis || "")).length;
+        if (press >= 2)
+          return { name: "\u4F4E\u8C37\u5E74", big: true };
+        return { name: (fallback || "").replace(/之年$/, "\u5E74"), big: false };
+      }
+      var splitLabel = (t) => {
+        const m = String(t || "").match(/^【([^】]*)】([\s\S]*)$/);
+        return m ? { label: m[1], text: m[2] } : { label: "", text: String(t || "") };
+      };
+      function ageOn(chart, year) {
+        const b = chart && chart.input || {};
+        if (!b.year)
+          return null;
+        let a = year - b.year;
+        if (b.month && b.day) {
+        }
+        return a;
+      }
+      function renderYearB(y, opt) {
+        const o = opt || {};
+        const sigsRaw = (y.signals || []).slice();
+        const sigs = sigsRaw.map((s) => {
+          const t = o.married ? s.textPartner || s.text : s.textSingle || s.text;
+          return { text: t, basis: s.basis, _w: weightOf(s) };
+        }).sort((a, b) => b._w - a._w);
+        const tone = toneOf(sigs, y.headline);
+        let items = sigs.map((s) => splitLabel(s.text));
+        const overlaps = (a, b) => {
+          for (let i = 0; i + 6 <= a.length; i++)
+            if (b.includes(a.slice(i, i + 6)))
+              return true;
+          return false;
+        };
+        const plainItems = items.map((it) => ({ label: it.label, text: it.text }));
+        const jis = (y.ji || []).map((j) => ({ tag: j, line: JI_LINE[j] || j })).filter((x) => x.line && !items.some((it) => overlaps(x.line, it.text)));
+        const DOMAIN = { \u5BB6: /家里|长辈|家事|家宅/, \u94B1: /钱|财|进账|破财|账/, \u60C5: /感情|婚姻|关系|对方/, \u4E8B: /项目|返工|收尾|工作|环境|换岗/, \u8BDD: /说|口舌|是非|承诺|文书/ };
+        const domainOf = (s) => Object.keys(DOMAIN).find((k) => DOMAIN[k].test(s)) || null;
+        const leftover = [];
+        jis.forEach((x) => {
+          const d = domainOf(x.tag + x.line);
+          const idx = d ? items.findIndex((it) => domainOf(it.label + it.text) === d) : -1;
+          if (idx >= 0)
+            items[idx].text = items[idx].text.replace(/。$/, "\u3002") + x.line + "\u3002";
+          else
+            leftover.push(x.line);
+        });
+        const lead = tone.big ? "" : (y.trait || "").split("\u3002")[0] ? (y.trait || "").split("\u3002")[0] + "\u3002" : "";
+        return {
+          year: o.year,
+          age: ageOn(o.chart, o.year),
+          tone: tone.name,
+          big: tone.big || !!y.big,
+          lead,
+          items,
+          plainItems,
+          caution: leftover.length ? leftover.join("\uFF1B") + "\u3002" : ""
+        };
+      }
+      function formatYearB(b) {
+        const head = `\u25B6 ${b.year}${b.age != null ? `\uFF08${b.age}\u5C81 \xB7 ${b.tone}\uFF09` : `\uFF08${b.tone}\uFF09`}${b.big ? " \u2605" : ""}`;
+        const lines = [head];
+        if (b.lead)
+          lines.push(b.lead);
+        if (b.items.length === 1)
+          lines.push(b.items[0].text);
+        else if (b.items.length > 1) {
+          const n = ["\u2460", "\u2461", "\u2462", "\u2463", "\u2464"];
+          b.items.forEach((t, i) => lines.push(`  ${n[i] || "\xB7"} ${t.text}`));
+        }
+        if (b.caution)
+          lines.push(b.caution);
+        return lines.join("\n");
+      }
+      if (typeof module !== "undefined")
+        module.exports = { renderYearB, formatYearB, JI_LINE, weightOf, toneOf };
+    }
+  });
+
+  // engine/natalB.js
+  var require_natalB = __commonJS({
+    "engine/natalB.js"(exports, module) {
+      "use strict";
+      var GOD_TRAP = {
+        \u5370: { name: "\u60F3\u5468\u5168", line: "\u4F60\u300C\u51E1\u4E8B\u60F3\u7A33\u59A5\u300D\u4E0D\u662F\u8C28\u614E\uFF0C\u662F\u62D6", why: "\u60F3\u5F97\u592A\u4E45\uFF0C\u673A\u4F1A\u5C31\u5728\u773C\u524D\u4E5F\u8FDF\u8FDF\u4E0D\u52A8" },
+        \u98DF: { name: "\u60F3\u5F97\u591A", line: "\u4F60\u300C\u70B9\u5B50\u591A\u300D\u4E0D\u662F\u5929\u8D4B\uFF0C\u662F\u5206\u5FC3", why: "\u5F00\u7684\u5934\u592A\u591A\uFF0C\u6536\u5C3E\u7684\u90A3\u80A1\u52B2\u5C31\u603B\u4E0D\u591F\u7528" },
+        \u8D22: { name: "\u6293\u5F97\u7D27", line: "\u4F60\u300C\u4EC0\u4E48\u90FD\u60F3\u6293\u4F4F\u300D\u4E0D\u662F\u4E0A\u8FDB\uFF0C\u662F\u614C", why: "\u53EA\u987E\u773C\u524D\uFF0C\u628A\u81EA\u5DF1\u903C\u5F97\u6CA1\u6709\u4F59\u5730" },
+        \u5B98: { name: "\u8981\u9762\u9762\u4FF1\u5230", line: "\u4F60\u300C\u4EC0\u4E48\u90FD\u8981\u987E\u5230\u300D\u4E0D\u662F\u8D1F\u8D23\uFF0C\u662F\u4E0D\u6562\u677E\u624B", why: "\u5E38\u628A\u81EA\u5DF1\u903C\u5230\u6CA1\u6709\u9000\u8DEF" },
+        \u6BD4: { name: "\u786C\u625B", line: "\u4F60\u300C\u4EC0\u4E48\u90FD\u81EA\u5DF1\u6765\u300D\u4E0D\u662F\u80FD\u5E72\uFF0C\u662F\u4E0D\u80AF\u5F00\u53E3", why: "\u625B\u5230\u6700\u540E\uFF0C\u80FD\u5E2E\u4F60\u7684\u4EBA\u90FD\u9000\u5F00\u4E86" }
+      };
+      function renderNatalB(p, P, dy, mj) {
+        const balanced = !!P.balanced;
+        const weak = /弱/.test(mj && mj.strength || "");
+        const trap = GOD_TRAP[P.topGod] || null;
+        let tagline;
+        if (balanced && weak)
+          tagline = "\u4E00\u4E2A\u4EC0\u4E48\u90FD\u63A5\u5F97\u4F4F\u3001\u5374\u6700\u96BE\u4E3A\u81EA\u5DF1\u6311\u4E00\u4E2A\u7684\u4EBA\u3002";
+        else if (balanced)
+          tagline = "\u4E00\u4E2A\u6837\u6837\u62FF\u5F97\u8D77\u3001\u504F\u504F\u6700\u96BE\u53EA\u8981\u4E00\u6837\u7684\u4EBA\u3002";
+        else if (weak)
+          tagline = "\u4E00\u4E2A\u603B\u5728\u300C\u501F\u529B\u300D\u548C\u300C\u81EA\u5DF1\u4E0A\u300D\u4E4B\u95F4\u6447\u6446\u7684\u4EBA\u3002";
+        else
+          tagline = "\u4E00\u4E2A\u5B81\u53EF\u81EA\u5DF1\u625B\u4E0B\u6765\u3001\u4E5F\u4E0D\u613F\u6B20\u4EBA\u7684\u4EBA\u3002";
+        const trapLine = balanced ? "\u300C\u4EC0\u4E48\u90FD\u80FD\u505A\u300D\u662F\u4F60\u7684\u9677\u9631\uFF0C\u4E0D\u662F\u5929\u8D4B\u3002\u4F60\u4EC0\u4E48\u90FD\u6525\u7740\uFF0C\u6240\u4EE5\u54EA\u6837\u90FD\u6CA1\u6525\u5230\u5934\u2014\u2014\u4E0D\u72E0\u5FC3\u780D\u6389\u4E00\u534A\uFF0C\u4F60\u4F1A\u4E00\u76F4\u5728\u539F\u5730\u8F6C\u5708\u3002" : trap ? `${trap.line}\u3002${trap.why}\u2014\u2014\u8FD9\u4E00\u6761\u4E0D\u6539\uFF0C\u4F60\u7684\u529B\u6C14\u4F1A\u4E00\u76F4\u82B1\u5728\u51C6\u5907\u4E0A\uFF0C\u800C\u4E0D\u662F\u7ED3\u679C\u4E0A\u3002` : "";
+        const dyLine = dy && dy.ganZhi ? `\u8FD9\u4E0D\u662F\u4E00\u53E5\u8BC4\u8BED\uFF0C\u662F\u4F60\u8FD9\u5341\u5E74\uFF08${dy.ganZhi}\u8FD0\uFF0C${dy.startYear}\u2013${dy.startYear + 9}\uFF09\u8BE5\u7EC3\u7684\u90A3\u4EF6\u4E8B\u3002` : "";
+        const leverLine = weak ? "\u4F60\u7684\u529B\u6C14\u4E0D\u5728\u786C\u625B\uFF0C\u5728\u501F\u529B\uFF1A\u4F4D\u7F6E\u7AD9\u5BF9\u3001\u4EBA\u627E\u5BF9\uFF0C\u4E8B\u5C31\u7701\u4E00\u534A\u3002\u53EF\u8D8A\u9760\u5916\u9762\u7684\u529B\uFF0C\u81EA\u5DF1\u7684\u52B2\u8D8A\u4F7F\u4E0D\u51FA\u6765\uFF1B\u6BCF\u81EA\u5DF1\u62CD\u677F\u4E00\u4EF6\u4E8B\uFF0C\u5E95\u6C14\u5C31\u539A\u4E00\u5C42\u3002" : "";
+        return {
+          tagline,
+          // leverLine 是「追加」不是「替换」——早先写成 (leverLine || coreText[1]),
+          //   把身弱盘原本的 P2 整段顶掉了(她那张盘 P2 恰好冗余所以没露馅,宜昌那张就丢了内容)。
+          paras: [
+            p.coreText[0],
+            [p.coreText[1], leverLine].filter(Boolean).join(""),
+            `${p.coreText[2].split("\u3002")[0]}\u3002${trapLine}`
+          ].filter(Boolean),
+          love: p.love,
+          work: p.work,
+          closing: [p.closing, dyLine].filter(Boolean).join("")
+        };
+      }
+      function formatNatalB(b) {
+        const L = [`\u3010\u4E00\u53E5\u8BDD\u3011${b.tagline}`, ""];
+        b.paras.forEach((t, i) => {
+          L.push(`${i + 1}. ${t}`);
+          L.push("");
+        });
+        L.push(`\u3010\u611F\u60C5\u91CC\u7684\u4F60\u3011${b.love}`, "");
+        L.push(`\u3010\u4E8B\u4E1A\u91CC\u7684\u4F60\u3011${b.work}`, "");
+        L.push(`\u3010\u6536\u5C3E\u3011${b.closing}`);
+        return L.join("\n");
+      }
+      if (typeof module !== "undefined")
+        module.exports = { renderNatalB, formatNatalB, GOD_TRAP };
+    }
+  });
+
   // engine/report.js
   var require_report = __commonJS({
     "engine/report.js"(exports, module) {
@@ -15568,9 +15764,11 @@ var RhythmEngine = (() => {
         SAN_HUI,
         GAN_CHONG
       } = require_relations();
-      var { liuri } = require_liuri();
+      var { liuri, activeDaYun } = require_liuri();
       var { personaSignals } = require_profile();
       var { liuNian2, liuYue2, keyMonthsOf } = require_liunian2();
+      var { renderYearB } = require_liunianB();
+      var { renderNatalB } = require_natalB();
       var WX_INFO = {
         \u6728: {
           keyword: "\u751F\u957F \xB7 \u8212\u5C55",
@@ -16386,6 +16584,7 @@ var RhythmEngine = (() => {
         const persona = buildPersona(mj, chart, stage);
         const dialectics = buildDialectics(mj, chart);
         const { expressive } = personaSignals(mj, chart);
+        const personaB = renderNatalB(persona, personaSignals(mj, chart), activeDaYun(chart, today && today.year || (/* @__PURE__ */ new Date()).getFullYear()), mj);
         const aspects = buildAspects(mj, dayWx, persona, expressive, stage);
         return {
           dayMaster: mj.dayMaster,
@@ -16414,6 +16613,8 @@ var RhythmEngine = (() => {
           aspects,
           persona,
           // {identity,tagline,coreText[p1,p2,p3],love,work,closing}
+          personaB,
+          // B 版:{tagline,paras[],love,work,closing}
           dialectics
           // [{t,s}] 命局辩证段落
         };
@@ -17043,6 +17244,12 @@ var RhythmEngine = (() => {
         const godType = tenGodFull ? FULL_TO_TYPE[tenGodFull(chart.dayGan, yGan)] : tenGodType(dayWx, yGanWx);
         return { year, yGan, yZhi, yGanWx, yZhiWx, energy, relation, net, raw, dyn, dy, tags, severe, godType };
       }
+      function attachYearB(yr, g2, chart) {
+        yr.b = {
+          single: renderYearB(g2, { year: yr.year, chart, married: false }),
+          partner: renderYearB(g2, { year: yr.year, chart, married: true })
+        };
+      }
       function buildYears(mj, chart, startYear) {
         const natal = natalPillars(chart);
         const dayWx = GAN_WX[chart.dayGan];
@@ -17078,6 +17285,7 @@ var RhythmEngine = (() => {
           yr.yi = g2.yi;
           yr.ji = g2.ji;
           yr.keyMonths = keyMonthsOf(chart, yr.year, yr.ganZhi[1], yr._dyn.favVec || mj.favVec, dayWx);
+          attachYearB(yr, g2, chart);
           yr.shifted = !!yr._dyn.shifted;
           delete yr._tags;
           delete yr._severe;
@@ -17128,6 +17336,7 @@ var RhythmEngine = (() => {
         yr.yi = g2.yi;
         yr.ji = g2.ji;
         yr.keyMonths = keyMonthsOf(chart, yr.year, yr.ganZhi[1], yr._dyn && yr._dyn.favVec || mj.favVec, dayWx);
+        attachYearB(yr, g2, chart);
         yr.shifted = !!yr._dyn.shifted;
         delete yr._tags;
         delete yr._severe;
