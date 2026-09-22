@@ -17899,14 +17899,62 @@ var RhythmEngine = (() => {
         const yr = liunian(mj, chart, y);
         return buildYearMonths(mj, chart, y, 1, yr.months.map((m) => m.avg));
       }
-      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor };
+      function buildCalendarOnly(today) {
+        const ym = { year: today.year, month: today.month, day: today.day };
+        const firstDow = (new Date(ym.year, ym.month - 1, 1).getDay() + 6) % 7;
+        const dim = new Date(ym.year, ym.month, 0).getDate();
+        let band = null;
+        const days = [];
+        for (let g = 1; g <= dim; g++) {
+          const folk = folkOf(ym.year, ym.month, g);
+          if (folk.band && !band)
+            band = folk.band;
+          const tag = pickTag(folk);
+          const lun = Solar.fromYmd(ym.year, ym.month, g).getLunar();
+          const hasDot = folk.tags.some((t) => t.type === "\u8D66\u65E5" || t.type !== "\u5FCC" && t.level <= 2);
+          days.push({
+            g,
+            lunarDayCN: folk.lunarDayCN,
+            lunarLabel: folk.lunarLabel,
+            fk: hasDot,
+            wu: folk.wuRi,
+            today: g === ym.day,
+            tagName: tag ? tag.name : "\u5E73\u65E5",
+            tagCls: tag ? tag.cls : "plain",
+            tagYi: tag ? tag.yi : "",
+            tagDesc: tag ? tag.desc : "",
+            tagType: tag ? tag.type : "",
+            ganZhi: {
+              year: lun.getYearInGanZhi(),
+              month: lun.getMonthInGanZhi(),
+              day: lun.getDayInGanZhi(),
+              shengXiao: lun.getYearShengXiao()
+            },
+            gongJi: folk.gongJi
+          });
+        }
+        return {
+          noPerson: true,
+          month: {
+            year: ym.year,
+            month: ym.month,
+            monthLabel: ym.month + "\u6708",
+            ganZhiYear: Solar.fromYmd(ym.year, ym.month, 1).getLunar().getYearInGanZhi() + "\u5E74",
+            firstDow,
+            band,
+            days,
+            highDays: []
+          }
+        };
+      }
+      module.exports = { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor, buildCalendarOnly };
     }
   });
 
   // engine/browser.js
   var require_browser = __commonJS({
     "engine/browser.js"(exports, module) {
-      var { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor } = require_buildApp();
+      var { buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor, buildCalendarOnly } = require_buildApp();
       var { folkOf, modernYi } = require_folk();
       var { paipan, trueSolarCorrection } = require_paipan();
       function gongJiOf(y, m, d) {
@@ -17960,7 +18008,7 @@ var RhythmEngine = (() => {
           return 30;
         }
       }
-      module.exports = { modernYi, buildApp, buildMonth, buildYear, buildYearCardFor, buildMonthsFor, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
+      module.exports = { modernYi, buildApp, buildCalendarOnly, buildMonth, buildYear, buildYearCardFor, buildMonthsFor, gongJiOf, paipan, trueSolarCorrection, energyRange, lunarToSolar, lunarLeapMonth, lunarMonthDays, Solar, Lunar };
     }
   });
   return require_browser();

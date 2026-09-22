@@ -2726,7 +2726,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=199"></script>
+  <script src="engine_bundle.js?v=200"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2784,17 +2784,20 @@
         if (_cacheOK(_env2)){ window.APP = _env2.payload; window.APP_PERSON = person; window.__IS_DEMO = false; return; }
         if (person){ window.APP = null; window.APP_PERSON = person; window.__IS_DEMO = false; window.__ENGINE_DOWN = true; return; }
       }catch(e){}
-      // ③ 无存档 → 演示命主 + 真实今天(分享给朋友打开时,「今日」永远是当天)
+      // ③ 无存档 → 只出历法层,个人层一律不算(2026-09-22 创始人拍板)
+      //   原来这里跑一个假命主(1995-08-17 女 成都)把全站填满:能量分、今日宜缓、整本命书、
+      //   近期吉日全是别人的盘,只有三条小字说「当前为示例」。撞铁律「一律不做示例/演示数据」,
+      //   而且比一般示例更危险 —— 它长得和真结果一模一样,分享链接点开的人会当成自己的。
+      //   现在:农历/节气/节假日/干支/黄历公吉照常可用,个人层留空状态等用户填生辰。
       try{
-        if (window.RhythmEngine && RhythmEngine.buildApp){
-          var DEMO = { year:1995, month:8, day:17, hour:14, minute:30, longitude:104.07, gender:'女' };
-          window.APP = RhythmEngine.buildApp(DEMO, today);
-          window.APP_PERSON = DEMO; window.__IS_DEMO = true;
+        if (window.RhythmEngine && RhythmEngine.buildCalendarOnly){
+          window.APP = RhythmEngine.buildCalendarOnly(today);
+          window.APP_PERSON = null; window.__IS_DEMO = false; window.__NO_PERSON = true;
           return;
         }
       }catch(e){}
-      window.__IS_DEMO = true;
-      document.write('<scr'+'ipt src="app_data.js?v=199"></scr'+'ipt>');
+      window.__NO_PERSON = true;
+      document.write('<scr'+'ipt src="app_data.js?v=200"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -2803,8 +2806,15 @@
     // 这正是为「引擎在浏览器抛错」那类事故准备的安全网,自己却无护栏。改为:先画一个可恢复的
     // 「请刷新」提示,再主动中止本块(此时本就无数据可渲染,中止即可,不再连累用户看到白屏)。
     if(!window.APP){
-      document.body.innerHTML='<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2em;text-align:center;color:#A9A296;font-size:15px;line-height:1.9">'
-        +(window.__ENGINE_DOWN?'本机数据未准备好<br>请联网后重新打开（不会用旧结果冒充今天）':'内容加载失败<br>请检查网络后刷新页面')+'</div>';
+      // 🔴 2026-09-22:原来直接 body.innerHTML= 把底栏一起抹掉 —— PWA standalone 无地址栏、
+      //   无下拉刷新,用户只能杀进程。现在只覆盖内容区、保留底栏,并给一个能点的出口。
+      var _rec=document.createElement('div');
+      _rec.style.cssText='position:fixed;left:0;right:0;top:0;bottom:calc(58px + env(safe-area-inset-bottom));z-index:60;background:var(--bg,#0E0E0F);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:2em;text-align:center;color:#A9A296;font-size:15px;line-height:1.9';
+      _rec.innerHTML='<div>'+(window.__ENGINE_DOWN?'本机数据未准备好<br>请联网后重新打开（不会用旧结果冒充今天）':'内容加载失败<br>请检查网络后重试')+'</div>'
+        +'<button type="button" id="err-reload" style="min-height:44px;padding:0 26px;border-radius:22px;border:1px solid #6E6350;background:transparent;color:#C8A96A;font-size:15px;font-family:inherit">重新载入</button>';
+      document.body.appendChild(_rec);
+      var _rb=document.getElementById('err-reload');
+      if(_rb) _rb.addEventListener('click', function(){ location.reload(); });
       throw new Error('APP unavailable — showed recovery notice');
     }
     const APP = window.APP;
@@ -3591,9 +3601,11 @@
 
     // ===== 未来一周 · 能量柱状(锚定真实今天，加长 + 浅→深)=====
     (function wk7(){
-      const win = (APP.days || [APP.today]).slice(0, 7);
+      // 无生辰时 APP.days / APP.today 都不存在:[undefined] 会在下面读 c.energy 炸掉
+      const win = (APP.days || (APP.today ? [APP.today] : [])).slice(0, 7);
       const el = $('w-wk7');
       if (!el) return;
+      if (!win.length) { el.innerHTML = ''; return; }
       el.innerHTML = win.map((c,i)=>{
         const h = Math.round(14 + Math.max(0, Math.min(100, c.energy) - 30) / 70 * 86);
         const lab = i===0?'今':i===1?'明':i===2?'后':(c.dateText.match(/(\d+)日/)||[,''])[1];
@@ -3792,6 +3804,15 @@
     (function fold(){
       const KEY='shihe_wdg_fold'; let st={};
       try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+      // 🔴 2026-09-22:核心小部件的折叠改为「当天有效」。原来整条标题行都是折叠热区且永久持久化,
+      //   一次误触之后,此后每天打开首屏都没有核心内容,且没有任何提示告诉你它被收起了。
+      //   次要部件(老黄历更多细节等)仍沿用永久记忆。
+      const DAILY = { today: 1 };          // 需要每日重置的部件 id
+      try{
+        const dk = new Date().toISOString().slice(0,10);
+        if (st.__d !== dk) { Object.keys(DAILY).forEach((k)=>{ delete st[k]; }); st.__d = dk;
+          localStorage.setItem(KEY, JSON.stringify(st)); }
+      }catch(e){}
       const DEF={hlmore:true};  // 今日详解与老黄历「更多细节·四法参断」都默认展开(2026-09-20:折叠导致用户以为内容变少)
       document.querySelectorAll('.widgets .collapsible').forEach((w)=>{
         const id=w.dataset.wid;
@@ -5408,6 +5429,7 @@
       //   只换排布/字体/颜色/交互:三章顶栏常驻 + 本命连续长读(吸顶小目录跳读) + 流年 年/月/日 条带直选 + 调养平铺。
       //   所有文字取自与旧版完全相同的字段(R.natal / jdYearData / tlMonthsOf / buildMonth / APP.season),一字不改。
       var RD={ch:'natal', dom:0, mode:'y', Y:null, MY:null, D:null, built:false};
+      window.RD = RD;   // 供路由读当前章(2026-09-22)
       var RD_NUM=['壹','贰','叁','肆','伍','陆','柒','捌'];
       var RD_DOM={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'健康'};
       function rdEl(id){ return document.getElementById(id); }
@@ -5432,6 +5454,8 @@
       function rdShow(ch){
         if(ch!=='toc'&&ch!=='natal'&&ch!=='tl'&&ch!=='care') ch='toc';
         RD.ch=ch;
+        // 换章压栈(2026-09-22):否则返回键会跳过章这一层直接退出
+        if(window.__navPush) window.__navPush({ screen: 2, rd: ch });
         var root=rdEl('rd'); if(!root) return;
         root.classList.toggle('on-toc', ch==='toc');
         root.querySelectorAll('.rd-bar button').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.ch===ch?'true':'false'); });
@@ -6264,7 +6288,67 @@
         // 进入「解读」:条带此刻才有宽度 → 选中项居中 + 目录高亮
         if (i === 2 && window.__rdOnShow) requestAnimationFrame(window.__rdOnShow);
       }
+// ===== 无生辰:个人层一律不渲染,只留历法层(2026-09-22 拆假命主)=====
+      //   铁律:空状态只留淡图标 + 四字状态,不放引导长句、不放示例预览。
+      //   历法层(月历农历/节气/节假日/老黄历/节气三伏/重点日)与生辰无关,照常可用。
+      (function noPerson(){
+        if (!window.__NO_PERSON) return;
+        var EMPTY = function(txt){
+          return '<div class="mk-empty"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.45">'
+            + '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 1.5"/></svg><p>' + txt + '</p></div>';
+        };
+        // 个人小部件:能量 / 今日状态 / 未来一周 —— 整块换成空状态或移除
+        ['energy','week'].forEach(function(id){
+          var el=document.querySelector('.widgets .wdg[data-wid="' + id + '"]');
+          if(el) el.style.display='none';
+        });
+        var td=document.querySelector('.widgets .wdg[data-wid="today"]');
+        if(td){
+          td.classList.remove('collapsible');
+          var body=td.querySelector('.wdg-body') || td;
+          var head=td.querySelector('.wdg-toggle');
+          // 只掐掉「折叠」这个行为,不能把整条标题行的点击关掉 ——
+          //   「怎么用?」按钮就在这一行里,一起禁掉会让无生辰的新用户连说明都打不开。
+          if(head) head.classList.remove('wdg-toggle');
+          body.innerHTML = EMPTY('未设置生辰');
+        }
+        document.body.classList.add('no-person');
+      })();
       window.__setScreen = setScreen; // 供「解读」内联报告 / 工具深链跨屏跳转
+
+      // ===== 路由:让系统返回键回退一层,而不是退出整个应用(2026-09-22)=====
+      //   原来全站零 history 操作,从「解读 › 流年」按手机返回键 = 直接退出 PWA。
+      //   做法:用户每往深一层就 push 一条 state,popstate 时还原上一层;
+      //   还原过程置 __navSilent,避免「还原又触发 push」的死循环。
+      (function router(){
+        var silent = false;
+        function cur(){
+          return { screen: +(document.body.dataset.screen || 0),
+                   rd: (window.RD && window.RD.ch) || null };
+        }
+        function apply(st){
+          silent = true;
+          try{
+            st = st || { screen: 0, rd: null };
+            if (st.screen !== 2 && window.__tbReset && st.screen !== 3) window.__tbReset();
+            if (st.screen === 2 && st.rd && window.__rdRestore) window.__rdRestore({ ch: st.rd });
+            setScreen(st.screen || 0);
+          }catch(e){}
+          silent = false;
+        }
+        window.__navPush = function(st){
+          if (silent) return;
+          var now = null; try{ now = history.state; }catch(e){}
+          if (now && now.screen === st.screen && now.rd === st.rd) return;   // 同一层不重复压栈
+          try{ history.pushState(st, ''); }catch(e){}
+        };
+        try{ history.replaceState({ screen: 0, rd: null }, ''); }catch(e){}
+        window.addEventListener('popstate', function(e){ apply(e.state); });
+        // 包住 setScreen:用户切屏即压栈(还原过程不压)
+        var _orig = setScreen;
+        setScreen = function(i){ _orig(i); window.__navPush({ screen: +i || 0, rd: (window.RD && window.RD.ch) || null }); };
+        window.__setScreen = setScreen;
+      })();
       // 跨日重载后还原位置(所在屏 / 解读章节 / 日历所看月与选中日)
       (function(){
         var raw=null; try{ raw=sessionStorage.getItem('shihe_rollover'); sessionStorage.removeItem('shihe_rollover'); }catch(e){}
@@ -6371,7 +6455,7 @@
       });
       // 新版接管后就地刷新一次 —— 补上「缓存优先」缺的那一步。
       //   SW 是缓存优先:这次打开先给旧页面,新版在后台装好才接管,于是用户眼前这屏永远慢一版;
-      //   而旧 HTML 里的 engine_bundle.js?v=199NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
+      //   而旧 HTML 里的 engine_bundle.js?v=200NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
       //   三道闸:① 首装不刷(没有旧 controller = 干净安装,本来就是新的)
       //          ② 只在刚打开的头 12 秒内刷(用户还没开始读,不打断;超时就留给下次打开)
       //          ③ sessionStorage 标记防连环刷

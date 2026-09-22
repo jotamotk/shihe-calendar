@@ -237,7 +237,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=199"></script>
+  <script src="engine_bundle.js?v=200"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -339,7 +339,12 @@
     }
     function loadGeo(){
       return fetch('geocities.json').then(r=>r.json()).then(d=>{ GEO=d; GEO_FAILED=false; cityQ.placeholder='输入城市名，如 西宁 / New York';
-        cityRes.innerHTML=''; cityRes.classList.remove('on'); if(!lonEl.value)pickCity('成都',104.07,'Asia/Shanghai','CN'); }).catch(cityLoadFailed);
+        cityRes.innerHTML=''; cityRes.classList.remove('on');
+        // 🔴 2026-09-22:不再预填「成都」。原来加载成功就 pickCity('成都'),而提交校验只拦
+        //   「打了字没点选」,预填值原样放行 → 没碰过城市框的人静默按成都经度排盘。
+        //   西宁 vs 成都差 2.29°≈真太阳时 9 分钟,生在时辰边界的人时柱会错。
+        //   现在留空,由 btn-go 的既有校验(_pk 为空即拦)强制用户主动选。
+      }).catch(cityLoadFailed);
     }
     cityRes.addEventListener('click',(e)=>{ if(e.target.closest('[data-retry]')) loadGeo(); });
     loadGeo();
@@ -460,7 +465,10 @@
         const t = document.getElementById('in-time').value.split(':').map(Number);
         hh = t[0]||0; mi = t[1]||0;
       }
-      const lon = parseFloat(lonEl.value)||104.07;
+      // 🔴 不再 ||104.07 静默落成都:上面的城市校验已保证走到这里必有经度,
+      //   真到了这里还是空,宁可抛出去被上层拦住,也不拿一个「合法但错误」的经度去排盘。
+      const lon = parseFloat(lonEl.value);
+      if (!isFinite(lon)) { throw new Error('no-longitude'); }
       const tz = tzEl.value || 'Asia/Shanghai';
       let sy=y, sm=m, sd=d;
       if (cal === '农历'){ const leap=!Number.isInteger(m), mm=Math.floor(m); const s = RhythmEngine.lunarToSolar(y,mm,d,leap); sy=s.year; sm=s.month; sd=s.day; }
