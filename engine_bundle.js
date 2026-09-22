@@ -12743,10 +12743,14 @@ var RhythmEngine = (() => {
         const balanced = nonBi[0].v < th.top && (diff0 < th.diff || topIsJi && diff0 < 7);
         const dominant = balanced ? "\u5747\u8861" : topGod;
         const riZhiGod = tenGodType(dayWx, ZHI_WX[chart.zhis[2]]);
-        const _emoRank = [["\u5B98", godPct.\u5B98 || 0, "\u79CB"], ["\u98DF", godPct.\u98DF || 0, "\u590F"], ["\u5370", godPct.\u5370 || 0, "\u51AC"], ["\u6BD4", godPct.\u6BD4 || 0, "\u6625"]].sort((a, b) => b[1] - a[1]);
+        const _emoRank = [["\u5B98", godPct.\u5B98 || 0], ["\u98DF", godPct.\u98DF || 0], ["\u5370", godPct.\u5370 || 0], ["\u6BD4", godPct.\u6BD4 || 0]].sort((a, b) => b[1] - a[1]);
         const emoFromGod = riZhiGod === "\u5B98" || godPct.\u5B98 >= 22 || _emoRank[0][1] >= 18;
-        const emoKey = !emoFromGod ? null : riZhiGod === "\u5B98" || godPct.\u5B98 >= 22 ? "\u79CB" : _emoRank[0][2];
-        const emoPol = !emoFromGod ? null : emoKey === "\u6625" || emoKey === "\u590F" ? "\u5916" : "\u5185";
+        const emoGod = !emoFromGod ? null : riZhiGod === "\u5B98" || godPct.\u5B98 >= 22 ? "\u5B98" : _emoRank[0][0];
+        const _inner = (godPct.\u5B98 || 0) + (godPct.\u5370 || 0);
+        const _outer = (godPct.\u98DF || 0) + (godPct.\u6BD4 || 0);
+        const _gap = Math.abs(_inner - _outer);
+        const emoLevel = !emoFromGod ? null : _emoRank[0][1] >= 32 && _gap >= 12 ? "\u663E" : "\u504F";
+        const emoPol = !emoFromGod ? null : emoGod === "\u6BD4" || emoGod === "\u98DF" ? "\u5916" : "\u5185";
         const domWx = WX5.find((x) => tenGodType(dayWx, x) === dominant);
         const domJi = !balanced && !!domWx && ((mj.favVec || {})[domWx] ?? 0) < -0.12;
         const social = Math.max(0, Math.min(100, 50 + (godPct.\u98DF * 0.85 + godPct.\u6BD4 * 0.5 - godPct.\u5370 * 0.55 - godPct.\u5B98 * 0.25)));
@@ -12789,7 +12793,8 @@ var RhythmEngine = (() => {
           dominant,
           domJi,
           riZhiGod,
-          emoKey,
+          emoGod,
+          emoLevel,
           emoFromGod,
           emoPol,
           social,
@@ -15985,11 +15990,11 @@ var RhythmEngine = (() => {
       function balancedDrive(top, second) {
         return `\u4F60\u7565\u504F${LEAN[top] || "\u80FD\u625B\u4E8B\u7684\u4E00\u9762"}\uFF0C\u53C8\u5E26\u51E0\u5206${LEAN[second] || "\u7075\u6D3B\u7684\u4E00\u9762"}\uFF0C\u5404\u79CD\u573A\u5408\u90FD\u5E94\u4ED8\u5F97\u6765\uFF0C\u9002\u5E94\u529B\u662F\u4F60\u7684\u957F\u5904\u3002`;
       }
-      var SEASON_EMO = {
-        \u6625: "\u4F60\u7684\u60C5\u7EEA\u6765\u5F97\u5FEB\u3001\u504F\u51B2\u52A8\uFF0C\u770B\u5230\u673A\u4F1A\u5C31\u60F3\u7ACB\u523B\u884C\u52A8\u3002",
-        \u590F: "\u4F60\u7684\u60C5\u7EEA\u6765\u5F97\u5FEB\u4E5F\u5F3A\u70C8\uFF0C\u60F3\u5230\u5C31\u60F3\u7ACB\u523B\u505A\uFF0C\u6BD4\u8F83\u7F3A\u4E4F\u7B49\u5F85\u7684\u8010\u5FC3\u3002",
-        \u79CB: "\u4F60\u7684\u60C5\u7EEA\u504F\u51B7\u9759\u3001\u4E0D\u6613\u51B2\u52A8\uFF0C\u6DF7\u4E71\u4E2D\u4E5F\u7A33\u5F97\u4F4F\u3002",
-        \u51AC: "\u4F60\u7684\u60C5\u7EEA\u504F\u6C89\u7A33\u3001\u6162\u70ED\uFF0C\u505A\u4E8B\u9700\u8981\u7F13\u51B2\uFF0C\u6025\u4E0D\u5F97\u3001\u4E5F\u4E0D\u559C\u6B22\u88AB\u50AC\u3002"
+      var EMO_BY_GOD = {
+        \u6BD4: { \u504F: "\u4F60\u7684\u60C5\u7EEA\u504F\u51B2\uFF0C\u770B\u5230\u673A\u4F1A\u5C31\u60F3\u7ACB\u523B\u4E0A\u3002", \u663E: "\u4F60\u60C5\u7EEA\u51B2\uFF0C\u8BA4\u51C6\u4E86\u5C31\u4E0A\u3002" },
+        \u98DF: { \u504F: "\u4F60\u7684\u60C5\u7EEA\u6765\u5F97\u5FEB\uFF0C\u60F3\u5230\u5C31\u60F3\u7ACB\u523B\u505A\u3002", \u663E: "\u4F60\u60C5\u7EEA\u6765\u5F97\u5FEB\u4E5F\u53BB\u5F97\u5FEB\uFF0C\u85CF\u4E0D\u4F4F\u3002" },
+        \u5B98: { \u504F: "\u4F60\u7684\u60C5\u7EEA\u504F\u51B7\u9759\u3001\u4E0D\u6613\u51B2\u52A8\uFF0C\u6DF7\u4E71\u4E2D\u4E5F\u7A33\u5F97\u4F4F\u3002", \u663E: "\u4F60\u60C5\u7EEA\u51B7\u9759\u3001\u4E0D\u52A8\u58F0\u8272\uFF0C\u518D\u4E71\u4E5F\u538B\u5F97\u4F4F\u3002" },
+        \u5370: { \u504F: "\u4F60\u7684\u60C5\u7EEA\u504F\u6C89\u7A33\u3001\u6162\u70ED\uFF0C\u505A\u4E8B\u9700\u8981\u7F13\u51B2\u3002", \u663E: "\u4F60\u60C5\u7EEA\u6C89\u3001\u6162\u70ED\uFF0C\u4E8B\u60C5\u8981\u7ED9\u4F60\u7F13\u51B2\u7684\u65F6\u95F4\u3002" }
       };
       var BLINDSPOT_SOFT = {
         \u5370: "\u4E5F\u6B63\u56E0\u4E3A\u51E1\u4E8B\u60F3\u6C42\u7A33\u3001\u8981\u5468\u5168\uFF0C\u6709\u65F6\u6162\u4E86\u534A\u62CD\uFF0C\u673A\u4F1A\u5C31\u5728\u773C\u524D\u4E5F\u8FDF\u8FDF\u4E0D\u52A8\u3002",
@@ -16013,7 +16018,7 @@ var RhythmEngine = (() => {
         \u7678: "\u901A\u900F\u7EC6\u817B"
       };
       var POL_TITLE = { \u5F3A: "\u7A33\u5F97\u4F4F", \u4E2D: "\u62FF\u5F97\u7A33", \u5F31: "\u61C2\u501F\u529B" };
-      var SEASON_TITLE = { \u6625: "\u4E5F\u95F2\u4E0D\u4F4F", \u590F: "\u4E5F\u51B2\u5F97\u51FA\u53BB", \u79CB: "\u4E5F\u62FF\u5F97\u4E0B\u51B3\u65AD", \u51AC: "\u4E5F\u6C89\u5F97\u4F4F\u6C14" };
+      var TITLE_BY_GOD = { \u6BD4: "\u4E5F\u95F2\u4E0D\u4F4F", \u98DF: "\u4E5F\u51B2\u5F97\u51FA\u53BB", \u5B98: "\u4E5F\u62FF\u5F97\u4E0B\u51B3\u65AD", \u5370: "\u4E5F\u6C89\u5F97\u4F4F\u6C14" };
       var GOD_LOVE = {
         \u5370: "\u611F\u60C5\u91CC\u4F60\u91CD\u60C5\u3001\u5FF5\u65E7\uFF0C\u613F\u610F\u9ED8\u9ED8\u4ED8\u51FA\uFF0C\u628A\u5BF9\u65B9\u653E\u5728\u5FC3\u4E0A\uFF0C\u7ED9\u5F97\u51FA\u8DB3\u591F\u7684\u5B89\u5168\u611F\uFF1B\u53EA\u662F\u5BB9\u6613\u4ED8\u51FA\u8FC7\u5934\u3001\u628A\u81EA\u5DF1\u770B\u5F97\u592A\u4F4E\u3002",
         \u98DF: "\u611F\u60C5\u91CC\u4F60\u6D6A\u6F2B\u3001\u4F1A\u8868\u8FBE\uFF0C\u80AF\u82B1\u5FC3\u601D\uFF0C\u548C\u4F60\u5728\u4E00\u8D77\u4E0D\u65E0\u804A\uFF1B\u53EA\u662F\u70ED\u60C5\u6765\u5F97\u5FEB\uFF0C\u4E5F\u9700\u8981\u4E00\u4EFD\u7A33\u5F97\u4F4F\u7684\u5B9A\u529B\u3002",
@@ -16193,7 +16198,7 @@ var RhythmEngine = (() => {
       };
       var KW_POL = { \u5F3A: "\u6709\u4E3B\u89C1", \u4E2D: "\u5584\u6743\u8861", \u5F31: "\u5584\u501F\u529B" };
       var KW_GOD = { \u5370: "\u91CD\u60C5\u5FF5\u65E7", \u98DF: "\u6709\u7075\u6C14", \u8D22: "\u52A1\u5B9E", \u5B98: "\u8D23\u4EFB\u5FC3\u5F3A", \u5747\u8861: "\u9002\u5E94\u529B\u5F3A" };
-      var KW_SEASON = { \u6625: "\u8282\u594F\u504F\u5FEB", \u590F: "\u70ED\u60C5\u76F4\u63A5", \u79CB: "\u5584\u51B3\u65AD", \u51AC: "\u6C89\u5F97\u4F4F\u6C14" };
+      var KW_EMO = { \u6BD4: "\u8282\u594F\u504F\u5FEB", \u98DF: "\u70ED\u60C5\u76F4\u63A5", \u5B98: "\u5584\u51B3\u65AD", \u5370: "\u6C89\u5F97\u4F4F\u6C14" };
       var SPOUSE_LINE = {
         \u5973: {
           \u663E: { \u559C: "\u611F\u60C5\u91CC\u4F60\u8981\u7684\u662F\u9760\u5F97\u4F4F\u3001\u6709\u62C5\u5F53\u7684\u4EBA\uFF0C\u8FD9\u6837\u7684\u4EBA\u4E5F\u5BB9\u6613\u51FA\u73B0\u5728\u4F60\u8EAB\u8FB9\u3002", \u5FCC: "\u4F60\u5BB9\u6613\u9047\u5230\u5F3A\u52BF\u3001\u8981\u6C42\u591A\u7684\u4EBA\uFF0C\u5173\u7CFB\u91CC\u5E38\u662F\u4F60\u5728\u914D\u5408\u3002", \u5E73: "\u611F\u60C5\u91CC\u4F60\u91CD\u627F\u8BFA\uFF0C\u9047\u5230\u7684\u4EBA\u4E5F\u89C4\u77E9\u3001\u7A33\u91CD\u3002" },
@@ -16236,12 +16241,12 @@ var RhythmEngine = (() => {
             surface: "\u5916\u8868\u968F\u548C\u3001\u4E0D\u592A\u663E\u950B\u8292\uFF0C\u4F46\u5FC3\u91CC\u6709\u81EA\u5DF1\u7684\u786C\u4E3B\u610F\uFF1B\u719F\u4E86\u7684\u4EBA\u624D\u77E5\u9053\uFF0C\u4F60\u5176\u5B9E\u6709\u68F1\u89D2\u3001\u4E5F\u729F"
           };
         const P = personaSignals(mj, chart);
-        const { pol, season, w, total, godPct, topGod, secondGod, balanced, dominant, riZhiGod, emoKey, emoFromGod } = P;
+        const { pol, season, w, total, godPct, topGod, secondGod, balanced, dominant, riZhiGod, emoGod, emoLevel, emoFromGod } = P;
         const EXPRESS_INNER = { \u4E01: "\u5FC3\u4E8B\u4E0D\u8F7B\u6613\u8868\u9732\uFF0C\u81EA\u5DF1\u5FC3\u91CC\u6709\u5206\u5BF8\uFF0C", \u5DF1: "\u8BDD\u4E0D\u591A\uFF0C\u751F\u6D3B\u6709\u81EA\u5DF1\u7684\u89C4\u5F8B\uFF0C" };
         const shiTouGan = (chart.gans || []).some((g, i) => i !== 2 && tenGodType(dayWx, GAN_WX[g]) === "\u98DF");
         const innerType = !!EXPRESS_INNER[dayGan] && !shiTouGan && godPct.\u5370 >= 20 && godPct.\u98DF < 20;
         const noun = balanced ? "" : GOD_NOUN[topGod] || "\u884C\u52A8\u6D3E";
-        const modifier = balanced ? `${POL_TITLE[pol]}\u3001${SEASON_TITLE[emoKey] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : daySuppressed ? "\u4E0D\u663E\u950B\u8292" : TONE_PREFIX[dayGan] || "";
+        const modifier = balanced ? `${POL_TITLE[pol]}\u3001${TITLE_BY_GOD[emoGod] || "\u4E5F\u4F7F\u5F97\u4E0A\u529B"}` : daySuppressed ? "\u4E0D\u663E\u950B\u8292" : TONE_PREFIX[dayGan] || "";
         const identity = balanced ? modifier : (modifier ? modifier + "\u7684" : "") + noun;
         const essence = balanced ? "\uFF0C\u5404\u9762\u5747\u8861\u3001\u9002\u5E94\u529B\u5F3A" : GOD_ESSENCE[topGod] || "";
         const tagline = (innerType ? "\u6E29\u548C\u3001\u6709\u5185\u79C0" : imp.short) + essence + "\u3002";
@@ -16274,7 +16279,7 @@ var RhythmEngine = (() => {
         const p2 = balanced ? balancedDrive(topGod, secondGod) : domJi && CORE_DRIVE_JI[topGod] ? CORE_DRIVE_JI[topGod] : `${CORE_DRIVE[topGod] || ""}${TENSION[topGod] && TENSION[topGod][secondGod] || ""}`;
         const sitStill = P.sitStill;
         const sitStillVeto = !balanced && topGod === "\u98DF" && sitStill;
-        const p3 = `${emoFromGod ? SEASON_EMO[emoKey] || "" : ""}${balanced ? BAL_BLINDSPOT : sitStillVeto ? "" : BLINDSPOT_SOFT[topGod] || ""}`;
+        const p3 = `${emoFromGod ? (EMO_BY_GOD[emoGod] || {})[emoLevel] || "" : ""}${balanced ? BAL_BLINDSPOT : sitStillVeto ? "" : BLINDSPOT_SOFT[topGod] || ""}`;
         const GOD_LOVE_JI = {
           \u5B98: "\u611F\u60C5\u91CC\u4F60\u5BB9\u6613\u9047\u5230\u5F3A\u52BF\u7684\u3001\u8981\u6C42\u591A\u7684\u5BF9\u8C61\uFF0C\u76F8\u5904\u504F\u7D2F\uFF1B\u4F60\u4E60\u60EF\u8FC1\u5C31\uFF0C\u628A\u81EA\u5DF1\u7EF7\u5F97\u7D27\u3002"
         };
@@ -16306,13 +16311,13 @@ var RhythmEngine = (() => {
         const work = isElder ? `${ELDER_WORK[balanced ? "\u5747\u8861" : topGod] || ELDER_WORK["\u5747\u8861"]}${monthGod !== dominant && ELDER_ROOT[monthGod] || ""}${ELDER_POL[pol] || ""}${hasYiMa ? "\u4F60\u95F2\u4E0D\u4F4F\uFF0C\u5E38\u8D70\u52A8\u3001\u5E38\u4E32\u95E8\uFF0C\u6362\u4E2A\u5730\u65B9\u53CD\u800C\u7CBE\u795E\u3002" : ""}` : `${workBase}${rootLine}${POL_WORK[pol] || ""}${yiMaLine}`;
         let closing;
         if (balanced) {
-          closing = pol === "\u5F3A" && (emoKey === "\u590F" || emoKey === "\u6625") ? "\u4F60\u7684\u6C89\u7A33\u548C\u51B2\u52B2\u662F\u4E00\u4F53\u4E24\u9762\uFF0C\u6311\u5BF9\u65F6\u673A\u53D1\u529B\uFF0C\u8DEF\u4F1A\u8D8A\u8D70\u8D8A\u5BBD\u3002" : pol === "\u5F3A" ? "\u4F60\u4EC0\u4E48\u90FD\u62FF\u5F97\u8D77\uFF0C\u96BE\u5728\u653E\u4E0B\u3001\u9009\u5B9A\u4E00\u4E2A\u65B9\u5411\uFF1B\u8BA4\u51C6\u65B9\u5411\u6C89\u4E0B\u53BB\uFF0C\u8D70\u5F97\u66F4\u8FDC\u66F4\u7A33\u3002" : emoKey === "\u51AC" || emoKey === "\u79CB" ? "\u4F60\u5404\u65B9\u9762\u90FD\u62FF\u5F97\u51FA\u624B\uFF0C\u4E5F\u56E0\u6B64\u5BB9\u6613\u88AB\u522B\u4EBA\u7684\u5B89\u6392\u7275\u7740\u8D70\uFF1B\u5148\u5B9A\u81EA\u5DF1\u8981\u4EC0\u4E48\uFF0C\u518D\u8C08\u914D\u5408\u3002" : "\u4F60\u9002\u5E94\u529B\u5F3A\uFF0C\u4EC0\u4E48\u5C40\u9762\u90FD\u63A5\u5F97\u4F4F\uFF1B\u522B\u628A\u8FD9\u4EFD\u597D\u7528\u7528\u5728\u4E0D\u91CD\u8981\u7684\u4E8B\u4E0A\u3002";
+          closing = pol === "\u5F3A" && (emoGod === "\u98DF" || emoGod === "\u6BD4") ? "\u4F60\u7684\u6C89\u7A33\u548C\u51B2\u52B2\u662F\u4E00\u4F53\u4E24\u9762\uFF0C\u6311\u5BF9\u65F6\u673A\u53D1\u529B\uFF0C\u8DEF\u4F1A\u8D8A\u8D70\u8D8A\u5BBD\u3002" : pol === "\u5F3A" ? "\u4F60\u4EC0\u4E48\u90FD\u62FF\u5F97\u8D77\uFF0C\u96BE\u5728\u653E\u4E0B\u3001\u9009\u5B9A\u4E00\u4E2A\u65B9\u5411\uFF1B\u8BA4\u51C6\u65B9\u5411\u6C89\u4E0B\u53BB\uFF0C\u8D70\u5F97\u66F4\u8FDC\u66F4\u7A33\u3002" : emoGod === "\u5370" || emoGod === "\u5B98" ? "\u4F60\u5404\u65B9\u9762\u90FD\u62FF\u5F97\u51FA\u624B\uFF0C\u4E5F\u56E0\u6B64\u5BB9\u6613\u88AB\u522B\u4EBA\u7684\u5B89\u6392\u7275\u7740\u8D70\uFF1B\u5148\u5B9A\u81EA\u5DF1\u8981\u4EC0\u4E48\uFF0C\u518D\u8C08\u914D\u5408\u3002" : "\u4F60\u9002\u5E94\u529B\u5F3A\uFF0C\u4EC0\u4E48\u5C40\u9762\u90FD\u63A5\u5F97\u4F4F\uFF1B\u522B\u628A\u8FD9\u4EFD\u597D\u7528\u7528\u5728\u4E0D\u91CD\u8981\u7684\u4E8B\u4E0A\u3002";
         } else {
           const gc = GOD_CLOSING[topGod];
           closing = sitStillVeto ? "" : gc && (gc[pol] || gc.\u4E2D) || "\u8BA4\u51C6\u4F60\u6700\u60F3\u8981\u7684\uFF0C\u628A\u52B2\u7528\u5728\u90A3\u4E00\u5904\uFF0C\u65E5\u5B50\u4F1A\u8D8A\u8D70\u8D8A\u987A\u3002";
         }
         const kwImp = innerType ? ["\u6E29\u548C", "\u6709\u5185\u79C0"] : (imp.short || "").split(/[、,，]/).map((s) => s.trim()).filter(Boolean).slice(0, 2);
-        let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_SEASON[emoKey]]);
+        let keywords = kwImp.concat([KW_GOD[dominant] || KW_GOD[topGod], KW_POL[pol], KW_EMO[emoGod]]);
         keywords = keywords.filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
         const _social = _socialEarly;
         return { identity, tagline, keywords, coreText: [p1, p2, p3], love, work, closing, taohua: taohuaDesc(chart.zhis, { expressive, guanYa, social: _socialEarly, god: topGod }), _dominant: dominant, _domJi: domJi, _pol: pol, _social };
@@ -17567,7 +17572,7 @@ var RhythmEngine = (() => {
         getScoreWeights,
         setScoreWeights,
         // 测试用:暴露性格片段表 + 组合函数,供 coreText 全组合穷举校验(不影响运行时)
-        __persona: { IMPRESSION, EXPRESS, POL_INNER, DRIVE_HINT, BAL_DRIVE_HINT, CORE_DRIVE, TENSION, SEASON_EMO, BLINDSPOT_SOFT, BAL_BLINDSPOT, LEAN, balancedDrive, YANG_GAN, GAN_WX, tenGodType }
+        __persona: { IMPRESSION, EXPRESS, POL_INNER, DRIVE_HINT, BAL_DRIVE_HINT, CORE_DRIVE, TENSION, EMO_BY_GOD, BLINDSPOT_SOFT, BAL_BLINDSPOT, LEAN, balancedDrive, YANG_GAN, GAN_WX, tenGodType }
       };
     }
   });
