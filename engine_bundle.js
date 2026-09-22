@@ -14775,15 +14775,21 @@ var RhythmEngine = (() => {
           if (!txt)
             continue;
           const bad = ["\u51B2", "\u5211", "\u5BB3", "\u81EA"].includes(r.rel);
+          const heavy = bad && (r.idx === 1 || r.idx === 2);
           cands.push({
             w: bad ? 78 : 74,
+            heavy,
             text: `\u3010${gongLabel(r.gong)}\u3011${txt}`,
             basis: `${year}\u5E74\u6D41\u5E74${yZhi}\u4E0E\u6D41\u6708${mZhi}\u540C\u52A8${gongLabel(r.gong)}\uFF08${r.rel}\uFF09`,
             suiyun: r.rel + "\xB7" + r.sh
           });
         }
         const sorted = cands.sort((a, b) => b.w - a.w);
-        const signals = studentize(sorted.slice(0, 1), age).map((g) => ({ text: g.text, basis: g.basis }));
+        const picked = sorted.slice(0, 1);
+        const heavyOne = sorted.find((x) => x.heavy && x !== picked[0]);
+        if (heavyOne)
+          picked.push(heavyOne);
+        const signals = studentize(picked, age).map((g) => ({ text: g.text, basis: g.basis }));
         const yk = YIJI_KEY[full];
         const YJ0 = (k) => (YEAR_YIJI_STAGE[lifeStage(age)] || {})[k] || YEAR_YIJI[k];
         const baseYj = YJ0(yk + xj) || (xj === "\u5E73" && YJ0(yk + "\u559C") && YJ0(yk + "\u5FCC") ? { yi: [YJ0(yk + "\u559C").yi[0]], ji: [YJ0(yk + "\u5FCC").ji[0]] } : { yi: [], ji: [] });
