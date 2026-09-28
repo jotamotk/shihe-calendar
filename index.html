@@ -2726,7 +2726,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=200"></script>
+  <script src="engine_bundle.js?v=201"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2797,7 +2797,7 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=200"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=201"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4575,11 +4575,7 @@
       function renderNatal(){
         const n=R.natal;
         const pe=n.persona||{};
-        // 开篇:去掉原型名/人设/关键词(占地大、又易失准),改以一句本色金句轻起头
-        const quote=pe.tagline
-          ? '<div class="np-quote np-quote-lead">'
-            + '<div class="np-quote-tx">'+esc(pe.tagline)+'</div>'
-            + '<div class="np-quote-rule"><i></i><b></b><i></i></div></div>' : '';
+        // 2026-09-28 用户复核:「一句话点评」概括过度,全局不再展示。
         // 读懂你:三段 coreText → 左线要点行(固定标签，一眼可扫，不再堆散文卡)
         const core=(pe.coreText||[]).filter(Boolean);
         const rows=core.length
@@ -4621,9 +4617,12 @@
             + '<div class="np-tabs">'+tabsNav+'</div>'+panels+'</div>' : '';
         // 需要注意
         const jiCard=(j)=>'<div class="rp-ji-it"><i class="rp-ji-dot"></i><span>'+esc(j.caution)+'</span></div>';
-        const ji=(n.jiShen&&n.jiShen.length)
+        // 2026-09-22:忌神条目可能全部没有断语(通用剧本已删),此时整段不渲染,
+        //   不能只判数组长度 —— 否则会留下一排没有文字的空圆点。
+        const jiItems=(n.jiShen||[]).filter((j)=>j.caution);
+        const ji=jiItems.length
           ? '<div class="rp-sec"><div class="rp-sec-h"><i class="rp-bar"></i><b>需要注意</b></div>'
-            + '<div class="rp-card"><div class="rp-ji">'+n.jiShen.map(jiCard).join('')+'</div></div></div>' : '';
+            + '<div class="rp-card"><div class="rp-ji">'+jiItems.map(jiCard).join('')+'</div></div></div>' : '';
         // 幸运色(变现钩子)
         // 幸运色:所有喜用色都画,首选大、其余小并标「常用/点缀」(不再只写首选)
         const xcs=(n.xiColors&&n.xiColors.length)?n.xiColors:[{name:n.xiColor.name,hex:n.xiColor.hex,badge:'首选'}];
@@ -4662,11 +4661,11 @@
         // —— 章内子块折叠(整齐·可跳读·一眼知道每块讲什么):第一块默认展开,其余收起+一句概括 ——
         (function foldNatalSections(){
           const SUMM={
-            '读懂你': pe.tagline || '你是什么样的人',
+            '读懂你': '你是什么样的人',
             '四种状态': '精力 · 专注 · 情绪 · 人际',
             '生活方面': '学习 · 事业 · 钱财 · 情感 · 健康',
             '近期调养窗口': '接下来适合养一养的时段',
-            '需要注意': (n.jiShen&&n.jiShen.length)? n.jiShen.map((j)=>j.caution).slice(0,2).join(' · ') : '你要留心的几点',
+            '需要注意': (n.jiShen||[]).map((j)=>j.caution).filter(Boolean).slice(0,2).join(' · ') || '你要留心的几点',
             '你的幸运色': ((n.xiColors&&n.xiColors.length)?n.xiColors.map(c=>c.name).join('·'):(n.xiColor&&n.xiColor.name||'')) + ' · 随身带一点',
           };
           let idx=0;
@@ -5392,7 +5391,9 @@
       function jdToc(){
         var el=$('toc-list'); if(!el) return;
         var n=R.natal||{}, pe=n.persona||{};
-        var idEl=$('toc-id'); if(idEl) idEl.textContent=pe.identity||'本命命书';
+        // 2026-09-22 创始人拍板:删掉「标签」(identity)——一句话已经够了,标签是重复,
+   //   而且它把人往一个称号上定性(如「不显锋芒的实在人」被本人判「不算实在」)。
+   var idEl=$('toc-id'); if(idEl) idEl.textContent='本命命书';
         var jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
         var curY=(R.years&&R.years.curYear)||'';
         var yObj=(R.years&&R.years.years)?R.years.years.filter(function(y){return y.year===curY;})[0]:null;
