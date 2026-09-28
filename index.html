@@ -1961,6 +1961,8 @@
   #rd .rd-bar button[aria-selected="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:3px;background:var(--rd-acc);border-radius:2px;}
   #rd .rd-view{display:none;padding:0 20px 36px;}
   #rd .rd-view.on{display:block;}
+  /* 让本命末尾两节也能分别滚到吸顶目录下方；不显示内容、不参与点击。 */
+  #rd .rd-jump-tail{height:max(110px,calc(100dvh - var(--rd-bar) - var(--rd-idx) - 110px));pointer-events:none;}
 
   /* 本命·卷首 */
   #rd .rd-hero{display:flex;align-items:center;gap:16px;padding:26px 0 20px;}
@@ -2726,7 +2728,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=201"></script>
+  <script src="engine_bundle.js?v=202"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2797,7 +2799,7 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=201"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=202"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5513,7 +5515,8 @@
         var v=rdEl('rd-v-natal');
         v.innerHTML='<div class="rd-idx" id="rd-idx">'+secs.map(function(s){ return '<button type="button" data-to="'+s.id+'">'+s.title+'</button>'; }).join('')+'</div>'
           +secs.map(function(s,i){ return '<div class="rd-sec" id="'+s.id+'"><div class="rd-sh"><span class="no">'+RD_NUM[i]+'</span><h2>'+s.title+'</h2></div>'+s.html+'</div>'; }).join('')
-          +(function(){ var c=(pb&&pb.closing)||pe.closing; return c?'<div class="rd-closing"><p>'+esc(c)+'</p></div>':''; })();
+          +(function(){ var c=(pb&&pb.closing)||pe.closing; return c?'<div class="rd-closing"><p>'+esc(c)+'</p></div>':''; })()
+          +'<div class="rd-jump-tail" aria-hidden="true"></div>';
         v.querySelectorAll('#rd-idx button').forEach(function(b){ b.addEventListener('click', function(){
           var el=rdEl(b.dataset.to), sc=rdScroller(); if(!el||!sc) return;
           var top=sc.scrollTop+el.getBoundingClientRect().top-sc.getBoundingClientRect().top-(52+51)+2;
