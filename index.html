@@ -2728,7 +2728,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=202"></script>
+  <script src="engine_bundle.js?v=203"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2799,7 +2799,7 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=202"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=203"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4536,7 +4536,7 @@
           {k:'专注', v:clamp(study*0.6+career*0.4,42,95)},
           {k:'情绪', v:clamp(mood*0.7+health*0.3,42,95)},
           {k:'人际', v:clamp(50+(social-50)*0.62,38,90)},
-        ];
+        ].filter(d => d.k !== '情绪' || n.emotionAvailable === true);
       }
       function rhythmCard(n){
         const dims=rhythmDims(n);
@@ -4547,7 +4547,7 @@
           + '<span class="rp-rh-line">'+esc(rhDesc(d.k,d.v))+'</span>'
           + '</div>';
         return '<div class="rp-sec">'
-          + '<div class="rp-sec-h"><b>四种状态</b></div>'
+          + '<div class="rp-sec-h"><b>'+(dims.length===4?'四种状态':'状态')+'</b></div>'
           + '<div class="rp-card"><div class="rp-rhythm">'+dims.map(row).join('')+'</div>'
           + '</div></div>';
       }
@@ -4563,7 +4563,7 @@
           + '<div class="rp-card"><div class="rp-win">'
           + '<div class="rp-win-ic"><span style="color:#BCD6EC;font-size:17px">☾</span></div>'
           + '<div class="rp-win-tx"><b>'+mtxt+'能量偏收，宜蓄力调养</b>'
-          + '<p>这几个月你的能量自然回落——不是低谷，而是身体让你慢下来的信号。适合沉淀、打基础、把作息养回来，不必强求突破；养足了，下一程才走得远。</p>'
+          + '<p>这几个月，给日常安排留些余地。</p>'
           + '<div class="rp-win-more">想看每月起伏与宜忌，往下展开 <b>高能量月</b> 一章 ↓</div>'
           + '</div></div></div></div>';
       }
@@ -4764,7 +4764,7 @@
       function natalRadar(aspects){
         if(!aspects||aspects.length<3) return '';
         const id=++_chartN;
-        const ax=aspects.map((a)=>({label:RD_SHORT[a.title]||a.title, m:(RD_TONE[a.tone]||RD_TONE['平'])}));
+        const ax=aspects.map((a)=>({label:a.displayTitle||RD_SHORT[a.title]||a.title, m:(RD_TONE[a.tone]||RD_TONE['平'])}));
         const N=ax.length, cx=144, cy=124, R=74;
         const ang=(i)=> (-90 + i*(360/N))*Math.PI/180;
         const pt=(i,fr)=>[cx+Math.cos(ang(i))*R*fr, cy+Math.sin(ang(i))*R*fr];
@@ -4895,9 +4895,12 @@
       //   opts.itemsOnly:只出重排后的条目(不出定调/开场/收尾)。当年卡用它——
       //   定调段与年型名行是创始人 2026-09 拍板砍掉的层,「忌」也已由该卡的「要注意」栏承担;
       //   B 在那张卡上只负责一件事:岁运这类「过程修饰」别占头,具体的事排前面。
+      function yearBFor(y, rel){
+        return y.b && y.b[rel==='partner'?'partner':rel==='single'?'single':'neutral'];
+      }
       function yrB(y, rel, opts){
         opts = opts || {};
-        var b = y.b && (rel==='partner' ? y.b.partner : y.b.single);
+        var b = yearBFor(y, rel);
         if(!b) return (y.headline?'<div class="yr-hl">'+esc(y.headline)+'</div>':'')
               + (y.trait?'<div class="rp-mo-trait">'+esc(y.trait)+'</div>':'')
               + yrSigs(y.signals);   // 兜底:旧 payload(缓存里的老数据)照旧渲染
@@ -5011,7 +5014,7 @@
           var vf=v==='y'?'<span class="rp-mo-vf y">✓ 对上了</span>':v==='n'?'<span class="rp-mo-vf n">✗ 没对上</span>':'';
           return '<div class="rp-mo" data-pyr="'+y.year+'">'
             + '<div class="rp-mo-top">'
-            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+'</span>'+(function(){var _b=y.b&&(getRelStatus()==='partner'?y.b.partner:y.b.single);var _t=(_b&&_b.tone)||y.headline;return _t?'<span class="rp-mo-hl">'+esc(_t)+'</span>':'';})()+vf+'</div>'
+            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+'</span>'+(function(){var _b=yearBFor(y,getRelStatus());var _t=(_b&&_b.tone)||y.headline;return _t?'<span class="rp-mo-hl">'+esc(_t)+'</span>':'';})()+vf+'</div>'
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
             + '<div class="rp-mo-body">'
@@ -5162,7 +5165,7 @@
           const isCur=y.year===Y.curYear;
           return '<div class="rp-mo'+(isCur?' cur':'')+'" data-yr="'+y.year+'">'
             + '<div class="rp-mo-top">'
-            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span>'+(function(){var _b=y.b&&(getRelStatus()==='partner'?y.b.partner:y.b.single);var _t=(_b&&_b.tone)||y.headline;return _t?'<span class="rp-mo-hl">'+esc(_t)+'</span>':'';})()+(y.big?'<span class="rp-mo-big">大年</span>':'')+'</div>'
+            + '<div class="rp-mo-m yr"><b>'+y.year+'</b><span>'+(y.age!=null?y.age+'岁':'')+(isCur?' · 今年':'')+'</span>'+(function(){var _b=yearBFor(y,getRelStatus());var _t=(_b&&_b.tone)||y.headline;return _t?'<span class="rp-mo-hl">'+esc(_t)+'</span>':'';})()+(y.big?'<span class="rp-mo-big">大年</span>':'')+'</div>'
             + moEnergy(y.energy, y.level, yLo, yHi)
             + '<svg class="rp-mo-chev"><use href="#i-chev"></use></svg>'
             + '</div>'
@@ -5492,15 +5495,15 @@
         if(core.length) add('rd-s-read','读懂你','<div class="rd-read">'+core.map(function(p){ var s=rdFirstSent(p); return '<p><b>'+esc(s[0])+'</b>'+esc(s[1])+'</p>'; }).join('')+'</div>');
         if(n.dialectics&&n.dialectics.length) add('rd-s-about','关于你','<div class="rd-about">'+n.dialectics.map(function(x){ return '<div class="it">'+(x.t?'<h3>'+esc(x.t)+'</h3>':'')+'<p>'+esc(x.s)+'</p></div>'; }).join('')+'</div>');
         var dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
-        if(dims.length) add('rd-s-states','四种状态','<div class="rd-states">'+dims.map(function(d){ return '<div><b>'+esc(d.k)+'</b><p>'+esc(rhDesc(d.k,d.v))+'</p></div>'; }).join('')+'</div>');
+        if(dims.length) add('rd-s-states',dims.length===4?'四种状态':'状态','<div class="rd-states">'+dims.map(function(d){ return '<div><b>'+esc(d.k)+'</b><p>'+esc(rhDesc(d.k,d.v))+'</p></div>'; }).join('')+'</div>');
         var asps=n.aspects||[];
         if(RD.dom>=asps.length) RD.dom=0;
-        if(asps.length) add('rd-s-life','生活方面','<div class="rd-seg" role="tablist" id="rd-domseg">'+asps.map(function(a,i){ return '<button type="button" role="tab" data-i="'+i+'" aria-selected="'+(i===RD.dom)+'">'+esc(RD_DOM[a.key]||a.title)+'</button>'; }).join('')+'</div><div class="rd-panel" id="rd-dompanel"></div>');
+        if(asps.length) add('rd-s-life','生活方面','<div class="rd-seg" role="tablist" id="rd-domseg">'+asps.map(function(a,i){ return '<button type="button" role="tab" data-i="'+i+'" aria-selected="'+(i===RD.dom)+'">'+esc(a.displayTitle||RD_DOM[a.key]||a.title)+'</button>'; }).join('')+'</div><div class="rd-panel" id="rd-dompanel"></div>');
         var Y=R.yearMonths;
         if(Y&&Y.lowMonths&&Y.lowMonths.length){
           var up=Y.lowMonths.filter(function(m){ return m>=(Y.curMonth||1); }).slice(0,2);
           if(up.length) add('rd-s-win','近期调养窗口','<div class="rd-win"><b>'+up.map(function(m){ return '<em>'+m+'</em>月'; }).join('、')+'能量偏收，宜蓄力调养</b>'
-            +'<p>这几个月你的能量自然回落——不是低谷，而是身体让你慢下来的信号。适合沉淀、打基础、把作息养回来，不必强求突破；养足了，下一程才走得远。</p></div>');
+            +'<p>这几个月，给日常安排留些余地。</p></div>');
         }
         if(n.jiShen&&n.jiShen.length){
           var cs=n.jiShen.map(function(j){ return j.caution||''; }).filter(Boolean);
@@ -5637,7 +5640,7 @@
       //   拿不到 b(旧缓存)就退回原样,不影响老数据。
       function rdSigsB(y){
         var rel=getRelStatus();
-        var b=y.b&&(rel==='partner'?y.b.partner:y.b.single);
+        var b=yearBFor(y,rel);
         var list=b&&(b.plainItems||b.items);
         if(!list||!list.length) return rdSigs(y.signals);
         return '<ul class="rd-sig">'+list.map(function(it){
