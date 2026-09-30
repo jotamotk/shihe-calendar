@@ -2515,7 +2515,7 @@
           </button>
           <button class="tb-feat" data-tool="fujiu" data-title="三伏三九">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-fujiu"></use></svg>
-              <div><b>三伏三九</b><small id="tb-c-fj">冬病夏治 · 冬令进补</small></div></div>
+              <div><b>三伏三九</b><small id="tb-c-fj">三伏调养 · 冬令起居</small></div></div>
             <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
           </button>
 
@@ -2617,7 +2617,7 @@
             <div class="tb-h2">三伏 · 夏防暑湿</div>
             <div class="fj-list" id="fj-fu"></div>
             <div class="fj-tips"><b>三伏 · 顺时起居</b>
-              <p>一年里最热的时段，传统讲究顺天时、护阳气、防暑湿。</p>
+              <p>一年里暑热较盛的时段，传统上重视三伏调养。</p>
               <p>防暑护阳并重：不贪冰冷，空调 26–28℃、不直吹头颈；午时小憩，大汗后别马上冲冷水澡。</p>
               <p>饮食清淡：绿豆、苦瓜、乌梅解暑生津；少食生冷。</p></div>
             <div class="tb-h2" style="margin-top:18px">数九 · 冬藏进补</div>
@@ -2626,7 +2626,7 @@
               <p>天寒藏阳，宜早眠晚起、待日光而动；护好头颈、腰腹与双足。</p>
               <p>冬令宜温热饮食（如羊肉、山药），按自己体质来、别过量。</p>
               <p>重在少熬夜、多静养，为来年蓄力。</p></div>
-            <div class="tb-note">三伏三九为传统节令，冬病夏治、冬令进补参考，非医疗建议</div>
+            <div class="tb-note">三伏三九为传统节令与起居参考，非医疗建议</div>
           </div>
          </div>
         </div>
@@ -2728,7 +2728,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=203"></script>
+  <script src="engine_bundle.js?v=204"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2799,7 +2799,7 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=203"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=204"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -4513,10 +4513,10 @@
       // —— 四种状态禀赋:精力/专注/情绪/人际 —— 全部由现有引擎输出派生(bodyT/socialTendency/季节/生活五项分),不改底层计算。
       //   精力=bodyT定方向+四维均值(喜忌口径)解饱和+季节 · 专注=学习×.6+事业×.4 · 情绪=情感×.7+健康×.3 · 人际=结构性外向度 socialTendency(食伤+比劫-印-官,独立于旺衰)
       const RH_DESC={
-        精力:[[72,'干劲足、耐力稳，扛得住高强度'],[56,'精力平稳，张弛有度'],[0,'精力细水长流，注意少熬夜']],
-        专注:[[72,'沉得下心、钻得进去，宜深耕一处'],[56,'专注够用，固定节奏最出活'],[0,'思路活跳、点子多，宜分段推进']],
-        情绪:[[72,'情绪来去顺、不太憋得住事，想得开'],[56,'情绪大体平稳，偶有波动也能自解'],[0,'情绪细腻敏感，多向外疏解、勤走动']],
-        人际:[[72,'善张罗、合得来，人脉能帮衬'],[56,'社交有度，亲疏拿捏得当'],[0,'慢热、重深交，小圈子里更自在']],
+        精力:[[72,'做事更容易起劲，也较能持续投入'],[56,'精力平稳，张弛有度'],[0,'力气适合分着用，别让自己连续透支']],
+        专注:[[72,'沉得下心、钻得进去，宜深耕一处'],[56,'专注够用，稳定推进更容易持续'],[0,'思路活跳、点子多，宜分段推进']],
+        情绪:[[72,'情绪较容易流动，不容易长久积压'],[56,'情绪大体平稳，偶有波动也能自解'],[0,'感受更细，情绪有出口时更舒服']],
+        人际:[[72,'更愿意张罗和来往，协作容易带来助力'],[56,'社交有度，亲疏拿捏得当'],[0,'慢热、重深交，小圈子里更自在']],
       };
       function rhDesc(k,v){ const b=RH_DESC[k]||[]; for(let i=0;i<b.length;i++){ if(v>=b[i][0]) return b[i][1]; } return ''; }
       function rhythmDims(n){
@@ -4573,7 +4573,7 @@
       //   重做:全页唯一渐变英雄区 + 多纹理区块轮换(渐变英雄 / 无框金句 / 左线要点行 / 分段Tab生活方面 / 清单 / 色卡 / 收束金句)。
       //         去掉①②③脚手架 stepper;去掉与「生活方面」重复的 persona.love/work;5 张同款卡 → 1 处分段 Tab。
       //   底层计算不变——全部派生自现有 R.natal(persona / aspects / jiShen / xiColor)。
-      const NP_TAB_LAB={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'健康'};
+      const NP_TAB_LAB={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'调养'};
       function renderNatal(){
         const n=R.natal;
         const pe=n.persona||{};
@@ -4760,7 +4760,7 @@
 
       // 本命生活面向 · 五维雷达图(顺/平/慎/养 → 分值，内联 SVG,深黑金)
       const RD_TONE={'顺':{v:90,c:'#EBD7A6',cls:'shun',t:'顺势'},'平':{v:60,c:'#A89C82',cls:'ping',t:'平稳'},'慎':{v:46,c:'#D6A36C',cls:'shen',t:'留心'},'养':{v:64,c:'#9DB89A',cls:'yang',t:'宜养'}};
-      const RD_SHORT={'学习成长':'学习','事业':'事业','钱财花销':'钱财','情感方面':'情感','健康养生':'健康'};
+      const RD_SHORT={'学习成长':'学习','事业':'事业','钱财花销':'钱财','情感方面':'情感','健康养生':'健康','日常调养':'调养'};
       function natalRadar(aspects){
         if(!aspects||aspects.length<3) return '';
         const id=++_chartN;
@@ -5437,7 +5437,7 @@
       var RD={ch:'natal', dom:0, mode:'y', Y:null, MY:null, D:null, built:false};
       window.RD = RD;   // 供路由读当前章(2026-09-22)
       var RD_NUM=['壹','贰','叁','肆','伍','陆','柒','捌'];
-      var RD_DOM={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'健康'};
+      var RD_DOM={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'调养'};
       function rdEl(id){ return document.getElementById(id); }
       function rdScroller(){ return rdEl('jd-scroll'); }
       function rdSplitSig(t){
@@ -6243,7 +6243,7 @@
 
     // ===== 工具箱 · 时辰养生(子午流注:十二时辰↔经络当令,静态 TCM 表 + 此刻高亮,每分钟刷新)=====
 
-    // ===== 工具箱 · 三伏三九(纯历法:夏至/立秋庚日推三伏,冬至起数九;冬病夏治·冬令进补,计算已核验)=====
+    // ===== 工具箱 · 三伏三九(纯历法:夏至/立秋庚日推三伏,冬至起数九;传统起居参考,计算已核验)=====
     (function renderFuJiu(){
       var fuEl=document.getElementById('fj-fu'), jiuEl=document.getElementById('fj-jiu'), nowEl=document.getElementById('fj-now'), chip=document.getElementById('tb-c-fj');
       if(!fuEl) return;
@@ -6265,7 +6265,7 @@
       function rows(el,arr){ el.innerHTML=arr.map(function(x){ var on=inR(x); return '<div class="fj-row'+(on?' on':'')+'"><b>'+x.n+'</b><span class="fj-rg">'+fmt(x.a)+' – '+fmt(x.b)+(on?'<span class="fj-today">今日</span>':'')+'</span></div>'; }).join(''); }
       rows(fuEl,fu); rows(jiuEl,jiu);
       var st=null, i;
-      for(i=0;i<fu.length;i++){ if(inR(fu[i])){ st={t:'三伏 · '+fu[i].n, m:'第 '+(diff(fu[i].a,T)+1)+' 天', y:'暑湿正盛，宜防暑护阳、冬病夏治，忌过食生冷。'}; break; } }
+      for(i=0;i<fu.length;i++){ if(inR(fu[i])){ st={t:'三伏 · '+fu[i].n, m:'第 '+(diff(fu[i].a,T)+1)+' 天', y:'暑湿正盛，传统上重视三伏调养；注意防暑，少贪生冷。'}; break; } }
       if(!st) for(i=0;i<jiu.length;i++){ if(inR(jiu[i])){ st={t:'数九 · '+jiu[i].n, m:'第 '+(diff(jiu[i].a,T)+1)+' 天', y:'天寒地冻，宜藏阳保暖、冬令进补，早眠晚起。'}; break; } }
       if(!st){ var cands=[]; if(fu.length&&T<fu[0].a) cands.push({k:'入伏',d:diff(T,fu[0].a),y:'三伏将至，宜养阳防暑、备好度夏。'});
         if(jiu.length&&T<jiu[0].a) cands.push({k:'数九',d:diff(T,jiu[0].a),y:'数九将至，宜藏阳保暖、备冬令进补。'});
