@@ -2812,7 +2812,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=204"></script>
+  <script src="engine_bundle.js?v=205"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2883,7 +2883,7 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=204"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=205"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -5529,6 +5529,12 @@
       window.RD = RD;   // 供路由读当前章(2026-09-22)
       var RD_NUM=['壹','贰','叁','肆','伍','陆','柒','捌'];
       var RD_DOM={study:'学习',career:'事业',money:'钱财',mood:'情感',health:'健康'};
+      // 正文为空的生活方面不出空卡；保留有正文的钱财项。只做显示层过滤，不改引擎计算。
+      function rdVisibleAspects(n){
+        return (n&&n.aspects||[]).filter(function(a){
+          return !(a.key==='money' && !String(a.text||'').trim());
+        });
+      }
       function rdEl(id){ return document.getElementById(id); }
       function rdScroller(){ return rdEl('jd-scroll'); }
       function rdSplitSig(t){
@@ -5587,7 +5593,7 @@
         if(n.dialectics&&n.dialectics.length) add('rd-s-about','关于你','<div class="rd-about">'+n.dialectics.map(function(x){ return '<div class="it">'+(x.t?'<h3>'+esc(x.t)+'</h3>':'')+'<p>'+esc(x.s)+'</p></div>'; }).join('')+'</div>');
         var dims=[]; try{ dims=rhythmDims(n)||[]; }catch(e){}
         if(dims.length) add('rd-s-states','四种状态','<div class="rd-states">'+dims.map(function(d){ return '<div><b>'+esc(d.k)+'</b><p>'+esc(rhDesc(d.k,d.v))+'</p></div>'; }).join('')+'</div>');
-        var asps=n.aspects||[];
+        var asps=rdVisibleAspects(n);
         if(RD.dom>=asps.length) RD.dom=0;
         if(asps.length) add('rd-s-life','生活方面','<div class="rd-seg" role="tablist" id="rd-domseg">'+asps.map(function(a,i){ return '<button type="button" role="tab" data-i="'+i+'" aria-selected="'+(i===RD.dom)+'">'+esc(RD_DOM[a.key]||a.title)+'</button>'; }).join('')+'</div><div class="rd-panel" id="rd-dompanel"></div>');
         var Y=R.yearMonths;
@@ -5625,7 +5631,7 @@
         rdDom(true);
       }
       function rdDom(anim){
-        var p=rdEl('rd-dompanel'); var a=(R.natal.aspects||[])[RD.dom]; if(!p||!a) return;
+        var p=rdEl('rd-dompanel'); var a=rdVisibleAspects(R.natal)[RD.dom]; if(!p||!a) return;
         var li=function(arr){ return '<div class="rd-lab">建议</div><ol class="rd-adv">'+arr.map(function(x){ return '<li><span>'+esc(x)+'</span></li>'; }).join('')+'</ol>'; };
         var draw=function(){
           var h='';
@@ -6540,7 +6546,7 @@
       });
       // 新版接管后就地刷新一次 —— 补上「缓存优先」缺的那一步。
       //   SW 是缓存优先:这次打开先给旧页面,新版在后台装好才接管,于是用户眼前这屏永远慢一版;
-      //   而旧 HTML 里的 engine_bundle.js?v=204NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
+      //   而旧 HTML 里的 engine_bundle.js?v=205NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
       //   三道闸:① 首装不刷(没有旧 controller = 干净安装,本来就是新的)
       //          ② 只在刚打开的头 12 秒内刷(用户还没开始读,不打断;超时就留给下次打开)
       //          ③ sessionStorage 标记防连环刷
