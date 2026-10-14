@@ -2726,7 +2726,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=202"></script>
+  <script src="engine_bundle.js?v=203"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2797,7 +2797,7 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=202"></scr'+'ipt>');
+      document.write('<scr'+'ipt src="app_data.js?v=203"></scr'+'ipt>');
     })();
   </script>
   <script>
@@ -3100,10 +3100,11 @@
         if(!f){ wrap.style.display='none'; return; }
         wrap.style.display='';
         var tabs=$('w-fortune-tabs'); if(tabs) tabs.style.display='none';   // tab 版下架:改简单列表(2026-09-21)
+        var labels=d.fortuneLabels||FT_LABEL;
         var rows = FT_ORDER.map(function(k){
           var it=f[k]||{}; var line = (k==='love') ? loveLineOf(it) : it.line;
           if(!it.tone || it.tone==='平' || !line) return '';   // 平档=没信号=不显示(她定:不准不如不说)
-          return '<div class="tf-li"><span class="tf-li-k">'+FT_LABEL[k]+'</span><span class="tf-li-v">'+esc(line)+'</span></div>';
+          return '<div class="tf-li"><span class="tf-li-k">'+esc(labels[k]||FT_LABEL[k])+'</span><span class="tf-li-v">'+esc(line)+'</span></div>';
         }).filter(Boolean);
         $('w-fortune-body').innerHTML = rows.join('');
         wrap.style.display = rows.length ? '' : 'none';   // 全平的日子整块不出现
@@ -3688,7 +3689,7 @@
             +'<div class="sc-foot">顺时黄历 · 传统历法整理，不承诺任何结果</div>';
         }
         // A · 今日笺 · 宣纸留白(真数据:光球 + 当天信号最强的域当主句、其余当提点 + 宜色)
-        const XDOM=[['career','事业'],['money','钱财'],['study','学习'],['love','感情'],['health','身体'],['chance','机会']];
+        const XLABEL=(d.fortuneLabels||{}), XDOM=[['career',XLABEL.career||'事业'],['money',XLABEL.money||'钱财'],['study',XLABEL.study||'学习'],['love',XLABEL.love||'感情'],['health',XLABEL.health||'身体'],['chance',XLABEL.chance||'机会']];
         const XRANK={顺:0,慎:1,养:1,平:2};
         const xitems=XDOM.map(function(p){var f=(d.fortune&&d.fortune[p[0]])||{};return {lab:p[1],tone:f.tone||'',line:f.line||''};})
           .filter(function(x){return x.line;})
@@ -5143,7 +5144,8 @@
         var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){}
         var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
         var rows='';
-        [['事业',f.career],['钱财',f.money],['感情',{line:loveLn,tone:f.love&&f.love.tone}],['学习',f.study]].forEach(function(p){
+        var labels=d.fortuneLabels||{};
+        [[labels.career||'事业',f.career],[labels.money||'钱财',f.money],[labels.love||'感情',{line:loveLn,tone:f.love&&f.love.tone}],[labels.study||'学习',f.study]].forEach(function(p){
           if(p[1]&&p[1].line) rows+='<div class="yr-sig"><span class="yr-tag">'+p[0]+'</span><span class="tx">'+esc(p[1].line)+'</span></div>';
         });
         // heroLine 不进日卡(与五域行逐字重复);v156重排:tl-card容器,干支/能量作卡内小注
@@ -5681,7 +5683,6 @@
           +'<div class="rd-back"><button type="button" hidden></button></div>'
           +'<div class="rd-card">'+rdSigsB(y)
           +((yi.length||ji.length)?'<div class="rd-yj">'+(yi.length?'<div class="y"><h4>'+(RD.Y===curY?'今年要做':'这一年要做')+'</h4><ul>'+li(yi)+'</ul></div>':'')+(ji.length?'<div class="j"><h4>要注意</h4><ul>'+li(ji)+'</ul></div>':'')+'</div>':'')
-          +(((y.keyMonths||[]).length)?'<div class="rd-km"><h4>关键月份</h4><ul>'+y.keyMonths.map(function(k){ return '<li><b>'+k.month+'月</b>'+esc(k.tag)+'</li>'; }).join('')+'</ul></div>':'')
           +'<button type="button" class="rd-cta" id="rd-share-y">为这一年做一张卡片</button></div>';
         var Y0=RD.Y;
         rdSlide(dir, html, function(){
@@ -5689,19 +5690,8 @@
           var sb=rdEl('rd-share-y'); if(sb) sb.onclick=function(){ if(window.__shiheShareTL) window.__shiheShareTL('year', { year:Y0, gz:y.ganZhi||'', sigs:y.signals||[], yi:y.yi||[] }); };
         });
       }
-      // 关键月份逐条(2026-09-20:月档只有一条曲线太简单,补上今年主线落在哪几个月、各一句)
-      // 关键月份:用引擎 keyMonths(与年卡同判据的那三个月),不再把十二个月全铺出来
-      function rdKeyMonthLines(ms, keys){
-        var byM={}; (ms||[]).forEach(function(m){ byM[m.month]=m; });
-        var rows=(keys||[]).map(function(k){
-          var m=byM[k.month]; if(!m||!(m.signals||[]).length) return '';
-          return '<li><b>'+k.month+'月</b><i>'+esc(k.tag||'')+'</i><p>'+esc(m.signals[0].text)+'</p></li>';
-        }).filter(Boolean);
-        if(!rows.length) return '';
-        return '<div class="rd-mkey"><h4>关键月份</h4><ul>'+rows.join('')+'</ul></div>';
-      }
       // 月档(2026-09-18 用户拍板:流月逐月断语不做了,只留一条起伏线 + 标出能量好的月份)。
-      //   逐月的「今年主线落在哪个月」已收进年卡的「关键月份」一行,这里只回答「今年哪几个月状态好」。
+      //   这里只回答「今年哪几个月状态相对好」，不再下具体月份事件判断。
       function rdMonth(dir){
         var A=R.monthsAhead; if(!A||!A.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
@@ -5733,7 +5723,6 @@
           +'<polyline points="'+pts+'" fill="none" stroke="var(--rd-ink)" stroke-width="1.6" stroke-linejoin="round"/>'
           +dots+labs+'</svg></div>'
           +(goodTx?'<div class="rd-mnote"><b>状态好的月份</b>'+goodTx+'</div>':'<div class="rd-mnote">这一年十二个月起伏不大，没有特别突出的月份。</div>')
-          +rdKeyMonthLines(ms, yObj.keyMonths)
           +'</div>';
         rdSlide(dir, html, function(){
           rdBind(function(g){ var y2=RD.MY.y+g; if(y2<birthY||y2>maxY) return; RD.MY={y:y2,m:RD.MY.m}; rdMonth(g); },
@@ -5769,7 +5758,8 @@
         var f=d.fortune||{}, rel=getRelStatus();
         var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
         var rows='';
-        [['事业',f.career&&f.career.line],['钱财',f.money&&f.money.line],['感情',loveLn],['学习',f.study&&f.study.line]].forEach(function(p){
+        var labels=d.fortuneLabels||{};
+        [[labels.career||'事业',f.career&&f.career.line],[labels.money||'钱财',f.money&&f.money.line],[labels.love||'感情',loveLn],[labels.study||'学习',f.study&&f.study.line]].forEach(function(p){
           if(p[1]) rows+='<li><b>'+p[0]+'</b><p>'+esc(p[1])+'</p></li>';
         });
         var gz=(d.ganZhi&&d.ganZhi.day)?d.ganZhi.day:(typeof d.ganZhi==='string'?d.ganZhi:'');
@@ -6460,7 +6450,7 @@
       });
       // 新版接管后就地刷新一次 —— 补上「缓存优先」缺的那一步。
       //   SW 是缓存优先:这次打开先给旧页面,新版在后台装好才接管,于是用户眼前这屏永远慢一版;
-      //   而旧 HTML 里的 engine_bundle.js?v=202NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
+      //   而旧 HTML 里的 engine_bundle.js?v=203NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
       //   三道闸:① 首装不刷(没有旧 controller = 干净安装,本来就是新的)
       //          ② 只在刚打开的头 12 秒内刷(用户还没开始读,不打断;超时就留给下次打开)
       //          ③ sessionStorage 标记防连环刷
