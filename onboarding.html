@@ -78,7 +78,10 @@
   .pick input,.pick select{flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);font-weight:400;width:100%;cursor:pointer;}
   .pick select{appearance:none;-webkit-appearance:none;}
   .pick input::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.55;filter:invert(1);}
-  .seg.tmode{margin-bottom:9px;}
+  .time-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .time-heading .flabel{margin-bottom:0;min-width:0;}
+  .seg.tmode{flex:none;gap:0;margin:0;padding:2px;border:1px solid var(--line-2);background:var(--card);border-radius:9px;}
+  .seg.tmode button{min-height:34px;padding:6px 9px;font-size:11px;white-space:nowrap;}
   .time-unknown{font-size:11.5px;color:var(--sage-d);font-weight:300;line-height:1.65;background:var(--sage-soft);border-radius:13px;padding:12px 15px;}
 
   /* —— 滚轮选择器:出生日期与时间(替代原 date/time 输入框)—— */
@@ -175,10 +178,8 @@
         </div>
 
         <div class="field">
-          <div class="flabel" id="time-label">出生日期与时间 · 北京时间</div>
-          <div class="seg tmode" id="seg-tmode">
-            <button class="on" data-m="exact">准确时间</button>
-            <button data-m="unknown">时辰未知</button>
+          <div class="time-heading"><div class="flabel" id="time-label">出生日期与时间 · 北京时间</div>
+            <div class="seg tmode" id="seg-tmode"><button class="on" data-m="exact">准确</button><button data-m="unknown">时辰未知</button></div>
           </div>
           <div class="wheels" id="birth-wheels">
             <div class="wheel-col" style="flex:1.3"><div class="wheel-cap">年</div><div class="wheel" id="wh-year"></div></div>
@@ -204,6 +205,7 @@
             <div class="city-results" id="city-results"></div>
           </div>
           <input type="hidden" id="in-lon"><input type="hidden" id="in-tz"><input type="hidden" id="in-cityname">
+          <div class="privacy" style="margin-top:8px;text-align:left">州／省名称参考 <a class="pv-link" href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a>；未核实的城市显示经度。</div>
           <button type="button" class="ts-toggle" id="ts-toggle" aria-expanded="false">校准 ›</button>
           <div class="truesun" id="ts-box" hidden>
             <span class="ts-ico"></span>
@@ -237,7 +239,7 @@
     <div class="frame-label">出生信息</div>
   </div>
 
-  <script src="engine_bundle.js?v=205"></script>
+  <script src="engine_bundle.js?v=206"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。与 index.html 保持同一份配置。
        不配置 SHIHE_ANALYTICS_URL 时全程零网络；后端部署后打开下面这行即可启用。 -->
@@ -295,9 +297,19 @@
     const cityQ=document.getElementById('in-city-q'), cityRes=document.getElementById('city-results');
     const lonEl=document.getElementById('in-lon'), tzEl=document.getElementById('in-tz'), cnameEl=document.getElementById('in-cityname');
     let GEO=null;
+    let selectedCityCC='', selectedCityAdmin1='', selectedCityLabel='';
     const CC_NAME={CN:'中国',TW:'台湾',HK:'香港',MO:'澳门',US:'美国',CA:'加拿大',GB:'英国',AU:'澳大利亚',NZ:'新西兰',JP:'日本',KR:'韩国',SG:'新加坡',MY:'马来西亚',TH:'泰国',VN:'越南',FR:'法国',DE:'德国',IT:'意大利',ES:'西班牙',NL:'荷兰',SE:'瑞典',RU:'俄罗斯',IN:'印度',ID:'印尼',PH:'菲律宾'};
-    const ccName=(cc)=>CC_NAME[cc]||cc;
-    function pickCity(name,lon,tz,cc){ lonEl.value=lon; tzEl.value=tz; cnameEl.value=name; cityQ.value=name+' · '+ccName(cc); cityRes.classList.remove('on'); cityRes.innerHTML=''; cityQ.style.borderColor=''; var _h=document.getElementById('city-hint'); if(_h)_h.textContent='';
+    const regionNames=typeof Intl.DisplayNames==='function'?new Intl.DisplayNames(['zh-Hans'],{type:'region'}):null;
+    const ccName=(cc)=>CC_NAME[cc]||(cc?(regionNames?.of(cc)||cc):'');
+    const safeCityText=(s)=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const cityLonText=(lon)=>'经度 '+Math.abs(Number(lon)).toFixed(2)+'°'+(Number(lon)<0?'W':'E');
+    function cityLabel(name,admin1,cc,lon){
+      const country=ccName(cc), region=admin1&&admin1!==name&&admin1!==country?admin1:(!admin1?cityLonText(lon):'');
+      return [name,region,country].filter(Boolean).join(' · ');
+    }
+    function pickCity(name,lon,tz,cc,admin1){ lonEl.value=lon; tzEl.value=tz; cnameEl.value=name;
+      selectedCityCC=cc||''; selectedCityAdmin1=admin1||''; selectedCityLabel=cityLabel(name,selectedCityAdmin1,selectedCityCC,lon); cityQ.value=selectedCityLabel;
+      cityRes.classList.remove('on'); cityRes.innerHTML=''; cityQ.style.borderColor=''; var _h=document.getElementById('city-hint'); if(_h)_h.textContent='';
       // 🔴 标签随城市切换:海外城市=填"出生地当地时间"(我们自动换算)。写死"北京时间"会诱导海外用户自己换算→双重换算整盘错
       var _tl=document.getElementById('time-label');
       if(_tl){ var _cn=(tz==='Asia/Shanghai'||tz==='Asia/Urumqi'); _tl.textContent='出生日期与时间 · '+(_cn?'北京时间':'出生地当地时间(自动校准时区)'); }
@@ -308,7 +320,7 @@
       // 中文别名:整词或前缀命中 → 换成英文名搜(如"纽约"/"纽"→New York City)
       for(const k in CITY_ALIAS){ if(k===q.trim()||k.indexOf(q.trim())===0){ t=CITY_ALIAS[k].toLowerCase(); break; } }
       for(const c of GEO.c){ if(c[0].toLowerCase().indexOf(t)>=0){ hits.push(c); if(hits.length>=300)break; } } hits.sort((a,b)=>b[4]-a[4]); const top=hits.slice(0,20);
-      cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+GEO.tz[c[2]]+'" data-cc="'+c[3]+'" data-name="'+String(c[0]).replace(/"/g,'')+'">'+c[0]+' <span>'+ccName(c[3])+'</span></div>').join('') : '<div class="city-res-empty">没找到；可换中/英文写法，或选就近的大城市</div>';
+      cityRes.innerHTML= top.length? top.map(c=>'<div class="city-res-item" data-lon="'+c[1]+'" data-tz="'+safeCityText(GEO.tz[c[2]])+'" data-cc="'+safeCityText(c[3])+'" data-admin="'+safeCityText(c[5]||'')+'" data-name="'+safeCityText(c[0])+'">'+safeCityText(c[0])+' <span>'+safeCityText(cityLabel('',c[5]||'',c[3],c[1]).replace(/^ · /,''))+'</span></div>').join('') : '<div class="city-res-empty">没找到；可换中/英文写法，或选就近的大城市</div>';
       cityRes.classList.add('on');
       fitCityResults(); }
     // 下拉高度按可用空间算:不能盖住底部主按钮(盖住时点「生成我的黄历」会误点成城市项)
@@ -325,7 +337,7 @@
     window.addEventListener('resize', function(){ if(cityRes.classList.contains('on')) fitCityResults(); });
     cityQ.addEventListener('input',()=>searchCity(cityQ.value));
     cityQ.addEventListener('focus',()=>{ if(cityRes.innerHTML)cityRes.classList.add('on'); });
-    cityRes.addEventListener('click',(e)=>{ const it=e.target.closest('.city-res-item'); if(!it)return; pickCity(it.dataset.name,parseFloat(it.dataset.lon),it.dataset.tz,it.dataset.cc); });
+    cityRes.addEventListener('click',(e)=>{ const it=e.target.closest('.city-res-item'); if(!it||it.dataset.retry)return; pickCity(it.dataset.name,parseFloat(it.dataset.lon),it.dataset.tz,it.dataset.cc,it.dataset.admin); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('.city-search'))cityRes.classList.remove('on'); });
     // 城市库(2026-09-18 外审 B09):加载失败时不再静默写入「成都」——海外用户会在毫不知情的情况下按中国城市排盘。
     //   失败即 fail closed:留空 + 明确提示 + 禁止提交,直到重试成功。
@@ -340,6 +352,15 @@
     function loadGeo(){
       return fetch('geocities.json').then(r=>r.json()).then(d=>{ GEO=d; GEO_FAILED=false; cityQ.placeholder='输入城市名，如 西宁 / New York';
         cityRes.innerHTML=''; cityRes.classList.remove('on');
+        // Old profiles had no country/admin fields. Recover display metadata only
+        // from an unambiguous name + exact stored longitude + timezone match.
+        if(cnameEl.value && lonEl.value && (!selectedCityCC || !selectedCityAdmin1)){
+          const hits=GEO.c.filter(c=>c[0]===cnameEl.value && c[1]===Number(lonEl.value) && GEO.tz[c[2]]===tzEl.value);
+          const labels=new Set(hits.map(c=>c[3]+'|'+(c[5]||'')));
+          if(labels.size===1 && hits.length){ selectedCityCC=hits[0][3]; selectedCityAdmin1=hits[0][5]||''; }
+          selectedCityLabel=cityLabel(cnameEl.value,selectedCityAdmin1,selectedCityCC,lonEl.value);
+          cityQ.value=selectedCityLabel;
+        }
         // 🔴 2026-09-22:不再预填「成都」。原来加载成功就 pickCity('成都'),而提交校验只拦
         //   「打了字没点选」,预填值原样放行 → 没碰过城市框的人静默按成都经度排盘。
         //   西宁 vs 成都差 2.29°≈真太阳时 9 分钟,生在时辰边界的人时柱会错。
@@ -485,6 +506,7 @@
       }
       return { year:eY, month:eM, day:eD, hour:eH, minute:eMin, longitude:lon, gender:segVal('seg-sex'), hourUnknown: timeMode==='unknown',
         calInput: cal, inY: y, inM: m, inD: d, tz, cityName: cnameEl.value,
+        cityCC: selectedCityCC, cityAdmin1: selectedCityAdmin1,
         srcY: sy, srcM: sm, srcD: sd, srcH: hh||0, srcMin: mi||0 };
     }
 
@@ -524,7 +546,9 @@
       // 出生地:还原上次选的城市(新数据用 cityName,老数据回退按经度显示)
       if (typeof saved.longitude === 'number'){
         lonEl.value = saved.longitude; tzEl.value = saved.tz || 'Asia/Shanghai'; cnameEl.value = saved.cityName || '';
-        cityQ.value = saved.cityName ? (saved.cityName + (saved.cc?(' · '+ccName(saved.cc)):'')) : (cnameEl.value||'');
+        selectedCityCC=saved.cityCC||saved.cc||''; selectedCityAdmin1=saved.cityAdmin1||'';
+        selectedCityLabel=saved.cityName?cityLabel(saved.cityName,selectedCityAdmin1,selectedCityCC,saved.longitude):'';
+        cityQ.value=selectedCityLabel;
       }
       // 出生时间模式:点对应模式按钮(触发显示切换),再回填具体值
       // 兼容旧数据:历史「大致时段」(timeApprox)已废弃，统一归入「不确定→三柱」。
@@ -570,7 +594,7 @@
       const corr = Math.round(chart.correctionMin);
       const sign = corr>=0?'+':'−';
       document.getElementById('cf-info').innerHTML =
-        '<b>'+(p.srcY||p.year)+'年'+(p.srcM||p.month)+'月'+(p.srcD||p.day)+'日</b> · '+p.gender+' · '+(p.cityName||'')+'<br>'+
+        '<b>'+(p.srcY||p.year)+'年'+(p.srcM||p.month)+'月'+(p.srcD||p.day)+'日</b> · '+p.gender+' · '+safeCityText(cityLabel(p.cityName||'',p.cityAdmin1||'',p.cityCC||'',p.longitude))+'<br>'+
         '农历 <b>'+chart.lunarText+'</b><br>'+
         (p.hourUnknown
           ? '出生时辰 <b>未知</b> · 按当日推算'
@@ -587,7 +611,7 @@
     document.getElementById('btn-go').addEventListener('click',()=>{
       // 🔴 防海外静默回落:输入框文本与已选城市不一致 = 打了字没从下拉点选 → 拦下,否则按默认成都/北京时把整盘算错(尤其海外)
       const _pk=(cnameEl.value||'').trim(), _tp=(cityQ.value||'').trim();
-      if(!_pk || (_tp && _tp.indexOf(_pk)!==0)){
+      if(!_pk || !_tp || _tp!==selectedCityLabel){
         cityRes.classList.remove('on'); cityQ.style.borderColor='#C4866A'; cityQ.focus();
         let hint=document.getElementById('city-hint');
         if(!hint){ hint=document.createElement('div'); hint.id='city-hint'; hint.style.cssText='color:#C4866A;font-size:12px;margin-top:7px;line-height:1.5;'; cityQ.parentNode.appendChild(hint); }

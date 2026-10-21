@@ -145,6 +145,14 @@
   .cal-top h2 small{font-size:11px;color:var(--muted);font-weight:300;margin-left:6px;letter-spacing:0;}
   .cal-top .mctrl{font-size:10.5px;color:var(--sage-d);font-weight:400;cursor:pointer;border:1px solid var(--line);border-radius:20px;padding:3px 11px;background:var(--card);transition:all .2s var(--ease);}
   .cal-top .mctrl:hover{background:var(--sage-soft);border-color:var(--sage);}
+  .cal-region{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 2px 12px;font-size:11px;line-height:1.45;color:var(--muted);}
+  .cal-region button{flex:none;min-height:44px;padding:5px 11px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--ink-2);font:inherit;font-size:11.5px;cursor:pointer;}
+  .cal-region span{flex:1;min-width:125px;}
+  .holiday-search{width:100%;min-height:44px;margin:16px 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:15px;}
+  .holiday-countries{max-height:min(55vh,460px);overflow-y:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);}
+  .holiday-countries button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:14px;text-align:left;cursor:pointer;}
+  .holiday-countries button:last-child{border-bottom:0;}
+  .holiday-countries small{font-size:11px;color:var(--muted);}
   .mnav{display:flex;align-items:center;gap:7px;}
   /* 月份导航:‹ › 做成实心圆钮(与年月面板 .ymp-ya 同款),一眼可点；不再是易被忽略的淡色箭头 */
   .mn-arrow{width:33px;height:33px;border:1px solid var(--line);background:var(--card);color:var(--sage-d);font-size:18px;line-height:1;cursor:pointer;border-radius:50%;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:all .2s var(--ease);box-shadow:0 1px 4px -1px rgba(0,0,0,.25);}
@@ -280,6 +288,11 @@
   .share-kind{display:flex;margin-bottom:16px;border:1.5px solid #26282d;border-radius:11px;overflow:hidden;}
   .share-kind button{font-family:var(--serif);font-size:15px;letter-spacing:2px;color:#26282d;background:none;border:0;padding:0 30px;min-height:40px;cursor:pointer;transition:all .2s var(--ease);}
   .share-kind button.on{color:#F1F0EB;background:#26282d;font-weight:700;}
+  .share-day-nav{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:min(348px,90vw);margin:-4px 0 13px;color:#26282d;}
+  .share-day-nav[hidden]{display:none;}
+  .share-day-nav button{width:40px;height:40px;border:1px solid #9B988E;border-radius:11px;background:transparent;color:#26282d;font-size:25px;line-height:1;cursor:pointer;}
+  .share-day-nav button:disabled{opacity:.35;cursor:default;}
+  .share-day-nav span{font-size:14px;letter-spacing:1px;}
   .share-themes{display:flex;gap:7px;margin-bottom:15px;}
   .share-themes button{font-family:inherit;font-size:11px;letter-spacing:1.5px;color:rgba(241,237,230,.62);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 15px;cursor:pointer;transition:all .22s var(--ease);}
   .share-themes button.on{color:#241c0d;background:linear-gradient(135deg,var(--gold-d),var(--gold));border-color:transparent;font-weight:600;}
@@ -445,6 +458,8 @@
   .mine-hero-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.04em;}
   .mine-hero-sub{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:300;}
   .mine-val{font-size:12.5px;color:var(--muted);font-weight:300;margin-left:auto;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56%;}
+  .mine-birth-value{display:flex;flex-direction:column;gap:3px;min-width:0;max-width:62%;margin-left:auto;padding-right:8px;text-align:right;color:var(--muted);font-size:12px;}
+  .mine-birth-value span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .mine-grp{font-size:11px;letter-spacing:4px;color:var(--gold-d);font-weight:500;padding:0 4px 8px;margin-top:6px;}
   .mine-list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:18px;}
   .mine-it{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:16px;background:none;border:none;border-bottom:1px solid var(--line);color:var(--ink);font-size:15px;text-align:left;text-decoration:none;cursor:pointer;transition:background .15s;}
@@ -1499,6 +1514,12 @@
   .hl2-cmp-sum{font-size:11.5px;color:var(--ink-2);font-weight:300;line-height:1.74;letter-spacing:.3px;padding:9px 11px;background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:10px;}
   .hl2-src{font-size:10px;color:var(--muted);font-weight:300;line-height:1.72;letter-spacing:.3px;margin-top:11px;opacity:.85;}
   .hl2-src b{color:var(--ink-2);font-weight:400;}
+  .hl2-open-tool{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:42px;margin-top:9px;padding:0 2px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--gold-d);font:inherit;font-size:12px;letter-spacing:1px;cursor:pointer;}
+  #tb-huangli-slot .hl2-open-tool{display:none;}
+  #tb-huangli-slot .wdg-h{display:none;}
+  #tb-huangli-slot .wdg-hl2{width:100%;}
+  .tb-huangli-date{margin:0 0 12px;color:var(--muted);font-size:12px;letter-spacing:1px;}
+  #widgets #w-huangli .hl2-more{display:none;}
   /* W5 民俗/戊日 */
   /* —— 可折叠小部件(点开展开，不删内容)—— */
   .wdg-toggle{cursor:pointer;-webkit-tap-highlight-color:transparent;}
@@ -1916,7 +1937,25 @@
   /* 收束金句:居中宋体,去金框 */
   #jd-chapter .rp-closing{background:none;border:none;border-top:1px solid var(--line);border-radius:0;padding:26px 14px 6px;text-align:center;font-size:16px;line-height:1.7;letter-spacing:.5px;text-wrap:balance;}
   #jd-chapter .rp-closing::before{content:"";left:50%;top:-6px;transform:translateX(-50%);width:22px;height:1px;background:var(--gold-line);font-size:0;}
-</style>
+    /* 公开网页版的会员说明和原位提示；购买与权益由 iOS App 处理。 */
+    .member-gate{padding:20px 18px;margin:12px 0;border:1px solid var(--gold-line);border-radius:16px;background:var(--gold-soft);color:var(--ink);}
+    .member-gate b{display:block;font-family:var(--serif);font-size:17px;font-weight:500;line-height:1.6;}
+    .member-gate p{font-size:12px;line-height:1.8;color:var(--ink-2);margin:8px 0 14px;}
+    .member-gate button,.member-done{min-height:44px;padding:10px 19px;border:1px solid var(--gold-line);border-radius:12px;background:var(--gold);color:#241c10;font:inherit;font-size:13px;cursor:pointer;}
+    .member-dialog{position:fixed;inset:0;z-index:180;max-width:430px;margin:auto;padding:24px 22px calc(26px + env(safe-area-inset-bottom));background:var(--bg);color:var(--ink);overflow:auto;}
+    .member-dialog[hidden]{display:none;}
+    .member-dialog h2{font-family:var(--serif);font-size:28px;font-weight:500;letter-spacing:3px;margin:40px 0 8px;}
+    .member-sub{color:var(--gold-d);font-size:15px;letter-spacing:2px;}
+    .member-benefits{list-style:none;padding:22px 0;margin:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+    .member-benefits li{font-size:14px;line-height:1.8;margin:12px 0;}
+    .member-price{font-size:28px;color:var(--gold-d);margin:8px 0;}
+    .member-price small{font-size:14px;color:var(--ink-2);}
+    .member-note{font-size:12px;line-height:1.85;color:var(--muted);margin:12px 0;}
+    .member-links{display:flex;gap:20px;margin:22px 0;}
+    .member-links a{font-size:12px;color:var(--gold-d);}
+    .member-done{width:100%;margin:12px 0;}
+    #calendar-member[hidden],#t-share[hidden]{display:none;}
+  </style>
 <style id="rd-css">
   /* 宋体:iOS 不带任何中文衬线字 → 自带思源宋体(Noto Serif SC,OFL)子集,只含引擎/页面用到的字 */
   @font-face{font-family:RDSerif;font-weight:400;font-style:normal;font-display:swap;src:url("assets/fonts/notoserif-Regular.woff") format("woff");}
@@ -2333,6 +2372,7 @@
             </div>
             <div class="mctrl" id="c-today-btn">回今天</div>
           </div>
+          <div class="cal-region"><button id="calendar-country" type="button">日历地区：未选择 ›</button><span id="calendar-holiday-status">选择地区后查看当地全国公共假日</span></div>
           <!-- 年月选择面板 -->
           <div class="ympick" id="ympick">
             <div class="ymp-card">
@@ -2359,6 +2399,7 @@
                 <b id="w-date">6月8日 周一</b>
                 <span id="w-lunar">农历四月廿二</span>
                 <span class="w-festival" id="w-festival"></span>
+                <span class="w-festival fest-folk" id="w-culture" style="display:none"></span>
               </div>
               <div class="we-folk" id="w-folk" style="display:none">
                 <span class="we-folk-n" id="w-folk-n"></span>
@@ -2369,6 +2410,7 @@
 
             <!-- W-TODAY 今日 · 你的状态(个人层:心神 + 宜/缓 + 宜色 + 今日详解，与上方通用黄历分层)-->
             <div class="wdg prebirth-note" id="prebirth-note" style="display:none">这天你尚未出生 · 下方只显示当日历法</div>
+            <div id="calendar-member" hidden></div>
             <div class="wdg wdg-today collapsible" data-wid="today">
               <div class="wdg-h wdg-toggle"><span class="wdg-htitle">今日状态</span><a class="demo-badge" id="w-demo-badge" href="onboarding.html" style="display:none" onclick="event.stopPropagation()">示例 · 换成你的</a><span class="today-score-chip" id="w-score-chip"></span><button class="wdg-help" id="intro-open" type="button" onclick="event.stopPropagation()">怎么用?</button><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
@@ -2393,9 +2435,9 @@
               </div></div>
             </div>
 
-            <!-- W-HL 老黄历(选中日 · 权威版:宜忌 hero + 为什么推导 + 十二时辰 + 更多细节 + 四法参断)-->
+            <!-- W-HL 黄历(首页速览；完整细节在工具箱) -->
             <div class="wdg wdg-hl2 collapsible" data-wid="huangli" id="w-huangli" style="display:none">
-              <div class="wdg-h wdg-toggle hl2-toggle"><span class="wdg-htitle">老黄历</span><span class="hl2-sub" id="hl2-gz">—</span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
+              <div class="wdg-h wdg-toggle hl2-toggle"><span class="wdg-htitle">黄历</span><span class="hl2-sub" id="hl2-gz">—</span><svg class="wdg-chev"><use href="#i-chev"></use></svg></div>
               <div class="wdg-body"><div class="wdg-body-in">
               <!-- 公吉结论行(大吉当头:天赦/大节/黄道,读 gongJi;硬凶/平日静默) -->
               <div class="hl2-verdict" id="hl2-verdict" style="display:none"></div>
@@ -2423,6 +2465,7 @@
                   <div class="hl2-src" id="hl2-src"></div>
                 </div></div>
               </div>
+              <button type="button" class="hl2-open-tool" id="hl2-open-tool">更多 <span aria-hidden="true">›</span></button>
               </div></div>
             </div>
 
@@ -2449,6 +2492,7 @@
             <button type="button" data-k="day" class="on">今日</button>
             <button type="button" data-k="year">今年</button>
           </div>
+          <div class="share-day-nav" id="share-day-nav"><button type="button" id="share-prev" aria-label="前一天">‹</button><span id="share-date"></span><button type="button" id="share-next" aria-label="后一天">›</button></div>
           <div class="share-themes" id="share-themes">
             <button data-th="A" class="on">今日笺</button>
             <button data-th="B">请柬</button>
@@ -2604,6 +2648,11 @@
           </button>
 
           <div class="tb-group-h">民俗</div>
+          <button class="tb-feat" data-tool="huangli" data-title="黄历">
+            <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-cal"></use></svg>
+              <div><b>黄历</b><small>查看当日宜忌与时辰</small></div></div>
+            <span class="tb-feat-r"><span class="tb-feat-go">›</span></span>
+          </button>
           <button class="tb-feat" data-tool="luckyday" data-title="近期吉日">
             <div class="tb-feat-l"><svg class="tb-feat-ic"><use href="#i-lucky"></use></svg>
               <div><b>近期吉日</b><small id="tb-c-luck">未来两周高能量日</small></div></div>
@@ -2629,6 +2678,7 @@
             <button class="tb-back" id="tb-back" aria-label="返回"><span>‹</span>工具箱</button>
             <span class="tb-detail-title" id="tb-detail-title">工具</span>
           </div>
+          <div class="tb-panel" data-panel="huangli"><div class="tb-huangli-date" id="tb-huangli-date"></div><div id="tb-huangli-slot"></div></div>
 
           <!-- 工具:近期吉日 -->
           <div class="tb-panel" data-panel="luckyday">
@@ -2786,22 +2836,27 @@
   <!-- 「我的」overlay:body 级全屏,任意页面均可打开。生辰作为一项(不再整页),含一生能量/分享/协议 -->
   <div class="mine-ov" id="mine-ov">
     <div class="mine-scroll">
-      <div class="ch-bar mine-title"><span class="ch-bar-t">我 的</span></div>
+      <div class="ch-bar mine-title"><span class="ch-bar-t">我的</span></div>
       <div class="mine-list">
-        <a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-val" id="mine-birth">—</span><span class="mine-go">›</span></a>
         <button class="mine-it" type="button" id="mine-share"><svg class="mine-ic"><use href="#i-cal"></use></svg><span class="mine-it-t">今日状态</span><span class="mine-go">›</span></button>
+        <button class="mine-it" type="button" data-membership><span class="mine-it-t">顺时会员</span><span class="mine-val">iOS 版准备中</span><span class="mine-go">›</span></button>
         <!-- 每日提醒:仅原生壳+已录生辰显示(Web/示例态隐藏;本地通知,零上传) -->
       </div>
       <div class="mine-grp">使 用 指 南</div>
       <div class="mine-list">
+        <button class="mine-it" type="button" id="mine-calendar-country"><span class="mine-it-t">日历地区</span><span class="mine-val" id="mine-calendar-country-value">未选择</span><span class="mine-go">›</span></button>
         <a class="mine-it" href="about.html#guide"><span class="mine-it-t">怎么用</span><span class="mine-val">一分钟看懂</span><span class="mine-go">›</span></a>
         <a class="mine-it" href="about.html#data"><span class="mine-it-t">关于与隐私</span><span class="mine-go">›</span></a>
+        <a class="mine-it" href="about.html#support" id="mine-support"><span class="mine-it-t">联系与反馈</span><span class="mine-go">›</span></a>
+        <button class="mine-it" type="button" id="mine-clear"><span class="mine-it-t">清除本机资料</span><span class="mine-go">›</span></button>
       </div>
       <div class="mine-grp">条　款</div>
       <div class="mine-list">
         <a class="mine-it" href="terms.html"><span class="mine-it-t">用户协议</span><span class="mine-go">›</span></a>
         <a class="mine-it" href="privacy.html"><span class="mine-it-t">隐私政策</span><span class="mine-go">›</span></a>
       </div>
+      <div class="mine-list"><a class="mine-it" href="onboarding.html"><svg class="mine-ic"><use href="#i-mine"></use></svg><span class="mine-it-t">生辰信息</span><span class="mine-birth-value"><span id="mine-birth">—</span><span id="mine-birth-city"></span></span><span class="mine-go">›</span></a></div>
+      <div class="mine-foot" id="mine-version"></div>
     </div>
     <nav class="tabbar" aria-label="主导航">
       <button class="tab" type="button"><svg class="ti" aria-hidden="true"><use href="#i-cal"></use></svg>日历</button>
@@ -2812,7 +2867,7 @@
   </div>
 
   <!-- 本机计算引擎:供日历挑年月时实时重算(不联网、不上传)。缓存由 service worker 统一管理，更新版本时在 sw.js 内提升缓存号即可 -->
-  <script src="engine_bundle.js?v=205"></script>
+  <script src="engine_bundle.js?v=206"></script>
 
   <!-- 轻量运营埋点(隐私优先 · 默认关闭)。
        不配置 SHIHE_ANALYTICS_URL 时，一个字节都不会发出，主应用零影响;
@@ -2840,13 +2895,16 @@
       try{ var _tt=(localStorage.getItem('shihe_test_today')||'').split('-').map(Number);
            if(_tt.length===3 && _tt.every(function(x){ return x>0; })) today={ year:_tt[0], month:_tt[1], day:_tt[2] }; }catch(e){}
       var _todayKey = today.year+'-'+today.month+'-'+today.day;
+      var _validApp=function(a){return a&&!a.err&&!a.__error&&a.month&&a.month.year===today.year&&a.month.month===today.month
+        &&Array.isArray(a.month.days)&&a.month.days.length===new Date(today.year,today.month,0).getDate()
+        &&a.month.days.every(function(d,i){return d&&d.g===i+1&&(!person||Number.isFinite(d.e));});};
       // 缓存信封(2026-09-18 外审 B03):旧版只按日期判,异常兜底时甚至不判身份/版本,
       //   可能把上一份出生资料或旧引擎的结果当成当前用户的真结果展示。现在四项全对才认。
       var _fp = function(p){ try{ return [p.year,p.month,p.day,p.hour,p.minute,p.longitude,p.gender,p.hourUnknown?1:0,p.tz||'',p.srcY,p.srcM,p.srcD].join('|'); }catch(e){ return ''; } };
       var _ENG_V = (function(){ try{ return (document.querySelector('script[src*="engine_bundle"]')||{}).src.replace(/^.*\?v=/,'')||'0'; }catch(e){ return '0'; } })();
       var _cacheOK = function(env){
         return env && env.schemaVersion===1 && env.dateKey===_todayKey
-          && env.engineVersion===_ENG_V && person && env.personFingerprint===_fp(person) && env.payload;
+          && env.engineVersion===_ENG_V && person && env.personFingerprint===_fp(person) && _validApp(env.payload);
       };
       var _readCache = function(){ try{ return JSON.parse(localStorage.getItem('shihe_app')||'null'); }catch(e){ return null; } };
       // ①a 有真实生日 + 本机已有「今天」的缓存 → 直接用,免每次重跑 buildApp(百年人生+3年报告)约250-500ms
@@ -2858,6 +2916,7 @@
       try{
         if (person && window.RhythmEngine && RhythmEngine.buildApp){
           window.APP = RhythmEngine.buildApp(person, today);
+          if(!_validApp(window.APP)) throw new Error('invalid-app-result');
           window.APP_PERSON = person; window.__IS_DEMO = false;
           try{ localStorage.setItem('shihe_app', JSON.stringify({ schemaVersion:1, engineVersion:_ENG_V, dateKey:_todayKey, personFingerprint:_fp(person), payload:window.APP }));
                localStorage.setItem('shihe_app_date', _todayKey); }catch(e){}
@@ -2883,21 +2942,23 @@
         }
       }catch(e){}
       window.__NO_PERSON = true;
-      document.write('<scr'+'ipt src="app_data.js?v=205"></scr'+'ipt>');
+      // 不用预生成旧日期冒充今天；无个人资料也应显示明确的恢复页。
+      window.APP = null; window.APP_PERSON = null; window.__ENGINE_DOWN = true;
     })();
   </script>
   <script>
-    // 引导兜底:三条引擎路径 + app_data.js 末级兜底全部失败时 window.APP 会是 undefined。
+    // 当前日期内容不可用时显示恢复页，不回退预生成的旧日期。
     // 裸取 APP.user(2217)会在本脚本块(2209–4820)顶部抛错 → 整页白屏且无任何提示。
     // 这正是为「引擎在浏览器抛错」那类事故准备的安全网,自己却无护栏。改为:先画一个可恢复的
     // 「请刷新」提示,再主动中止本块(此时本就无数据可渲染,中止即可,不再连累用户看到白屏)。
-    if(!window.APP){
+    if(!window.APP || window.APP.err || window.APP.__error || !window.APP.month || !Array.isArray(window.APP.month.days)){
       // 🔴 2026-09-22:原来直接 body.innerHTML= 把底栏一起抹掉 —— PWA standalone 无地址栏、
       //   无下拉刷新,用户只能杀进程。现在只覆盖内容区、保留底栏,并给一个能点的出口。
       var _rec=document.createElement('div');
       _rec.style.cssText='position:fixed;left:0;right:0;top:0;bottom:calc(58px + env(safe-area-inset-bottom));z-index:60;background:var(--bg,#0E0E0F);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:2em;text-align:center;color:#A9A296;font-size:15px;line-height:1.9';
-      _rec.innerHTML='<div>'+(window.__ENGINE_DOWN?'本机数据未准备好<br>请联网后重新打开（不会用旧结果冒充今天）':'内容加载失败<br>请检查网络后重试')+'</div>'
-        +'<button type="button" id="err-reload" style="min-height:44px;padding:0 26px;border-radius:22px;border:1px solid #6E6350;background:transparent;color:#C8A96A;font-size:15px;font-family:inherit">重新载入</button>';
+      _rec.innerHTML='<div>'+(window.__ENGINE_DOWN?'本机计算未能完成<br>请重新载入；若离线资源缺失，可联网后再试':'内容加载失败<br>请重新载入后再试')+'</div>'
+        +'<button type="button" id="err-reload" style="min-height:44px;padding:0 26px;border-radius:22px;border:1px solid #6E6350;background:transparent;color:#C8A96A;font-size:15px;font-family:inherit">重新载入</button>'
+        +'<a href="about.html#support" style="color:inherit">联系与反馈</a>';
       document.body.appendChild(_rec);
       var _rb=document.getElementById('err-reload');
       if(_rb) _rb.addEventListener('click', function(){ location.reload(); });
@@ -2908,6 +2969,97 @@
     const esc = (s)=> String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     // 轻提示:替代生硬的 alert,底部淡入淡出
     const toast = (()=>{ let el,timer; return (msg)=>{ if(!el){ el=document.createElement('div'); el.className='toast'; document.body.appendChild(el); } el.textContent=msg; requestAnimationFrame(()=>el.classList.add('on')); clearTimeout(timer); timer=setTimeout(()=>el.classList.remove('on'),2800); }; })();
+    // 免费范围只控制呈现，不改变任何命理计算。网页版没有购买或本机解锁标记。
+    const WebAccess = Object.freeze({
+      day(y,m,d){
+        const now=new Date(), today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+        const selected=Date.UTC(Number(y),Number(m)-1,Number(d));
+        return Number.isFinite(selected) && selected<=today+7*86400000;
+      },
+      year(y){ return Number(y)<=new Date().getFullYear(); },
+      months(y){ return Number(y)<new Date().getFullYear(); }
+    });
+    function memberGateHTML(title, detail){
+      return '<div class="member-gate"><b>'+esc(title)+'</b><p>'+esc(detail||'iOS 会员可查看完整内容，网页版保留免费体验。')+'</p><button type="button" data-membership>了解顺时会员</button></div>';
+    }
+    (function membership(){
+      const dialog=document.createElement('section'); dialog.id='membership-dialog'; dialog.className='member-dialog'; dialog.hidden=true;
+      dialog.setAttribute('role','dialog'); dialog.setAttribute('aria-modal','true'); dialog.setAttribute('aria-labelledby','member-title');
+      dialog.innerHTML='<h2 id="member-title" tabindex="-1">顺时会员</h2><div class="member-sub">提前看看，安排从容</div>'
+        +'<ul class="member-benefits"><li>查看更远日期的个人状态与宜忌</li><li>按事项筛选更远时段的日子</li><li>展开全年月度起伏与更多年份</li></ul>'
+        +'<div class="member-price">US$4.99 <small>／每 3 个月</small></div>'
+        +'<p class="member-note">iOS 版准备中，当前暂未开放购买。以上为拟定美区价格，正式上线以 App Store 显示的当地价格为准。</p>'
+        +'<p class="member-note">正式开通后按购买日起每 3 个月自动续订，可在 Apple 订阅设置中取消。取消后可使用至当期结束。</p>'
+        +'<p class="member-note">本命全文、普通日历与黄历、今日及未来 7 天的个人内容免费。会员在 iOS App 内使用，App 购买不会自动解锁网页版。恢复购买不等于恢复本机出生资料。</p>'
+        +'<div class="member-links"><a href="terms.html">使用条款</a><a href="privacy.html">隐私政策</a></div><button type="button" class="member-done" id="member-close">继续使用免费版</button>';
+      document.body.appendChild(dialog);
+      let previousFocus=null, inertState=[];
+      function close(){ dialog.hidden=true; inertState.forEach(function(x){ if(!x[1]) x[0].removeAttribute('inert'); }); inertState=[]; if(previousFocus&&previousFocus.isConnected) previousFocus.focus({preventScroll:true}); }
+      function open(){
+        if(!dialog.hidden) return;
+        previousFocus=document.activeElement;
+        inertState=Array.from(document.body.children).filter(function(x){return x!==dialog&&x.tagName!=='SCRIPT';}).map(function(x){const old=x.hasAttribute('inert'); x.setAttribute('inert',''); return [x,old];});
+        dialog.hidden=false; $('member-title').focus({preventScroll:true});
+      }
+      document.addEventListener('click',function(e){ if(e.target.closest('[data-membership]')){ e.preventDefault(); open(); } });
+      $('member-close').addEventListener('click',close);
+      dialog.addEventListener('keydown',function(e){
+        if(e.key==='Escape'){ e.preventDefault(); close(); }
+        if(e.key==='Tab'){
+          const items=Array.from(dialog.querySelectorAll('a,button')).filter(function(x){return !x.disabled;});
+          const first=items[0], last=items[items.length-1];
+          if(e.shiftKey&&(document.activeElement===first||document.activeElement===$('member-title'))){e.preventDefault();last.focus();}
+          else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+        }
+      });
+      window.__openMembership=open;
+    })();
+    // 仅清理本应用命名空间，不清空同域其他站点、Apple 购买或已导出的系统日历事件。
+    (function localDataControls(){
+      const version=(document.querySelector('script[src*="engine_bundle"]')?.getAttribute('src')||'').match(/[?&]v=(\d+)/);
+      const versionEl=$('mine-version');
+      if(versionEl) versionEl.textContent='网页版资源 v'+(version?version[1]:'未知')+' · 日期按设备时区';
+      const dialog=document.createElement('section'); dialog.id='local-data-dialog'; dialog.className='member-dialog'; dialog.hidden=true;
+      dialog.setAttribute('role','dialog'); dialog.setAttribute('aria-modal','true'); dialog.setAttribute('aria-labelledby','local-data-title');
+      dialog.innerHTML='<h2 id="local-data-title" tabindex="-1">清除本机资料</h2>'
+        +'<p class="member-note">将清除本浏览器中的生辰、重点日、设置与推算缓存，无法从应用恢复。不会取消 Apple 订阅，也不会删除已导入系统日历的事件。</p>'
+        +'<label class="member-note" style="display:flex;gap:10px;align-items:center;min-height:44px"><input id="local-data-confirm" type="checkbox">我已知晓，仍要清除</label>'
+        +'<p class="member-note" id="local-data-error" role="alert"></p>'
+        +'<button type="button" class="member-done" id="local-data-delete" disabled>确认清除</button>'
+        +'<button type="button" class="member-done" id="local-data-cancel">取消</button>';
+      document.body.appendChild(dialog);
+      let previousFocus=null, inertState=[];
+      function close(){ dialog.hidden=true; inertState.forEach(function(x){if(!x[1])x[0].removeAttribute('inert');}); inertState=[]; if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true}); }
+      $('mine-clear').addEventListener('click',function(){
+        previousFocus=document.activeElement;
+        $('local-data-confirm').checked=false; $('local-data-delete').disabled=true; $('local-data-error').textContent='';
+        inertState=Array.from(document.body.children).filter(function(x){return x!==dialog&&x.tagName!=='SCRIPT';}).map(function(x){const old=x.hasAttribute('inert');x.setAttribute('inert','');return [x,old];});
+        dialog.hidden=false; $('local-data-title').focus({preventScroll:true});
+      });
+      $('local-data-cancel').addEventListener('click',close);
+      $('local-data-confirm').addEventListener('change',function(){ $('local-data-delete').disabled=!this.checked; });
+      $('local-data-delete').addEventListener('click',function(){
+        if(!$('local-data-confirm').checked)return;
+        this.disabled=true;
+        try{
+          for(const storage of [localStorage,sessionStorage]){
+            const keys=[]; for(let i=0;i<storage.length;i++){const k=storage.key(i);if(k?.startsWith('shihe_')&&k!=='shihe_consent')keys.push(k);}
+            keys.forEach(function(k){storage.removeItem(k);});
+          }
+          // 清除资料不发送运营事件，也不包含出生信息或推算正文。
+          location.replace('./index.html');
+        }catch(e){ $('local-data-error').textContent='未能清除全部本机资料，请检查浏览器存储设置后重试。'; this.disabled=false; }
+      });
+      dialog.addEventListener('keydown',function(e){
+        if(e.key==='Escape'){e.preventDefault();close();}
+        if(e.key==='Tab'){
+          const items=Array.from(dialog.querySelectorAll('input,button')).filter(function(x){return !x.disabled;});
+          const first=items[0],last=items[items.length-1];
+          if(e.shiftKey&&(document.activeElement===first||document.activeElement===$('local-data-title'))){e.preventDefault();last.focus();}
+          else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+        }
+      });
+    })();
     // 喜色:命主个人色，仅在「宜色推荐」处现身，不再泼洒全局
     // 无 persona 退化态的兜底色:用中性素色，绝不硬编码某个五行色(旧值木绿#6E8F73 会误示喜木)
     const XI = (APP.user && APP.user.xiColor && APP.user.xiColor.hex) || '#A9A296';
@@ -2969,8 +3121,8 @@
       window.addEventListener('touchend', hide);
     }
     const WEEK = ['日','一','二','三','四','五','六'];
-    // 设备时区∈中国大陆→显示调休班/休;海外(含港澳台)自动弱化(中国调休对当地生活无意义;节日名照常显示)
-    const CN_TZ = (function(){ try{ var z=Intl.DateTimeFormat().resolvedOptions().timeZone||''; return z==='Asia/Shanghai'||z==='Asia/Urumqi'; }catch(e){ return true; } })();
+    // 未选择地区时仅中国时区沿用中国休/班与传统节日；海外日历不混入中国节庆。
+    const isChinaTimeZone = ()=>{ try{ var z=Intl.DateTimeFormat().resolvedOptions().timeZone||''; return z==='Asia/Shanghai'||z==='Asia/Urumqi'; }catch(e){ return false; } };
     // 感情状态(单身/有伴侣)存本机,仅用于挑选感情建议版本,不上传、不改命盘
     const REL_KEY='shihe_relstatus';
     const getRelStatus = ()=>{ try{ return localStorage.getItem(REL_KEY)||''; }catch(e){ return ''; } };
@@ -2984,15 +3136,138 @@
       const off=(m,d1,d2,name)=>{ for(let d=d1;d<=d2;d++) H[m+'-'+d]={type:'off',name:d===d1?name:''}; };
       const work=(m,d)=>{ H[m+'-'+d]={type:'work',name:''}; };
       off(1,1,3,'元旦');            work(1,4);
-      off(2,15,23,'春节');          work(2,14); work(2,28);
+      off(2,15,23,'');              work(2,14); work(2,28);
       off(4,4,6,'清明');
       off(5,1,5,'劳动节');          work(5,9);
-      off(6,19,21,'端午');
-      off(9,25,27,'中秋');
+      off(6,19,21,'');
+      off(9,25,27,'');
       off(10,1,7,'国庆');           work(9,20); work(10,10);
       return H;
     })();
-    const holiday = (Y,M,g)=> (Y===2026 ? (HOLIDAYS_2026[M+'-'+g]||null) : null);
+    // 公共假日按用户选择的日历地区显示，与出生城市及设备时区彼此独立。
+    // 未选择时保持旧行为：中国时区沿用 2026 国务院休/班表；海外不猜所在地。
+    const HolidayRegions = (()=>{
+      const KEY='shihe_calendar_country';
+      const state={ country:'', data:null, coverage:null, loading:null, refresh:null };
+      try{ const saved=localStorage.getItem(KEY)||''; if(/^[A-Z]{2}$/.test(saved)) state.country=saved; }catch(e){}
+      const countryName=(code)=>{
+        try{ return new Intl.DisplayNames(['zh-Hans'],{type:'region'}).of(code)||code; }catch(e){ return code; }
+      };
+      const yearsText=()=>state.data&&state.data.years.length?state.data.years[0]+'—'+state.data.years[state.data.years.length-1]+' 年':'';
+      const hasYear=(y)=>!!state.data&&state.data.years.includes(y);
+      const hasCountryYear=(code,y)=>!!state.coverage?.[code]?.has(y);
+      const stamp=(y,m,d)=>y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      const isChinaCalendar=()=>state.country==='CN'||(!state.country&&isChinaTimeZone());
+      let lastImplicitChina=isChinaCalendar();
+      function holiday(y,m,d){
+        if(isChinaCalendar()&&y===2026) return HOLIDAYS_2026[m+'-'+d]||null;
+        if(!state.country||!hasCountryYear(state.country,y)) return null;
+        const name=state.data.dates?.[state.country]?.[stamp(y,m,d)];
+        return typeof name==='string'&&name.trim()?{type:'national',name:name.trim()}:null;
+      }
+      function updateStatus(y){
+        const chosen=state.country;
+        const label=chosen?countryName(chosen):'未选择';
+        if($('calendar-country')) $('calendar-country').textContent='日历地区：'+label+' ›';
+        if($('mine-calendar-country-value')) $('mine-calendar-country-value').textContent=label;
+        const out=$('calendar-holiday-status'); if(!out) return;
+        if(!chosen){ out.textContent=isChinaCalendar()&&y===2026?'中国 2026 休／班安排 · 可另选日历地区':'选择地区查看当地全国公共假日'; return; }
+        if(chosen==='CN'&&y===2026){ out.textContent='中国 2026 休／班安排 · 以官方公告为准'; return; }
+        if(!state.data){ out.textContent=state.loading?'正在载入全国公共假日':'节假日资料暂不可用，点此重试'; return; }
+        if(!hasYear(y)){ out.textContent='该年尚未收录公共假日（已收录 '+yearsText()+'）'; return; }
+        if(!hasCountryYear(chosen,y)){ out.textContent='该地区该年资料未收录 · 以当地公告为准'; return; }
+        out.textContent='全国公共假日 · 不含州省 · 以当地公告为准（'+yearsText()+'）';
+      }
+      function refresh(){ if(state.refresh) state.refresh(); else updateStatus(new Date().getFullYear()); }
+      function load(){
+        if(state.data) return Promise.resolve(state.data);
+        if(state.loading) return state.loading;
+        state.loading=fetch('public-holidays.json').then((r)=>{ if(!r.ok) throw Error('holiday data '+r.status); return r.json(); })
+          .then((d)=>{
+            if(!Array.isArray(d.years)||!Array.isArray(d.countries)||!d.dates||typeof d.dates!=='object') throw Error('holiday data format');
+            state.data={...d,years:d.years.map(Number).filter(Number.isInteger),countries:d.countries.filter((v)=>typeof v==='string'&&/^[A-Z]{2}$/.test(v))};
+            state.coverage={};
+            for(const code of state.data.countries){
+              state.coverage[code]=new Set(Object.entries(state.data.dates[code]||{})
+                .filter(([date,name])=>/^\d{4}-\d{2}-\d{2}$/.test(date)&&typeof name==='string'&&name.trim())
+                .map(([date])=>Number(date.slice(0,4))));
+            }
+            if(state.country&&!state.data.countries.includes(state.country)){
+              state.country=''; try{localStorage.removeItem(KEY);}catch(e){}
+            }
+            return state.data;
+          }).finally(()=>{ state.loading=null; refresh(); });
+        refresh();
+        return state.loading;
+      }
+      function setCountry(code){
+        if(code&&(!state.data||!state.data.countries.includes(code))) return;
+        state.country=code;
+        lastImplicitChina=isChinaCalendar();
+        try{ code?localStorage.setItem(KEY,code):localStorage.removeItem(KEY); }catch(e){}
+        refresh();
+      }
+      function refreshAfterTimeZoneChange(){
+        if(state.country) return;
+        const china=isChinaCalendar();
+        if(china!==lastImplicitChina){ lastImplicitChina=china; refresh(); }
+      }
+      document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refreshAfterTimeZoneChange(); });
+      window.addEventListener('focus',refreshAfterTimeZoneChange);
+      return {state,countryName,holiday,isChinaCalendar,updateStatus,load,setCountry,bindRefresh:(fn)=>{state.refresh=fn;refresh();}};
+    })();
+    // 节假日资料本机缓存；联网失败时不凭印象补假日。中国 2026 调休表仍可离线使用。
+    HolidayRegions.load().catch(()=>{});
+    (function calendarCountryPicker(){
+      const dialog=document.createElement('section'); dialog.id='holiday-country-dialog'; dialog.className='member-dialog'; dialog.hidden=true;
+      dialog.setAttribute('role','dialog'); dialog.setAttribute('aria-modal','true'); dialog.setAttribute('aria-labelledby','holiday-country-title');
+      dialog.innerHTML='<h2 id="holiday-country-title" tabindex="-1">日历地区</h2>'
+        +'<p class="member-note"><span id="holiday-country-count">正在载入地区资料。</span>仅显示全国公共假日，不含州、省及城市假日；以当地公告为准。与出生城市无关。</p>'
+        +'<input class="holiday-search" id="holiday-country-search" type="search" placeholder="搜索国家或地区" aria-label="搜索国家或地区">'
+        +'<div class="holiday-countries" id="holiday-country-list"></div>'
+        +'<button type="button" class="member-done" id="holiday-country-close">完成</button>';
+      document.body.appendChild(dialog);
+      const search=$('holiday-country-search'), list=$('holiday-country-list');
+      let previousFocus=null, inertState=[];
+      function countries(){
+        const data=HolidayRegions.state.data;
+        if(!data) return [];
+        let en=null; try{en=new Intl.DisplayNames(['en'],{type:'region'});}catch(e){}
+        return data.countries.map((code)=>({code,zh:HolidayRegions.countryName(code),en:en?.of(code)||code}))
+          .sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans'));
+      }
+      function renderList(){
+        const query=search.value.trim().toLocaleLowerCase();
+        $('holiday-country-count').textContent=HolidayRegions.state.data?'已收录 '+HolidayRegions.state.data.countries.length+' 个国家／地区。':'正在载入地区资料。';
+        if(!HolidayRegions.state.data){
+          list.innerHTML='<button type="button" data-retry="1">节假日资料未载入 · 点此重试</button>'; return;
+        }
+        const opts=countries().filter((c)=>!query||[c.code,c.zh,c.en].some((s)=>s.toLocaleLowerCase().includes(query)));
+        list.innerHTML=(!query?'<button type="button" data-country=""><span>未选择（沿用原设置）</span></button>':'')
+          +(opts.length?opts.map((c)=>'<button type="button" data-country="'+c.code+'"><span>'+esc(c.zh)+'</span><small>'+c.code+(HolidayRegions.state.country===c.code?' ✓':'')+'</small></button>').join(''):'<div class="member-note" style="padding:14px">未找到，或该地区暂无全国假日资料</div>');
+      }
+      function open(){
+        previousFocus=document.activeElement; search.value=''; renderList();
+        inertState=Array.from(document.body.children).filter((x)=>x!==dialog&&x.tagName!=='SCRIPT').map((x)=>{const old=x.hasAttribute('inert');x.setAttribute('inert','');return [x,old];});
+        dialog.hidden=false; search.focus({preventScroll:true});
+        HolidayRegions.load().then(renderList).catch(renderList);
+      }
+      function close(){
+        dialog.hidden=true; inertState.forEach((x)=>{if(!x[1])x[0].removeAttribute('inert');}); inertState=[];
+        if(previousFocus?.isConnected) previousFocus.focus({preventScroll:true});
+      }
+      $('calendar-country').addEventListener('click',open);
+      $('mine-calendar-country').addEventListener('click',open);
+      $('calendar-holiday-status').addEventListener('click',()=>{if(!HolidayRegions.state.data) open();});
+      search.addEventListener('input',renderList);
+      list.addEventListener('click',(e)=>{
+        const retry=e.target.closest('[data-retry]'); if(retry){ HolidayRegions.load().then(renderList).catch(renderList); return; }
+        const btn=e.target.closest('[data-country]'); if(!btn) return;
+        HolidayRegions.setCountry(btn.dataset.country); close();
+      });
+      $('holiday-country-close').addEventListener('click',close);
+      dialog.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){e.preventDefault();close();} });
+    })();
     const HOL_LIST = [
       {name:'元旦',   range:'1月1日 – 1月3日',   days:3, work:'1月4日(周日)上班'},
       {name:'春节',   range:'2月15日 – 2月23日',  days:9, work:'2月14日、2月28日上班'},
@@ -3004,7 +3279,7 @@
     ];
 
     // ===== 民俗 / 纪念节日(非法定放假，只在日期下方给一句提示)=====
-    //   公历固定日 + 浮动日(母/父亲节、感恩节)+ 传统农历节(端午/中秋/春节已在放假表，这里补未放假的)。
+    //   公历固定日 + 浮动日(母/父亲节、感恩节)+ 传统农历节(春节/端午/中秋逐年按农历)。
     const FEST_SOLAR = {
       '2-14':'情人节', '3-8':'妇女节', '3-12':'植树节', '4-1':'愚人节',
       '5-4':'青年节',  '6-1':'儿童节',
@@ -3023,18 +3298,21 @@
       '12-13':{short:'国家公祭', full:'南京大屠杀死难者国家公祭日'},
     };
     const memorialOf = (Y,M,D)=>{ const m=MEMORIAL[M+'-'+D]; return m? {short:m.short, full:m.full, anniv:(m.since? Y-m.since : 0)} : null; };
+    const MAJOR_LUNAR = { '正月初一':'春节', '五月初五':'端午节', '八月十五':'中秋节' };
     const FEST_LUNAR = {
       '正月十五':'元宵节', '二月初二':'龙抬头', '七月初七':'七夕',
       '七月十五':'中元节', '九月初九':'重阳节', '腊月初八':'腊八节', '腊月廿三':'小年'
     };
     const festOf = (Y,M,D,lunarLabel)=>{
+      const lunarDay=String(lunarLabel||'').replace(/^农历/,'');
+      if(lunarDay && !lunarDay.startsWith('闰') && MAJOR_LUNAR[lunarDay]) return MAJOR_LUNAR[lunarDay];
       const dow=new Date(Y,M-1,D).getDay(), nth=Math.ceil(D/7);
       if(M===5 && dow===0 && nth===2) return '母亲节';
       if(M===6 && dow===0 && nth===3) return '父亲节';
-      if(M===11 && dow===4 && nth===4) return '感恩节';
+      if(M===11 && dow===4 && nth===4) return '美国感恩节';
       const mem=MEMORIAL[M+'-'+D]; if(mem) return mem.short;   // 国家纪念日:日历格内用短名
       if(FEST_SOLAR[M+'-'+D]) return FEST_SOLAR[M+'-'+D];
-      if(lunarLabel){ const k=String(lunarLabel).replace(/^农历/,'').replace(/^闰/,''); if(FEST_LUNAR[k]) return FEST_LUNAR[k]; }
+      if(lunarDay){ const k=lunarDay.replace(/^闰/,''); if(FEST_LUNAR[k]) return FEST_LUNAR[k]; }
       return null;
     };
 
@@ -3121,6 +3399,7 @@
     // ===== 屏1 · 日历首页(日历 + 当日小部件流)=====
     let SHARE_DAY = null;        // 当前选中日(供分享卡)
     let SHARE_YM = null;         // 选中日所在年月(日历可翻月,分享卡日期/星期必须跟选中日同源,不能用 APP.month)
+    let SHARE_REQUIRES_MEMBERSHIP = false;
     // 🔴 出生日期有两套,不可混用:
     //   srcY/srcM/srcD = 出生地当地公历日(农历已转公历)→ 所有 UI 生命周期边界(是否已出生 / 日档下限)只用它
     //   year/month/day = 换算成北京基准后喂冻结引擎的值 → 只给引擎
@@ -3131,6 +3410,14 @@
       if(!P||!P.year) return null;
       return { y:(P.srcY||P.year), m:(P.srcM||P.month||1), d:(P.srcD||P.day||1) };
     };
+    function onOrAfterBirth(y,m,d){
+      const birth=window.__birthLocal(), date=new Date(y,m-1,d);
+      return !!birth && date.getFullYear()===Number(y) && date.getMonth()===Number(m)-1 && date.getDate()===Number(d)
+        && Date.UTC(y,m-1,d)>=Date.UTC(birth.y,birth.m-1,birth.d);
+    }
+    function personalDayOpen(y,m,d){
+      return onOrAfterBirth(y,m,d) && WebAccess.day(y,m,d);
+    }
 
     (function renderHome(){
       let PERSON=null;
@@ -3171,6 +3458,11 @@
           return mo;
         } catch(e){ return null; }
       }
+      // 分享卡逐日预览复用同一月数据，不改变日历当前选中日。
+      window.__calDayForShare = (Y,M,g)=>{
+        const mo=monthData(Y,M);
+        return mo && Array.isArray(mo.days) ? mo.days.find((d)=>d.g===g) || null : null;
+      };
 
       // —— 能量卡今日顺时一句:贴着分数+态势，给每天一个一眼可读的钩子(养生口吻，非医疗)——
       // (tipLine 死代码已删:今日主句走 heroLine + 大吉横幅,不再用纯能量的宜句,免与大吉当头打架)
@@ -3244,10 +3536,15 @@
         (function(){
           const el=$('hl2-verdict'); if(!el) return;
           if(gj && gj.grade==='S'){
-            const rs=(gj.names&&gj.names.length)?gj.names.slice(0,2).join(' · '):((gj.reasons&&gj.reasons.length)?gj.reasons.slice(0,2).join(' · '):'诸事可为');
+            const china=HolidayRegions.isChinaCalendar();
+            const names=china?(gj.names||[]):(gj.names||[]).filter((name)=>name==='天赦日');
+            const reasons=china?(gj.reasons||[]):(gj.reasons||[]).filter((reason)=>reason==='天赦当头'||reason==='天德月德临');
+            if(!china&&!names.length&&!reasons.length){ el.style.display='none'; return; }
+            const rs=names.length?names.slice(0,2).join(' · '):(reasons.length?reasons.slice(0,2).join(' · '):'诸事可为');
             el.textContent='黄历大吉 · '+rs; el.className='hl2-verdict'; el.style.display='';
           } else if(gj && gj.grade==='A'){
-            el.textContent=(gj.reasons&&gj.reasons.length)?gj.reasons.slice(0,2).join(' · '):'黄道吉日'; el.className='hl2-verdict a'; el.style.display='';
+            const reasons=HolidayRegions.isChinaCalendar()?(gj.reasons||[]):(gj.reasons||[]).filter((reason)=>reason==='黄道吉日'||reason==='吉神值日');
+            el.textContent=reasons.length?reasons.slice(0,2).join(' · '):'黄道吉日'; el.className='hl2-verdict a'; el.style.display='';
           } else { el.style.display='none'; }
         })();
         const RE=window.RhythmEngine;
@@ -3379,6 +3676,10 @@
           if(hlcard) hlcard.addEventListener('click',(ev)=>{ const el=ev.target.closest('[data-d]'); if(!el) return; const sd=$('hl2-ss-detail'); if(!sd) return; sd.classList.add('show'); sd.textContent=el.getAttribute('data-d'); });
         }
       }
+      window.__hlRenderDate = (Y,M,g)=>{
+        const mo=monthData(Y,M), day=mo&&Array.isArray(mo.days)?mo.days.find((d)=>d.g===g):null;
+        renderHuangli(Y,M,g,day&&day.gongJi);
+      };
       // 单个时辰详情 HTML(当前时辰默认展示 + 点选切换)
       function shiDetailHTML(z){
         const info=_hlTimes&&_hlTimes[z]; if(!info) return '';
@@ -3391,7 +3692,12 @@
 
       // —— 选中某日 → 填充下方小部件流 ——
       function showDay(d){
-        SHARE_DAY = d; SHARE_YM = { year:curY, month:curM };
+        window.__hlSelectedDate = { year:curY, month:curM, day:d.g };
+        const dayOpen=WebAccess.day(curY,curM,d.g);
+        const personalOpen=personalDayOpen(curY,curM,d.g);
+        SHARE_REQUIRES_MEMBERSHIP = !dayOpen && onOrAfterBirth(curY,curM,d.g);
+        SHARE_DAY = personalOpen ? d : null; SHARE_YM = personalOpen ? { year:curY, month:curM } : null;
+        if(!personalOpen && $('share-ov')) $('share-ov').classList.remove('on');
         const dt = new Date(curY, curM-1, d.g);
         // 距今天数(参考中华日历:点选某天，底部即显示「X天后 / X天前 / 今天」)
         (function(){
@@ -3414,8 +3720,13 @@
           var P=window.__birthLocal&&window.__birthLocal();
           var card=document.querySelector('.wdg-today'), ph=document.getElementById('prebirth-note'), pre=false;
           if(P){ var b=new Date(P.y,P.m-1,P.d); b.setHours(0,0,0,0); var s=new Date(curY,curM-1,d.g); s.setHours(0,0,0,0); pre=s<b; }
-          if(card) card.style.display=pre?'none':'';
+          if(card) card.style.display=(pre||!dayOpen)?'none':'';
           if(ph) ph.style.display=pre?'':'none';
+          const gate=$('calendar-member'); if(gate){
+            gate.hidden=pre||dayOpen||!PERSON;
+            gate.innerHTML=gate.hidden?'':memberGateHTML('查看这一天的个人状态与宜忌','今日及未来 7 天免费；更远日期的个人内容在 iOS 会员内查看。普通黄历与重点日照常使用。');
+          }
+          if($('t-share')) $('t-share').hidden=pre||!dayOpen;
         })();
         $('w-lunar').textContent = '农历'+d.lunarLabel;
         // 当日重点日(本机自定义):有则在能量卡上方点名
@@ -3427,15 +3738,25 @@
               return '<span class="we-mk-chip"><i></i>'+esc(m.name)+'</span>'; }).join('');
           } else el.style.display='none';
         })();
-        const hol = holiday(curY, curM, d.g);
+        const hol = HolidayRegions.holiday(curY, curM, d.g);
         const fest = $('w-festival');
-        const mem = memorialOf(curY, curM, d.g);   // 国家纪念日:选中卡片里给全称 + 周年
-        const fstToday = festOf(curY, curM, d.g, d.lunarLabel);
-        if (hol && hol.name){ fest.textContent=hol.name; fest.style.display=''; fest.className='w-festival fest-folk'; }
-        else if (mem){ fest.textContent=mem.full+(mem.anniv>0?(' · '+mem.anniv+'周年'):''); fest.style.display=''; fest.className='w-festival fest-folk'; }
-        else if (fstToday){ fest.textContent=fstToday; fest.style.display=''; fest.className='w-festival fest-folk'; }
-        else { fest.style.display='none'; }
+        const culture = $('w-culture');
+        // 海外日历只展示所选地区的公共假日，不混入中国纪念日或华人传统节日。
+        const mem = HolidayRegions.isChinaCalendar()?memorialOf(curY, curM, d.g):null;
+        const fstToday = HolidayRegions.isChinaCalendar()?festOf(curY, curM, d.g, d.lunarLabel):null;
+        const names=[];
+        if(mem) names.push(mem.full+(mem.anniv>0?(' · '+mem.anniv+'周年'):''));
+        if(fstToday&&!names.includes(fstToday)) names.push(fstToday);
+        if(hol&&hol.name){
+          fest.textContent=hol.type==='national'?'全国公共假日 · '+hol.name:hol.name;
+          fest.style.display=''; fest.className='w-festival '+(hol.type==='national'?'fest-off':'fest-folk');
+        } else if(names.length){
+          fest.textContent=names.shift(); fest.style.display=''; fest.className='w-festival fest-folk';
+        } else fest.style.display='none';
+        const extra=names.filter((name)=>!hol||name!==hol.name);
+        if(culture){ culture.textContent=extra.join(' · '); culture.style.display=extra.length?'':'none'; }
         // 今日能量:光球(替代裸「N分」;满=气足,自内透光呼吸)。整体能量值存 dataset,供「按住浮出 0-100」读取
+        if(dayOpen){
         if($('w-orb')){ $('w-orb').innerHTML = energyOrb(d.e, undefined, undefined, d.today?'今日':'该日'); $('w-orb').dataset.e = d.e; bindOrbPeek(); }
         if($('w-score')) $('w-score').textContent = d.e;
         // 今日一句:干货生成器主句(说中你+能照做)
@@ -3480,17 +3801,29 @@
         $('w-xisw').style.background = XI;
         $('w-xiname').textContent = XINAME;
         renderFortune(d);                 // 今日各方面(五维:事业/感情/财运/学习↔健康/机会)
+        } else {
+          ['w-orb','w-score','w-score-chip','w-yi','w-huan','w-xiname','w-fortune-tabs','w-fortune-body'].forEach(function(id){const el=$(id);if(el)el.textContent='';});
+          if($('w-orb')) delete $('w-orb').dataset.e;
+          if($('w-xisw')) $('w-xisw').style.background='';
+          if($('w-axisfill')) $('w-axisfill').style.width='0';
+          if($('w-axisknob')) $('w-axisknob').style.left='50%';
+          $('share-ov').classList.remove('on'); $('share-card').innerHTML='';
+        }
         renderHuangli(curY, curM, d.g, d.gongJi);   // 老黄历卡(选中日 · 传统历法速查;传 gongJi 显公吉结论行)
         // 民俗节日 / 黄历吉日:并入能量卡第一栏(名称 + 释义)
         (function(){
           const box=$('w-folk'), nm=$('w-folk-n'), de=$('w-folk-d');
           if(!box) return;
           const gj = d.gongJi;
-          if (gj && gj.grade==='S'){
+          if (!HolidayRegions.isChinaCalendar() && d.tagType==='节日'){
+            box.style.display='none';
+          } else if (gj && gj.grade==='S'){
             // 大吉当头:通用黄历层置顶大吉,个人能量在下方「你的状态」卡另说,诚实分层、不打架
-            const names = (gj.names&&gj.names.length) ? gj.names.slice(0,2).join(' · ') : (d.tagName&&d.tagName!=='平日'?d.tagName:'黄历上吉');
+            const china=HolidayRegions.isChinaCalendar();
+            const safeNames=china?(gj.names||[]):(gj.names||[]).filter((name)=>name==='天赦日');
+            const names = safeNames.length ? safeNames.slice(0,2).join(' · ') : (d.tagName&&d.tagName!=='平日'?d.tagName:'黄历上吉');
             nm.textContent = names + ' · 黄历大吉';
-            de.textContent = gj.headYi ? ('宜 '+gj.headYi) : '天地开恩、诸事可为';
+            de.textContent = china&&gj.headYi ? ('宜 '+gj.headYi) : '天地开恩、诸事可为';
             box.className='we-folk we-folk-daji'; box.style.display='';
           } else if (d.tagName && d.tagName!=='平日' && d.tagType!=='忌'){
             // 具名民俗(节日/天赦)优先于泛化黄道
@@ -3515,6 +3848,7 @@
       }
       function calTipShow(grid,cell){
         const tip=grid.querySelector('.cal-tip'); if(!tip||!cell) return;
+        if(!cell.hasAttribute('data-e')){ calTipHide(grid); return; }
         tip.querySelector('b').textContent=cell.dataset.e||'';
         tip.querySelector('i').textContent=cell.dataset.tone||'';
         if(!tip.classList.contains('on')){ tip.style.transition='none'; posCalTip(tip,cell); void tip.offsetWidth; tip.style.transition=''; }
@@ -3553,6 +3887,7 @@
           const cell=e.target.closest('.px'); if(!cell){ return; }
           if(cell===cur) return; cur=cell;
           const tip=grid.querySelector('.cal-tip'); if(!tip) return;
+          if(!cell.hasAttribute('data-e')){ tip.classList.remove('on'); return; }
           tip.querySelector('b').textContent=cell.dataset.e||'';
           tip.querySelector('i').textContent=cell.dataset.tone||'';
           if(!tip.classList.contains('on')){            // 首次出现:瞬移到位，避免从角落滑入
@@ -3566,6 +3901,7 @@
       // (天赦日/大吉标记已改用 buildApp 挂好的 day.gongJi,不再单独重扫整月——见下方 renderMonth 的 d.gongJi)
       function renderMonth(m){
         $('c-title').innerHTML = m.year+'年'+m.month+'月<small id="c-sub">'+m.ganZhiYear+'</small><i class="mn-caret">▾</i>';
+        HolidayRegions.updateStatus(m.year);
         const grid = $('pgrid');
         let html = '';
         const jqMap = jieqiDays(m.year, m.month);   // {日: 节气名}
@@ -3573,35 +3909,37 @@
         const _es = m.days.map((x)=>x.e).filter((v)=>typeof v==='number').sort((a,b)=>a-b);
         for (let i=0;i<m.firstDow;i++) html += '<div class="pad"></div>';
         m.days.forEach((d)=>{
-          const hol = holiday(m.year, m.month, d.g);
+          const hol = HolidayRegions.holiday(m.year, m.month, d.g);
           const jq = jqMap[d.g] || '';
           const dow = new Date(m.year, m.month-1, d.g).getDay();   // 周几(0=日…6=六),供休/班角标
           const cls = ['px'];
           if (d.today) cls.push('today');
-          if (hol && CN_TZ) cls.push(hol.type==='off' ? 'h-off' : 'h-work');
+          if (hol) cls.push(hol.type==='work' ? 'h-work' : 'h-off');
           else if (!d.today && (dow===0 || dow===6)) cls.push('we-day');   // 普通周末(非放假/调休/今日)数字暖色弱标;放假走h-off自有色,调休班日按工作日不标
           // 休/班 角标(仅国务院法定节假日调休):放假日标「休」、调休补班标「班」;普通周末不标(只由列头/字色区分),这是中华/系统日历统一惯例
           // 海外弱化:设备时区非中国大陆时不标班/休(中国调休对海外无意义);中国时区照常显示。
           // 选中日卡片的「调休上班」说明行已删(用户拍板),角标保留。
           let restBadge='';
-          if (CN_TZ && hol && hol.type==='work') restBadge='<span class="hbadge b-work">班</span>';
-          else if (CN_TZ && hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
+          if (hol && hol.type==='work') restBadge='<span class="hbadge b-work">班</span>';
+          else if (hol && hol.type==='off') restBadge='<span class="hbadge b-off">休</span>';
           // 日期下方文字优先级:节气 > 节假日名 > 民俗节日 > 农历(让重点信息突出，不显杂乱)
           let sub, subCls='ln';
           // 日期下方文字:节气 > 节假日 > 传统节日(festOf) > 农历。不在月历上把吉日/神诞挑出来标注(那属"择日",归点开的今日卡/老黄历/近期吉日,别泼满日历)。
-          const fst = festOf(m.year, m.month, d.g, d.lunarLabel);
-          if (jq){ sub=jq; subCls='ln jq'; }
+          const fst = HolidayRegions.isChinaCalendar()?festOf(m.year, m.month, d.g, d.lunarLabel):null;
+          if (hol && hol.type==='national'){ sub=hol.name; subCls='ln fest'; }
+          else if (jq){ sub=jq; subCls='ln jq'; }
           else if (hol && hol.name){ sub=hol.name; subCls='ln fest'; }
           else if (fst){ sub=fst; subCls='ln fest'; }
           else sub=d.lunarDayCN;
           const mks = MARKS.forDate(m.year, m.month, d.g);
           // 民俗吉日不在月历标金(按用户意愿不把吉日泼满日历;金点只留给「重点日」d-mk);原 d-fk 有类无样式,已去
           if (mks.length) cls.push('d-mk');
-          const eTip = '能量 '+d.e+(d.toneShort?' · '+d.toneShort:'');
-          html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'" data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="'+eTip+'">'+
+          const personalOpen=!!PERSON&&WebAccess.day(m.year,m.month,d.g);
+          const energyAttrs=personalOpen?' data-e="'+d.e+'" data-tone="'+(d.toneShort||'')+'" title="能量 '+d.e+(d.toneShort?' · '+d.toneShort:'')+'"':'';
+          html += '<div class="'+cls.join(' ')+(d.today?' sel':'')+'" data-g="'+d.g+'"'+energyAttrs+'>'+
                   restBadge+
                   '<b>'+d.g+'</b>'+
-                  '<span class="'+subCls+'">'+sub+'</span></div>';
+                  '<span class="'+subCls+'">'+esc(sub)+'</span></div>';
         });
         grid.innerHTML = html;
         ensureCalTip(grid); bindCalHover(grid); bindCalTouch(grid);   // 桌面悬停 / 手机长按 都能浮出能量数字(丝滑过渡)
@@ -3625,9 +3963,18 @@
       function goto(Y, M){
         while(M<1){ M+=12; Y--; } while(M>12){ M-=12; Y++; }
         const m = monthData(Y, M);
-        if (!m){ if (ENGINE===null) toast('完善出生信息后，就能自由翻看每一年、每个月'); return; }
+        if (!m || m.err || m.__error || !Array.isArray(m.days) || m.days.length!==new Date(Y,M,0).getDate()){
+          toast(ENGINE===null?'完善出生信息后可查看个人内容':'这个月未能载入，请重试'); return;
+        }
         curY=Y; curM=M; renderMonth(m);
       }
+
+      HolidayRegions.bindRefresh(()=>{
+        const m=monthData(curY,curM); if(!m) return;
+        const keep=Number($('pgrid').querySelector('.px.sel')?.dataset.g)||0;
+        renderMonth(m);
+        if(keep){ const c=$('pgrid').querySelector('.px[data-g="'+keep+'"]'); if(c) c.click(); }
+      });
 
       $('c-prev').addEventListener('click', ()=> goto(curY, curM-1));
       $('c-next').addEventListener('click', ()=> goto(curY, curM+1));
@@ -3635,7 +3982,7 @@
       window.__calGoToday = ()=> goto(REAL.year, REAL.month);   // 「我的 → 今日分享」先回今天
       window.__calState = ()=> ({ y:curY, m:curM, g:(SHARE_DAY&&SHARE_DAY.g)||0 });
       window.__calRestore = (st)=>{ if(!st||!st.y) return; goto(st.y, st.m);
-        if(st.g){ const c=grid.querySelector('.px[data-g="'+st.g+'"]'); if(c) c.click(); } };
+        if(st.g){ const c=$('pgrid').querySelector('.px[data-g="'+st.g+'"]'); if(c) c.click(); } };
       // 工具箱里增删重点日后，日历实时重画(保持当前所选日)
       MARKS.onChange(()=>{ const m=monthData(curY,curM); if(m){ const keep=SHARE_DAY&&SHARE_DAY.g;
         renderMonth(m);
@@ -3713,7 +4060,8 @@
     (function share(){
       const ov=$('share-ov'), card=$('share-card');
       const GOLD='#C8AC78';
-      let THEME = (function(){ try{ return localStorage.getItem('shihe_share_theme')||'A'; }catch(e){ return 'A'; } })();
+      // 主题切换已下线；旧本机偏好不能再把用户带回隐藏的旧分享版式。
+      let THEME = 'A';
       function moodArt(hex){
         return 'background:radial-gradient(118% 92% at 78% 16%,'+hex+'cc,transparent 56%),'
           +'radial-gradient(92% 82% at 12% 90%,'+GOLD+'88,transparent 60%),'
@@ -3724,9 +4072,9 @@
       const WAVE='<svg viewBox="0 0 288 152" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:.45">'
         +'<path d="M0,108 C68,84 118,126 198,98 C250,80 286,104 288,92" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>'
         +'<path d="M0,128 C78,106 138,144 218,116 C272,98 286,122 288,114" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/></svg>';
-      function gzDay(d){
+      function gzDay(d,ym){
         if(d.ganZhi&&d.ganZhi.day) return d.ganZhi.day+'日';
-        try{ const _ym=SHARE_YM||APP.month; return RhythmEngine.Solar.fromYmd(_ym.year,_ym.month,d.g).getLunar().getDayInGanZhi()+'日'; }catch(e){ return ''; }
+        try{ return RhythmEngine.Solar.fromYmd(ym.year,ym.month,d.g).getLunar().getDayInGanZhi()+'日'; }catch(e){ return ''; }
       }
       function poeticBreak(s){ s=esc(s||''); return s.replace(/([，。；])/, '$1\n'); }
       const RING_C=2*Math.PI*31;
@@ -3734,9 +4082,9 @@
         return '<svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="31" fill="none" stroke="#33323A" stroke-width="3.5"/>'
           +'<circle cx="36" cy="36" r="31" fill="none" stroke="url(#scgg)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="'+RING_C.toFixed(1)+'" stroke-dashoffset="'+o+'"/>'
           +'<defs><linearGradient id="scgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C8AC78"/><stop offset="1" stop-color="#E6CF9E"/></linearGradient></defs></svg>'; }
-      function build(d){
+      function build(d,YM){
         if (!d) return '';
-        const YM=SHARE_YM||{year:APP.month.year,month:APP.month.month}, M=YM.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d));
+        const M=YM.month, lunar=esc(d.lunarLabel||''), gz=esc(gzDay(d,YM));
         const line=poeticBreak(d.cueLine||('今天平稳，先把要紧的一两件做完。'));
         const e=Math.min(100,d.e), word=esc(d.word||''), xi=XI||GOLD;
         const yi=esc((d.yi&&d.yi.length)?d.yi.slice(0,2).join(' · '):'挑最要紧的一件做完');
@@ -3801,7 +4149,17 @@
           +'</div></div>';
       }
       // 流年/流月卡(贰卷入口):沿用今日笺宣纸质感,内容=大年份/月份+信号行(chip+断语)
-      let MODE='day', PAYLOAD=null;
+      let MODE='day', PAYLOAD=null, DAY=null, DAY_YM=null;
+      function shareAllowed(){
+        if(MODE==='year'||MODE==='month'){
+          const birth=window.__birthLocal();
+          return !!PAYLOAD && !!birth && Number(PAYLOAD.year)>=birth.y
+            && (MODE==='year'?WebAccess.year(PAYLOAD.year):WebAccess.months(PAYLOAD.year));
+        }
+        return !!DAY && !!DAY_YM && !DAY.err && !DAY.__error
+          && Number.isFinite(DAY.e) && DAY.e>=0 && DAY.e<=100
+          && personalDayOpen(DAY_YM.year,DAY_YM.month,DAY.g);
+      }
       function sigTips(sigs, n, defLab){
         return (sigs||[]).slice(0,n).map(function(g){
           var m=(g.text||'').match(/^【(.+?)】([\s\S]*)$/);
@@ -3833,32 +4191,55 @@
       function render(){
         var th=$('share-themes');
         var kd=$('share-kind');
+        var nav=$('share-day-nav');
         if(kd){ kd.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.k===(MODE==='year'?'year':'day')); }); }
         if(MODE==='year'||MODE==='month'){
+          if(nav) nav.hidden=true;
           card.className='share-card sc-tA';
           card.innerHTML=MODE==='year'?buildYearShare(PAYLOAD):buildMonthShare(PAYLOAD);
           if(th) th.style.display='none';
           return;
         }
+        if(nav && DAY_YM && DAY){
+          nav.hidden=false;
+          $('share-date').textContent=DAY_YM.year+'年'+DAY_YM.month+'月'+DAY.g+'日';
+          const prev=new Date(Date.UTC(DAY_YM.year,DAY_YM.month-1,DAY.g-1));
+          $('share-prev').disabled=!onOrAfterBirth(prev.getUTCFullYear(),prev.getUTCMonth()+1,prev.getUTCDate());
+          const next=new Date(Date.UTC(DAY_YM.year,DAY_YM.month-1,DAY.g+1));
+          $('share-next').title=WebAccess.day(next.getUTCFullYear(),next.getUTCMonth()+1,next.getUTCDate())?'':'更远日期请了解顺时会员';
+        }
         if(th) th.style.display='';
         card.className='share-card sc-t'+THEME;
-        card.innerHTML=build(SHARE_DAY);
+        card.innerHTML=build(DAY,DAY_YM);
         document.querySelectorAll('#share-themes button').forEach((b)=>b.classList.toggle('on', b.dataset.th===THEME));
       }
       document.querySelectorAll('#share-themes button').forEach((b)=>{
         b.addEventListener('click', ()=>{ THEME=b.dataset.th; try{ localStorage.setItem('shihe_share_theme',THEME); }catch(e){} render(); });
       });
+      function stepDay(delta){
+        if(MODE!=='day'||!DAY||!DAY_YM) return;
+        const target=new Date(Date.UTC(DAY_YM.year,DAY_YM.month-1,DAY.g+delta));
+        const y=target.getUTCFullYear(),m=target.getUTCMonth()+1,g=target.getUTCDate();
+        if(!onOrAfterBirth(y,m,g)) return;
+        if(!WebAccess.day(y,m,g)){ window.__openMembership(); return; }
+        const next=window.__calDayForShare&&window.__calDayForShare(y,m,g);
+        if(!next||next.err||next.__error||!Number.isFinite(next.e)||next.e<0||next.e>100){ toast('这一天未能载入，请重试'); return; }
+        DAY=next; DAY_YM={year:y,month:m}; render();
+      }
+      $('share-prev').addEventListener('click',()=>stepDay(-1));
+      $('share-next').addEventListener('click',()=>stepDay(1));
       // 分享浮层提升到 body:贰卷(其他屏)也能打开;原挂在首页屏内,切屏后 display:none 连坐
       try{ document.body.appendChild(ov); }catch(e){}
       window.__shiheShareTL=function(mode,payload){
-        MODE=mode; PAYLOAD=payload; render(); ov.classList.add('on');
+        if(!payload || (mode==='year'&&!WebAccess.year(payload.year)) || (mode==='month'&&!WebAccess.months(payload.year))){ window.__openMembership(); return; }
+        MODE=mode; PAYLOAD=payload; DAY=SHARE_DAY; DAY_YM=SHARE_YM&&{...SHARE_YM}; if(!shareAllowed()){ ov.classList.remove('on'); return; } render(); ov.classList.add('on');
         window.shihe&&window.shihe.track&&window.shihe.track('share_open',{mode:mode});
       };
-      $('t-share').addEventListener('click', ()=>{ MODE='day'; PAYLOAD=null; render(); ov.classList.add('on'); window.shihe&&window.shihe.track&&window.shihe.track('share_open',{}); });
+      $('t-share').addEventListener('click', ()=>{ MODE='day'; PAYLOAD=null; DAY=SHARE_DAY; DAY_YM=SHARE_YM&&{...SHARE_YM}; if(!shareAllowed()){ ov.classList.remove('on'); if(SHARE_REQUIRES_MEMBERSHIP) window.__openMembership(); return; } render(); ov.classList.add('on'); window.shihe&&window.shihe.track&&window.shihe.track('share_open',{}); });
       // 页内切换今日/今年:今年取当年那条年卡,不必回解读页另找入口
       document.querySelectorAll('#share-kind button').forEach(function(b){
         b.addEventListener('click', function(){
-          if(b.dataset.k==='day'){ MODE='day'; PAYLOAD=null; render(); return; }
+          if(b.dataset.k==='day'){ MODE='day'; PAYLOAD=null; if(!DAY){ DAY=SHARE_DAY; DAY_YM=SHARE_YM&&{...SHARE_YM}; } if(!shareAllowed()){ ov.classList.remove('on'); return; } render(); return; }
           try{
             var R=(window.APP&&APP.report)||{}, ys=(R.years&&R.years.years)||[], cy=(R.years&&R.years.curYear)||new Date().getFullYear();
             var y=ys.filter(function(x){ return x.year===cy; })[0]||ys[0];
@@ -3872,6 +4253,7 @@
         const go=$('share-go'); if(!go) return;
         if(!navigator.share){ go.style.display='none'; return; }   // 不支持系统分享 → 退回「长按存图」
         go.addEventListener('click', async ()=>{
+          if(!shareAllowed()){ ov.classList.remove('on'); return; }
           // 文案按当前分享类型出(外审:原来永远读 SHARE_DAY,年卡分享要么没反应要么发成旧日文案)
           var txt;
           if(MODE==='year' && PAYLOAD){
@@ -3879,8 +4261,8 @@
           } else if(MODE==='month' && PAYLOAD){
             txt='顺时黄历 · '+PAYLOAD.year+'年'+PAYLOAD.m+'月 · 这个月的起伏。顺天而养，应时而行。';
           } else {
-            const d=SHARE_DAY; if(!d) return;
-            const _ym=SHARE_YM||APP.month;
+            const d=DAY; if(!d) return;
+            const _ym=DAY_YM;
             txt='顺时黄历 · '+_ym.month+'月'+d.g+'日 · '+(d.today?'我今天的状态':'这一天的状态')+'。顺天而养，应时而行。';
           }
           try{
@@ -4292,6 +4674,16 @@
         cctx.restore();
       }
       function draw(){
+        // 公开 Web 保留十年聚合概览；完整逐年、逐月轮盘由 App 会员查看。
+        level='life';
+        if(view) view.style.display='none';
+        svg.innerHTML=''; if(cctx) cctx.clearRect(-170,-170,340,340);
+        $('lf-crumb').innerHTML='';
+        const stepper=$('lf-read').closest('.wheel-stepper'); if(stepper) stepper.style.display='none';
+        $('lf-read').textContent=''; $('lf-hint').textContent='';
+        let gate=$('life-member'); if(!gate){gate=document.createElement('div');gate.id='life-member';view.parentNode.appendChild(gate);}
+        gate.innerHTML=memberGateHTML('展开完整年份与月份','下方保留十年一程的概览。完整逐年、逐月内容在 iOS 会员内查看。');
+        renderBars({arr:[]}); return;
         const V=curView();
         if(!V.arr){ svg.innerHTML=''; renderCrumb();
           setRead('<b>这一段暂时看不了</b> · 完善出生信息后可查看任意年月'); $('lf-hint').textContent=''; return; }
@@ -5019,6 +5411,7 @@
           + '<div class="rp-mo-e '+band+'"><b>'+v+'</b><span>能量</span></div>';
       }
       function renderMonths(){
+        if($('rp-p-months')){ $('rp-p-months').innerHTML=memberGateHTML('查看全年月度起伏'); return; }
         const Y=R.yearMonths; if(!Y){ $('rp-p-months').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">年度数据生成中…</div></div>'; return; }
         const _mv=Y.months.map((x)=>x.avg), mLo=Math.min.apply(null,_mv), mHi=Math.max.apply(null,_mv);
         const card=(m)=>{
@@ -5065,6 +5458,7 @@
       // —— 报告6:未来 3 年逐月(全免费开放)——
       function renderAhead(){
         const el=$('rp-p-ahead'); if(!el) return;
+        el.innerHTML=memberGateHTML('查看后续年份与月度起伏'); return;
         const A=R.monthsAhead;
         if(!A){ el.innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">数据生成中…</div></div>'; return; }
         const monthCard=(m,year,lo,hi)=> '<div class="rp-mo" data-k="'+year+'-'+m.month+'">'
@@ -5166,7 +5560,11 @@
         var A=R.monthsAhead||[];
         for(var i=0;i<A.length;i++) if(A[i].year===Y) return A[i];
         if(_tlMonthsFor[Y]) return _tlMonthsFor[Y];
-        try{ var ym=window.RhythmEngine.buildMonthsFor(window.APP_PERSON, Y); _tlMonthsFor[Y]={year:Y, months:ym.months, curMonth:0}; return _tlMonthsFor[Y]; }
+        try{
+          var ym=window.RhythmEngine.buildMonthsFor(window.APP_PERSON, Y);
+          if(!ym || ym.err || ym.__error || ym.year!==Y)return null;
+          _tlMonthsFor[Y]=ym; return ym;
+        }
         catch(e){ try{ console.error('[render] tlMonthsOf', Y, e&&e.message); }catch(_){} return null; }
       }
       function renderTLMonth(){
@@ -5193,6 +5591,7 @@
         if(nx) nx.onclick=function(){ shiftM(1); };
         var tb=$('tl-mo-today'); if(tb) tb.onclick=function(){ _tlMY={y:curY,m:curM}; renderTLMonth(); };
         var yObj=tlMonthsOf(_tlMY.y);
+        if(!WebAccess.months(_tlMY.y)){ box.innerHTML=memberGateHTML('查看全年月度起伏'); return; }
         if(!yObj||!yObj.months||!yObj.months.length){ box.innerHTML='<div class="tl-day-gz">载入中…</div>'; return; }
         var m=yObj.months.filter(function(x){return x.month===_tlMY.m;})[0]||yObj.months[0];
         var _av=yObj.months.map(function(x){return x.avg;}), lo=Math.min.apply(null,_av), hi=Math.max.apply(null,_av);
@@ -5230,6 +5629,7 @@
         $('tl-d-prev').onclick=function(){ shift(-1); };
         $('tl-d-next').onclick=function(){ shift(1); };
         var tb=$('tl-d-today'); if(tb) tb.onclick=function(){ _tlDay=null; renderTLDay(); };
+        if(!WebAccess.day(_tlDay.y,_tlDay.m,_tlDay.d)){ box.innerHTML=memberGateHTML('查看这一天的个人状态与宜忌'); return; }
         var f=d.fortune||{};
         var rel=''; try{ rel=localStorage.getItem('shihe_relstatus')||''; }catch(e){}
         var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
@@ -5250,6 +5650,7 @@
 
       // —— 报告2b:未来 10 年 · 高能量年(item 8)——
       function renderYears(){
+        if($('rp-p-years')){ $('rp-p-years').innerHTML=memberGateHTML('查看完整年份'); return; }
         const Y=R.years; if(!Y){ $('rp-p-years').innerHTML='<div class="rp-sec"><div class="rp-card rp-lede">数据生成中…</div></div>'; return; }
         const _yv=Y.years.map((x)=>x.energy), yLo=Math.min.apply(null,_yv), yHi=Math.max.apply(null,_yv);
         const card=(y)=>{
@@ -5353,6 +5754,8 @@
       ];
       function jdSignal(p){
         try{
+          if(p==='months'||p==='years'||p==='ahead') return '更多年份与月度起伏 · 在 iOS 会员内查看';
+          if(p==='picker') return '今日及未来 7 天免费 · 更远时段在 iOS 会员内查看';
           const n=R.natal, Y=R.yearMonths, YR=R.years, P=R.picker;
           const jq=(window.APP&&APP.season&&APP.season.jieqi)?APP.season.jieqi.name:'';
           if(p==='natal') return '你的性子、内在驱动，与生活各面';
@@ -5441,6 +5844,10 @@
         var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30);
         if(_jdYearY==null) _jdYearY=curY;
         _jdYearY=Math.max(Math.max(birthY, curY-8), Math.min(curY+20, _jdYearY));
+        if(!WebAccess.year(_jdYearY)){
+          host.innerHTML='<div class="yc-nav"><button type="button" id="jd-yr-prev">‹</button><b>'+_jdYearY+'年</b><button type="button" id="jd-yr-next">›</button></div>'+memberGateHTML('查看后续年份');
+          $('jd-yr-prev').onclick=function(){_jdYearY--;renderYearCard();}; $('jd-yr-next').onclick=function(){_jdYearY++;renderYearCard();}; return;
+        }
         var y=jdYearData(_jdYearY); if(!y){
           // 引擎未就绪时不留空白(过去年曾点开只见空),稍后自动重试
           host.innerHTML='<div class="yc"><div class="yc-sub">载入中…</div></div>';
@@ -5694,6 +6101,7 @@
           v.querySelectorAll('#rd-modeseg button').forEach(function(x){ x.setAttribute('aria-selected', x===b?'true':'false'); });
           rdDrawTL(0);
         }); });
+        v.querySelectorAll('#rd-modeseg button').forEach(function(b){ b.setAttribute('aria-selected',b.dataset.m===RD.mode?'true':'false'); });
       }
       function rdDrawTL(dir){ try{ if(RD.mode==='y') rdYear(dir); else if(RD.mode==='m') rdMonth(dir); else rdDay(dir); }catch(e){ try{ console.error('[render] rdTL', e&&e.message); }catch(_){} } }
       function rdCenter(instant){
@@ -5756,12 +6164,19 @@
       var RD_PAST = 8, RD_FUTURE = 20;
       function rdYearRange(curY){
         var birthY=((window.__birthLocal&&(window.__birthLocal()||{}).y))||(curY-30);
-        return { lo: Math.max(birthY, curY - RD_PAST), hi: curY + RD_FUTURE };
+        var engineBirth=(window.APP_PERSON&&window.APP_PERSON.year)||birthY;
+        return { lo: Math.max(birthY, curY - RD_PAST), hi: Math.min(curY + RD_FUTURE,engineBirth+99) };
+      }
+      function rdFailure(retry){
+        const body=rdEl('rd-tlbody');
+        body.innerHTML='<div class="rd-wait" role="alert">这份内容未能载入</div><button type="button" class="rd-cta" id="rd-retry">重新载入</button>';
+        rdEl('rd-retry').onclick=retry;
       }
       function rdYear(dir){
         if(!R.years||!R.years.years||!R.years.years.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=R.years.curYear||R.years.years[0].year;
         var _r=rdYearRange(curY), birthY=_r.lo, maxY=_r.hi;
+        if(maxY<birthY){rdEl('rd-strip').innerHTML='';rdEl('rd-tlbody').innerHTML='<div class="rd-wait">该年份超出当前支持范围</div>';return;}
         if(RD.Y==null) RD.Y=curY;
         RD.Y=Math.max(birthY, Math.min(maxY, RD.Y));
         var s=rdEl('rd-strip'); s.className='rd-strip'; var h='';
@@ -5769,8 +6184,13 @@
         s.innerHTML=h;
         var go=function(Y2){ if(Y2<birthY||Y2>maxY||Y2===RD.Y) return; var d=Y2>RD.Y?1:-1; RD.Y=Y2; rdYear(d); };
         rdStripBind(function(v){ go(+v); });
+        if(!WebAccess.year(RD.Y)){
+          rdSlide(dir,rdHead('<h2>'+RD.Y+'<small>年</small></h2>','年度主线',RD.Y<=birthY,RD.Y>=maxY)+'<div class="rd-back"><button type="button" hidden></button></div>'+memberGateHTML('查看后续年份'),function(){rdBind(function(g){go(RD.Y+g);},'回今年',false,function(){go(curY);});}); return;
+        }
         var y=jdYearData(RD.Y);
-        if(!y){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; setTimeout(function(){ if(RD.mode==='y') rdYear(0); }, 600); return; }
+        if(!y || y.err || y.__error || y.year!==RD.Y || !Number.isFinite(y.energy)){
+          delete _jdYearCache[RD.Y]; rdFailure(function(){rdYear(0);}); return;
+        }
         var li=function(arr){ return arr.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); };
         var yi=y.yi||[], ji=y.ji||[];
         // 岁数(年份差,与引擎 age 同源;出生当年写「出生这年」)
@@ -5792,11 +6212,17 @@
         var A=R.monthsAhead; if(!A||!A.length){ rdEl('rd-tlbody').innerHTML=''; return; }
         var curY=A[0].year, curM=(A[0].curMonth>0?A[0].curMonth:new Date().getMonth()+1);
         var _rm=rdYearRange(curY), birthY=_rm.lo, maxY=_rm.hi;
+        if(maxY<birthY){rdEl('rd-strip').innerHTML='';rdEl('rd-tlbody').innerHTML='<div class="rd-wait">该年份超出当前支持范围</div>';return;}
         if(!RD.MY) RD.MY={y:curY,m:curM};
         RD.MY.y=Math.max(birthY, Math.min(maxY, RD.MY.y));
         var s=rdEl('rd-strip'); s.className='rd-strip'; s.innerHTML='';
+        if(!WebAccess.months(RD.MY.y)){
+          rdSlide(dir,rdHead('<h3>'+RD.MY.y+'年</h3>','十二个月的起伏',RD.MY.y<=birthY,RD.MY.y>=maxY)+'<div class="rd-back"><button type="button" hidden></button></div>'+memberGateHTML('查看全年月度起伏'),function(){
+            rdBind(function(g){var y2=RD.MY.y+g;if(y2<birthY||y2>maxY)return;RD.MY={y:y2,m:RD.MY.m};rdMonth(g);},'回今年',RD.MY.y===curY,function(){RD.MY={y:curY,m:curM};rdMonth(0);});
+          }); return;
+        }
         var yObj=tlMonthsOf(RD.MY.y);
-        if(!yObj||!yObj.months||!yObj.months.length){ rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>'; setTimeout(function(){ if(RD.mode==='m') rdMonth(0); }, 600); return; }
+        if(!yObj || yObj.err || yObj.__error || yObj.year!==RD.MY.y || !Array.isArray(yObj.months) || yObj.months.length!==12 || yObj.months.some(function(x){return !Number.isFinite(x.avg)||(x.year!=null&&x.year!==RD.MY.y);})){ delete _tlMonthsFor[RD.MY.y]; rdFailure(function(){rdMonth(0);}); return; }
         var ms=yObj.months, vals=ms.map(function(x){ return x.avg; });
         var hi=Math.max.apply(null,vals), lo=Math.min.apply(null,vals), span=Math.max(6, hi-lo);
         var good=(yObj.highMonths||[]).slice(0,3);
@@ -5831,8 +6257,7 @@
         var mk=RD.D.y+'-'+RD.D.m, mo=_tlMonthCache[mk];
         if(!mo){ try{ mo=window.RhythmEngine.buildMonth(window.APP_PERSON,{year:RD.D.y,month:RD.D.m}); _tlMonthCache[mk]=mo; }
           catch(e){ try{ console.error('[render] rdDay', e&&e.message); }catch(_){}
-            rdEl('rd-tlbody').innerHTML='<div class="rd-wait">载入中…</div>';
-            RD.retry=(RD.retry||0)+1; if(RD.retry<=10) setTimeout(function(){ if(RD.mode==='d') rdDay(0); },600);
+            rdFailure(function(){rdDay(0);});
             return; } }
         RD.retry=0;
         var WK=['日','一','二','三','四','五','六'], nd=new Date(RD.D.y, RD.D.m, 0).getDate();
@@ -5845,11 +6270,18 @@
         var ord=function(o){ return new Date(o.y,o.m-1,o.d).getTime(); };
         // 日档边界(2026-09-19 拍板):日档只查最近,今年前后各一年;起点不早于出生日
         var BL=(window.__birthLocal&&window.__birthLocal())||{y:T.y-30,m:1,d:1}, bY=BL.y;
-        var dMin=Math.max(new Date(BL.y,BL.m-1,BL.d).getTime(), new Date(T.y-1,0,1).getTime());
-        var dMax=new Date(T.y+1,11,31).getTime();
+        var routeYear=Number.isInteger(RD.routedYear)?RD.routedYear:T.y;
+        var dMin=Math.max(new Date(BL.y,BL.m-1,BL.d).getTime(), new Date(Math.min(T.y-1,routeYear),0,1).getTime());
+        var dMax=new Date(Math.max(T.y+1,routeYear),11,31).getTime();
         var go=function(o){ var k=ord(o); if(k===ord(RD.D)||k<dMin||k>dMax) return; var g=k>ord(RD.D)?1:-1; RD.D=o; rdDay(g); };
         rdStripBind(function(v){ go({y:RD.D.y, m:RD.D.m, d:+v}); });
-        var d=mo.days[RD.D.d-1]; if(!d){ rdEl('rd-tlbody').innerHTML=''; return; }
+        if(!WebAccess.day(RD.D.y,RD.D.m,RD.D.d)){
+          rdSlide(dir,rdHead('<h3>'+RD.D.m+'月'+RD.D.d+'日</h3>','个人状态与宜忌',ord(RD.D)<=dMin,ord(RD.D)>=dMax)+'<div class="rd-back"><button type="button" hidden></button></div>'+memberGateHTML('查看这一天的个人状态与宜忌'),function(){
+            rdBind(function(g){var dt=new Date(RD.D.y,RD.D.m-1,RD.D.d+g);go({y:dt.getFullYear(),m:dt.getMonth()+1,d:dt.getDate()});},'回今天',false,function(){go({y:T.y,m:T.m,d:T.d});});
+          }); return;
+        }
+        var d=mo&&Array.isArray(mo.days)&&mo.days[RD.D.d-1];
+        if(!d || d.g!==RD.D.d || !Number.isFinite(d.e)){delete _tlMonthCache[mk];rdFailure(function(){rdDay(0);});return;}
         var isToday=(RD.D.y===T.y&&RD.D.m===T.m&&RD.D.d===T.d);
         var f=d.fortune||{}, rel=getRelStatus();
         var loveLn=f.love?(rel==='single'?(f.love.lineSingle||f.love.line):rel==='partner'?(f.love.linePartner||f.love.line):''):'';
@@ -5914,8 +6346,22 @@
         [rdToc, rdNatal, rdTL, rdCare].forEach(function(fn){ try{ fn(); }catch(e){ try{ console.error('[render]', fn.name, e&&e.message); }catch(_){} } });
         window.__jdShowChapter=function(ch){ rdShow(ch==='liunian'?'tl':ch); };
         window.__rdOnShow=function(){ rdCenter(true); rdSpy(); };
-        window.__rdState=function(){ return { ch:RD.ch, mode:RD.mode }; };                     // 跨日重载前存位
-        window.__rdRestore=function(st){ if(!st) return; if(st.mode) RD.mode=st.mode; rdShow(st.ch||'toc'); };
+        window.__rdState=function(){ return { ch:RD.ch, mode:RD.mode, Y:RD.Y, MY:RD.MY, D:RD.D, routedYear:RD.routedYear }; };
+        window.__rdRestore=function(st){
+          if(!st)return;
+          if(['y','m','d'].includes(st.mode))RD.mode=st.mode;
+          if(Number.isInteger(st.Y))RD.Y=st.Y;
+          if(st.MY&&Number.isInteger(st.MY.y)&&Number.isInteger(st.MY.m))RD.MY=st.MY;
+          if(st.D&&Number.isInteger(st.D.y)&&Number.isInteger(st.D.m)&&Number.isInteger(st.D.d))RD.D=st.D;
+          if(Number.isInteger(st.routedYear))RD.routedYear=st.routedYear;
+          rdTL();rdShow(st.ch||'toc');
+        };
+        window.__rdOpenDay=function(date){
+          if(!date || !WebAccess.day(date.y,date.m,date.d))return;
+          const birth=window.__birthLocal&&window.__birthLocal();
+          if(birth&&new Date(date.y,date.m-1,date.d)<new Date(birth.y,birth.m-1,birth.d))return;
+          RD.mode='d'; RD.routedYear=date.y; RD.D={y:date.y,m:date.m,d:date.d}; rdTL(); rdShow('tl');
+        };
         window.__rdRelChanged=function(){ try{ rdDom(false); if(RD.mode==='d') rdDrawTL(0); }catch(e){} };   // 「我的」改感情状态 → 解读情感面板/日档同步
         rdShow(RD.built?RD.ch:'toc');
         RD.built=true;
@@ -5982,9 +6428,9 @@
         const lock=document.querySelector('#rp-open .rp-entry-lock');
         const cta=document.querySelector('#rp-open .rp-entry-cta');
         const price=document.querySelector('#rp-open .rp-entry-price');
-        if(lock) lock.textContent='已开放';
-        if(cta) cta.textContent='查看报告 →';
-        if(price) price.innerHTML='全部免费 · 长期可看';
+        if(lock) lock.textContent='免费体验';
+        if(cta) cta.textContent='查看免费内容 →';
+        if(price) price.textContent='本命全文免费 · 更多日期见会员';
       }
       refreshEntry();
       // 供「解读」页复用同一套原型徽章 / 能量类型标签 / 补给源标签(同源，避免重复维护)
@@ -6024,19 +6470,51 @@
       const cards=document.querySelectorAll('.tb-card, .tb-feat');
       const panels=document.querySelectorAll('.tb-panel');
       const scroll=$('tb-scroll'), titleEl=$('tb-detail-title'), backEl=$('tb-back');
-      function openTool(t, title){
+      const hlCard=$('w-huangli'), hlSlot=$('tb-huangli-slot');
+      let hlHome=null;
+      function restoreHuangli(){
+        if(!hlHome || !hlCard) return;
+        const {parent,next,collapsed,moreCollapsed,date}=hlHome;
+        if(parent && parent.isConnected) parent.insertBefore(hlCard, next&&next.parentNode===parent?next:null);
+        hlCard.classList.toggle('collapsed', collapsed);
+        const more=hlCard.querySelector('.hl2-more'); if(more) more.classList.toggle('collapsed', moreCollapsed);
+        hlHome=null;
+        if(date && window.__hlRenderDate) window.__hlRenderDate(date.year,date.month,date.day);
+      }
+      function openHuangli(date){
+        if(!hlCard || !hlSlot || !window.__hlRenderDate) return;
+        restoreHuangli();
+        const selected=window.__hlSelectedDate;
+        hlHome={ parent:hlCard.parentNode, next:hlCard.nextSibling,
+          collapsed:hlCard.classList.contains('collapsed'),
+          moreCollapsed:!!hlCard.querySelector('.hl2-more.collapsed'),
+          date:selected&&{...selected} };
+        hlSlot.appendChild(hlCard); // 同一个节点；不复制 ID，既有时辰点击监听继续有效。
+        hlCard.classList.remove('collapsed');
+        const more=hlCard.querySelector('.hl2-more'); if(more) more.classList.remove('collapsed');
+        const now=new Date(), d=date||{year:now.getFullYear(),month:now.getMonth()+1,day:now.getDate()};
+        window.__hlRenderDate(d.year,d.month,d.day);
+        const dt=new Date(d.year,d.month-1,d.day), label=$('tb-huangli-date');
+        if(label) label.textContent=d.year+'年'+d.month+'月'+d.day+'日 · 周'+['日','一','二','三','四','五','六'][dt.getDay()];
+      }
+      function openTool(t, title, date){
         if(t==='rhythm'){ window.__lfFrom=3; if(window.__setScreen) window.__setScreen(1); return; }  // 生命之轮=整屏节律,复用现成跨屏跳转+转盘重排钩子
+        if(t==='huangli') openHuangli(date); else restoreHuangli();
         panels.forEach((p)=> p.classList.toggle('on', p.dataset.panel===t));
         if(titleEl) titleEl.textContent = title||'工具';
         if(scroll){ scroll.classList.add('on-detail'); scroll.scrollTop=0; }
       }
       function back(){
+        restoreHuangli();
         if(scroll){ scroll.classList.remove('on-detail'); scroll.scrollTop=0; }
       }
       cards.forEach((c)=> c.addEventListener('click',()=> openTool(c.dataset.tool, c.dataset.title)));
       if(backEl) backEl.addEventListener('click', back);
       // 切到其它标签页时回到目录，下次进工具箱从干净目录开始
       window.__tbReset = back;
+      window.__tbOpenHuangli = (date)=>{ if(window.__setScreen) window.__setScreen(3); openTool('huangli','黄历',date); };
+      const hlMore=$('hl2-open-tool');
+      if(hlMore) hlMore.addEventListener('click',(ev)=>{ ev.stopPropagation(); window.__tbOpenHuangli(window.__hlSelectedDate); });
 
       // (工具箱「事业·天赋与方向」「本命养生·速查」已删:与解读页「生活方面→事业」「叁·调养」重复,报告里已完整呈现)
 
@@ -6057,15 +6535,33 @@
         const SCENE=[['','全部'],['搬家入住','搬家'],['签约收款','签约'],['开业开工','开业'],['入学考试','考试'],['见面商谈','见面'],['提亲成婚','婚嫁'],['出行远门','出行'],['休养调理','休养'],['装修动工','装修']];
         let offset=0, scene='';
         function draw(){
+          try { drawResults(); }
+          catch(e){
+            if($('luck-intro'))$('luck-intro').textContent='';
+            list.innerHTML='<div class="tb-empty" role="alert">择日内容未能载入</div><button type="button" class="mk-save" id="luck-retry">重新载入</button>';
+            $('luck-retry').onclick=draw;
+          }
+        }
+        function drawResults(){
           const base=new Date(); base.setHours(0,0,0,0); base.setDate(base.getDate()+offset*WIN);
           const sy=base.getFullYear(), sm=base.getMonth()+1, sd=base.getDate();
-          const eng=RE.energyRange(P, sy,sm,sd, WIN)||[];
+          const sc=$('luck-scene');
+          if(sc) sc.innerHTML=SCENE.map(function(kv){ return '<button type="button" data-s="'+kv[0]+'" aria-pressed="'+(scene===kv[0])+'">'+kv[1]+'</button>'; }).join('');
+          if(offset>0){
+            const end=new Date(sy,sm-1,sd+WIN-1);
+            if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日';
+            $('luck-intro').textContent=''; list.innerHTML=memberGateHTML('按事项查看更远时段','未来 7 天免费，更远时段的个人择日在 iOS 会员内查看。'); return;
+          }
+          const eng=RE.energyRange(P, sy,sm,sd, 8);
+          if(!Array.isArray(eng)||eng.length!==8||eng.some(function(x){return !x||!Number.isFinite(x.energy);}))throw new Error('invalid-lucky-days');
           const cand=[];
           for(let i=0;i<eng.length;i++){
             const d=eng[i];
+            if(!WebAccess.day(d.year,d.month,d.day)) continue;
             // 同源:用引擎 gongJiOf(与今日卡/日历/老黄历同一份 gongJi),别再各自 re-derive
             const gj = (typeof RE.gongJiOf==='function') ? RE.gongJiOf(d.year,d.month,d.day) : null;
-            if(!gj || gj.hardXiong) continue;   // 硬凶(月破/受死/四离四绝)一票否决,免把凶日当吉日推荐
+            if(!gj)throw new Error('missing-almanac-result');
+            if(gj.hardXiong) continue;   // 硬凶(月破/受死/四离四绝)一票否决,免把凶日当吉日推荐
             // S级(天赦/大节/德神)无条件收(修:7/19天赦是黑道、旧版"须黄道"把它漏了);A级须黄道+吉神(精选,免纯黄道半月淹没名单)
             const isPick = gj.grade==='S' || (gj.grade==='A' && gj.jiShen && gj.jiShen.length && gj.tianShenType==='黄道');
             if(!isPick) continue;
@@ -6085,15 +6581,13 @@
           cand.sort((a,b)=> b.score-a.score);
           const pool = scene ? cand.filter((x)=> x.uses.indexOf(scene)>=0) : cand;
           const top=pool.slice(0,14).sort((a,b)=> (a.m-b.m)||(a.day-b.day));
-          const sc=$('luck-scene');
-          if(sc) sc.innerHTML=SCENE.map(function(kv){ return '<button type="button" data-s="'+kv[0]+'" aria-pressed="'+(scene===kv[0])+'">'+kv[1]+'</button>'; }).join('');
-          const end=new Date(sy,sm-1,sd+WIN-1);
-          if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日'+(offset===0?' · 未来三个月':'');
-          if(chip && offset===0) chip.textContent= top.length? ('近三个月 '+top.length+' 个吉日') : '近三个月平稳';
+          const end=new Date(sy,sm-1,sd+7);
+          if($('luck-range')) $('luck-range').textContent=sm+'月'+sd+'日 – '+(end.getMonth()+1)+'月'+end.getDate()+'日 · 免费范围';
+          if(chip) chip.textContent=top.length?('未来 7 天 '+top.length+' 个吉日'):'未来 7 天';
           const scName=(SCENE.filter(function(kv){return kv[0]===scene;})[0]||['',''])[1];
           if($('luck-intro')) $('luck-intro').textContent= top.length ? ''
-            : (scene ? ('这一季没有适合'+scName+'的日子，可看下一季。') : '这一季没有格外突出的吉日。');
-          list.innerHTML= top.length ? top.map(rowHtml).join('') : '<div class="tb-empty">'+(scene?('这三个月暂无适合'+scName+'的日子'):'这一季暂无特别突出的吉日')+'</div>';
+            : (scene ? ('免费范围内暂无适合'+scName+'的日子。') : '免费范围内暂无特别突出的吉日。');
+          list.innerHTML=(top.length?top.map(rowHtml).join(''):'<div class="tb-empty">'+(scene?('未来 7 天暂无适合'+scName+'的日子'):'未来 7 天暂无特别突出的吉日')+'</div>')+memberGateHTML('查看更远时段的日子','按事项筛选更远日期，在 iOS 会员内继续安排。');
         }
         function rowHtml(x){
           const badge = '';   // S 级名(天德月德临)与下方吉神标、理由句三处重复,只留吉神标
@@ -6477,7 +6971,13 @@
       // 通用跨屏入口:任意 [data-goto] 元素点击即切屏(日历今日卡 → 解读完整命书 等)
       var GOTO_SCREEN = { cal:0, rhythm:1, read:2, tools:3 };
       document.querySelectorAll('[data-goto]').forEach(function(el){
-        el.addEventListener('click', function(){ var i=GOTO_SCREEN[el.dataset.goto]; if(i!=null) setScreen(i); });
+        el.addEventListener('click', function(){
+          var i=GOTO_SCREEN[el.dataset.goto];
+          if(el.classList.contains('today-more')&&SHARE_DAY&&SHARE_YM&&window.__rdOpenDay){
+            window.__rdOpenDay({y:SHARE_YM.year,m:SHARE_YM.month,d:SHARE_DAY.g});
+          }
+          if(i!=null)setScreen(i);
+        });
       });
       // 伪状态栏时钟已由 CSS(.status .clock{display:none}) 隐藏(真机系统栏已有时间);
       // 原每 15 秒刷新隐藏元素的定时器纯属浪费,已删。span 保留无害(被 CSS 隐藏)。
@@ -6501,6 +7001,7 @@
           var p=null; try{ p=JSON.parse(localStorage.getItem('shihe_person')||'null'); }catch(e){}
           if(!p && window.__IS_DEMO===false) p=window.APP_PERSON||null;   // 仅真实用户才回落 APP_PERSON;示例态不冒充,走「未设置生辰」
           var bs=document.getElementById('mine-birth');   // 生辰信息行右侧摘要(顶部大卡已删)
+          var bc=document.getElementById('mine-birth-city');
           if(p&&p.year){
             // 展示用户录入的原样(海外=当地时间,农历=农历日期),不展示喂引擎的北京基准;时辰未知不显示占位 0:00
             var hasIn=(p.inY&&p.inM&&p.inD), lunarIn=hasIn&&p.calInput==='农历';
@@ -6510,8 +7011,16 @@
             var mn=(m0!=null?m0:0); mn=(mn<10?'0':'')+mn;
             var timeTx=p.hourUnknown?'时辰未知':((h0!=null?h0:0)+':'+mn);
             if(bs) bs.textContent=dateTx+' · '+timeTx+(p.gender?' · '+p.gender:'');
+            if(bc){
+              var country=p.cityCC?(typeof Intl.DisplayNames==='function'?(new Intl.DisplayNames(['zh-Hans'],{type:'region'}).of(p.cityCC)||p.cityCC):p.cityCC):'';
+              var admin=p.cityAdmin1&&p.cityAdmin1!==p.cityName&&p.cityAdmin1!==country?p.cityAdmin1:'';
+              var fallback=!p.cityAdmin1&&Number.isFinite(Number(p.longitude))?'经度 '+Math.abs(Number(p.longitude)).toFixed(2)+'°'+(Number(p.longitude)<0?'W':'E'):'';
+              bc.textContent=[p.cityName||'',admin||fallback,country].filter(Boolean).join(' · ');
+              bc.title=bc.textContent;
+            }
           } else {
             if(bs) bs.textContent='未设置';
+            if(bc) bc.textContent='';
           }
           mov.classList.add('on'); document.body.dataset.mine='1';
           // 无障碍:下层整屏 inert + aria-hidden,焦点移进「我的」,免读屏/键盘还能走到被盖住的页面
@@ -6546,7 +7055,7 @@
       });
       // 新版接管后就地刷新一次 —— 补上「缓存优先」缺的那一步。
       //   SW 是缓存优先:这次打开先给旧页面,新版在后台装好才接管,于是用户眼前这屏永远慢一版;
-      //   而旧 HTML 里的 engine_bundle.js?v=205NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
+      //   而旧 HTML 里的 engine_bundle.js?v=206NNN 就是本地算好数据的缓存键,解读内容跟着一起钉死在旧版。
       //   三道闸:① 首装不刷(没有旧 controller = 干净安装,本来就是新的)
       //          ② 只在刚打开的头 12 秒内刷(用户还没开始读,不打断;超时就留给下次打开)
       //          ③ sessionStorage 标记防连环刷

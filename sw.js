@@ -1,10 +1,11 @@
 // 时和 · 离线缓存 Service Worker(纯静态,无追踪;失败不影响在线使用)
 // 策略:网络优先(始终拿最新),离线时回退缓存——避免更新后看到旧版本。
-const CACHE = 'shihe-v205';
+const CACHE = 'shihe-v206';
 // 核心资源:首屏必需,原子预缓存(任一失败则整体失败,保证一致)
 const CORE = [
   './', './index.html', './onboarding.html', './privacy.html', './about.html', './terms.html',
-  './app_data.js', './engine_bundle.js', './analytics.js', './consent.js',
+  './app_data.js', './engine_bundle.js', './analytics.js', './consent.js', './public-holidays.json',
+  './THIRD_PARTY_HOLIDAYS_LICENSE.txt',
   './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png'
 ];
 // 次要资源:图片等,逐个 best-effort 缓存(单张失败不拖挂整个 SW 安装)。
@@ -33,7 +34,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((ks) => Promise.all(ks.filter((k) => /^shihe-v[0-9]+$/.test(k) && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
       // 缓存优先策略固有的「慢一步」:用户这次打开拿到的是旧页面,新版要等下次打开才显形。
       //   更糟的是旧 HTML 里的 engine_bundle.js?v=NNN 正是本地算好数据的缓存键,
@@ -56,18 +57,21 @@ self.addEventListener('fetch', (e) => {
   // ignoreSearch:页面请求 engine_bundle.js?v=NNN,预缓存键不带 ?v → 不忽略则首次离线必 miss(缓存名已按版本隔离,忽略查询串安全)
   const isNav = e.request.mode === 'navigate';
   e.respondWith(
-    caches.match(e.request, { ignoreSearch: true }).then((hit) => {
-      const refresh = fetch(e.request).then((res) => {
-        if (res && res.ok) { const clone = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, clone)); }
+    caches.open(CACHE).then((cache) => cache.match(e.request, { ignoreSearch: true }).then((hit) => {
+      const refresh = fetch(e.request).then(async (res) => {
+        if (res && res.ok) {
+          // 等待缓存写入完成；写满等失败仍返回已成功取得的网络响应。
+          try { await cache.put(e.request, res.clone()); } catch (_) {}
+        }
         return res;
       }).catch(() => {
         if (hit) return hit;
         // 只有页面导航才回退 index.html;JS/字体/图片 miss 绝不能拿 HTML 顶替(会解析报错)
-        if (isNav) return caches.match('./index.html', { ignoreSearch: true });
+        if (isNav) return cache.match('./index.html', { ignoreSearch: true });
         return Response.error();
       });
       if (hit) { try { e.waitUntil(refresh.catch(() => {})); } catch (_) {} return hit; }
       return refresh;
-    })
+    }))
   );
 });

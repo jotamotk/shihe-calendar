@@ -1,0 +1,19 @@
+GeoNames city administrative-region attribution
+
+Source: GeoNames Gazetteer, https://www.geonames.org/
+Files: cities1000.zip and admin1CodesASCII.txt from
+https://download.geonames.org/export/dump/
+Snapshot downloaded: 2026-10-20.
+License: Creative Commons Attribution 4.0 International (CC BY 4.0),
+https://creativecommons.org/licenses/by/4.0/
+Source format and license statement: https://download.geonames.org/export/dump/readme.txt
+
+Changes made by Shihe: matched existing city rows to GeoNames by country,
+name, rounded longitude and IANA timezone; extracted first-level
+administrative-region names solely for display. Existing city names,
+longitudes, timezones, country codes, population values and order were not
+changed. 339 hand-curated Chinese rows use the project's pre-existing
+province/city table instead. Unverifiable matches remain unlabeled.
+
+GeoNames provides the data as-is, without a guarantee of completeness or
+accuracy. GeoNames does not endorse Shihe.
